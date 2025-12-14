@@ -1,0 +1,347 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  passwordHash    String   @map("password_hash")
+  role            UserRole
+  status          UserStatus @default(ACTIVE)
+  verified        Boolean  @default(false)
+  verificationToken String? @map("verification_token")
+  resetPasswordToken String? @map("reset_password_token")
+  resetPasswordExpires DateTime? @map("reset_password_expires")
+  
+  // Profile data (can be non-encrypted)
+  firstName       String?  @map("first_name")
+  lastName        String?  @map("last_name")
+  phone           String?
+  country         String?
+  professionalNumber String? @map("professional_number")
+  speciality      String?
+  
+  // Stripe integration
+  stripeCustomerId String? @unique @map("stripe_customer_id")
+  
+  // Timestamps
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  lastLogin       DateTime? @map("last_login")
+  
+  // Relations
+  clients         Client[]
+  sessions        Session[]
+  reports         Report[]
+  auditLogs       AuditLog[]
+  encryptionKeys  EncryptionKey[]
+  subscription    Subscription?
+  
+  @@map("users")
+}
+
+model Subscription {
+  id                    String   @id @default(cuid())
+  userId                String   @unique @map("user_id")
+  stripeSubscriptionId  String   @unique @map("stripe_subscription_id")
+  status                String   // active, canceled, past_due, etc.
+  planType              String   @map("plan_type") // basic, pro, premium
+  currentPeriodStart    DateTime @map("current_period_start")
+  currentPeriodEnd      DateTime @map("current_period_end")
+  canceledAt            DateTime? @map("canceled_at")
+  
+  // Timestamps
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("subscriptions")
+  @@index([status])
+  @@index([planType])
+}
+
+model EncryptionKey {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  keyValue  String   @map("key_value") // Base64 encoded key
+  algorithm String   @default("aes-256-gcm")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime? @map("expires_at")
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("encryption_keys")
+  @@index([userId, isActive])
+}
+
+model Client {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  
+  // Encrypted personal data
+  encryptedPersonalData Bytes  @map("encrypted_personal_data")
+  encryptedClinicalData Bytes? @map("encrypted_clinical_data")
+  encryptedSensitiveData Bytes? @map("encrypted_sensitive_data")
+  
+  // Non-sensitive metadata
+  tags            String[]
+  riskLevel       RiskLevel @default(LOW) @map("risk_level")
+  isActive        Boolean  @default(true) @map("is_active")
+  
+  // Encryption metadata
+  encryptionKeyId String   @map("encryption_key_id")
+  dataVersion     Int      @default(1) @map("data_version")
+  
+  // Dates and audit
+  firstSessionAt  DateTime? @map("first_session_at")
+  lastSessionAt   DateTime? @map("last_session_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  lastModifiedBy  String   @map("last_modified_by")
+  
+  // Relations
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions        Session[]
+  reports         Report[]
+  consents        Consent[]
+  
+  @@map("clients")
+  @@index([userId, isActive])
+  @@index([tags])
+  @@index([riskLevel])
+}
+
+model Consent {
+  id            String      @id @default(cuid())
+  clientId      String      @map("client_id")
+  consentType   ConsentType @map("consent_type")
+  granted       Boolean
+  grantedAt     DateTime    @map("granted_at")
+  revokedAt     DateTime?   @map("revoked_at")
+  version       String      @default("1.0")
+  notes         String?
+  ipAddress     String?     @map("ip_address")
+  userAgent     String?     @map("user_agent")
+  
+  client        Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  @@map("consents")
+  @@index([clientId, consentType])
+}
+
+model Session {
+  id              String        @id @default(cuid())
+  clientId        String        @map("client_id")
+  userId          String        @map("user_id")
+  
+  // Session data
+  startTime       DateTime      @map("start_time")
+  endTime         DateTime?     @map("end_time")
+  duration        Int?          // in minutes
+  sessionType     SessionType   @map("session_type")
+  status          SessionStatus
+  
+  // Encrypted content
+  encryptedTranscription Bytes? @map("encrypted_transcription")
+  encryptedNotes  Bytes?        @map("encrypted_notes")
+  encryptedAudioPath String?    @map("encrypted_audio_path")
+  
+  // AI data (can be encrypted or not based on sensitivity)
+  aiSuggestions   Json?         @map("ai_suggestions")
+  aiMetadata      Json?         @map("ai_metadata")
+  
+  // Metadata
+  encryptionKeyId String?       @map("encryption_key_id")
+  audioQuality    AudioQuality? @map("audio_quality")
+  recordingConsent Boolean      @default(false) @map("recording_consent")
+  
+  // Timestamps
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  
+  // Relations
+  client          Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reports         Report[]
+  
+  @@map("sessions")
+  @@index([userId, status])
+  @@index([clientId, startTime])
+}
+
+model Report {
+  id              String       @id @default(cuid())
+  clientId        String       @map("client_id")
+  userId          String       @map("user_id")
+  sessionId       String?      @map("session_id")
+  
+  // Report metadata
+  title           String
+  reportType      ReportType   @map("report_type")
+  status          ReportStatus
+  version         Int          @default(1)
+  
+  // Encrypted content
+  encryptedContent Bytes       @map("encrypted_content")
+  encryptedMetadata Bytes?     @map("encrypted_metadata")
+  
+  // Template and AI data
+  templateId      String?      @map("template_id")
+  aiGenerated     Boolean      @default(false) @map("ai_generated")
+  aiConfidence    Float?       @map("ai_confidence")
+  
+  // Audit and timestamps
+  encryptionKeyId String       @map("encryption_key_id")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  completedAt     DateTime?    @map("completed_at")
+  
+  // Relations
+  client          Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session         Session?     @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  
+  @@map("reports")
+  @@index([userId, status])
+  @@index([clientId, reportType])
+}
+
+model AuditLog {
+  id            String      @id @default(cuid())
+  userId        String?     @map("user_id")
+  action        AuditAction
+  resourceType  String      @map("resource_type")
+  resourceId    String?     @map("resource_id")
+  
+  // Request metadata
+  ipAddress     String      @map("ip_address")
+  userAgent     String?     @map("user_agent")
+  method        String?
+  url           String?
+  
+  // Change details
+  oldValues     Json?       @map("old_values")
+  newValues     Json?       @map("new_values")
+  metadata      Json?
+  
+  // Security
+  isSuccess     Boolean     @default(true) @map("is_success")
+  errorMessage  String?     @map("error_message")
+  riskScore     Int?        @map("risk_score") // 0-100
+  
+  // Timestamp
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  // Relations
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@map("audit_logs")
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+  @@index([resourceType, resourceId])
+}
+
+// Enums
+enum UserRole {
+  PSYCHOLOGIST_BASIC
+  PSYCHOLOGIST_PRO
+  PSYCHOLOGIST_PREMIUM
+  PSYCHOLOGIST  // Add a general psychologist role
+  STUDENT
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ConsentType {
+  AUDIO_RECORDING
+  AI_PROCESSING
+  DATA_STORAGE
+  THIRD_PARTY_SHARING
+  MARKETING_COMMUNICATIONS
+}
+
+enum SessionType {
+  INDIVIDUAL
+  GROUP
+  FAMILY
+  COUPLE
+  CONSULTATION
+  EMERGENCY
+}
+
+enum SessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum AudioQuality {
+  LOW
+  MEDIUM
+  HIGH
+  ULTRA
+}
+
+enum ReportType {
+  INITIAL_EVALUATION
+  PROGRESS
+  DISCHARGE
+  REFERRAL
+  LEGAL
+  INSURANCE
+  CUSTOM
+}
+
+enum ReportStatus {
+  DRAFT
+  IN_REVIEW
+  COMPLETED
+  ARCHIVED
+  DELETED
+}
+
+enum AuditAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  LOGIN
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  LOGOUT
+  FAILED_LOGIN
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+  SUBSCRIPTION_CHANGE
+  DATA_EXPORT
+  DATA_IMPORT
+  CONSENT_GRANTED
+  CONSENT_REVOKED
+}

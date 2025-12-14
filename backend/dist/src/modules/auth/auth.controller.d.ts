@@ -1,0 +1,34 @@
+import { Response, Request } from 'express';
+import { AuthService } from './auth.service';
+import { LoginDto, RegisterDto, ChangePasswordDto, RefreshTokenDto } from './dto/auth.dto';
+export declare class AuthController {
+    private readonly authService;
+    private readonly logger;
+    constructor(authService: AuthService);
+    login(loginDto: LoginDto, response: Response): Promise<{
+        message: string;
+        user: import("./dto/auth.dto").UserResponseDto;
+    }>;
+    register(registerDto: RegisterDto, response: Response): Promise<{
+        message: string;
+        user: import("./dto/auth.dto").UserResponseDto;
+    }>;
+    refreshToken(refreshTokenDto: RefreshTokenDto, response: Response): Promise<{
+        message: string;
+    }>;
+    logout(req: Request & {
+        user: any;
+    }, response: Response): Promise<{
+        message: string;
+    }>;
+    getProfile(req: Request & {
+        user: any;
+    }): Promise<{
+        user: any;
+    }>;
+    changePassword(req: Request & {
+        user: any;
+    }, changePasswordDto: ChangePasswordDto): Promise<{
+        message: string;
+    }>;
+}

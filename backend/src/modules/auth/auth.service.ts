@@ -1,0 +1,287 @@
+import { Injectable, UnauthorizedException, ConflictException, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../../common/prisma/prisma.service';
+import { EncryptionService } from '../encryption/encryption.service';
+import { UsersService } from '../users/users.service';
+import { EmailService } from '../email/email.service';
+import { LoginDto, RegisterDto, TokensDto, AuthResponseDto } from './dto/auth.dto';
+import { UserRole, UserStatus } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+
+@Injectable()
+export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly encryptionService: EncryptionService,
+    private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
+  ) {}
+
+  /**
+   * Valida las credenciales del usuario
+   */
+  async validateUser(email: string, password: string): Promise<any> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+
+      if (!user) {
+        this.logger.warn(`Login attempt with non-existent email: ${email}`);
+        return null;
+      }
+
+      if (user.status !== UserStatus.ACTIVE) {
+        this.logger.warn(`Login attempt with inactive user: ${email}`);
+        throw new UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
+      }
+
+      const isPasswordValid = await this.encryptionService.comparePassword(password, user.passwordHash);
+      
+      if (!isPasswordValid) {
+        this.logger.warn(`Failed login attempt for user: ${email}`);
+        await this.logAuthAttempt(user.id, false);
+        return null;
+      }
+
+      await this.logAuthAttempt(user.id, true);
+      const { passwordHash, ...result } = user;
+      return result;
+    } catch (error) {
+      this.logger.error(`Error validating user: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Realiza el login y devuelve tokens JWT
+   */
+  async login(loginDto: LoginDto): Promise<AuthResponseDto> {
+    const user = await this.validateUser(loginDto.email, loginDto.password);
+    
+    if (!user) {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
+
+    const tokens = await this.generateTokens(user);
+    
+    // Actualizar último login
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
+    });
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        status: user.status,
+      },
+      tokens,
+    };
+  }
+
+  /**
+   * Registra un nuevo usuario
+   */
+  async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
+    try {
+      // Verificar si el email ya existe
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: registerDto.email.toLowerCase() },
+      });
+
+      if (existingUser) {
+        throw new ConflictException('El email ya está registrado');
+      }
+
+      // Hashear la contraseña
+      const passwordHash = await this.encryptionService.hashPassword(registerDto.password);
+
+      // Crear el usuario
+      const user = await this.prisma.user.create({
+        data: {
+          email: registerDto.email.toLowerCase(),
+          passwordHash,
+          firstName: registerDto.firstName,
+          lastName: registerDto.lastName,
+          role: registerDto.role || UserRole.PSYCHOLOGIST,
+          status: UserStatus.ACTIVE,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      this.logger.log(`New user registered: ${user.email}`);
+
+      // Enviar email de bienvenida
+      try {
+        await this.emailService.sendWelcomeEmail(
+          user.email, 
+          `${user.firstName} ${user.lastName}`
+        );
+      } catch (emailError) {
+        this.logger.warn(`Failed to send welcome email to ${user.email}: ${emailError.message}`);
+        // No fallar el registro si el email falla
+      }
+
+      const tokens = await this.generateTokens(user);
+      
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          status: user.status,
+        },
+        tokens,
+      };
+    } catch (error) {
+      this.logger.error(`Error registering user: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Genera tokens de acceso y refresh
+   */
+  async generateTokens(user: any): Promise<TokensDto> {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+    };
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_SECRET'),
+        expiresIn: this.configService.get('JWT_EXPIRES_IN', '15m'),
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN', '7d'),
+      }),
+    ]);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  /**
+   * Refresca el token de acceso
+   */
+  async refreshToken(refreshToken: string): Promise<TokensDto> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+      });
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+      });
+
+      if (!user || user.status !== UserStatus.ACTIVE) {
+        throw new UnauthorizedException('Usuario no válido');
+      }
+
+      return this.generateTokens(user);
+    } catch (error) {
+      this.logger.error(`Error refreshing token: ${error.message}`);
+      throw new UnauthorizedException('Token de refresh inválido');
+    }
+  }
+
+  /**
+   * Logout - invalida el token
+   */
+  async logout(userId: string): Promise<{ message: string }> {
+    try {
+      // En una implementación completa, aquí agregaríamos el token a una blacklist
+      // Por ahora, simplemente loggeamos el evento
+      this.logger.log(`User logged out: ${userId}`);
+      
+      return { message: 'Logout exitoso' };
+    } catch (error) {
+      this.logger.error(`Error during logout: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Cambiar contraseña
+   */
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('Usuario no encontrado');
+      }
+
+      const isCurrentPasswordValid = await this.encryptionService.comparePassword(
+        currentPassword,
+        user.passwordHash,
+      );
+
+      if (!isCurrentPasswordValid) {
+        throw new UnauthorizedException('Contraseña actual incorrecta');
+      }
+
+      const newPasswordHash = await this.encryptionService.hashPassword(newPassword);
+
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          passwordHash: newPasswordHash,
+          updatedAt: new Date(),
+        },
+      });
+
+      this.logger.log(`Password changed for user: ${userId}`);
+
+      return { message: 'Contraseña cambiada exitosamente' };
+    } catch (error) {
+      this.logger.error(`Error changing password: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Registra intentos de autenticación para auditoría
+   */
+  private async logAuthAttempt(userId: string, success: boolean): Promise<void> {
+    try {
+      await this.prisma.auditLog.create({
+        data: {
+          userId,
+          action: success ? 'LOGIN_SUCCESS' : 'LOGIN_FAILED',
+          resourceType: 'USER',
+          metadata: { timestamp: new Date(), success },
+          ipAddress: '', // Se puede obtener del request
+          userAgent: '', // Se puede obtener del request
+          isSuccess: success,
+        },
+      });
+    } catch (error) {
+      this.logger.error(`Error logging auth attempt: ${error.message}`);
+    }
+  }
+}
