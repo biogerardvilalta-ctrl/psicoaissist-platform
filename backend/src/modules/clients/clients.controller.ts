@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Put } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto, UpdateClientDto, ClientResponseDto } from './dto/clients.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -38,5 +38,12 @@ export class ClientsController {
     @ApiResponse({ status: 200 })
     remove(@Req() req: Request & { user: any }, @Param('id') id: string) {
         return this.clientsService.remove(req.user.id, id);
+    }
+
+    @Put(':id')
+    @ApiOperation({ summary: 'Actualizar información del cliente' })
+    @ApiResponse({ status: 200, type: ClientResponseDto })
+    update(@Req() req: Request & { user: any }, @Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
+        return this.clientsService.update(req.user.id, id, updateClientDto);
     }
 }

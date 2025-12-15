@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/auth-context';
+import { useToast } from '@/hooks/use-toast';
 import { Heart, User, BarChart3, Clock, BookOpen } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useRouter } from 'next/navigation';
@@ -11,7 +12,9 @@ import { DashboardAPI, DashboardStats } from '@/lib/dashboard-api';
 export default function DashboardPage() {
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -20,10 +23,25 @@ export default function DashboardPage() {
         setStats(data);
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
+        toast({
+          title: "Error al cargar datos",
+          description: "No se pudieron obtener las estadísticas del dashboard.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchStats();
-  }, []);
+  }, [toast]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <ProtectedRoute requiredRole="PSYCHOLOGIST">
@@ -64,7 +82,7 @@ export default function DashboardPage() {
 
             <StatsCard
               title="Horas de Consulta"
-              value="36.5"
+              value="0"
               icon={Clock}
               iconBgColor="bg-purple-100"
               iconColor="text-purple-600"
@@ -87,7 +105,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <ProgressChart
               title="Sesiones por Tipo"
-              totalValue={48}
+              totalValue={stats?.totalSessions || 0}
               trend={{ percentage: 12, isPositive: true, period: "este mes" }}
               data={[
                 { label: "Individual", value: 32, color: "bg-blue-500" },

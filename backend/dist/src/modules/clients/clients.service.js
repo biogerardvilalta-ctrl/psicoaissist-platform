@@ -47,6 +47,7 @@ let ClientsService = ClientsService_1 = class ClientsService {
                 emergencyContact: createClientDto.emergencyContact,
                 diagnosis: createClientDto.diagnosis,
                 notes: createClientDto.notes,
+                birthDate: createClientDto.birthDate,
             };
             const encrypted = await this.encryptionService.encryptData(personalData, userId);
             const packedData = this.packEncryptedData(encrypted);
@@ -160,6 +161,7 @@ let ClientsService = ClientsService_1 = class ClientsService {
             emergencyContact: updateClientDto.emergencyContact || currentData.emergencyContact,
             diagnosis: updateClientDto.diagnosis || currentData.diagnosis,
             notes: updateClientDto.notes || currentData.notes,
+            birthDate: updateClientDto.birthDate || currentData.birthDate,
         };
         const newEncrypted = await this.encryptionService.encryptData(newData, userId);
         const packedData = this.packEncryptedData(newEncrypted);

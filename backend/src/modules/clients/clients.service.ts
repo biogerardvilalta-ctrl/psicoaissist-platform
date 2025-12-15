@@ -12,6 +12,7 @@ interface ClientPersonalData {
     emergencyContact?: string;
     diagnosis?: string;
     notes?: string;
+    birthDate?: string;
 }
 
 @Injectable()
@@ -67,6 +68,7 @@ export class ClientsService {
                 emergencyContact: createClientDto.emergencyContact,
                 diagnosis: createClientDto.diagnosis,
                 notes: createClientDto.notes,
+                birthDate: createClientDto.birthDate,
             };
 
             // 2. Encrypt
@@ -221,6 +223,7 @@ export class ClientsService {
             emergencyContact: updateClientDto.emergencyContact || currentData.emergencyContact,
             diagnosis: updateClientDto.diagnosis || currentData.diagnosis,
             notes: updateClientDto.notes || currentData.notes,
+            birthDate: updateClientDto.birthDate || currentData.birthDate,
         };
 
         // Re-encrypt

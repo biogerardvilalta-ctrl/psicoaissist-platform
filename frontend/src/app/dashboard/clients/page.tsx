@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, MoreHorizontal, FileText, Calendar, Trash2 } from 'lucide-react';
+import { Plus, Search, MoreHorizontal, FileText, Calendar, Trash2, Pencil } from 'lucide-react';
 import { ClientsAPI, Client } from '@/lib/clients-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -213,6 +213,9 @@ export default function ClientsPage() {
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem onClick={() => router.push(`/dashboard/sessions/new?clientId=${client.id}`)}>
                                                             <Calendar className="mr-2 h-4 w-4" /> Agendar sesión
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/clients/${client.id}/edit`)}>
+                                                            <Pencil className="mr-2 h-4 w-4" /> Editar
                                                         </DropdownMenuItem>
                                                         <DropdownMenuSeparator />
                                                         <DropdownMenuItem

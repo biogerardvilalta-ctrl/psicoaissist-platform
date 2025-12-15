@@ -1,5 +1,5 @@
 import { ClientsService } from './clients.service';
-import { CreateClientDto, ClientResponseDto } from './dto/clients.dto';
+import { CreateClientDto, UpdateClientDto, ClientResponseDto } from './dto/clients.dto';
 import { Request } from 'express';
 export declare class ClientsController {
     private readonly clientsService;
@@ -16,4 +16,7 @@ export declare class ClientsController {
     remove(req: Request & {
         user: any;
     }, id: string): Promise<void>;
+    update(req: Request & {
+        user: any;
+    }, id: string, updateClientDto: UpdateClientDto): Promise<ClientResponseDto>;
 }

@@ -43,6 +43,11 @@ export class CreateClientDto {
     @IsOptional()
     riskLevel?: RiskLevel;
 
+    @ApiPropertyOptional({ example: '1990-01-01' })
+    @IsString()
+    @IsOptional()
+    birthDate?: string;
+
     @ApiPropertyOptional({ type: [String] })
     @IsArray()
     @IsString({ each: true })

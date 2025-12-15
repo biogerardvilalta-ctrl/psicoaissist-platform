@@ -8,6 +8,7 @@ export declare class CreateClientDto {
     diagnosis?: string;
     notes?: string;
     riskLevel?: RiskLevel;
+    birthDate?: string;
     tags?: string[];
 }
 export declare class UpdateClientDto extends CreateClientDto {

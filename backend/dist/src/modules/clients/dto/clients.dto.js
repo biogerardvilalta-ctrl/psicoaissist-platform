@@ -65,6 +65,12 @@ __decorate([
     __metadata("design:type", String)
 ], CreateClientDto.prototype, "riskLevel", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: '1990-01-01' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "birthDate", void 0);
+__decorate([
     (0, swagger_1.ApiPropertyOptional)({ type: [String] }),
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.IsString)({ each: true }),

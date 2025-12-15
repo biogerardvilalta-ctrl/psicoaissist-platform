@@ -34,6 +34,9 @@ let ClientsController = class ClientsController {
     remove(req, id) {
         return this.clientsService.remove(req.user.id, id);
     }
+    update(req, id, updateClientDto) {
+        return this.clientsService.update(req.user.id, id, updateClientDto);
+    }
 };
 exports.ClientsController = ClientsController;
 __decorate([
@@ -75,6 +78,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], ClientsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Actualizar información del cliente' }),
+    (0, swagger_1.ApiResponse)({ status: 200, type: clients_dto_1.ClientResponseDto }),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, clients_dto_1.UpdateClientDto]),
+    __metadata("design:returntype", void 0)
+], ClientsController.prototype, "update", null);
 exports.ClientsController = ClientsController = __decorate([
     (0, swagger_1.ApiTags)('Clients'),
     (0, swagger_1.ApiBearerAuth)(),
