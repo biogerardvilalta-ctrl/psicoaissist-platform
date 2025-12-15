@@ -14,6 +14,8 @@ export declare class SessionsController {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }>;
     findAll(req: any): Promise<{
         id: any;
@@ -26,6 +28,8 @@ export declare class SessionsController {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }[]>;
     findByDateRange(req: any, start: string, end: string): Promise<{
         id: any;
@@ -38,6 +42,8 @@ export declare class SessionsController {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }[]>;
     findOne(req: any, id: string): Promise<{
         id: any;
@@ -50,6 +56,8 @@ export declare class SessionsController {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }>;
     update(req: any, id: string, updateSessionDto: UpdateSessionDto): Promise<{
         id: any;
@@ -62,6 +70,8 @@ export declare class SessionsController {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }>;
     remove(req: any, id: string): Promise<{
         id: string;

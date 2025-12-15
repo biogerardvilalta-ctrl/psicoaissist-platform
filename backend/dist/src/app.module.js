@@ -18,6 +18,7 @@ const users_module_1 = require("./modules/users/users.module");
 const clients_module_1 = require("./modules/clients/clients.module");
 const dashboard_module_1 = require("./modules/dashboard/dashboard.module");
 const sessions_module_1 = require("./modules/sessions/sessions.module");
+const ai_module_1 = require("./modules/ai/ai.module");
 const payments_module_1 = require("./modules/payments/payments.module");
 const admin_module_1 = require("./modules/admin/admin.module");
 const prisma_module_1 = require("./common/prisma/prisma.module");
@@ -60,6 +61,7 @@ exports.AppModule = AppModule = __decorate([
             clients_module_1.ClientsModule,
             dashboard_module_1.DashboardModule,
             sessions_module_1.SessionsModule,
+            ai_module_1.AiModule,
         ],
         controllers: [],
         providers: [],

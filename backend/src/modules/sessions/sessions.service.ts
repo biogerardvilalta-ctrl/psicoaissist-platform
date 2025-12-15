@@ -3,6 +3,7 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException 
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { CreateSessionDto, UpdateSessionDto, SessionStatus, SessionType } from './dto/sessions.dto';
+import { AiService } from '../ai/ai.service';
 
 interface EncryptedSessionData {
     notes?: string;
@@ -13,6 +14,7 @@ export class SessionsService {
     constructor(
         private prisma: PrismaService,
         private encryption: EncryptionService,
+        private aiService: AiService,
     ) { }
 
     private packEncryptedData(data: { iv: string; tag: string; encryptedData: Buffer }): Buffer {
@@ -187,6 +189,35 @@ export class SessionsService {
             });
         }
 
+        // Trigger AI Analysis if completed
+        if (updateSessionDto.status === SessionStatus.COMPLETED && notesToReturn) {
+            try {
+                // Run in background (fire and forget pattern for response speed, but awaited here for simplicity in MVP)
+                // In production, might want to use a job queue.
+                const analysis = await this.aiService.generateSessionAnalysis(id, notesToReturn);
+                const finalSession = await this.prisma.session.update({
+                    where: { id },
+                    data: {
+                        aiMetadata: {
+                            summary: analysis.summary,
+                            sentiment: analysis.sentiment,
+                            riskLevel: analysis.riskLevel,
+                            clinicalImpressions: analysis.clinicalImpressions,
+                            detectedIndicators: analysis.detectedIndicators
+                        },
+                        aiSuggestions: analysis.suggestions as any
+                    },
+                    include: { client: true }
+                });
+
+                // Use the session with AI data for response
+                return this.mapToDto(finalSession, notesToReturn);
+            } catch (error) {
+                console.error('AI Analysis failed', error);
+                // Don't fail the request if AI fails
+            }
+        }
+
         return this.mapToDto(updatedSession, notesToReturn);
     }
 
@@ -246,7 +277,9 @@ export class SessionsService {
             sessionType: session.sessionType,
             notes: decryptedNotes,
             clientName: clientName,
-            client: session.client
+            client: session.client,
+            aiMetadata: session.aiMetadata,
+            aiSuggestions: session.aiSuggestions
         };
     }
 }

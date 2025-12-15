@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ConditionalHeader, ConditionalFooter } from '@/components/layout'
 import { AuthProvider } from '@/contexts/auth-context'
+import { Toaster } from '@/components/ui/toaster'
 import '../styles/globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -13,11 +14,11 @@ export const metadata: Metadata = {
   },
   description: 'Potencia tu práctica psicológica con IA responsable. Transcripción automática, informes profesionales y análisis inteligente. GDPR compliant.',
   keywords: [
-    'psicólogo', 
-    'IA', 
-    'transcripción', 
-    'sesiones', 
-    'GDPR', 
+    'psicólogo',
+    'IA',
+    'transcripción',
+    'sesiones',
+    'GDPR',
     'inteligencia artificial',
     'informes clínicos',
     'práctica psicológica',
@@ -83,6 +84,7 @@ export default function RootLayout({
           <ConditionalHeader />
           {children}
           <ConditionalFooter />
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

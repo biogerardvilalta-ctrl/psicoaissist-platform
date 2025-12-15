@@ -10,10 +10,13 @@ import {
     FileText,
     MoreVertical,
     CheckCircle2,
-    XCircle
+    XCircle,
+    Brain
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { AudioRecorder } from '@/components/dashboard/sessions/audio-recorder';
+import { AiAPI } from '@/lib/ai-api';
 import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
 import { ClientsAPI, Client } from '@/lib/clients-api';
 import { Button } from '@/components/ui/button';
@@ -26,6 +29,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { AiAssistantPanel } from '@/components/dashboard/sessions/ai-assistant-panel';
 
 export default function SessionDetailPage({ params }: { params: { id: string } }) {
     const router = useRouter();
@@ -98,9 +102,14 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const handleStatusChange = async (newStatus: SessionStatus) => {
         if (!session) return;
         try {
-            await SessionsAPI.update(session.id, { status: newStatus });
+            const payload: any = { status: newStatus };
+            // Auto-save notes when completing session to ensure AI analysis has pending text
+            if (newStatus === SessionStatus.COMPLETED) {
+                payload.notes = notes;
+            }
+            const updatedSession = await SessionsAPI.update(session.id, payload);
 
-            setSession(prev => prev ? { ...prev, status: newStatus } : null);
+            setSession(updatedSession);
 
             toast({
                 title: 'Estado actualizado',
@@ -108,7 +117,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             });
 
             if (newStatus === SessionStatus.COMPLETED) {
-                router.push('/dashboard/sessions');
+                // router.push('/dashboard/sessions');
             }
 
         } catch (error) {
@@ -317,57 +326,166 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                     </CardContent>
                 </Card>
 
-                {/* Patient Sidebar */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <User className="h-5 w-5 text-purple-600" />
-                            Paciente
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        {client ? (
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3 pb-4 border-b">
-                                    <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">
-                                        {client.firstName[0]}{client.lastName[0]}
-                                    </div>
-                                    <div>
-                                        <p className="font-medium">{client.firstName} {client.lastName}</p>
-                                        <p className="text-xs text-muted-foreground">Paciente Activo</p>
-                                    </div>
-                                </div>
-                                <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Email:</span>
-                                        <span className="truncate max-w-[120px]">{client.email || '-'}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Teléfono:</span>
-                                        <span>{client.phone || '-'}</span>
-                                    </div>
-                                    <div className="pt-2">
-                                        <Button
-                                            variant="outline"
-                                            className="w-full"
-                                            onClick={() => router.push(`/dashboard/clients/${client.id}`)}
-                                        >
-                                            Ver Expediente
-                                        </Button>
-                                    </div>
-                                </div>
+                {/* AI Analysis Section - Only if Completed */}
+                {session.status === SessionStatus.COMPLETED && session.aiMetadata && (
+                    <Card className="md:col-span-2 border-purple-100 bg-purple-50/20">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-purple-700">
+                                <Brain className="h-5 w-5" />
+                                Análisis de IA
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div>
+                                <h4 className="text-sm font-semibold text-blue-900 mb-1">Resumen</h4>
+                                <p className="text-sm text-slate-600">{session.aiMetadata.summary}</p>
                             </div>
-                        ) : (
-                            <div className="text-center py-4">
-                                {session.clientName ? (
-                                    <p className="font-medium">{session.clientName}</p>
-                                ) : (
-                                    <p className="text-muted-foreground italic">Información del paciente no disponible.</p>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <h4 className="text-sm font-semibold text-blue-900 mb-1">Sentimiento Detectado</h4>
+                                    <Badge variant={session.aiMetadata.sentiment === 'PREOCUPANTE' ? 'destructive' : 'secondary'}>
+                                        {session.aiMetadata.sentiment}
+                                    </Badge>
+                                </div>
+                                {session.aiMetadata.riskLevel && (
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-blue-900 mb-1">Nivel de Riesgo</h4>
+                                        <Badge variant={session.aiMetadata.riskLevel === 'ALTO' ? 'destructive' : session.aiMetadata.riskLevel === 'MODERADO' ? 'default' : 'outline'}>
+                                            {session.aiMetadata.riskLevel}
+                                        </Badge>
+                                    </div>
                                 )}
                             </div>
-                        )}
-                    </CardContent>
-                </Card>
+
+                            {session.aiMetadata.detectedIndicators && session.aiMetadata.detectedIndicators.length > 0 && (
+                                <div className="mb-4">
+                                    <h4 className="text-sm font-semibold text-blue-900 mb-1">Indicadores Detectados durante la sesión</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {session.aiMetadata.detectedIndicators.map((ind, i) => (
+                                            <Badge key={i} variant="outline" className={`
+                                                ${ind.type === 'risk' ? 'bg-red-50 text-red-700' : ''}
+                                                ${ind.type === 'mood' ? 'bg-amber-50 text-amber-700' : ''}
+                                                ${ind.type === 'topic' ? 'bg-indigo-50 text-indigo-700' : ''}
+                                            `}>
+                                                {ind.label}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {session.aiMetadata.clinicalImpressions && session.aiMetadata.clinicalImpressions.length > 0 && (
+                                <div>
+                                    <h4 className="text-sm font-semibold text-blue-900 mb-1">Impresiones Clínicas (IA)</h4>
+                                    <div className="flex flex-wrap gap-2 mb-2">
+                                        {/* Simulating mapping from impressions to badges for visual consistency */}
+                                        {session.aiMetadata.clinicalImpressions.map((impression, index) => (
+                                            <Badge key={index} variant="outline" className="bg-slate-50">
+                                                {impression}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {session.aiSuggestions && (
+                                <div>
+                                    <h4 className="text-sm font-semibold text-blue-900 mb-1">Sugerencias de Seguimiento</h4>
+                                    <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1">
+                                        {session.aiSuggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                    </ul>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* Patient Sidebar Card was here */}
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <User className="h-5 w-5 text-purple-600" />
+                                Paciente
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {client ? (
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 pb-4 border-b">
+                                        <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">
+                                            {client.firstName[0]}{client.lastName[0]}
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">{client.firstName} {client.lastName}</p>
+                                            <p className="text-xs text-muted-foreground">Paciente Activo</p>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-muted-foreground">Email:</span>
+                                            <span className="truncate max-w-[120px]">{client.email || '-'}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-muted-foreground">Teléfono:</span>
+                                            <span>{client.phone || '-'}</span>
+                                        </div>
+                                        <div className="pt-2">
+                                            <Button
+                                                variant="outline"
+                                                className="w-full"
+                                                onClick={() => router.push(`/dashboard/clients/${client.id}`)}
+                                            >
+                                                Ver Expediente
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-4">
+                                    {session.clientName ? (
+                                        <p className="font-medium">{session.clientName}</p>
+                                    ) : (
+                                        <p className="text-muted-foreground italic">Información del paciente no disponible.</p>
+                                    )}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Audio Recorder - Only if In Progress */}
+                    {session.status === SessionStatus.IN_PROGRESS && (
+                        <AudioRecorder
+                            onAudioData={async (blob) => {
+                                // Final blob handler (optional if we stream)
+                                console.log('Final recording blob size:', blob.size);
+                            }}
+                            onStreamData={async (chunk) => {
+                                // Real-time transcription
+                                try {
+                                    const { text } = await AiAPI.transcribe(chunk);
+                                    if (text) {
+                                        setNotes(prev => {
+                                            const newNotes = prev + (prev ? ' ' : '') + `${text}`;
+                                            // Optional: trigger save or analysis here if needed
+                                            return newNotes;
+                                        });
+                                    }
+                                } catch (e) {
+                                    console.error('Stream transcription error', e);
+                                }
+                            }}
+                        />
+                    )}
+
+                    {/* AI Assistant Panel */}
+                    <AiAssistantPanel
+                        sessionId={session.id}
+                        isActive={session.status === SessionStatus.IN_PROGRESS}
+                        liveContext={notes} // Pass the accumulated notes (which include audio transcriptions)
+                    />
+                </div>
             </div>
         </div>
     );

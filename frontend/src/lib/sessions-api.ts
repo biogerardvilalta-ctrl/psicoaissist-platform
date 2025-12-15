@@ -25,6 +25,14 @@ export interface Session {
     sessionType: SessionType;
     notes?: string;
     clientName?: string;
+    aiMetadata?: {
+        summary: string;
+        sentiment: string;
+        riskLevel?: string;
+        clinicalImpressions?: string[];
+        detectedIndicators?: { type: string; label: string }[];
+    };
+    aiSuggestions?: string[];
 }
 
 export interface CreateSessionData {

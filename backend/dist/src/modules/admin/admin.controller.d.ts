@@ -35,6 +35,7 @@ export declare class AdminController {
             };
             id: string;
             email: string;
+            stripeCustomerId: string | null;
             role: import(".prisma/client").$Enums.UserRole;
             status: import(".prisma/client").$Enums.UserStatus;
             verified: boolean;
@@ -47,7 +48,6 @@ export declare class AdminController {
             country: string | null;
             professionalNumber: string | null;
             speciality: string | null;
-            stripeCustomerId: string | null;
             createdAt: Date;
             updatedAt: Date;
             lastLogin: Date | null;
@@ -106,8 +106,8 @@ export declare class AdminController {
             userId: string;
             encryptionKeyId: string;
             clientId: string;
-            sessionId: string | null;
             title: string;
+            sessionId: string | null;
             reportType: import(".prisma/client").$Enums.ReportType;
             version: number;
             encryptedContent: Buffer;
@@ -136,6 +136,7 @@ export declare class AdminController {
         };
         id: string;
         email: string;
+        stripeCustomerId: string | null;
         role: import(".prisma/client").$Enums.UserRole;
         status: import(".prisma/client").$Enums.UserStatus;
         verified: boolean;
@@ -148,7 +149,6 @@ export declare class AdminController {
         country: string | null;
         professionalNumber: string | null;
         speciality: string | null;
-        stripeCustomerId: string | null;
         createdAt: Date;
         updatedAt: Date;
         lastLogin: Date | null;

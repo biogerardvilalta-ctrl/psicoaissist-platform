@@ -14,10 +14,12 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../common/prisma/prisma.service");
 const encryption_service_1 = require("../encryption/encryption.service");
 const sessions_dto_1 = require("./dto/sessions.dto");
+const ai_service_1 = require("../ai/ai.service");
 let SessionsService = class SessionsService {
-    constructor(prisma, encryption) {
+    constructor(prisma, encryption, aiService) {
         this.prisma = prisma;
         this.encryption = encryption;
+        this.aiService = aiService;
     }
     packEncryptedData(data) {
         const iv = Buffer.from(data.iv, 'base64');
@@ -164,6 +166,29 @@ let SessionsService = class SessionsService {
                 data: { lastSessionAt: updatedSession.startTime }
             });
         }
+        if (updateSessionDto.status === sessions_dto_1.SessionStatus.COMPLETED && notesToReturn) {
+            try {
+                const analysis = await this.aiService.generateSessionAnalysis(id, notesToReturn);
+                const finalSession = await this.prisma.session.update({
+                    where: { id },
+                    data: {
+                        aiMetadata: {
+                            summary: analysis.summary,
+                            sentiment: analysis.sentiment,
+                            riskLevel: analysis.riskLevel,
+                            clinicalImpressions: analysis.clinicalImpressions,
+                            detectedIndicators: analysis.detectedIndicators
+                        },
+                        aiSuggestions: analysis.suggestions
+                    },
+                    include: { client: true }
+                });
+                return this.mapToDto(finalSession, notesToReturn);
+            }
+            catch (error) {
+                console.error('AI Analysis failed', error);
+            }
+        }
         return this.mapToDto(updatedSession, notesToReturn);
     }
     async remove(id, userId) {
@@ -208,7 +233,9 @@ let SessionsService = class SessionsService {
             sessionType: session.sessionType,
             notes: decryptedNotes,
             clientName: clientName,
-            client: session.client
+            client: session.client,
+            aiMetadata: session.aiMetadata,
+            aiSuggestions: session.aiSuggestions
         };
     }
 };
@@ -216,6 +243,7 @@ exports.SessionsService = SessionsService;
 exports.SessionsService = SessionsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        encryption_service_1.EncryptionService])
+        encryption_service_1.EncryptionService,
+        ai_service_1.AiService])
 ], SessionsService);
 //# sourceMappingURL=sessions.service.js.map

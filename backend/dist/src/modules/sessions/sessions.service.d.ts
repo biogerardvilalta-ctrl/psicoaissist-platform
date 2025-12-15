@@ -1,10 +1,12 @@
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { CreateSessionDto, UpdateSessionDto } from './dto/sessions.dto';
+import { AiService } from '../ai/ai.service';
 export declare class SessionsService {
     private prisma;
     private encryption;
-    constructor(prisma: PrismaService, encryption: EncryptionService);
+    private aiService;
+    constructor(prisma: PrismaService, encryption: EncryptionService, aiService: AiService);
     private packEncryptedData;
     private unpackEncryptedData;
     create(userId: string, createSessionDto: CreateSessionDto): Promise<{
@@ -18,6 +20,8 @@ export declare class SessionsService {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }>;
     findAll(userId: string): Promise<{
         id: any;
@@ -30,6 +34,8 @@ export declare class SessionsService {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }[]>;
     findByDateRange(userId: string, start: string, end: string): Promise<{
         id: any;
@@ -42,6 +48,8 @@ export declare class SessionsService {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }[]>;
     findOne(id: string, userId: string): Promise<{
         id: any;
@@ -54,6 +62,8 @@ export declare class SessionsService {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }>;
     update(id: string, userId: string, updateSessionDto: UpdateSessionDto): Promise<{
         id: any;
@@ -66,6 +76,8 @@ export declare class SessionsService {
         notes: string;
         clientName: string;
         client: any;
+        aiMetadata: any;
+        aiSuggestions: any;
     }>;
     remove(id: string, userId: string): Promise<{
         id: string;
