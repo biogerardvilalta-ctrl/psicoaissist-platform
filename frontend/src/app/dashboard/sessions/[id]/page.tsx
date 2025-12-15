@@ -1,322 +1,268 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Clock, User, Calendar, Play, CheckCircle, XCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardFooter,
-} from '@/components/ui/card';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { useToast } from '@/hooks/use-toast';
-import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
+    ArrowLeft,
+    Calendar,
+    Clock,
+    User,
+    FileText,
+    MoreVertical,
+    CheckCircle2,
+    XCircle
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
+import { ClientsAPI, Client } from '@/lib/clients-api';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function SessionDetailPage({ params }: { params: { id: string } }) {
     const router = useRouter();
     const { toast } = useToast();
     const [session, setSession] = useState<Session | null>(null);
-    const [notes, setNotes] = useState('');
+    const [client, setClient] = useState<Client | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
-    const [timer, setTimer] = useState(0);
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    useEffect(() => {
-        loadSession();
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
-    }, []);
-
-    // Timer logic for IN_PROGRESS sessions
-    useEffect(() => {
-        if (session?.status === SessionStatus.IN_PROGRESS) {
-            timerRef.current = setInterval(() => {
-                const start = new Date(session.startTime).getTime();
-                const now = new Date().getTime();
-                setTimer(Math.floor((now - start) / 1000));
-            }, 1000);
-        } else {
-            if (timerRef.current) clearInterval(timerRef.current);
-        }
-    }, [session?.status]);
-
-    const loadSession = async () => {
+    const fetchSession = async () => {
         try {
+            setIsLoading(true);
             const data = await SessionsAPI.getById(params.id);
             setSession(data);
-            setNotes(data.notes || '');
 
-            // Initial timer set if already correct status
-            if (data.status === SessionStatus.IN_PROGRESS) {
-                const start = new Date(data.startTime).getTime();
-                const now = new Date().getTime();
-                setTimer(Math.floor((now - start) / 1000));
+            if (data.clientId) {
+                try {
+                    const clientData = await ClientsAPI.getById(data.clientId);
+                    setClient(clientData);
+                } catch (clientError) {
+                    console.error('Error fetching client details:', clientError);
+                    // Don't block the UI if client load fails, we still have session info
+                }
             }
 
         } catch (error) {
-            console.error('Error loading session:', error);
+            console.error('Error fetching session:', error);
             toast({
-                title: "Error",
-                description: "No se pudo cargar la sesión.",
-                variant: "destructive",
+                title: 'Error',
+                description: 'No se pudo cargar la información de la sesión',
+                variant: 'destructive',
             });
+            router.push('/dashboard/sessions');
         } finally {
             setIsLoading(false);
         }
     };
 
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
-
-    // ... (inside loadSession after setSession)
-    // setLastSaved(new Date(data.updatedAt)); // Optional
-
-    const handleSaveNotes = async () => {
-        if (!session) return;
-        setIsSaving(true);
-        try {
-            await SessionsAPI.update(session.id, { notes });
-            toast({ title: "Notas guardadas" });
-            setSession({ ...session, notes });
-            setLastSaved(new Date());
-        } catch (error) {
-            toast({
-                title: "Error al guardar",
-                description: "No se pudieron guardar las notas.",
-                variant: "destructive"
-            });
-        } finally {
-            setIsSaving(false);
-        }
-    };
+    useEffect(() => {
+        fetchSession();
+    }, [params.id]);
 
     const handleStatusChange = async (newStatus: SessionStatus) => {
         if (!session) return;
         try {
-            toast({ title: "Procesando...", description: "Actualizando estado de la sesión." });
-            console.log("Changing status to:", newStatus);
-
-            const payload: any = { status: newStatus };
-
-            // If starting session, reset start time to now so timer starts at 0
-            if (newStatus === SessionStatus.IN_PROGRESS) {
-                payload.startTime = new Date().toISOString();
-            }
-
-            const updated = await SessionsAPI.update(session.id, payload);
-            console.log("Updated session:", updated);
-
-            setSession(updated);
-
+            await SessionsAPI.update(session.id, { status: newStatus });
             toast({
-                title: "Estado actualizado",
-                description: `La sesión está ${updated.status === SessionStatus.IN_PROGRESS ? 'en curso' : 'completada'}.`,
+                title: 'Estado actualizado',
+                description: `La sesión ha sido marcada como ${newStatus === SessionStatus.COMPLETED ? 'completada' : 'cancelada'}.`,
             });
-
-            if (updated.status === SessionStatus.COMPLETED) {
-                toast({ title: "Sesión Finalizada", description: "Redirigiendo al listado..." });
-                setTimeout(() => {
-                    router.push('/dashboard/sessions');
-                }, 1000);
-            }
+            fetchSession();
         } catch (error) {
-            console.error("Error changing status:", error);
-            toast({ title: "Error", variant: "destructive", description: "No se pudo cambiar el estado. Revisa la consola." });
+            toast({
+                title: 'Error',
+                description: 'No se pudo actualizar el estado',
+                variant: 'destructive',
+            });
         }
     };
 
-    const formatTimer = (seconds: number) => {
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = seconds % 60;
-        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    const handleDelete = async () => {
+        if (!session) return;
+        if (!confirm('¿Estás seguro de que deseas eliminar permanentemente esta sesión?')) return;
+
+        try {
+            await SessionsAPI.delete(session.id);
+            toast({
+                title: 'Sesión eliminada',
+                description: 'La sesión ha sido eliminada correctamente out.',
+            });
+            router.push('/dashboard/sessions');
+        } catch (error) {
+            console.error('Error deleting session:', error);
+            toast({
+                title: 'Error',
+                description: 'No se pudo eliminar la sesión',
+                variant: 'destructive',
+            });
+        }
     };
 
-    if (isLoading) return <div className="p-6">Cargando sesión...</div>;
-    if (!session) return <div className="p-6">Sesión no encontrada</div>;
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-96">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
+    if (!session) return null;
 
     return (
         <div className="p-6 max-w-4xl mx-auto space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" onClick={() => router.back()}>
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
                     <div>
-                        <h1 className="text-2xl font-bold flex items-center gap-2">
-                            Sesión con {session.clientName || "Paciente"}
-                            <Badge variant={session.status === SessionStatus.IN_PROGRESS ? "default" : "secondary"}>
-                                {session.status}
-                            </Badge>
-                        </h1>
-                        <div className="text-muted-foreground flex items-center gap-4 text-sm mt-1">
-                            <span className="flex items-center"><Calendar className="w-3 h-3 mr-1" /> {format(new Date(session.startTime), "PPP", { locale: es })}</span>
-                            <span className="flex items-center"><Clock className="w-3 h-3 mr-1" /> {format(new Date(session.startTime), "HH:mm")}</span>
-                            <span className="flex items-center capitalize"><User className="w-3 h-3 mr-1" /> {session.sessionType.toLowerCase()}</span>
-                        </div>
+                        <h1 className="text-3xl font-bold tracking-tight">Detalle de Sesión</h1>
+                        <p className="text-muted-foreground flex items-center gap-2 mt-1">
+                            <Calendar className="h-4 w-4" />
+                            {format(new Date(session.startTime), 'PPP', { locale: es })}
+                            <span>•</span>
+                            <Clock className="h-4 w-4" />
+                            {format(new Date(session.startTime), 'p', { locale: es })}
+                        </p>
                     </div>
                 </div>
 
-                {/* Actions */}
                 <div className="flex items-center gap-2">
                     {session.status === SessionStatus.SCHEDULED && (
-                        <Button onClick={() => handleStatusChange(SessionStatus.IN_PROGRESS)} className="bg-green-600 hover:bg-green-700">
-                            <Play className="mr-2 h-4 w-4" /> Iniciar Sesión
-                        </Button>
+                        <>
+                            <Button
+                                variant="outline"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                                onClick={() => handleStatusChange(SessionStatus.CANCELLED)}
+                            >
+                                <XCircle className="mr-2 h-4 w-4" /> Cancelar
+                            </Button>
+                            <Button
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() => handleStatusChange(SessionStatus.COMPLETED)}
+                            >
+                                <CheckCircle2 className="mr-2 h-4 w-4" /> Completar
+                            </Button>
+                        </>
                     )}
-
-                    {session.status === SessionStatus.IN_PROGRESS && (
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="default" className="bg-blue-600 hover:bg-blue-700">
-                                    <CheckCircle className="mr-2 h-4 w-4" /> Finalizar
-                                </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>¿Finalizar sesión?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        Se marcará la sesión como completada y se detendrá el cronómetro. Asegúrate de haber guardado tus notas.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleStatusChange(SessionStatus.COMPLETED)}>
-                                        Finalizar
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    )}
-
-                    {session.status === SessionStatus.SCHEDULED && (
-                        <Button variant="destructive" onClick={() => handleStatusChange(SessionStatus.CANCELLED)}>
-                            <XCircle className="mr-2 h-4 w-4" /> Cancelar
-                        </Button>
-                    )}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                                className="text-red-600 focus:text-red-600 cursor-pointer"
+                                onClick={handleDelete}
+                            >
+                                <div className="flex items-center">
+                                    <XCircle className="mr-2 h-4 w-4" />
+                                    Eliminar Sesión
+                                </div>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
 
-            {/* Timer Banner */}
-            {session.status === SessionStatus.IN_PROGRESS && (
-                <Card className="bg-green-50 border-green-200">
-                    <CardContent className="p-4 flex items-center justify-between">
-                        <div className="flex items-center text-green-800 font-medium">
-                            <span className="relative flex h-3 w-3 mr-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                            </span>
-                            Sesión en curso
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Main Info */}
+                <Card className="md:col-span-2">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <FileText className="h-5 w-5 text-blue-600" />
+                            Información de la Sesión
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-sm font-medium text-muted-foreground">Tipo de Sesión</label>
+                                <p className="text-lg font-medium">{session.sessionType}</p>
+                            </div>
+                            <div>
+                                <label className="text-sm font-medium text-muted-foreground">Estado</label>
+                                <div className="mt-1">
+                                    <Badge
+                                        variant={session.status === SessionStatus.COMPLETED ? 'default' : 'outline'}
+                                        className={session.status === SessionStatus.SCHEDULED ? 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200' : ''}
+                                    >
+                                        {session.status}
+                                    </Badge>
+                                </div>
+                            </div>
                         </div>
-                        <div className="text-2xl font-mono font-bold text-green-900">
-                            {formatTimer(timer)}
+
+                        <div>
+                            <label className="text-sm font-medium text-muted-foreground">Notas de la Sesión</label>
+                            <div className="mt-2 p-4 bg-slate-50 rounded-lg text-sm leading-relaxed border">
+                                {session.notes || "No hay notas registradas para esta sesión."}
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
-            )}
 
-            {/* Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Notes Column (Main) */}
-                <div className="lg:col-span-2 space-y-6">
-                    <Card className="h-[600px] flex flex-col">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-lg font-medium">Notas Clínicas</CardTitle>
-                            <div className="text-xs text-muted-foreground">
-                                {isSaving ? "Guardando..." : lastSaved ? `Guardado a las ${format(lastSaved, "HH:mm:ss")}` : "Cambios no guardados"}
-                            </div>
-                        </CardHeader>
-                        <CardContent className="flex-1 p-0">
-                            <Textarea
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                                placeholder="Escribe las notas de la sesión aquí..."
-                                className="h-full w-full resize-none border-0 focus-visible:ring-0 p-4 text-base leading-relaxed"
-                            />
-                        </CardContent>
-                        <CardFooter className="border-t p-4 flex justify-between bg-gray-50/50">
-                            <div className="text-xs text-muted-foreground w-1/2">
-                                Las notas se cifran automáticamente.
-                            </div>
-                            <Button onClick={handleSaveNotes} disabled={isSaving} size="sm">
-                                <Save className="mr-2 h-4 w-4" /> Guardar Notas
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                </div>
-
-                {/* Sidebar Info */}
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-base">Información del Paciente</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {/* Placeholder for Client/Patient Info */}
-                            {/* In a real app, I'd fetch client details here */}
-                            <div className="flex items-center space-x-4">
-                                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <span className="text-blue-700 font-bold text-lg">
-                                        {session.clientName ? session.clientName[0] : "P"}
-                                    </span>
+                {/* Patient Sidebar */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <User className="h-5 w-5 text-purple-600" />
+                            Paciente
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {client ? (
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3 pb-4 border-b">
+                                    <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">
+                                        {client.firstName[0]}{client.lastName[0]}
+                                    </div>
+                                    <div>
+                                        <p className="font-medium">{client.firstName} {client.lastName}</p>
+                                        <p className="text-xs text-muted-foreground">Paciente Activo</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm font-medium leading-none">{session.clientName}</p>
-                                    <p className="text-xs text-muted-foreground mt-1">ID: {session.clientId.slice(0, 8)}...</p>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                        <span className="text-muted-foreground">Email:</span>
+                                        <span className="truncate max-w-[120px]">{client.email || '-'}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-muted-foreground">Teléfono:</span>
+                                        <span>{client.phone || '-'}</span>
+                                    </div>
+                                    <div className="pt-2">
+                                        <Button
+                                            variant="outline"
+                                            className="w-full"
+                                            onClick={() => router.push(`/dashboard/clients/${client.id}`)}
+                                        >
+                                            Ver Expediente
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div className="pt-4 border-t space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Diagnóstico:</span>
-                                    <span className="font-medium">N/A</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Riesgo:</span>
-                                    <Badge variant="outline" className="text-xs">Bajo</Badge>
-                                </div>
+                        ) : (
+                            <div className="text-center py-4">
+                                {session.clientName ? (
+                                    <p className="font-medium">{session.clientName}</p>
+                                ) : (
+                                    <p className="text-muted-foreground italic">Información del paciente no disponible.</p>
+                                )}
                             </div>
-
-                            <Button variant="outline" className="w-full text-xs" onClick={() => window.open(`/dashboard/clients`, '_blank')}>
-                                Ver Expediente Completo
-                            </Button>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-base">Recursos</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <Button variant="ghost" className="w-full justify-start h-8 px-2">
-                                <span className="mr-2">📄</span> Plantilla SOAP
-                            </Button>
-                            <Button variant="ghost" className="w-full justify-start h-8 px-2">
-                                <span className="mr-2">📝</span> Plantilla de Evaluación
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

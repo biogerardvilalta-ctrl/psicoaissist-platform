@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
-import { Heart, User, Settings, LogOut, Bell, Menu, X, Shield, LayoutDashboard, Users, FileText } from 'lucide-react';
+import { Heart, User, Settings, LogOut, Bell, Menu, X, Shield, LayoutDashboard, Users, FileText, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import {
@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const navItems = [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         { name: 'Pacientes', href: '/dashboard/clients', icon: Users },
-        { name: 'Sesiones', href: '/dashboard/sessions', icon: Heart }, // Future
+        { name: 'Sesiones', href: '/dashboard/sessions', icon: Calendar },
         { name: 'Informes', href: '/dashboard/reports', icon: FileText }, // Future
     ];
 

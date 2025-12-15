@@ -110,7 +110,7 @@ export default function NewSessionPage() {
                 description: 'La sesión se ha creado correctamente.',
             });
 
-            router.push('/dashboard'); // Or /dashboard/sessions when list exists
+            router.push('/dashboard/sessions');
             router.refresh();
         } catch (error) {
             console.error('Error creating session:', error);
