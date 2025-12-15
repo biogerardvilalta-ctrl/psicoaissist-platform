@@ -46,10 +46,10 @@ export declare class PaymentsController {
         sessionId: string;
         url: string;
         plan: {
-            name: any;
-            amount: any;
-            currency: any;
-            interval: any;
+            name: string;
+            amount: number;
+            currency: string;
+            interval: string;
         };
     }>;
     createCheckoutSession(createCheckoutDto: CreateCheckoutSessionDto, req: any): Promise<{
@@ -62,16 +62,39 @@ export declare class PaymentsController {
             interval: any;
         };
     }>;
-    createCustomer(createCustomerDto: CreateCustomerDto): Promise<import("stripe").Stripe.Response<import("stripe").Stripe.Customer>>;
+    createCustomer(createCustomerDto: CreateCustomerDto): Promise<import("stripe").Stripe.Response<import("stripe").Stripe.Customer> | {
+        id: string;
+        email: string;
+        name: string;
+        metadata: Record<string, string>;
+        created: number;
+        object: string;
+    }>;
     createPortalSession(req: any): Promise<{
         url: string;
     }>;
     updateSubscription(updateSubscriptionDto: UpdateSubscriptionDto, req: any): Promise<{
-        subscription: import("stripe").Stripe.Response<import("stripe").Stripe.Subscription>;
+        subscription: import("stripe").Stripe.Response<import("stripe").Stripe.Subscription> | {
+            id: string;
+            items: {
+                data: {
+                    id: string;
+                    price: {
+                        id: string;
+                    };
+                }[];
+            };
+            object: string;
+        };
         plan: any;
     }>;
     cancelSubscription(req: any): Promise<{
-        subscription: import("stripe").Stripe.Response<import("stripe").Stripe.Subscription>;
+        subscription: import("stripe").Stripe.Response<import("stripe").Stripe.Subscription> | {
+            id: string;
+            status: string;
+            canceled_at: number;
+            object: string;
+        };
     }>;
     getSubscriptionStatus(req: any): Promise<{
         hasSubscription: boolean;

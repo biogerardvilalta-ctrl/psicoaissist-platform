@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from 'react';
 import { PaymentsAPI } from '@/lib/payments-api';
-import stripePromise from '@/lib/stripe';
 import type { Plan, CreateCheckoutSessionRequest } from '@/types/payments';
 
 export function usePayments() {
@@ -15,17 +14,12 @@ export function usePayments() {
     setError(null);
 
     try {
-      const stripe = await stripePromise;
-      if (!stripe) {
-        throw new Error('Stripe not loaded');
-      }
-
       console.log('📡 Llamando a PaymentsAPI.createCheckoutSession...');
       const session = await PaymentsAPI.createCheckoutSession(request);
       console.log('✅ Sesión creada:', session);
       
-      // Redirect to Stripe Checkout using the modern approach
-      const redirectUrl = session.url || `https://checkout.stripe.com/pay/${session.sessionId}`;
+      // Redirigir directamente a la URL que devuelve el backend (sea demo o real)
+      const redirectUrl = session.url;
       console.log('🔗 Redirigiendo a:', redirectUrl);
       window.location.href = redirectUrl;
     } catch (err) {

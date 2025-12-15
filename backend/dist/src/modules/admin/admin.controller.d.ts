@@ -21,22 +21,20 @@ export declare class AdminController {
                 status: string;
                 createdAt: Date;
                 updatedAt: Date;
-                userId: string;
                 stripeSubscriptionId: string;
                 planType: string;
                 currentPeriodStart: Date;
                 currentPeriodEnd: Date;
                 canceledAt: Date | null;
+                userId: string;
             };
             _count: {
                 clients: number;
                 sessions: number;
                 reports: number;
             };
-            email: string;
-            phone: string | null;
             id: string;
-            stripeCustomerId: string | null;
+            email: string;
             role: import(".prisma/client").$Enums.UserRole;
             status: import(".prisma/client").$Enums.UserStatus;
             verified: boolean;
@@ -45,9 +43,11 @@ export declare class AdminController {
             resetPasswordExpires: Date | null;
             firstName: string | null;
             lastName: string | null;
+            phone: string | null;
             country: string | null;
             professionalNumber: string | null;
             speciality: string | null;
+            stripeCustomerId: string | null;
             createdAt: Date;
             updatedAt: Date;
             lastLogin: Date | null;
@@ -85,7 +85,6 @@ export declare class AdminController {
             updatedAt: Date;
             userId: string;
             encryptionKeyId: string | null;
-            clientId: string;
             startTime: Date;
             endTime: Date | null;
             duration: number | null;
@@ -97,6 +96,7 @@ export declare class AdminController {
             aiMetadata: import("@prisma/client/runtime/library").JsonValue | null;
             audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
             recordingConsent: boolean;
+            clientId: string;
         }[];
         reports: {
             id: string;
@@ -122,22 +122,20 @@ export declare class AdminController {
             status: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             stripeSubscriptionId: string;
             planType: string;
             currentPeriodStart: Date;
             currentPeriodEnd: Date;
             canceledAt: Date | null;
+            userId: string;
         };
         _count: {
             clients: number;
             sessions: number;
             reports: number;
         };
-        email: string;
-        phone: string | null;
         id: string;
-        stripeCustomerId: string | null;
+        email: string;
         role: import(".prisma/client").$Enums.UserRole;
         status: import(".prisma/client").$Enums.UserStatus;
         verified: boolean;
@@ -146,9 +144,11 @@ export declare class AdminController {
         resetPasswordExpires: Date | null;
         firstName: string | null;
         lastName: string | null;
+        phone: string | null;
         country: string | null;
         professionalNumber: string | null;
         speciality: string | null;
+        stripeCustomerId: string | null;
         createdAt: Date;
         updatedAt: Date;
         lastLogin: Date | null;
@@ -165,8 +165,8 @@ export declare class AdminController {
     getSubscriptions(page?: string, limit?: string, status?: string, plan?: string): Promise<{
         subscriptions: ({
             user: {
-                email: string;
                 id: string;
+                email: string;
                 firstName: string;
                 lastName: string;
             };
@@ -175,12 +175,12 @@ export declare class AdminController {
             status: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             stripeSubscriptionId: string;
             planType: string;
             currentPeriodStart: Date;
             currentPeriodEnd: Date;
             canceledAt: Date | null;
+            userId: string;
         })[];
         pagination: {
             page: number;

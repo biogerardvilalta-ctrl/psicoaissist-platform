@@ -27,7 +27,7 @@ import {
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @ApiOperation({ summary: 'Login de usuario' })
   @ApiResponse({ status: 200, description: 'Login exitoso', type: AuthResponseDto })
@@ -60,6 +60,7 @@ export class AuthController {
       return {
         message: 'Login exitoso',
         user: result.user,
+        tokens: result.tokens,
       };
     } catch (error) {
       this.logger.error(`Login error: ${error.message}`);
@@ -98,6 +99,7 @@ export class AuthController {
       return {
         message: 'Usuario registrado exitosamente',
         user: result.user,
+        tokens: result.tokens,
       };
     } catch (error) {
       this.logger.error(`Registration error: ${error.message}`);
@@ -131,7 +133,10 @@ export class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
       });
 
-      return { message: 'Token renovado exitosamente' };
+      return {
+        message: 'Token renovado exitosamente',
+        tokens
+      };
     } catch (error) {
       this.logger.error(`Token refresh error: ${error.message}`);
       throw error;

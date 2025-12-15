@@ -15,6 +15,9 @@ const jwt_config_1 = require("./config/jwt.config");
 const redis_config_1 = require("./config/redis.config");
 const auth_module_1 = require("./modules/auth/auth.module");
 const users_module_1 = require("./modules/users/users.module");
+const clients_module_1 = require("./modules/clients/clients.module");
+const dashboard_module_1 = require("./modules/dashboard/dashboard.module");
+const sessions_module_1 = require("./modules/sessions/sessions.module");
 const payments_module_1 = require("./modules/payments/payments.module");
 const admin_module_1 = require("./modules/admin/admin.module");
 const prisma_module_1 = require("./common/prisma/prisma.module");
@@ -54,6 +57,9 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             payments_module_1.PaymentsModule,
             admin_module_1.AdminModule,
+            clients_module_1.ClientsModule,
+            dashboard_module_1.DashboardModule,
+            sessions_module_1.SessionsModule,
         ],
         controllers: [],
         providers: [],

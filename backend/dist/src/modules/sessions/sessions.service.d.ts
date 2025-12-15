@@ -1,0 +1,80 @@
+import { PrismaService } from '../../common/prisma/prisma.service';
+import { EncryptionService } from '../encryption/encryption.service';
+import { CreateSessionDto, UpdateSessionDto } from './dto/sessions.dto';
+export declare class SessionsService {
+    private prisma;
+    private encryption;
+    constructor(prisma: PrismaService, encryption: EncryptionService);
+    private packEncryptedData;
+    private unpackEncryptedData;
+    create(userId: string, createSessionDto: CreateSessionDto): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }>;
+    findAll(userId: string): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }[]>;
+    findOne(id: string, userId: string): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }>;
+    update(id: string, userId: string, updateSessionDto: UpdateSessionDto): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }>;
+    remove(id: string, userId: string): Promise<{
+        id: string;
+        startTime: Date;
+        endTime: Date | null;
+        duration: number | null;
+        sessionType: import(".prisma/client").$Enums.SessionType;
+        status: import(".prisma/client").$Enums.SessionStatus;
+        encryptedTranscription: Buffer | null;
+        encryptedNotes: Buffer | null;
+        encryptedAudioPath: string | null;
+        aiSuggestions: import("@prisma/client/runtime/library").JsonValue | null;
+        aiMetadata: import("@prisma/client/runtime/library").JsonValue | null;
+        encryptionKeyId: string | null;
+        audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
+        recordingConsent: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        clientId: string;
+        userId: string;
+    }>;
+    private unpackClientData;
+    private mapToDto;
+}

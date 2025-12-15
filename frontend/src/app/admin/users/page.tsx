@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRole } from '@/hooks/useRole';
 import { useAdminUsers } from '@/hooks/useAdmin';
 import { UserFilters } from '@/lib/admin-api';
@@ -12,14 +12,35 @@ export default function UsersPage() {
   const [statusFilter, setStatusFilter] = useState<UserFilters['status']>('ALL');
   const [roleFilter, setRoleFilter] = useState<UserFilters['role']>('ALL');
   
-  const filters: UserFilters = {
+  // Memoizar los filtros para evitar recreación en cada render
+  const filters = useMemo<UserFilters>(() => ({
     search: searchQuery || undefined,
     status: statusFilter,
     role: roleFilter,
     limit: 50
-  };
+  }), [searchQuery, statusFilter, roleFilter]);
   
-  const { users, loading, error, refetch, updateUser, deleteUser } = useAdminUsers(filters);
+  const { users, loading, error, refetch } = useAdminUsers(filters);
+
+  // Cerrar dropdowns cuando se hace click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const dropdowns = document.querySelectorAll('[data-dropdown]');
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(event.target as Node)) {
+          const menu = dropdown.querySelector('.absolute');
+          if (menu && !menu.classList.contains('hidden')) {
+            menu.classList.add('hidden');
+          }
+        }
+      });
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   if (!isAdmin()) {
     return (
@@ -52,7 +73,7 @@ export default function UsersPage() {
           <h2 className="text-lg font-medium text-gray-900 mb-2">Error al cargar usuarios</h2>
           <p className="text-gray-500 mb-4">{error}</p>
           <button
-            onClick={refetch}
+            onClick={() => refetch()}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
@@ -122,7 +143,10 @@ export default function UsersPage() {
               <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
               <p className="text-gray-600 mt-2">Administra los usuarios registrados en la plataforma</p>
             </div>
-            <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+            <button 
+              onClick={() => alert('Funcionalidad de invitar usuario próximamente')}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
               <Mail className="w-4 h-4 mr-2" />
               Invitar Usuario
             </button>
@@ -160,6 +184,18 @@ export default function UsersPage() {
                   <option value="INACTIVE">Inactivos</option>
                   <option value="SUSPENDED">Suspendidos</option>
                 </select>
+                
+                {/* Role Filter */}
+                <select
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  value={roleFilter}
+                  onChange={(e) => handleRoleFilter(e.target.value as UserFilters['role'])}
+                >
+                  <option value="ALL">Todos los roles</option>
+                  <option value="PSYCHOLOGIST">Psicólogos</option>
+                  <option value="ADMIN">Administradores</option>
+                  <option value="SUPER_ADMIN">Super Admins</option>
+                </select>
               </div>
             </div>
           </div>
@@ -167,6 +203,48 @@ export default function UsersPage() {
 
         {/* Users Table */}
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+          {/* Table Header with Results Count */}
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium text-gray-900">
+                Lista de Usuarios
+                <span className="ml-2 text-sm text-gray-500">
+                  ({users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'})
+                </span>
+              </h3>
+              {(searchQuery || statusFilter !== 'ALL' || roleFilter !== 'ALL') && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setStatusFilter('ALL');
+                    setRoleFilter('ALL');
+                  }}
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Limpiar filtros
+                </button>
+              )}
+            </div>
+            {(searchQuery || statusFilter !== 'ALL' || roleFilter !== 'ALL') && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {searchQuery && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    Búsqueda: "{searchQuery}"
+                  </span>
+                )}
+                {statusFilter !== 'ALL' && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Estado: {statusFilter === 'ACTIVE' ? 'Activos' : statusFilter === 'INACTIVE' ? 'Inactivos' : 'Suspendidos'}
+                  </span>
+                )}
+                {roleFilter !== 'ALL' && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    Rol: {roleFilter === 'PSYCHOLOGIST' ? 'Psicólogos' : roleFilter === 'ADMIN' ? 'Administradores' : 'Super Admins'}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -213,18 +291,67 @@ export default function UsersPage() {
                       {getStatusBadge(user.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getPlanBadge(user.subscription.planType)}
+                      {getPlanBadge(user.subscription?.planType || 'FREE')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(user.lastLogin)}
+                      {formatDate(user.lastLogin || new Date().toISOString())}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(user.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
+                      <div className="relative inline-block text-left" data-dropdown>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const dropdown = e.currentTarget.nextElementSibling;
+                            if (dropdown) {
+                              dropdown.classList.toggle('hidden');
+                            }
+                          }}
+                          className="text-gray-400 hover:text-gray-600"
+                        >
+                          <MoreHorizontal className="w-5 h-5" />
+                        </button>
+                        <div className="hidden absolute right-0 z-10 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                          <div className="py-1">
+                            <button 
+                              onClick={() => alert(`Editar usuario: ${user.firstName} ${user.lastName}`)}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            >
+                              Editar usuario
+                            </button>
+                            <button 
+                              onClick={() => {
+                                if (user.status === 'ACTIVE') {
+                                  alert(`Usuario ${user.firstName} ${user.lastName} suspendido`);
+                                } else {
+                                  alert(`Usuario ${user.firstName} ${user.lastName} activado`);
+                                }
+                              }}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            >
+                              {user.status === 'ACTIVE' ? 'Suspender' : 'Activar'} usuario
+                            </button>
+                            <button 
+                              onClick={() => alert(`Enviar email a: ${user.email}`)}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            >
+                              Enviar email
+                            </button>
+                            <button 
+                              onClick={() => {
+                                if (confirm(`¿Estás seguro de eliminar al usuario ${user.firstName} ${user.lastName}?`)) {
+                                  alert(`Usuario ${user.firstName} ${user.lastName} eliminado`);
+                                }
+                              }}
+                              className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
+                            >
+                              Eliminar usuario
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -8,13 +8,16 @@ export declare class AuthController {
     login(loginDto: LoginDto, response: Response): Promise<{
         message: string;
         user: import("./dto/auth.dto").UserResponseDto;
+        tokens: import("./dto/auth.dto").TokensDto;
     }>;
     register(registerDto: RegisterDto, response: Response): Promise<{
         message: string;
         user: import("./dto/auth.dto").UserResponseDto;
+        tokens: import("./dto/auth.dto").TokensDto;
     }>;
     refreshToken(refreshTokenDto: RefreshTokenDto, response: Response): Promise<{
         message: string;
+        tokens: import("./dto/auth.dto").TokensDto;
     }>;
     logout(req: Request & {
         user: any;

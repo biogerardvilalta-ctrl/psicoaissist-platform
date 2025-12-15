@@ -43,6 +43,7 @@ let AuthController = AuthController_1 = class AuthController {
             return {
                 message: 'Login exitoso',
                 user: result.user,
+                tokens: result.tokens,
             };
         }
         catch (error) {
@@ -69,6 +70,7 @@ let AuthController = AuthController_1 = class AuthController {
             return {
                 message: 'Usuario registrado exitosamente',
                 user: result.user,
+                tokens: result.tokens,
             };
         }
         catch (error) {
@@ -91,7 +93,10 @@ let AuthController = AuthController_1 = class AuthController {
                 sameSite: 'strict',
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-            return { message: 'Token renovado exitosamente' };
+            return {
+                message: 'Token renovado exitosamente',
+                tokens
+            };
         }
         catch (error) {
             this.logger.error(`Token refresh error: ${error.message}`);

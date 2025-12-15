@@ -48,10 +48,11 @@ export class PaymentsController {
     // Endpoint temporal para testing sin autenticación
     console.log('Demo checkout session requested:', createCheckoutDto);
     
-    // Crear un usuario demo temporal
-    const demoUserId = 'demo-user-id';
+    // Usar un usuario real de la base de datos para el demo
+    // Podemos usar el admin o cualquier usuario de los seeded
+    const demoUserId = 'cmj66cjcg0000ojxfyrhpepoh'; // admin@psycoai.com del seed
 
-    return this.paymentsService.createCheckoutSession(
+    return this.paymentsService.createCheckoutSessionDemo(
       createCheckoutDto,
       demoUserId,
     );

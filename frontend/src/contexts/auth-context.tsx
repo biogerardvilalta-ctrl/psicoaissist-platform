@@ -5,7 +5,7 @@ import { AuthAPI } from '@/lib/auth-api';
 import type { AuthState, AuthTokens, User, LoginRequest, RegisterRequest } from '@/types/auth';
 
 // Auth Actions
-type AuthAction = 
+type AuthAction =
   | { type: 'LOGIN_START' }
   | { type: 'LOGIN_SUCCESS'; payload: { user: User; tokens: AuthTokens } }
   | { type: 'LOGIN_FAILURE'; payload: string }
@@ -123,7 +123,7 @@ const storage = {
       return null;
     }
   },
-  
+
   setItem: (key: string, value: string): void => {
     if (typeof window === 'undefined') return;
     try {
@@ -132,7 +132,7 @@ const storage = {
       console.error('Error saving to localStorage:', error);
     }
   },
-  
+
   removeItem: (key: string): void => {
     if (typeof window === 'undefined') return;
     try {
@@ -141,7 +141,7 @@ const storage = {
       console.error('Error removing from localStorage:', error);
     }
   },
-  
+
   clear: (): void => {
     if (typeof window === 'undefined') return;
     try {
@@ -193,7 +193,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (accessToken && refreshToken && userStr) {
         const user = JSON.parse(userStr);
         const tokens = { accessToken, refreshToken };
-        
+
         console.log('🔄 Restoring session for user:', user.email);
         dispatch({ type: 'RESTORE_SESSION', payload: { user, tokens } });
         return true;
@@ -204,7 +204,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Error restoring session:', error);
       clearSession();
     }
-    
+
     dispatch({ type: 'SET_LOADING', payload: false });
     return false;
   }, [clearSession]);
@@ -212,57 +212,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Login function
   const login = useCallback(async (credentials: LoginRequest) => {
     dispatch({ type: 'LOGIN_START' });
-    
-    try {
-      // Mock login for demo
-      console.log('🔐 Login attempt:', credentials.email);
-      
-      let mockUser: User;
-      const mockTokens: AuthTokens = {
-        accessToken: 'mock_access_' + Math.random().toString(36).substr(2, 9),
-        refreshToken: 'mock_refresh_' + Math.random().toString(36).substr(2, 9),
-      };
 
-      // Simulate admin login
-      if (credentials.email === 'admin@psycoai.com' && credentials.password === 'admin123') {
-        mockUser = {
-          id: 'admin-1',
-          email: 'admin@psycoai.com',
-          firstName: 'Admin',
-          lastName: 'PsycoAI',
-          role: 'ADMIN',
-          status: 'ACTIVE',
-          subscription: {
-            planType: 'PREMIUM',
-            status: 'active'
-          }
-        };
-      } else if (credentials.password === 'demo123') {
-        // Regular user
-        mockUser = {
-          id: 'user-' + Math.random().toString(36).substr(2, 6),
-          email: credentials.email,
-          firstName: 'Usuario',
-          lastName: 'Demo',
-          role: 'PSYCHOLOGIST',
-          status: 'ACTIVE',
-          subscription: {
-            planType: 'BASIC',
-            status: 'active'
-          }
-        };
-      } else {
-        throw new Error('Credenciales incorrectas');
+    try {
+      console.log('🔐 Login attempt:', credentials.email);
+
+      const response = await AuthAPI.login(credentials);
+
+      const { user, tokens } = response;
+
+      if (!user || !tokens) {
+        throw new Error('Respuesta de login inválida');
       }
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      saveSession(mockUser, mockTokens);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user: mockUser, tokens: mockTokens } });
-      
-      console.log('✅ Login successful for:', mockUser.email);
-      
+      saveSession(user, tokens);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, tokens } });
+
+      console.log('✅ Login successful for:', user.email);
+
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error en el login';
       dispatch({ type: 'LOGIN_FAILURE', payload: message });
@@ -274,33 +240,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Register function
   const register = useCallback(async (userData: RegisterRequest) => {
     dispatch({ type: 'REGISTER_START' });
-    
+
     try {
       console.log('📝 Register attempt:', userData.email);
-      
-      // Mock registration
-      const mockUser: User = {
-        id: 'user-' + Math.random().toString(36).substr(2, 6),
-        email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        role: userData.role || 'PSYCHOLOGIST',
-        status: 'ACTIVE',
-      };
-      
-      const mockTokens: AuthTokens = {
-        accessToken: 'mock_access_' + Math.random().toString(36).substr(2, 9),
-        refreshToken: 'mock_refresh_' + Math.random().toString(36).substr(2, 9),
-      };
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      saveSession(mockUser, mockTokens);
-      dispatch({ type: 'REGISTER_SUCCESS', payload: { user: mockUser, tokens: mockTokens } });
-      
-      console.log('✅ Register successful for:', mockUser.email);
-      
+      const response = await AuthAPI.register(userData);
+      const { user, tokens } = response;
+
+      saveSession(user, tokens);
+      dispatch({ type: 'REGISTER_SUCCESS', payload: { user, tokens } });
+
+      console.log('✅ Register successful for:', user.email);
+
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error en el registro';
       dispatch({ type: 'REGISTER_FAILURE', payload: message });
@@ -325,20 +276,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       console.log('🔄 Refreshing token...');
-      // Mock refresh token - in real app call AuthAPI.refreshToken
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // For demo, just update the current session
-      if (state.user && state.tokens) {
-        const newTokens: AuthTokens = {
-          accessToken: 'mock_access_' + Math.random().toString(36).substr(2, 9),
-          refreshToken: currentRefreshToken,
-        };
-        
-        saveSession(state.user, newTokens);
-        dispatch({ type: 'REFRESH_TOKEN_SUCCESS', payload: { user: state.user, tokens: newTokens } });
-      }
-      
+
+      const response = await AuthAPI.refreshToken(currentRefreshToken);
+      const { user, tokens } = response;
+
+      saveSession(user, tokens);
+      dispatch({ type: 'REFRESH_TOKEN_SUCCESS', payload: { user, tokens } });
+
     } catch (error) {
       console.error('Failed to refresh token:', error);
       logout();
@@ -360,7 +304,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     console.log('🔄 AuthProvider: Checking for existing session...');
     restoreSession();
-  }, [restoreSession]);
+
+    // Listen for unauthorized events (401)
+    const handleUnauthorized = () => {
+      console.log('⛔ Unauthorized event received, logging out...');
+      logout();
+    };
+
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => {
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
+  }, [restoreSession, logout]);
 
   const value: AuthContextType = {
     ...state,

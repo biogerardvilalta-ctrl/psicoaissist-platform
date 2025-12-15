@@ -342,6 +342,43 @@ let PaymentsService = PaymentsService_1 = class PaymentsService {
             priceId: plan.priceId,
         }));
     }
+    async createCheckoutSessionDemo(createCheckoutDto, userId) {
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { subscription: true },
+            });
+            if (!user) {
+                throw new common_1.NotFoundException('User not found');
+            }
+            const demoPlans = {
+                basic: { name: 'Plan Básico', amount: 2900, currency: 'eur', interval: 'month' },
+                pro: { name: 'Plan Pro', amount: 5900, currency: 'eur', interval: 'month' },
+                premium: { name: 'Plan Premium', amount: 9900, currency: 'eur', interval: 'month' }
+            };
+            const plan = demoPlans[createCheckoutDto.plan];
+            if (!plan) {
+                throw new common_1.BadRequestException('Invalid plan selected');
+            }
+            const mockSessionId = `cs_demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const mockUrl = `http://localhost:3000/payment/success?session_id=${mockSessionId}&plan=${createCheckoutDto.plan}`;
+            this.logger.log(`Demo checkout session created for user ${user.email} - plan ${createCheckoutDto.plan}`);
+            return {
+                sessionId: mockSessionId,
+                url: mockUrl,
+                plan: {
+                    name: plan.name,
+                    amount: plan.amount,
+                    currency: plan.currency,
+                    interval: plan.interval,
+                },
+            };
+        }
+        catch (error) {
+            this.logger.error('Error creating demo checkout session:', error);
+            throw error;
+        }
+    }
     getPlanDisplayName(planType) {
         const plans = this.stripeService.getPlans();
         return plans[planType]?.name || planType;

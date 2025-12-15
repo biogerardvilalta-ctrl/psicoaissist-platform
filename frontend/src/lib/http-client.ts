@@ -15,10 +15,13 @@ class HttpClient {
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`
     console.log('🌐 HTTP Request:', options.method, url);
-    
+
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
+        ...(typeof window !== 'undefined' && localStorage.getItem('psycoai_access_token')
+          ? { 'Authorization': `Bearer ${localStorage.getItem('psycoai_access_token')}` }
+          : {}),
         ...options.headers,
       },
       credentials: 'include', // Include cookies for JWT
@@ -32,6 +35,11 @@ class HttpClient {
       console.log('📡 Response status:', response.status, response.statusText);
 
       if (!response.ok) {
+        if (response.status === 401) {
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+          }
+        }
         const errorData = await response.json().catch(() => ({}))
         console.error('❌ HTTP Error response:', errorData);
         throw new Error(

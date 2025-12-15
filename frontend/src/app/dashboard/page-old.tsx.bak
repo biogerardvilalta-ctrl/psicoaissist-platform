@@ -1,0 +1,173 @@
+'use client';
+
+import { useAuth } from '@/contexts/auth-context';
+import { StatsCard, RecentActivity, QuickActions, ProgressChart } from '@/components/dashboard';
+
+export default function DashboardPage() {
+  const { user } = useAuth();
+
+  return (
+    <div className="p-6">
+      {/* Welcome Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">
+          ¡Bienvenido, {user?.firstName}!
+        </h1>
+        <p className="mt-1 text-sm text-gray-600">
+          Aquí tienes un resumen de tu actividad reciente
+        </p>
+      </div>
+                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                </div>
+              </div>
+
+              {/* Settings and Logout */}
+              <div className="flex items-center space-x-2">
+                <a
+                  href="/settings"
+                  className="p-2 text-gray-400 hover:text-blue-600 rounded-full transition-colors"
+                  title="Configuración"
+                >
+                  <Settings className="w-4 h-4" />
+                </a>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-1 px-3 py-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors border border-red-200 bg-white flex-shrink-0"
+                  title="Cerrar sesión"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm font-medium">Salir</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {/* Welcome section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            ¡Bienvenido, {user?.firstName}! 👋
+          </h2>
+          <p className="text-gray-600">
+            Tu asistente de inteligencia artificial para psicología está listo para ayudarte.
+          </p>
+        </div>
+
+        {/* Enhanced stats with realistic demo data */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <StatsCard
+            title="Pacientes Activos"
+            value="12"
+            icon={User}
+            iconBgColor="bg-blue-100"
+            iconColor="text-blue-600"
+            subtitle="3 nuevos este mes"
+            trend={{ value: "25%", isPositive: true }}
+          />
+
+          <StatsCard
+            title="Sesiones Realizadas"
+            value="48"
+            icon={BarChart3}
+            iconBgColor="bg-green-100"
+            iconColor="text-green-600"
+            subtitle="Esta semana: 8"
+            trend={{ value: "12%", isPositive: true }}
+          />
+
+          <StatsCard
+            title="Horas de Consulta"
+            value="36.5"
+            icon={Clock}
+            iconBgColor="bg-purple-100"
+            iconColor="text-purple-600"
+            subtitle="Este mes"
+            trend={{ value: "8%", isPositive: true }}
+          />
+
+          <StatsCard
+            title="Informes Generados"
+            value="24"
+            icon={BookOpen}
+            iconBgColor="bg-orange-100"
+            iconColor="text-orange-600"
+            subtitle="Últimos 30 días"
+            trend={{ value: "15%", isPositive: true }}
+          />
+        </div>
+
+        {/* Charts and analytics section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <ProgressChart
+            title="Sesiones por Tipo"
+            totalValue={48}
+            trend={{ percentage: 12, isPositive: true, period: "este mes" }}
+            data={[
+              { label: "Individual", value: 32, color: "bg-blue-500" },
+              { label: "Grupal", value: 12, color: "bg-green-500" },
+              { label: "Familiar", value: 4, color: "bg-purple-500" }
+            ]}
+          />
+
+          <ProgressChart
+            title="Técnicas Terapéuticas"
+            totalValue={85}
+            trend={{ percentage: 8, isPositive: true, period: "este mes" }}
+            data={[
+              { label: "TCC", value: 35, color: "bg-indigo-500" },
+              { label: "Mindfulness", value: 25, color: "bg-cyan-500" },
+              { label: "EMDR", value: 15, color: "bg-pink-500" },
+              { label: "Otras", value: 10, color: "bg-gray-500" }
+            ]}
+          />
+        </div>
+
+        {/* Main content grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Quick actions */}
+          <QuickActions />
+
+          {/* Recent activity */}
+          <RecentActivity />
+        </div>
+
+        {/* Welcome message for new users */}
+        <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border">
+          <div className="flex items-start">
+            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <Heart className="w-5 h-5 text-white" />
+            </div>
+            <div className="ml-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                ¡Bienvenido a PsycoAI! 🚀
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Tu plataforma de inteligencia artificial diseñada específicamente para profesionales de la psicología. 
+                Aquí podrás acceder a herramientas avanzadas de IA para mejorar tu práctica clínica.
+              </p>
+              <div className="space-y-2 text-sm text-gray-700">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Asistente AI especializado en psicología
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Gestión segura de pacientes e historias clínicas
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  Análisis y seguimiento de progreso
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      </div>
+    </ProtectedRoute>
+  );
+}

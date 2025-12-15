@@ -19,16 +19,39 @@ export declare class PaymentsService {
             interval: any;
         };
     }>;
-    createCustomer(createCustomerDto: CreateCustomerDto): Promise<Stripe.Response<Stripe.Customer>>;
+    createCustomer(createCustomerDto: CreateCustomerDto): Promise<Stripe.Response<Stripe.Customer> | {
+        id: string;
+        email: string;
+        name: string;
+        metadata: Record<string, string>;
+        created: number;
+        object: string;
+    }>;
     createPortalSession(userId: string): Promise<{
         url: string;
     }>;
     updateSubscription(updateSubscriptionDto: UpdateSubscriptionDto, userId: string): Promise<{
-        subscription: Stripe.Response<Stripe.Subscription>;
+        subscription: Stripe.Response<Stripe.Subscription> | {
+            id: string;
+            items: {
+                data: {
+                    id: string;
+                    price: {
+                        id: string;
+                    };
+                }[];
+            };
+            object: string;
+        };
         plan: any;
     }>;
     cancelSubscription(userId: string): Promise<{
-        subscription: Stripe.Response<Stripe.Subscription>;
+        subscription: Stripe.Response<Stripe.Subscription> | {
+            id: string;
+            status: string;
+            canceled_at: number;
+            object: string;
+        };
     }>;
     handleWebhook(signature: string, payload: any): Promise<{
         received: boolean;
@@ -90,5 +113,15 @@ export declare class PaymentsService {
         };
         priceId: string;
     }[];
+    createCheckoutSessionDemo(createCheckoutDto: CreateCheckoutSessionDto, userId: string): Promise<{
+        sessionId: string;
+        url: string;
+        plan: {
+            name: string;
+            amount: number;
+            currency: string;
+            interval: string;
+        };
+    }>;
     private getPlanDisplayName;
 }

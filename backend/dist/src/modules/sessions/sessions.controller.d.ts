@@ -1,0 +1,74 @@
+import { SessionsService } from './sessions.service';
+import { CreateSessionDto, UpdateSessionDto } from './dto/sessions.dto';
+export declare class SessionsController {
+    private readonly sessionsService;
+    constructor(sessionsService: SessionsService);
+    create(req: any, createSessionDto: CreateSessionDto): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }>;
+    findAll(req: any): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }[]>;
+    findOne(req: any, id: string): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }>;
+    update(req: any, id: string, updateSessionDto: UpdateSessionDto): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }>;
+    remove(req: any, id: string): Promise<{
+        id: string;
+        startTime: Date;
+        endTime: Date | null;
+        duration: number | null;
+        sessionType: import(".prisma/client").$Enums.SessionType;
+        status: import(".prisma/client").$Enums.SessionStatus;
+        encryptedTranscription: Buffer | null;
+        encryptedNotes: Buffer | null;
+        encryptedAudioPath: string | null;
+        aiSuggestions: import("@prisma/client/runtime/library").JsonValue | null;
+        aiMetadata: import("@prisma/client/runtime/library").JsonValue | null;
+        encryptionKeyId: string | null;
+        audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
+        recordingConsent: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        clientId: string;
+        userId: string;
+    }>;
+}

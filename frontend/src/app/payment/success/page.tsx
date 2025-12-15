@@ -1,7 +1,30 @@
+'use client';
+
 import { CheckCircle, ArrowRight, Home } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function PaymentSuccessPage() {
+  const searchParams = useSearchParams();
+  const [sessionId, setSessionId] = useState<string>('');
+  const [planName, setPlanName] = useState<string>('');
+
+  useEffect(() => {
+    const sessionIdParam = searchParams.get('session_id') || '';
+    const planParam = searchParams.get('plan') || '';
+    
+    setSessionId(sessionIdParam);
+    
+    // Convertir el plan type a nombre legible
+    const planNames: Record<string, string> = {
+      'basic': 'Plan Básico',
+      'pro': 'Plan Pro',
+      'premium': 'Plan Premium'
+    };
+    setPlanName(planNames[planParam] || planParam || 'Plan seleccionado');
+  }, [searchParams]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
@@ -15,9 +38,18 @@ export default function PaymentSuccessPage() {
           ¡Pago Completado!
         </h1>
         
-        <p className="text-gray-600 mb-8">
-          Tu suscripción ha sido activada exitosamente. Ya puedes acceder a todas las funciones de PsycoAI.
+        <p className="text-gray-600 mb-4">
+          Tu suscripción al <strong>{planName}</strong> ha sido activada exitosamente. Ya puedes acceder a todas las funciones de PsycoAI.
         </p>
+
+        {/* Demo mode indicator */}
+        {sessionId.includes('demo') && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+            <p className="text-sm text-yellow-800">
+              🎭 <strong>Modo Demo</strong> - Esta es una simulación de pago con fines de prueba
+            </p>
+          </div>
+        )}
 
         {/* What's next */}
         <div className="bg-blue-50 rounded-lg p-4 mb-8 text-left">

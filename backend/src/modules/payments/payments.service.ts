@@ -429,6 +429,52 @@ export class PaymentsService {
     }));
   }
 
+  // Método demo para testing sin Stripe real
+  async createCheckoutSessionDemo(createCheckoutDto: CreateCheckoutSessionDto, userId: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { subscription: true },
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Planes demo hardcoded sin llamar a Stripe
+      const demoPlans = {
+        basic: { name: 'Plan Básico', amount: 2900, currency: 'eur', interval: 'month' },
+        pro: { name: 'Plan Pro', amount: 5900, currency: 'eur', interval: 'month' },
+        premium: { name: 'Plan Premium', amount: 9900, currency: 'eur', interval: 'month' }
+      };
+
+      const plan = demoPlans[createCheckoutDto.plan];
+      if (!plan) {
+        throw new BadRequestException('Invalid plan selected');
+      }
+
+      // Simular respuesta de Stripe para demo - usar URL local
+      const mockSessionId = `cs_demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const mockUrl = `http://localhost:3000/payment/success?session_id=${mockSessionId}&plan=${createCheckoutDto.plan}`;
+
+      this.logger.log(`Demo checkout session created for user ${user.email} - plan ${createCheckoutDto.plan}`);
+
+      return {
+        sessionId: mockSessionId,
+        url: mockUrl,
+        plan: {
+          name: plan.name,
+          amount: plan.amount,
+          currency: plan.currency,
+          interval: plan.interval,
+        },
+      };
+    } catch (error) {
+      this.logger.error('Error creating demo checkout session:', error);
+      throw error;
+    }
+  }
+
   private getPlanDisplayName(planType: PlanType): string {
     const plans = this.stripeService.getPlans();
     return plans[planType]?.name || planType;

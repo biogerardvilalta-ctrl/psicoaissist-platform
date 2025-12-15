@@ -12,11 +12,11 @@ import { RedisConfig } from './config/redis.config';
 // Modules
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-// import { ClientsModule } from './modules/clients/clients.module';
-// import { SessionsModule } from './modules/sessions/sessions.module';
+import { ClientsModule } from './modules/clients/clients.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
 // import { ReportsModule } from './modules/reports/reports.module';
 // import { AiModule } from './modules/ai/ai.module';
-// import { PaymentsModule } from './modules/payments/payments.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { AdminModule } from './modules/admin/admin.module';
 // import { HealthModule } from './modules/health/health.module';
@@ -80,9 +80,10 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     UsersModule,
     PaymentsModule,
     AdminModule,
-    // TODO: implement these modules
-    // ClientsModule,
-    // SessionsModule,
+    ClientsModule,
+    DashboardModule,
+    SessionsModule,
+    // ReportsModule,
     // ReportsModule,
     // AiModule,
     // HealthModule,
@@ -90,4 +91,4 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

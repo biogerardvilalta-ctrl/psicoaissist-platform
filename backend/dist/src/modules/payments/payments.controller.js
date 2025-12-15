@@ -32,8 +32,8 @@ let PaymentsController = class PaymentsController {
     }
     async createCheckoutSessionDemo(createCheckoutDto) {
         console.log('Demo checkout session requested:', createCheckoutDto);
-        const demoUserId = 'demo-user-id';
-        return this.paymentsService.createCheckoutSession(createCheckoutDto, demoUserId);
+        const demoUserId = 'cmj66cjcg0000ojxfyrhpepoh';
+        return this.paymentsService.createCheckoutSessionDemo(createCheckoutDto, demoUserId);
     }
     async createCheckoutSession(createCheckoutDto, req) {
         return this.paymentsService.createCheckoutSession(createCheckoutDto, req.user.sub);

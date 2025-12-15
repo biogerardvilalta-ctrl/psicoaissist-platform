@@ -53,8 +53,8 @@ export class AdminAPI {
     try {
       console.log('📊 Fetching admin dashboard stats...');
       const response = await httpClient.get(`${this.BASE_URL}/stats`);
-      console.log('✅ Dashboard stats loaded:', response.data);
-      return response.data;
+      console.log('✅ Dashboard stats loaded:', (response as any).data);
+      return (response as any).data;
     } catch (error) {
       console.error('❌ Error fetching dashboard stats, using mock data:', error);
       // Fallback to mock data
@@ -83,8 +83,8 @@ export class AdminAPI {
       console.log('✅ Users API response:', response);
       
       // Verificar la estructura de la respuesta
-      if (response && response.users && Array.isArray(response.users)) {
-        return response;
+      if (response && (response as any).users && Array.isArray((response as any).users)) {
+        return response as PaginatedUsers;
       } else {
         console.warn('⚠️ API response has unexpected structure, falling back to mock');
         throw new Error('Invalid API response structure');
@@ -103,8 +103,8 @@ export class AdminAPI {
     try {
       console.log('👤 Fetching user by ID:', id);
       const response = await httpClient.get(`${this.BASE_URL}/users/${id}`);
-      console.log('✅ User loaded:', response.data);
-      return response.data;
+      console.log('✅ User loaded:', (response as any).data);
+      return (response as any).data;
     } catch (error) {
       console.error('❌ Error fetching user:', error);
       throw new Error('Error al cargar el usuario');
@@ -115,8 +115,8 @@ export class AdminAPI {
     try {
       console.log('📝 Updating user:', id, userData);
       const response = await httpClient.put(`${this.BASE_URL}/users/${id}`, userData);
-      console.log('✅ User updated:', response.data);
-      return response.data;
+      console.log('✅ User updated:', (response as any).data);
+      return (response as any).data;
     } catch (error) {
       console.error('❌ Error updating user:', error);
       throw new Error('Error al actualizar el usuario');

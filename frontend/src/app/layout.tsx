@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Header, Footer } from '@/components/layout'
+import { ConditionalHeader, ConditionalFooter } from '@/components/layout'
 import { AuthProvider } from '@/contexts/auth-context'
 import '../styles/globals.css'
 
@@ -80,9 +80,9 @@ export default function RootLayout({
     <html lang="es">
       <body className={inter.className}>
         <AuthProvider>
-          <Header />
+          <ConditionalHeader />
           {children}
-          <Footer />
+          <ConditionalFooter />
         </AuthProvider>
       </body>
     </html>

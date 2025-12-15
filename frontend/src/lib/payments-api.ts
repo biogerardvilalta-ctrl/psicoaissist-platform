@@ -19,7 +19,7 @@ export class PaymentsAPI {
   ): Promise<CheckoutSession> {
     console.log('📡 PaymentsAPI.createCheckoutSession llamado con:', request);
     
-    // Usar endpoint demo temporalmente para testing
+    // Usar endpoint demo temporalmente hasta que tengamos auth real
     const endpoint = `${this.BASE_URL}/create-checkout-session-demo`;
     console.log('🌐 URL destino:', endpoint);
     

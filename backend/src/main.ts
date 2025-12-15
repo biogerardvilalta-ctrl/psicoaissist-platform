@@ -3,12 +3,16 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+
+  // Cookie parser
+  app.use(cookieParser());
 
   // Global validation pipe
   app.useGlobalPipes(new ValidationPipe({
@@ -44,7 +48,7 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' 
+    origin: process.env.NODE_ENV === 'production'
       ? configService.get('FRONTEND_URL', 'https://tu-dominio.com')
       : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003', 'http://localhost:3004'],
     credentials: true,
@@ -74,7 +78,7 @@ async function bootstrap() {
       .addTag('ai', 'Servicios de inteligencia artificial')
       .addTag('payments', 'Pagos y suscripciones')
       .build();
-    
+
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
   }
@@ -84,7 +88,7 @@ async function bootstrap() {
 
   const port = configService.get('PORT') || 3001;
   await app.listen(port);
-  
+
   console.log(`🚀 Server running on http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
