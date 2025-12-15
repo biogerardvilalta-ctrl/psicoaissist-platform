@@ -17,6 +17,7 @@ var SessionStatus;
     SessionStatus["IN_PROGRESS"] = "IN_PROGRESS";
     SessionStatus["COMPLETED"] = "COMPLETED";
     SessionStatus["CANCELLED"] = "CANCELLED";
+    SessionStatus["NO_SHOW"] = "NO_SHOW";
 })(SessionStatus || (exports.SessionStatus = SessionStatus = {}));
 var SessionType;
 (function (SessionType) {

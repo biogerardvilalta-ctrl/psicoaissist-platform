@@ -1,5 +1,5 @@
 
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto, UpdateSessionDto } from './dto/sessions.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -20,6 +20,11 @@ export class SessionsController {
     @Get()
     findAll(@Request() req) {
         return this.sessionsService.findAll(req.user.id);
+    }
+
+    @Get('calendar')
+    findByDateRange(@Request() req, @Query('start') start: string, @Query('end') end: string) {
+        return this.sessionsService.findByDateRange(req.user.id, start, end);
     }
 
     @Get(':id')

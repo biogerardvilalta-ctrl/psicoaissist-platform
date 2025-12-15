@@ -37,6 +37,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CalendarView } from '@/components/dashboard/sessions/calendar-view';
 
 export default function SessionsPage() {
     const router = useRouter();
@@ -148,6 +150,16 @@ export default function SessionsPage() {
         return '';
     };
 
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [view, setView] = useState<any>('month'); // type any to avoid 'Views' import issue here if not needed
+
+    // ... existing fetchSessions ...
+    // Using getAll for now, can switch to filtered fetch if needed
+
+    // ... existing useEffect ...
+
+    // ... existing handlers (handleCancel, handleDelete) ...
+
     return (
         <div className="p-6 space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -157,123 +169,144 @@ export default function SessionsPage() {
                         Gestiona tu agenda y el seguimiento de terapias.
                     </p>
                 </div>
-                <Button onClick={() => router.push('/dashboard/sessions/new')}>
-                    <Plus className="mr-2 h-4 w-4" /> Agendar Nueva Sesión
-                </Button>
+                <div className="flex gap-2">
+                    <Button onClick={() => router.push('/dashboard/sessions/new')}>
+                        <Plus className="mr-2 h-4 w-4" /> Agendar Nueva Sesión
+                    </Button>
+                </div>
             </div>
 
-            <Card>
-                <CardHeader className="pb-3">
-                    <CardTitle>Agenda de Sesiones</CardTitle>
-                    <CardDescription>
-                        {sessions.length} sesiones registradas en total.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center py-4">
-                        <div className="relative w-full max-w-sm">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder="Buscar por cliente o tipo..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-8"
-                            />
-                        </div>
-                    </div>
+            <Tabs defaultValue="list" className="space-y-4">
+                <TabsList>
+                    <TabsTrigger value="list">Lista</TabsTrigger>
+                    <TabsTrigger value="calendar">Calendario</TabsTrigger>
+                </TabsList>
 
-                    <div className="rounded-md border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Fecha y Hora</TableHead>
-                                    <TableHead>Paciente</TableHead>
-                                    <TableHead>Tipo</TableHead>
-                                    <TableHead>Estado</TableHead>
-                                    <TableHead className="text-right">Acciones</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {isLoading ? (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center">
-                                            Cargando sesiones...
-                                        </TableCell>
-                                    </TableRow>
-                                ) : filteredSessions.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center">
-                                            No se encontraron sesiones.
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    filteredSessions.map((session) => (
-                                        <TableRow key={session.id}>
-                                            <TableCell>
-                                                <div className="flex flex-col">
-                                                    <span className="font-medium flex items-center gap-2">
-                                                        <Calendar className="h-3 w-3 text-muted-foreground" />
-                                                        {format(new Date(session.startTime), 'PPP', { locale: es })}
-                                                    </span>
-                                                    <span className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
-                                                        <Clock className="h-3 w-3" />
-                                                        {format(new Date(session.startTime), 'p', { locale: es })}
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="font-medium flex items-center gap-2">
-                                                    <User className="h-3 w-3 text-muted-foreground" />
-                                                    {session.clientName || 'Cliente desconocido'}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline">{session.sessionType}</Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge
-                                                    variant={getStatusBadgeVariant(session.status) as any}
-                                                    className={getStatusClassName(session.status)}
-                                                >
-                                                    {getStatusLabel(session.status)}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" className="h-8 w-8 p-0">
-                                                            <span className="sr-only">Abrir menú</span>
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/sessions/${session.id}`)}>
-                                                            <FileText className="mr-2 h-4 w-4" /> Ver detalles
-                                                        </DropdownMenuItem>
-                                                        {session.status === SessionStatus.SCHEDULED && (
-                                                            <DropdownMenuItem onClick={() => handleCancel(session.id)}>
-                                                                <XCircle className="mr-2 h-4 w-4 text-orange-500" /> Cancelar sesión
-                                                            </DropdownMenuItem>
-                                                        )}
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem
-                                                            className="text-red-600 focus:text-red-600"
-                                                            onClick={() => handleDelete(session.id)}
-                                                        >
-                                                            Eliminar
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
+                <TabsContent value="list" className="space-y-4">
+                    <Card>
+                        <CardHeader className="pb-3">
+                            <CardTitle>Agenda de Sesiones</CardTitle>
+                            <CardDescription>
+                                {sessions.length} sesiones registradas en total.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center py-4">
+                                <div className="relative w-full max-w-sm">
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Buscar por cliente o tipo..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="pl-8"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="rounded-md border">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Fecha y Hora</TableHead>
+                                            <TableHead>Paciente</TableHead>
+                                            <TableHead>Tipo</TableHead>
+                                            <TableHead>Estado</TableHead>
+                                            <TableHead className="text-right">Acciones</TableHead>
                                         </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {isLoading ? (
+                                            <TableRow>
+                                                <TableCell colSpan={5} className="h-24 text-center">
+                                                    Cargando sesiones...
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : filteredSessions.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={5} className="h-24 text-center">
+                                                    No se encontraron sesiones.
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            filteredSessions.map((session) => (
+                                                <TableRow key={session.id}>
+                                                    <TableCell>
+                                                        <div className="flex flex-col">
+                                                            <span className="font-medium flex items-center gap-2">
+                                                                <Calendar className="h-3 w-3 text-muted-foreground" />
+                                                                {format(new Date(session.startTime), 'PPP', { locale: es })}
+                                                            </span>
+                                                            <span className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
+                                                                <Clock className="h-3 w-3" />
+                                                                {format(new Date(session.startTime), 'p', { locale: es })}
+                                                            </span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="font-medium flex items-center gap-2">
+                                                            <User className="h-3 w-3 text-muted-foreground" />
+                                                            {session.clientName || 'Cliente desconocido'}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Badge variant="outline">{session.sessionType}</Badge>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Badge
+                                                            variant={getStatusBadgeVariant(session.status) as any}
+                                                            className={getStatusClassName(session.status)}
+                                                        >
+                                                            {getStatusLabel(session.status)}
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="text-right">
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                                    <span className="sr-only">Abrir menú</span>
+                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end">
+                                                                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                                                                <DropdownMenuItem onClick={() => router.push(`/dashboard/sessions/${session.id}`)}>
+                                                                    <FileText className="mr-2 h-4 w-4" /> Ver detalles
+                                                                </DropdownMenuItem>
+                                                                {session.status === SessionStatus.SCHEDULED && (
+                                                                    <DropdownMenuItem onClick={() => handleCancel(session.id)}>
+                                                                        <XCircle className="mr-2 h-4 w-4 text-orange-500" /> Cancelar sesión
+                                                                    </DropdownMenuItem>
+                                                                )}
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuItem
+                                                                    className="text-red-600 focus:text-red-600"
+                                                                    onClick={() => handleDelete(session.id)}
+                                                                >
+                                                                    Eliminar
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="calendar">
+                    <CalendarView
+                        sessions={sessions}
+                        onNavigate={setCurrentDate}
+                        currentDate={currentDate}
+                        view={view}
+                        onViewChange={setView}
+                    />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

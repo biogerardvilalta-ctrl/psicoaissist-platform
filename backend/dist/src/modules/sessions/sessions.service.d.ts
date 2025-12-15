@@ -31,6 +31,18 @@ export declare class SessionsService {
         clientName: string;
         client: any;
     }[]>;
+    findByDateRange(userId: string, start: string, end: string): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }[]>;
     findOne(id: string, userId: string): Promise<{
         id: any;
         clientId: any;

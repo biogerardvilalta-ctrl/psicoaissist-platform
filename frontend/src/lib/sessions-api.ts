@@ -4,7 +4,8 @@ export enum SessionStatus {
     SCHEDULED = 'SCHEDULED',
     IN_PROGRESS = 'IN_PROGRESS',
     COMPLETED = 'COMPLETED',
-    CANCELLED = 'CANCELLED'
+    CANCELLED = 'CANCELLED',
+    NO_SHOW = 'NO_SHOW'
 }
 
 export enum SessionType {
@@ -60,5 +61,11 @@ export const SessionsAPI = {
 
     delete: async (id: string): Promise<void> => {
         return httpClient.delete<void>(`/api/v1/sessions/${id}`);
+    },
+
+    getByDateRange: async (start: Date, end: Date): Promise<Session[]> => {
+        const startStr = start.toISOString();
+        const endStr = end.toISOString();
+        return httpClient.get<Session[]>(`/api/v1/sessions/calendar?start=${startStr}&end=${endStr}`);
     },
 };

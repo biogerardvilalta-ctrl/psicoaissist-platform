@@ -87,6 +87,31 @@ export class SessionsService {
         return Promise.all(sessions.map(s => this.mapToDto(s, undefined)));
     }
 
+    async findByDateRange(userId: string, start: string, end: string) {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            throw new BadRequestException('Invalid date range');
+        }
+
+        const sessions = await this.prisma.session.findMany({
+            where: {
+                userId,
+                startTime: {
+                    gte: startDate,
+                    lte: endDate,
+                },
+            },
+            include: {
+                client: true,
+            },
+            orderBy: { startTime: 'asc' },
+        });
+
+        return Promise.all(sessions.map(s => this.mapToDto(s, undefined)));
+    }
+
     async findOne(id: string, userId: string) {
         const session = await this.prisma.session.findUnique({
             where: { id },

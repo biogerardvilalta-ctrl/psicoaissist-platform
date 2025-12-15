@@ -27,6 +27,9 @@ let SessionsController = class SessionsController {
     findAll(req) {
         return this.sessionsService.findAll(req.user.id);
     }
+    findByDateRange(req, start, end) {
+        return this.sessionsService.findByDateRange(req.user.id, start, end);
+    }
     findOne(req, id) {
         return this.sessionsService.findOne(id, req.user.id);
     }
@@ -53,6 +56,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], SessionsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('calendar'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Query)('start')),
+    __param(2, (0, common_1.Query)('end')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", void 0)
+], SessionsController.prototype, "findByDateRange", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Request)()),

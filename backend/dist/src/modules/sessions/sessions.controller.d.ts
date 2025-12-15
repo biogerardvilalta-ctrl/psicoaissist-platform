@@ -27,6 +27,18 @@ export declare class SessionsController {
         clientName: string;
         client: any;
     }[]>;
+    findByDateRange(req: any, start: string, end: string): Promise<{
+        id: any;
+        clientId: any;
+        userId: any;
+        startTime: any;
+        endTime: any;
+        status: any;
+        sessionType: any;
+        notes: string;
+        clientName: string;
+        client: any;
+    }[]>;
     findOne(req: any, id: string): Promise<{
         id: any;
         clientId: any;

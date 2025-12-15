@@ -34,11 +34,17 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const [client, setClient] = useState<Client | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [notes, setNotes] = useState('');
+    const [isSavingNotes, setIsSavingNotes] = useState(false);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+
     const fetchSession = async () => {
         try {
             setIsLoading(true);
             const data = await SessionsAPI.getById(params.id);
             setSession(data);
+            setNotes(data.notes || '');
 
             if (data.clientId) {
                 try {
@@ -46,7 +52,6 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                     setClient(clientData);
                 } catch (clientError) {
                     console.error('Error fetching client details:', clientError);
-                    // Don't block the UI if client load fails, we still have session info
                 }
             }
 
@@ -67,21 +72,74 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
         fetchSession();
     }, [params.id]);
 
+    // Timer effect for IN_PROGRESS sessions
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+
+        if (session?.status === SessionStatus.IN_PROGRESS) {
+            // For MVP, simple counter. In real app, diff from startTime or proper 'startedAt'
+            setElapsedTime(0); // Reset or Calculate real elapsed time here if needed
+
+            interval = setInterval(() => {
+                setElapsedTime(prev => prev + 1);
+            }, 1000);
+        }
+
+        return () => clearInterval(interval);
+    }, [session?.status]);
+
+    const formatTime = (seconds: number) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
+
     const handleStatusChange = async (newStatus: SessionStatus) => {
         if (!session) return;
         try {
             await SessionsAPI.update(session.id, { status: newStatus });
+
+            setSession(prev => prev ? { ...prev, status: newStatus } : null);
+
             toast({
                 title: 'Estado actualizado',
-                description: `La sesión ha sido marcada como ${newStatus === SessionStatus.COMPLETED ? 'completada' : 'cancelada'}.`,
+                description: `La sesión ha sido marcada como ${newStatus === SessionStatus.COMPLETED ? 'completada' : newStatus === SessionStatus.IN_PROGRESS ? 'iniciada' : 'cancelada'}.`,
             });
-            fetchSession();
+
+            if (newStatus === SessionStatus.COMPLETED) {
+                router.push('/dashboard/sessions');
+            }
+
         } catch (error) {
             toast({
                 title: 'Error',
                 description: 'No se pudo actualizar el estado',
                 variant: 'destructive',
             });
+        }
+    };
+
+    const handleSaveNotes = async () => {
+        if (!session) return;
+        setIsSavingNotes(true);
+        try {
+            await SessionsAPI.update(session.id, { notes });
+            const now = new Date();
+            setLastSavedAt(now);
+            toast({
+                title: 'Notas guardadas',
+                description: 'Las notas de la sesión se han guardado correctamente.',
+            });
+            setSession(prev => prev ? { ...prev, notes } : null);
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: 'No se pudieron guardar las notas',
+                variant: 'destructive',
+            });
+        } finally {
+            setIsSavingNotes(false);
         }
     };
 
@@ -93,7 +151,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             await SessionsAPI.delete(session.id);
             toast({
                 title: 'Sesión eliminada',
-                description: 'La sesión ha sido eliminada correctamente out.',
+                description: 'La sesión ha sido eliminada correctamente.',
             });
             router.push('/dashboard/sessions');
         } catch (error) {
@@ -137,6 +195,13 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {/* Timer Display if In Progress */}
+                    {session.status === SessionStatus.IN_PROGRESS && (
+                        <div className="mr-4 font-mono text-xl font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-md border border-blue-100">
+                            {formatTime(elapsedTime)}
+                        </div>
+                    )}
+
                     {session.status === SessionStatus.SCHEDULED && (
                         <>
                             <Button
@@ -147,13 +212,23 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                 <XCircle className="mr-2 h-4 w-4" /> Cancelar
                             </Button>
                             <Button
-                                className="bg-green-600 hover:bg-green-700"
-                                onClick={() => handleStatusChange(SessionStatus.COMPLETED)}
+                                className="bg-blue-600 hover:bg-blue-700"
+                                onClick={() => handleStatusChange(SessionStatus.IN_PROGRESS)}
                             >
-                                <CheckCircle2 className="mr-2 h-4 w-4" /> Completar
+                                <CheckCircle2 className="mr-2 h-4 w-4" /> Iniciar Sesión
                             </Button>
                         </>
                     )}
+
+                    {session.status === SessionStatus.IN_PROGRESS && (
+                        <Button
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={() => handleStatusChange(SessionStatus.COMPLETED)}
+                        >
+                            <CheckCircle2 className="mr-2 h-4 w-4" /> Finalizar Sesión
+                        </Button>
+                    )}
+
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
@@ -194,20 +269,50 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                 <label className="text-sm font-medium text-muted-foreground">Estado</label>
                                 <div className="mt-1">
                                     <Badge
-                                        variant={session.status === SessionStatus.COMPLETED ? 'default' : 'outline'}
-                                        className={session.status === SessionStatus.SCHEDULED ? 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200' : ''}
+                                        variant={session.status === SessionStatus.COMPLETED ? 'default' : session.status === SessionStatus.IN_PROGRESS ? 'secondary' : 'outline'}
+                                        className={session.status === SessionStatus.SCHEDULED ? 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200' : session.status === SessionStatus.IN_PROGRESS ? 'bg-blue-100 text-blue-800 animate-pulse' : ''}
                                     >
-                                        {session.status}
+                                        {session.status === SessionStatus.IN_PROGRESS ? 'EN CURSO' : session.status}
                                     </Badge>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium text-muted-foreground">Notas de la Sesión</label>
-                            <div className="mt-2 p-4 bg-slate-50 rounded-lg text-sm leading-relaxed border">
-                                {session.notes || "No hay notas registradas para esta sesión."}
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="text-sm font-medium text-muted-foreground">Notas de la Sesión</label>
+                                {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) && (
+                                    <div className="flex items-center gap-2">
+                                        {lastSavedAt && (
+                                            <span className="text-xs text-muted-foreground mr-2 flex items-center">
+                                                <CheckCircle2 className="inline h-3 w-3 mr-1 text-green-600" />
+                                                Guardado {format(lastSavedAt, 'p', { locale: es })}
+                                            </span>
+                                        )}
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={handleSaveNotes}
+                                            disabled={isSavingNotes}
+                                        >
+                                            {isSavingNotes ? 'Guardando...' : 'Guardar Notas'}
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
+
+                            {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) ? (
+                                <textarea
+                                    className="w-full min-h-[200px] p-4 bg-white rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+                                    placeholder="Escribe aquí las notas de la sesión..."
+                                    value={notes}
+                                    onChange={(e) => setNotes(e.target.value)}
+                                />
+                            ) : (
+                                <div className="p-4 bg-slate-50 rounded-lg text-sm leading-relaxed border whitespace-pre-wrap">
+                                    {session.notes || "No hay notas registradas para esta sesión."}
+                                </div>
+                            )}
                         </div>
                     </CardContent>
                 </Card>

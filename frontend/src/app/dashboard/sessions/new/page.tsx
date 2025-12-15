@@ -49,15 +49,31 @@ export default function NewSessionPage() {
     const [isLoadingClients, setIsLoadingClients] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Get clientId from URL query param if present
+    // Get clientId and date from URL query param
     const preselectedClientId = searchParams.get('clientId') || '';
+    const preselectedDateIso = searchParams.get('date');
+
+    let defaultDate = format(new Date(), 'yyyy-MM-dd');
+    let defaultTime = format(new Date(), 'HH:mm');
+
+    if (preselectedDateIso) {
+        try {
+            const dateObj = new Date(preselectedDateIso);
+            if (!isNaN(dateObj.getTime())) {
+                defaultDate = format(dateObj, 'yyyy-MM-dd');
+                defaultTime = format(dateObj, 'HH:mm');
+            }
+        } catch (e) {
+            console.error('Invalid date param', e);
+        }
+    }
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             clientId: preselectedClientId,
-            date: format(new Date(), 'yyyy-MM-dd'),
-            time: format(new Date(), 'HH:mm'),
+            date: defaultDate,
+            time: defaultTime,
             sessionType: SessionType.INDIVIDUAL,
             notes: '',
         },
