@@ -30,6 +30,8 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { AiAssistantPanel } from '@/components/dashboard/sessions/ai-assistant-panel';
+import { ConsentModal } from '@/components/dashboard/sessions/consent-modal';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function SessionDetailPage({ params }: { params: { id: string } }) {
     const router = useRouter();
@@ -99,10 +101,12 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
         return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
-    const handleStatusChange = async (newStatus: SessionStatus) => {
+    const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
+
+    const handleStatusChange = async (newStatus: SessionStatus, extraPayload: any = {}) => {
         if (!session) return;
         try {
-            const payload: any = { status: newStatus };
+            const payload: any = { status: newStatus, ...extraPayload };
             // Auto-save notes when completing session to ensure AI analysis has pending text
             if (newStatus === SessionStatus.COMPLETED) {
                 payload.notes = notes;
@@ -115,15 +119,40 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                 title: 'Estado actualizado',
                 description: `La sesión ha sido marcada como ${newStatus === SessionStatus.COMPLETED ? 'completada' : newStatus === SessionStatus.IN_PROGRESS ? 'iniciada' : 'cancelada'}.`,
             });
-
-            if (newStatus === SessionStatus.COMPLETED) {
-                // router.push('/dashboard/sessions');
-            }
-
         } catch (error) {
             toast({
                 title: 'Error',
                 description: 'No se pudo actualizar el estado',
+                variant: 'destructive',
+            });
+        }
+    };
+
+    const handleStartSessionClick = () => {
+        setIsConsentModalOpen(true);
+    };
+
+    const handleConsentConfirmed = async () => {
+        setIsConsentModalOpen(false);
+        await handleStatusChange(SessionStatus.IN_PROGRESS, {
+            consentSigned: true,
+            consentVersion: '1.0'
+        });
+    };
+
+    const handleMinorChange = async (checked: boolean) => {
+        if (!session) return;
+        try {
+            const updatedSession = await SessionsAPI.update(session.id, { isMinor: checked });
+            setSession(updatedSession);
+            toast({
+                title: 'Configuración actualizada',
+                description: `Modo menors d'edat ${checked ? 'activado' : 'desactivado'}.`,
+            });
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: 'No se pudo actualizar la configuración',
                 variant: 'destructive',
             });
         }
@@ -184,7 +213,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     if (!session) return null;
 
     return (
-        <div className="p-6 max-w-4xl mx-auto space-y-6">
+        <div className="p-6 max-w-[1600px] mx-auto space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -222,7 +251,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                             </Button>
                             <Button
                                 className="bg-blue-600 hover:bg-blue-700"
-                                onClick={() => handleStatusChange(SessionStatus.IN_PROGRESS)}
+                                onClick={handleStartSessionClick}
                             >
                                 <CheckCircle2 className="mr-2 h-4 w-4" /> Iniciar Sesión
                             </Button>
@@ -259,150 +288,10 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Main Info */}
-                <Card className="md:col-span-2">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <FileText className="h-5 w-5 text-blue-600" />
-                            Información de la Sesión
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-sm font-medium text-muted-foreground">Tipo de Sesión</label>
-                                <p className="text-lg font-medium">{session.sessionType}</p>
-                            </div>
-                            <div>
-                                <label className="text-sm font-medium text-muted-foreground">Estado</label>
-                                <div className="mt-1">
-                                    <Badge
-                                        variant={session.status === SessionStatus.COMPLETED ? 'default' : session.status === SessionStatus.IN_PROGRESS ? 'secondary' : 'outline'}
-                                        className={session.status === SessionStatus.SCHEDULED ? 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200' : session.status === SessionStatus.IN_PROGRESS ? 'bg-blue-100 text-blue-800 animate-pulse' : ''}
-                                    >
-                                        {session.status === SessionStatus.IN_PROGRESS ? 'EN CURSO' : session.status}
-                                    </Badge>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className="flex justify-between items-center mb-2">
-                                <label className="text-sm font-medium text-muted-foreground">Notas de la Sesión</label>
-                                {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) && (
-                                    <div className="flex items-center gap-2">
-                                        {lastSavedAt && (
-                                            <span className="text-xs text-muted-foreground mr-2 flex items-center">
-                                                <CheckCircle2 className="inline h-3 w-3 mr-1 text-green-600" />
-                                                Guardado {format(lastSavedAt, 'p', { locale: es })}
-                                            </span>
-                                        )}
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={handleSaveNotes}
-                                            disabled={isSavingNotes}
-                                        >
-                                            {isSavingNotes ? 'Guardando...' : 'Guardar Notas'}
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
-
-                            {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) ? (
-                                <textarea
-                                    className="w-full min-h-[200px] p-4 bg-white rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
-                                    placeholder="Escribe aquí las notas de la sesión..."
-                                    value={notes}
-                                    onChange={(e) => setNotes(e.target.value)}
-                                />
-                            ) : (
-                                <div className="p-4 bg-slate-50 rounded-lg text-sm leading-relaxed border whitespace-pre-wrap">
-                                    {session.notes || "No hay notas registradas para esta sesión."}
-                                </div>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* AI Analysis Section - Only if Completed */}
-                {session.status === SessionStatus.COMPLETED && session.aiMetadata && (
-                    <Card className="md:col-span-2 border-purple-100 bg-purple-50/20">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-purple-700">
-                                <Brain className="h-5 w-5" />
-                                Análisis de IA
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div>
-                                <h4 className="text-sm font-semibold text-blue-900 mb-1">Resumen</h4>
-                                <p className="text-sm text-slate-600">{session.aiMetadata.summary}</p>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <h4 className="text-sm font-semibold text-blue-900 mb-1">Sentimiento Detectado</h4>
-                                    <Badge variant={session.aiMetadata.sentiment === 'PREOCUPANTE' ? 'destructive' : 'secondary'}>
-                                        {session.aiMetadata.sentiment}
-                                    </Badge>
-                                </div>
-                                {session.aiMetadata.riskLevel && (
-                                    <div>
-                                        <h4 className="text-sm font-semibold text-blue-900 mb-1">Nivel de Riesgo</h4>
-                                        <Badge variant={session.aiMetadata.riskLevel === 'ALTO' ? 'destructive' : session.aiMetadata.riskLevel === 'MODERADO' ? 'default' : 'outline'}>
-                                            {session.aiMetadata.riskLevel}
-                                        </Badge>
-                                    </div>
-                                )}
-                            </div>
-
-                            {session.aiMetadata.detectedIndicators && session.aiMetadata.detectedIndicators.length > 0 && (
-                                <div className="mb-4">
-                                    <h4 className="text-sm font-semibold text-blue-900 mb-1">Indicadores Detectados durante la sesión</h4>
-                                    <div className="flex flex-wrap gap-2">
-                                        {session.aiMetadata.detectedIndicators.map((ind, i) => (
-                                            <Badge key={i} variant="outline" className={`
-                                                ${ind.type === 'risk' ? 'bg-red-50 text-red-700' : ''}
-                                                ${ind.type === 'mood' ? 'bg-amber-50 text-amber-700' : ''}
-                                                ${ind.type === 'topic' ? 'bg-indigo-50 text-indigo-700' : ''}
-                                            `}>
-                                                {ind.label}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {session.aiMetadata.clinicalImpressions && session.aiMetadata.clinicalImpressions.length > 0 && (
-                                <div>
-                                    <h4 className="text-sm font-semibold text-blue-900 mb-1">Impresiones Clínicas (IA)</h4>
-                                    <div className="flex flex-wrap gap-2 mb-2">
-                                        {/* Simulating mapping from impressions to badges for visual consistency */}
-                                        {session.aiMetadata.clinicalImpressions.map((impression, index) => (
-                                            <Badge key={index} variant="outline" className="bg-slate-50">
-                                                {impression}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {session.aiSuggestions && (
-                                <div>
-                                    <h4 className="text-sm font-semibold text-blue-900 mb-1">Sugerencias de Seguimiento</h4>
-                                    <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1">
-                                        {session.aiSuggestions.map((s, i) => <li key={i}>{s}</li>)}
-                                    </ul>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                )}
-
-                {/* Patient Sidebar Card was here */}
-                <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Main Info - Left Column */}
+                <div className="lg:col-span-6 space-y-6">
+                    {/* Client Info - Moved from Right Column */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -454,6 +343,238 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         </CardContent>
                     </Card>
 
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <FileText className="h-5 w-5 text-blue-600" />
+                                Información de la Sesión
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-sm font-medium text-muted-foreground">Tipo de Sesión</label>
+                                    <p className="text-lg font-medium">{session.sessionType}</p>
+                                </div>
+                                <div>
+                                    <label className="text-sm font-medium text-muted-foreground">Estado</label>
+                                    <div className="mt-1">
+                                        <Badge
+                                            variant={session.status === SessionStatus.COMPLETED ? 'default' : session.status === SessionStatus.IN_PROGRESS ? 'secondary' : 'outline'}
+                                            className={session.status === SessionStatus.SCHEDULED ? 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200' : session.status === SessionStatus.IN_PROGRESS ? 'bg-blue-100 text-blue-800 animate-pulse' : ''}
+                                        >
+                                            {session.status === SessionStatus.IN_PROGRESS ? 'EN CURSO' : session.status}
+                                        </Badge>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center space-x-2 pt-2">
+                                <Checkbox
+                                    id="isMinor"
+                                    checked={session.isMinor || false}
+                                    onCheckedChange={(checked) => handleMinorChange(checked as boolean)}
+                                    disabled={session.status === SessionStatus.COMPLETED || session.status === SessionStatus.CANCELLED}
+                                />
+                                <label
+                                    htmlFor="isMinor"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    Pacient menor d'edat
+                                </label>
+                            </div>
+
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="text-sm font-medium text-muted-foreground">Notas de la Sesión</label>
+                                    {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) && (
+                                        <div className="flex items-center gap-2">
+                                            {lastSavedAt && (
+                                                <span className="text-xs text-muted-foreground mr-2 flex items-center">
+                                                    <CheckCircle2 className="inline h-3 w-3 mr-1 text-green-600" />
+                                                    Guardado {format(lastSavedAt, 'p', { locale: es })}
+                                                </span>
+                                            )}
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={handleSaveNotes}
+                                                disabled={isSavingNotes}
+                                            >
+                                                {isSavingNotes ? 'Guardando...' : 'Guardar Notas'}
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) ? (
+                                    <textarea
+                                        className="w-full min-h-[300px] p-4 bg-white rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+                                        placeholder="Escribe aquí las notas de la sesión..."
+                                        value={notes}
+                                        onChange={(e) => setNotes(e.target.value)}
+                                    />
+                                ) : (
+                                    <div className="p-4 bg-slate-50 rounded-lg text-sm leading-relaxed border whitespace-pre-wrap min-h-[150px]">
+                                        {session.notes || "No hay notas registradas para esta sesión."}
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* AI Analysis Section - Only if Completed */}
+                    {
+                        session.status === SessionStatus.COMPLETED && session.aiMetadata && (
+                            <Card className="border-purple-100 bg-purple-50/20">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2 text-purple-700">
+                                        <Brain className="h-5 w-5" />
+                                        Anàlisi de suport (IA)
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-6">
+                                    {/* 1. Resum */}
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-blue-900 mb-1">Resum</h4>
+                                        <p className="text-sm text-slate-600 leading-relaxed mb-2">{session.aiMetadata.summary}</p>
+                                    </div>
+
+                                    {/* 2. Elements Emocionals */}
+                                    {session.aiMetadata.emotionalElements?.length > 0 && (
+                                        <div>
+                                            <h4 className="text-sm font-semibold text-blue-900 mb-2">Elements emocionals expressats</h4>
+                                            <p className="text-xs text-slate-500 mb-2">Durant el relat apareixen expressions associades a:</p>
+                                            <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1 mb-2">
+                                                {session.aiMetadata.emotionalElements.map((item, i) => (
+                                                    <li key={i}>{item}</li>
+                                                ))}
+                                            </ul>
+                                            <p className="text-[10px] text-slate-400 italic">
+                                                Aquests elements es presenten de manera descriptiva i no constitueixen una valoració clínica.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* 3. Indicadors Narratius */}
+                                    {session.aiMetadata.narrativeIndicators?.length > 0 && (
+                                        <div>
+                                            <h4 className="text-sm font-semibold text-blue-900 mb-2">Indicadors narratius observats</h4>
+                                            <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1 mb-2">
+                                                {session.aiMetadata.narrativeIndicators.map((item, i) => (
+                                                    <li key={i}>{item}</li>
+                                                ))}
+                                            </ul>
+                                            <p className="text-[10px] text-slate-400 italic">
+                                                Aquests indicadors poden servir com a punts d’exploració segons el criteri professional.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* 4. Observacions Orientatives */}
+                                    {session.aiMetadata.orientativeObservations?.length > 0 && (
+                                        <div>
+                                            <h4 className="text-sm font-semibold text-blue-900 mb-2">Observacions orientatives (IA)</h4>
+                                            <p className="text-xs text-slate-500 mb-2">Com a hipòtesis obertes i no concloents, alguns professionals podrien considerar rellevant explorar:</p>
+                                            <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
+                                                {session.aiMetadata.orientativeObservations.map((item, i) => (
+                                                    <li key={i}>{item}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* 5. Suport Seguiment */}
+                                    {session.aiMetadata.clinicalFollowUpSupport && (
+                                        <div className="bg-white p-4 rounded-lg border border-purple-100 shadow-sm space-y-4">
+                                            <h4 className="text-sm font-semibold text-purple-900">Suport per al seguiment clínic</h4>
+
+                                            {session.aiMetadata.clinicalFollowUpSupport.suggestions?.length > 0 && (
+                                                <div>
+                                                    <p className="text-xs font-semibold text-slate-600 mb-1">Suggeriment orientatiu:</p>
+                                                    <ul className="list-disc pl-5 text-sm text-slate-600">
+                                                        {session.aiMetadata.clinicalFollowUpSupport.suggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {session.aiMetadata.clinicalFollowUpSupport.possibleLines?.length > 0 && (
+                                                <div>
+                                                    <p className="text-xs font-semibold text-slate-600 mb-1">Línies de treball possibles:</p>
+                                                    <ul className="list-disc pl-5 text-sm text-slate-600">
+                                                        {session.aiMetadata.clinicalFollowUpSupport.possibleLines.map((s, i) => <li key={i}>{s}</li>)}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {session.aiMetadata.clinicalFollowUpSupport.modelReferences?.length > 0 && (
+                                                <div>
+                                                    <p className="text-xs font-semibold text-slate-600 mb-1">Referència a models terapèutics (no prescriptiu):</p>
+                                                    <ul className="list-disc pl-5 text-sm text-slate-600">
+                                                        {session.aiMetadata.clinicalFollowUpSupport.modelReferences.map((s, i) => <li key={i}>{s}</li>)}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* 6. Test Suggestions (Diagnostic Final) */}
+                                    {session.aiMetadata.diagnostic_final && (
+                                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="h-6 w-1 bg-blue-500 rounded-full"></div>
+                                                <h4 className="text-sm font-bold text-slate-800">Suggeriment de tests (IA)</h4>
+                                            </div>
+
+                                            <p className="text-xs text-slate-600 italic mb-3">
+                                                {session.aiMetadata.diagnostic_final.nota_general}
+                                            </p>
+
+                                            {session.aiMetadata.diagnostic_final.tests_sugerits_final?.suggeriments.map((sug, idx) => (
+                                                <div key={idx} className="mb-4">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <Badge variant="secondary" className="text-[10px] bg-slate-100 text-slate-600 border-slate-200">
+                                                            Tema: {sug.tema}
+                                                        </Badge>
+                                                        <p className="text-xs font-bold text-blue-900">{sug.categoria}</p>
+                                                    </div>
+
+                                                    <div className="space-y-2 pl-2 border-l-2 border-blue-50">
+                                                        {sug.tests.map((test, tIdx) => (
+                                                            <div key={tIdx} className="bg-white p-2 rounded border border-slate-100 shadow-sm">
+                                                                <div className="flex justify-between items-start">
+                                                                    <span className="text-xs font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded mr-2">{test.codi}</span>
+                                                                    <span className="text-xs font-semibold text-slate-800 flex-1">{test.nom}</span>
+                                                                </div>
+                                                                <p className="text-[10px] text-slate-500 mt-1 italic">{test.objectiu_general}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+
+                                            <div className="mt-3 pt-3 border-t border-slate-200">
+                                                <div className="flex flex-col gap-1 text-[10px] text-slate-400">
+                                                    <span>Font: {session.aiMetadata.diagnostic_final.tests_sugerits_final?.regles?.font}</span>
+                                                    <span>Criteri de selecció: {session.aiMetadata.diagnostic_final.tests_sugerits_final?.regles?.criteri_seleccio}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="pt-4 border-t border-purple-200">
+                                        <p className="text-[10px] text-center text-slate-500 font-medium whitespace-pre-line">
+                                            {session.aiMetadata.disclaimer || "Aquesta anàlisi no constitueix una valoració clínica, diagnòstica ni una avaluació de risc, i es basa exclusivament en el contingut verbalitzat durant la sessió."}
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )
+                    }
+                </div>
+
+                {/* Sidebar - Right Column - AI Panel & Tools */}
+                <div className="lg:col-span-6 flex flex-col h-[calc(100vh-140px)] sticky top-6 gap-4">
                     {/* Audio Recorder - Only if In Progress */}
                     {session.status === SessionStatus.IN_PROGRESS && (
                         <AudioRecorder
@@ -479,14 +600,23 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         />
                     )}
 
-                    {/* AI Assistant Panel */}
-                    <AiAssistantPanel
-                        sessionId={session.id}
-                        isActive={session.status === SessionStatus.IN_PROGRESS}
-                        liveContext={notes} // Pass the accumulated notes (which include audio transcriptions)
-                    />
+                    {/* AI Assistant Panel - Takes remaining space */}
+                    <div className="flex-1 min-h-0">
+                        <AiAssistantPanel
+                            sessionId={session.id}
+                            isActive={session.status === SessionStatus.IN_PROGRESS}
+                            liveContext={notes} // Pass the accumulated notes (which include audio transcriptions)
+                        />
+                    </div>
                 </div>
             </div>
+            {/* Consent Modal */}
+            <ConsentModal
+                isOpen={isConsentModalOpen}
+                onClose={() => setIsConsentModalOpen(false)}
+                onConfirm={handleConsentConfirmed}
+                clientName={client ? `${client.firstName} ${client.lastName}` : session.clientName || 'Paciente'}
+            />
         </div>
     );
 }

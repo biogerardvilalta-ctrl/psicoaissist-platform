@@ -151,6 +151,7 @@ model Session {
   duration        Int?          // in minutes
   sessionType     SessionType   @map("session_type")
   status          SessionStatus
+  isMinor         Boolean       @default(false) @map("is_minor")
   
   // Encrypted content
   encryptedTranscription Bytes? @map("encrypted_transcription")
@@ -165,6 +166,10 @@ model Session {
   encryptionKeyId String?       @map("encryption_key_id")
   audioQuality    AudioQuality? @map("audio_quality")
   recordingConsent Boolean      @default(false) @map("recording_consent")
+  consentSigned    Boolean      @default(false) @map("consent_signed")
+  consentTimestamp DateTime?    @map("consent_timestamp")
+  consentVersion   String?      @map("consent_version")
+  startedAt        DateTime?    @map("started_at")
   
   // Timestamps
   createdAt       DateTime      @default(now()) @map("created_at")
@@ -264,6 +269,9 @@ enum UserRole {
 }
 
 enum UserStatus {
+  PENDING_REVIEW
+  VALIDATED
+  REJECTED
   ACTIVE
   INACTIVE
   SUSPENDED

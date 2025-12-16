@@ -6,17 +6,75 @@ export declare class AiController {
     constructor(aiService: AiService, transcriptionService: TranscriptionService);
     analyzeSession(sessionId: string, notes: string): Promise<{
         summary: string;
-        sentiment: string;
-        suggestions: string[];
-        clinicalImpressions?: string[];
-        detectedIndicators?: {
-            type: string;
-            label: string;
-        }[];
-        riskLevel?: string;
+        emotionalElements: string[];
+        narrativeIndicators: string[];
+        orientativeObservations: string[];
+        clinicalFollowUpSupport: {
+            suggestions: string[];
+            possibleLines: string[];
+            modelReferences: string[];
+        };
+        discurs_pacient: {
+            resum_descriptiu: string;
+            fragments_relevants: string[];
+        };
+        temes_emergents_sessio: {
+            regles_seleccio: any;
+            temes_seleccionats: any[];
+            temes_descartats: any[];
+        };
+        diagnostic_final: {
+            nota_general: string;
+            tests_sugerits_final: {
+                regles: any;
+                suggeriments: Array<{
+                    tema: string;
+                    categoria: string;
+                    tests: Array<{
+                        codi: string;
+                        nom: string;
+                        objectiu_general: string;
+                        why_this_test_was_suggested: {
+                            based_on: string[];
+                            tema_associat: string;
+                            descripcio_orientativa: string;
+                            font: string;
+                            decisio_automatica: boolean;
+                        };
+                    }>;
+                }>;
+            };
+        };
+        disclaimer: string;
+        audit_session: {
+            ai_role: string;
+            clinical_decision_making: boolean;
+            real_time_recommendations: boolean;
+            tests_suggested_only_at_session_end: boolean;
+            max_topics_applied: number;
+            max_tests_applied: number;
+            decision_logic: {
+                based_on: string[];
+                excluded: string[];
+            };
+            professional_override_allowed: boolean;
+            audit_trace_available: boolean;
+            compliance: string[];
+            timestamp: string;
+        };
+        clinical_report_text: string;
+        audit_minors?: {
+            minor_context: boolean;
+            language_adapted: boolean;
+            developmental_focus: boolean;
+            non_diagnostic_language: boolean;
+            tests_age_appropriate: boolean;
+            guardian_decision_required: boolean;
+        };
     }>;
     getSuggestions(context: string): Promise<{
-        suggestions: string[];
+        questions: string[];
+        considerations: string[];
         indicators: {
             type: string;
             label: string;

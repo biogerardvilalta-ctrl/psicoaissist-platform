@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionResponseDto = exports.UpdateSessionDto = exports.CreateSessionDto = exports.SessionType = exports.SessionStatus = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 var SessionStatus;
 (function (SessionStatus) {
     SessionStatus["SCHEDULED"] = "SCHEDULED";
@@ -57,6 +58,11 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateSessionDto.prototype, "notes", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateSessionDto.prototype, "isMinor", void 0);
 class UpdateSessionDto {
 }
 exports.UpdateSessionDto = UpdateSessionDto;
@@ -76,10 +82,29 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateSessionDto.prototype, "status", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdateSessionDto.prototype, "consentSigned", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateSessionDto.prototype, "consentVersion", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateSessionDto.prototype, "notes", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdateSessionDto.prototype, "isMinor", void 0);
 class SessionResponseDto {
 }
 exports.SessionResponseDto = SessionResponseDto;

@@ -16,6 +16,7 @@ export declare class SessionsController {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }>;
     findAll(req: any): Promise<{
         id: any;
@@ -30,6 +31,7 @@ export declare class SessionsController {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }[]>;
     findByDateRange(req: any, start: string, end: string): Promise<{
         id: any;
@@ -44,6 +46,7 @@ export declare class SessionsController {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }[]>;
     findOne(req: any, id: string): Promise<{
         id: any;
@@ -58,6 +61,7 @@ export declare class SessionsController {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }>;
     update(req: any, id: string, updateSessionDto: UpdateSessionDto): Promise<{
         id: any;
@@ -72,6 +76,7 @@ export declare class SessionsController {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }>;
     remove(req: any, id: string): Promise<{
         id: string;
@@ -80,6 +85,7 @@ export declare class SessionsController {
         duration: number | null;
         sessionType: import(".prisma/client").$Enums.SessionType;
         status: import(".prisma/client").$Enums.SessionStatus;
+        isMinor: boolean;
         encryptedTranscription: Buffer | null;
         encryptedNotes: Buffer | null;
         encryptedAudioPath: string | null;
@@ -88,6 +94,10 @@ export declare class SessionsController {
         encryptionKeyId: string | null;
         audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
         recordingConsent: boolean;
+        consentSigned: boolean;
+        consentTimestamp: Date | null;
+        consentVersion: string | null;
+        startedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
         clientId: string;

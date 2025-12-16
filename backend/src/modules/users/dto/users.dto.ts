@@ -24,6 +24,14 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
+
+  @ApiProperty({ example: '12345678' })
+  @IsString()
+  professionalNumber: string;
+
+  @ApiProperty({ example: 'España' })
+  @IsString()
+  country: string;
 }
 
 export class UpdateUserDto {

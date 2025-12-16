@@ -1,7 +1,9 @@
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { ClientsService } from '../clients/clients.service';
 export declare class DashboardService {
     private readonly prisma;
-    constructor(prisma: PrismaService);
+    private readonly clientsService;
+    constructor(prisma: PrismaService, clientsService: ClientsService);
     getStats(userId: string): Promise<{
         activeClients: number;
         totalSessions: number;
@@ -19,4 +21,5 @@ export declare class DashboardService {
             isPositive: boolean;
         };
     }>;
+    private calculateTrend;
 }

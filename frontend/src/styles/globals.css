@@ -70,7 +70,55 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@media print {
+
+  /* Hide layout elements */
+  header,
+  aside,
+  nav,
+  footer,
+  .border-b,
+  button {
+    display: none !important;
+  }
+
+  /* Reset container widths */
+  .container,
+  .max-w-4xl,
+  .max-w-7xl {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Ensure body is white */
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  /* Force background graphics for logos/colors */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Allow printing of specific content areas */
+  main {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide specific dashboard elements that might persist */
+  .sticky {
+    position: static !important;
   }
 }

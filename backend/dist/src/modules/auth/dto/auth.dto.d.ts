@@ -9,6 +9,8 @@ export declare class RegisterDto {
     firstName: string;
     lastName: string;
     role?: UserRole;
+    professionalNumber: string;
+    country: string;
 }
 export declare class TokensDto {
     accessToken: string;

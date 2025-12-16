@@ -61,6 +61,7 @@ export class SessionsService {
                 status: SessionStatus.SCHEDULED,
                 encryptedNotes: encryptedNotesBuffer,
                 encryptionKeyId: keyId,
+                isMinor: createSessionDto.isMinor || false,
             },
             include: {
                 client: true,
@@ -176,7 +177,13 @@ export class SessionsService {
                 endTime: updateSessionDto.endTime ? new Date(updateSessionDto.endTime) : undefined,
                 status: updateSessionDto.status,
                 encryptedNotes: encryptedNotesBuffer,
-                encryptionKeyId: keyId
+                encryptionKeyId: keyId,
+                // GDPR Consent updates
+                consentSigned: updateSessionDto.consentSigned,
+                consentVersion: updateSessionDto.consentVersion,
+                consentTimestamp: updateSessionDto.consentSigned ? new Date() : undefined,
+                startedAt: updateSessionDto.status === SessionStatus.IN_PROGRESS && session.status !== SessionStatus.IN_PROGRESS ? new Date() : undefined,
+                isMinor: updateSessionDto.isMinor,
             },
             include: { client: true }
         });
@@ -194,18 +201,25 @@ export class SessionsService {
             try {
                 // Run in background (fire and forget pattern for response speed, but awaited here for simplicity in MVP)
                 // In production, might want to use a job queue.
-                const analysis = await this.aiService.generateSessionAnalysis(id, notesToReturn);
+                const isMinor = updatedSession.isMinor;
+                const analysis = await this.aiService.generateSessionAnalysis(id, notesToReturn, isMinor);
                 const finalSession = await this.prisma.session.update({
                     where: { id },
                     data: {
                         aiMetadata: {
                             summary: analysis.summary,
-                            sentiment: analysis.sentiment,
-                            riskLevel: analysis.riskLevel,
-                            clinicalImpressions: analysis.clinicalImpressions,
-                            detectedIndicators: analysis.detectedIndicators
+                            emotionalElements: analysis.emotionalElements,
+                            narrativeIndicators: analysis.narrativeIndicators,
+                            orientativeObservations: analysis.orientativeObservations,
+                            clinicalFollowUpSupport: analysis.clinicalFollowUpSupport,
+                            discurs_pacient: analysis.discurs_pacient,
+                            temes_emergents_sessio: analysis.temes_emergents_sessio,
+                            diagnostic_final: analysis.diagnostic_final,
+                            disclaimer: analysis.disclaimer,
+                            audit_session: analysis.audit_session,
+                            clinical_report_text: analysis.clinical_report_text
                         },
-                        aiSuggestions: analysis.suggestions as any
+                        aiSuggestions: analysis.clinicalFollowUpSupport.suggestions as any
                     },
                     include: { client: true }
                 });
@@ -279,7 +293,8 @@ export class SessionsService {
             clientName: clientName,
             client: session.client,
             aiMetadata: session.aiMetadata,
-            aiSuggestions: session.aiSuggestions
+            aiSuggestions: session.aiSuggestions,
+            isMinor: session.isMinor
         };
     }
 }

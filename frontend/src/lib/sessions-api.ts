@@ -27,12 +27,49 @@ export interface Session {
     clientName?: string;
     aiMetadata?: {
         summary: string;
-        sentiment: string;
-        riskLevel?: string;
-        clinicalImpressions?: string[];
-        detectedIndicators?: { type: string; label: string }[];
+        emotionalElements: string[];
+        narrativeIndicators: string[];
+        orientativeObservations: string[];
+        clinicalFollowUpSupport: {
+            suggestions: string[];
+            possibleLines: string[];
+            modelReferences: string[];
+        };
+        discurs_pacient?: {
+            resum_descriptiu: string;
+            fragments_relevants: string[];
+        };
+        temes_emergents_sessio?: {
+            regles_seleccio: any;
+            temes_seleccionats: any[];
+            temes_descartats: any[];
+        };
+        diagnostic_final?: {
+            nota_general: string;
+            tests_sugerits_final: {
+                regles: any;
+                suggeriments: Array<{
+                    tema: string;
+                    categoria: string;
+                    tests: Array<{
+                        codi: string;
+                        nom: string;
+                        objectiu_general: string;
+                        why_this_test_was_suggested?: {
+                            based_on: string[];
+                            tema_associat: string;
+                            descripcio_orientativa: string;
+                            font: string;
+                            decisio_automatica: boolean;
+                        };
+                    }>;
+                }>;
+            };
+        };
+        disclaimer?: string;
     };
     aiSuggestions?: string[];
+    isMinor?: boolean;
 }
 
 export interface CreateSessionData {
@@ -41,6 +78,7 @@ export interface CreateSessionData {
     endTime?: string;
     sessionType: SessionType;
     notes?: string;
+    isMinor?: boolean;
 }
 
 export interface UpdateSessionData {
@@ -48,6 +86,9 @@ export interface UpdateSessionData {
     endTime?: string;
     status?: SessionStatus;
     notes?: string;
+    consentSigned?: boolean;
+    consentVersion?: string;
+    isMinor?: boolean;
 }
 
 export const SessionsAPI = {

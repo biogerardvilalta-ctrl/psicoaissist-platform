@@ -22,6 +22,7 @@ export declare class SessionsService {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }>;
     findAll(userId: string): Promise<{
         id: any;
@@ -36,6 +37,7 @@ export declare class SessionsService {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }[]>;
     findByDateRange(userId: string, start: string, end: string): Promise<{
         id: any;
@@ -50,6 +52,7 @@ export declare class SessionsService {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }[]>;
     findOne(id: string, userId: string): Promise<{
         id: any;
@@ -64,6 +67,7 @@ export declare class SessionsService {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }>;
     update(id: string, userId: string, updateSessionDto: UpdateSessionDto): Promise<{
         id: any;
@@ -78,6 +82,7 @@ export declare class SessionsService {
         client: any;
         aiMetadata: any;
         aiSuggestions: any;
+        isMinor: any;
     }>;
     remove(id: string, userId: string): Promise<{
         id: string;
@@ -86,6 +91,7 @@ export declare class SessionsService {
         duration: number | null;
         sessionType: import(".prisma/client").$Enums.SessionType;
         status: import(".prisma/client").$Enums.SessionStatus;
+        isMinor: boolean;
         encryptedTranscription: Buffer | null;
         encryptedNotes: Buffer | null;
         encryptedAudioPath: string | null;
@@ -94,6 +100,10 @@ export declare class SessionsService {
         encryptionKeyId: string | null;
         audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
         recordingConsent: boolean;
+        consentSigned: boolean;
+        consentTimestamp: Date | null;
+        consentVersion: string | null;
+        startedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
         clientId: string;

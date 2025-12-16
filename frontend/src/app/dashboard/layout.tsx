@@ -36,7 +36,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         { name: 'Pacientes', href: '/dashboard/clients', icon: Users },
         { name: 'Sesiones', href: '/dashboard/sessions', icon: Calendar },
-        { name: 'Informes', href: '/dashboard/reports', icon: FileText }, // Future
+        { name: 'Legal', href: '/dashboard/compliance', icon: Shield },
+        // { name: 'Informes', href: '/dashboard/reports', icon: FileText }, // Future
     ];
 
     return (

@@ -45,7 +45,10 @@ export default function SessionsPage() {
     const { toast } = useToast();
     const [sessions, setSessions] = useState<Session[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [dateFilter, setDateFilter] = useState('');
+    const [patientFilter, setPatientFilter] = useState('');
+    const [typeFilter, setTypeFilter] = useState('ALL');
+    const [statusFilter, setStatusFilter] = useState('ALL');
 
     const fetchSessions = async () => {
         try {
@@ -107,19 +110,31 @@ export default function SessionsPage() {
         }
     };
 
-    // Filter sessions based on search query (client name or notes)
+    // Filter sessions based on all filters
     const filteredSessions = sessions.filter(session => {
-        const searchLower = searchQuery.toLowerCase();
-        // Check if we have client data populated
-        // The API returns client object inside session usually, but we need to check interface mapping
-        // Assuming session.client exists based on typical ORM population, but let's check interface later.
-        // For now, safe check:
-        const clientName = session.clientName ? session.clientName.toLowerCase() : '';
+        // Date Filter
+        if (dateFilter) {
+            const sessionDate = format(new Date(session.startTime), 'yyyy-MM-dd');
+            if (sessionDate !== dateFilter) return false;
+        }
 
-        return (
-            clientName.includes(searchLower) ||
-            session.sessionType.toLowerCase().includes(searchLower)
-        );
+        // Patient Filter
+        if (patientFilter) {
+            const clientName = session.clientName ? session.clientName.toLowerCase() : '';
+            if (!clientName.includes(patientFilter.toLowerCase())) return false;
+        }
+
+        // Type Filter
+        if (typeFilter !== 'ALL') {
+            if (session.sessionType !== typeFilter) return false;
+        }
+
+        // Status Filter
+        if (statusFilter !== 'ALL') {
+            if (session.status !== statusFilter) return false;
+        }
+
+        return true;
     });
 
     const getStatusBadgeVariant = (status: string) => {
@@ -191,15 +206,55 @@ export default function SessionsPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center py-4">
-                                <div className="relative w-full max-w-sm">
-                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 py-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Fecha</label>
                                     <Input
-                                        placeholder="Buscar por cliente o tipo..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="pl-8"
+                                        type="date"
+                                        value={dateFilter}
+                                        onChange={(e) => setDateFilter(e.target.value)}
+                                        className="w-full"
                                     />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Paciente</label>
+                                    <Input
+                                        placeholder="Buscar paciente..."
+                                        value={patientFilter}
+                                        onChange={(e) => setPatientFilter(e.target.value)}
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Tipo</label>
+                                    <select
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        value={typeFilter}
+                                        onChange={(e) => setTypeFilter(e.target.value)}
+                                    >
+                                        <option value="ALL">Todos</option>
+                                        <option value="INDIVIDUAL">Individual</option>
+                                        <option value="GROUP">Grupal</option>
+                                        <option value="FAMILY">Familiar</option>
+                                        <option value="COUPLE">Pareja</option>
+                                        <option value="CONSULTATION">Consulta</option>
+                                        <option value="EMERGENCY">Urgencia</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Estado</label>
+                                    <select
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        value={statusFilter}
+                                        onChange={(e) => setStatusFilter(e.target.value)}
+                                    >
+                                        <option value="ALL">Todos</option>
+                                        <option value="SCHEDULED">Programada</option>
+                                        <option value="COMPLETED">Completada</option>
+                                        <option value="CANCELLED">Cancelada</option>
+                                        <option value="IN_PROGRESS">En Curso</option>
+                                        <option value="NO_SHOW">No asistió</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -229,7 +284,17 @@ export default function SessionsPage() {
                                             </TableRow>
                                         ) : (
                                             filteredSessions.map((session) => (
-                                                <TableRow key={session.id}>
+                                                <TableRow
+                                                    key={session.id}
+                                                    className={`
+                                                        ${session.status === 'SCHEDULED' ? 'bg-indigo-50 hover:bg-indigo-100 cursor-pointer border-l-4 border-l-indigo-500' : ''}
+                                                        transition-colors
+                                                    `}
+                                                    onClick={() => {
+                                                        const target = `/dashboard/sessions/${session.id}`;
+                                                        router.push(target);
+                                                    }}
+                                                >
                                                     <TableCell>
                                                         <div className="flex flex-col">
                                                             <span className="font-medium flex items-center gap-2">
@@ -259,7 +324,7 @@ export default function SessionsPage() {
                                                             {getStatusLabel(session.status)}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell className="text-right">
+                                                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                                                         <DropdownMenu>
                                                             <DropdownMenuTrigger asChild>
                                                                 <Button variant="ghost" className="h-8 w-8 p-0">

@@ -1,5 +1,6 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, IsDateString, IsUUID, IsNumber } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, IsDateString, IsUUID, IsNumber, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export enum SessionStatus {
     SCHEDULED = 'SCHEDULED',
@@ -36,6 +37,10 @@ export class CreateSessionDto {
     @IsOptional()
     @IsString()
     notes?: string;
+
+    @IsOptional()
+    @IsBoolean()
+    isMinor?: boolean;
 }
 
 export class UpdateSessionDto {
@@ -51,9 +56,25 @@ export class UpdateSessionDto {
     @IsEnum(SessionStatus)
     status?: SessionStatus;
 
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsBoolean()
+    consentSigned?: boolean;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    consentVersion?: string;
+
+    @ApiProperty({ required: false })
     @IsOptional()
     @IsString()
     notes?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsBoolean()
+    isMinor?: boolean;
 }
 
 export class SessionResponseDto {
@@ -66,4 +87,5 @@ export class SessionResponseDto {
     sessionType: SessionType;
     notes?: string; // Decrypted notes
     clientName?: string; // For display
+    isMinor?: boolean;
 }

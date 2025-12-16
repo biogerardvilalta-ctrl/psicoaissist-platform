@@ -11,7 +11,7 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly encryptionService: EncryptionService,
-  ) {}
+  ) { }
 
   /**
    * Crear un nuevo usuario
@@ -37,8 +37,10 @@ export class UsersService {
           passwordHash,
           firstName: createUserDto.firstName,
           lastName: createUserDto.lastName,
+          professionalNumber: createUserDto.professionalNumber,
+          country: createUserDto.country,
           role: createUserDto.role || UserRole.PSYCHOLOGIST,
-          status: UserStatus.ACTIVE,
+          status: UserStatus.PENDING_REVIEW,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

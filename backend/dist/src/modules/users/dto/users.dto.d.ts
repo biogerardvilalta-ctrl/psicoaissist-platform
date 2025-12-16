@@ -5,6 +5,8 @@ export declare class CreateUserDto {
     firstName: string;
     lastName: string;
     role?: UserRole;
+    professionalNumber: string;
+    country: string;
 }
 export declare class UpdateUserDto {
     email?: string;

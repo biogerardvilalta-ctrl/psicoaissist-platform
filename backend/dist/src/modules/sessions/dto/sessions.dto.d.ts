@@ -17,12 +17,16 @@ export declare class CreateSessionDto {
     endTime?: string;
     sessionType: SessionType;
     notes?: string;
+    isMinor?: boolean;
 }
 export declare class UpdateSessionDto {
     startTime?: string;
     endTime?: string;
     status?: SessionStatus;
+    consentSigned?: boolean;
+    consentVersion?: string;
     notes?: string;
+    isMinor?: boolean;
 }
 export declare class SessionResponseDto {
     id: string;
@@ -34,4 +38,5 @@ export declare class SessionResponseDto {
     sessionType: SessionType;
     notes?: string;
     clientName?: string;
+    isMinor?: boolean;
 }

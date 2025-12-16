@@ -1,13 +1,13 @@
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Shield, 
-  Heart, 
-  Twitter, 
-  Linkedin, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Shield,
+  Heart,
+  Twitter,
+  Linkedin,
   Youtube,
-  Instagram 
+  Instagram
 } from 'lucide-react';
 
 export function Footer() {
@@ -18,7 +18,7 @@ export function Footer() {
       {/* Main footer content */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          
+
           {/* Company info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -28,8 +28,8 @@ export function Footer() {
               <span className="text-xl font-bold">PsycoAI</span>
             </div>
             <p className="text-gray-300 leading-relaxed">
-              Transformando la práctica psicológica con inteligencia artificial. 
-              Ayudamos a profesionales de la salud mental a optimizar su tiempo 
+              Transformando la práctica psicológica con inteligencia artificial.
+              Ayudamos a profesionales de la salud mental a optimizar su tiempo
               y mejorar la atención a sus pacientes.
             </p>
             <div className="flex items-center space-x-2 text-green-400">
@@ -118,8 +118,8 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 text-gray-400" />
-                <a 
-                  href="mailto:hola@psycoai.com" 
+                <a
+                  href="mailto:hola@psycoai.com"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   hola@psycoai.com
@@ -127,8 +127,8 @@ export function Footer() {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4 text-gray-400" />
-                <a 
-                  href="tel:+34900123456" 
+                <a
+                  href="tel:+34900123456"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   +34 900 123 456
@@ -147,26 +147,26 @@ export function Footer() {
             <div className="mt-6">
               <h4 className="text-sm font-semibold mb-3">Síguenos</h4>
               <div className="flex space-x-3">
-                <a 
-                  href="https://twitter.com/psycoai" 
+                <a
+                  href="https://twitter.com/psycoai"
                   className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <Twitter className="w-4 h-4" />
                 </a>
-                <a 
-                  href="https://linkedin.com/company/psycoai" 
+                <a
+                  href="https://linkedin.com/company/psycoai"
                   className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <Linkedin className="w-4 h-4" />
                 </a>
-                <a 
-                  href="https://youtube.com/@psycoai" 
+                <a
+                  href="https://youtube.com/@psycoai"
                   className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <Youtube className="w-4 h-4" />
                 </a>
-                <a 
-                  href="https://instagram.com/psycoai" 
+                <a
+                  href="https://instagram.com/psycoai"
                   className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <Instagram className="w-4 h-4" />
@@ -218,28 +218,28 @@ export function Footer() {
             <div className="mt-4 md:mt-0">
               <ul className="flex space-x-6 text-sm">
                 <li>
-                  <a href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+                  <a href="/dashboard/compliance?tab=gdpr" className="text-gray-400 hover:text-white transition-colors">
                     Privacidad
                   </a>
                 </li>
                 <li>
-                  <a href="/terms" className="text-gray-400 hover:text-white transition-colors">
+                  <a href="/dashboard/compliance?tab=terms" className="text-gray-400 hover:text-white transition-colors">
                     Términos
                   </a>
                 </li>
                 <li>
-                  <a href="/cookies" className="text-gray-400 hover:text-white transition-colors">
+                  <a href="/dashboard/compliance?tab=cookies" className="text-gray-400 hover:text-white transition-colors">
                     Cookies
                   </a>
                 </li>
                 <li>
-                  <a href="/legal" className="text-gray-400 hover:text-white transition-colors">
+                  <a href="/dashboard/compliance?tab=legal-justification" className="text-gray-400 hover:text-white transition-colors">
                     Legal
                   </a>
                 </li>
                 <li>
-                  <a href="/gdpr" className="text-gray-400 hover:text-white transition-colors">
-                    GDPR
+                  <a href="/dashboard/compliance?tab=gdpr" className="text-gray-400 hover:text-white transition-colors">
+                    Política de Privacitat/GDPR
                   </a>
                 </li>
               </ul>

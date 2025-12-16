@@ -89,6 +89,7 @@ export declare class AdminController {
             endTime: Date | null;
             duration: number | null;
             sessionType: import(".prisma/client").$Enums.SessionType;
+            isMinor: boolean;
             encryptedTranscription: Buffer | null;
             encryptedNotes: Buffer | null;
             encryptedAudioPath: string | null;
@@ -96,6 +97,10 @@ export declare class AdminController {
             aiMetadata: import("@prisma/client/runtime/library").JsonValue | null;
             audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
             recordingConsent: boolean;
+            consentSigned: boolean;
+            consentTimestamp: Date | null;
+            consentVersion: string | null;
+            startedAt: Date | null;
             clientId: string;
         }[];
         reports: {

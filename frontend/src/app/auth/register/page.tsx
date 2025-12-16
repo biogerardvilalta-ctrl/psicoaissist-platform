@@ -11,6 +11,9 @@ interface RegisterFormData {
   email: string;
   password: string;
   confirmPassword: string;
+  professionalNumber: string;
+  country: string;
+  termsAccepted: boolean;
 }
 
 export default function RegisterPage() {
@@ -20,22 +23,28 @@ export default function RegisterPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    professionalNumber: '',
+    country: 'España',
+    termsAccepted: false,
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const router = useRouter();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    // Handle checkbox separately
+    const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: val
     }));
-    
+
     // Clear error when user starts typing
     if (error) setError(null);
   };
@@ -45,59 +54,71 @@ export default function RegisterPage() {
       setError('El nombre es requerido');
       return false;
     }
-    
+
     if (!formData.lastName.trim()) {
       setError('El apellido es requerido');
       return false;
     }
-    
+
     if (!formData.email.trim()) {
       setError('El email es requerido');
       return false;
     }
-    
+
+    if (!formData.professionalNumber.trim()) {
+      setError('El número de colegiado es requerido');
+      return false;
+    }
+
+    if (!formData.termsAccepted) {
+      setError('Debes aceptar los términos y condiciones');
+      return false;
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError('Formato de email inválido');
       return false;
     }
-    
+
     if (formData.password.length < 8) {
       setError('La contraseña debe tener al menos 8 caracteres');
       return false;
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
       setError('Las contraseñas no coinciden');
       return false;
     }
-    
+
     return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       // Por ahora simulamos el registro
       console.log('📝 Registrando usuario:', {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
+        professionalNumber: formData.professionalNumber,
+        country: formData.country,
       });
-      
+
       // Simulamos delay de red
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Simulamos éxito
-      alert('¡Registro exitoso! Te has registrado correctamente.');
+      alert('¡Registro exitoso! Tu cuenta está en proceso de validación.');
       router.push('/auth/login?message=registro-exitoso');
-      
+
       /* Cuando tengamos el backend real:
       const response = await fetch('http://localhost:3005/api/v1/auth/register', {
         method: 'POST',
@@ -109,6 +130,8 @@ export default function RegisterPage() {
           lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
+          professionalNumber: formData.professionalNumber,
+          country: formData.country,
         }),
       });
       
@@ -120,7 +143,7 @@ export default function RegisterPage() {
       const data = await response.json();
       // Guardar token y redirigir
       */
-      
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error en el registro';
       setError(errorMessage);
@@ -139,7 +162,7 @@ export default function RegisterPage() {
               <Heart className="w-8 h-8 text-white" />
             </div>
           </div>
-          
+
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
             Únete a PsycoAI
           </h2>
@@ -168,7 +191,7 @@ export default function RegisterPage() {
                   placeholder="Tu nombre"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
                   Apellido
@@ -201,6 +224,46 @@ export default function RegisterPage() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="tu@email.com"
               />
+            </div>
+
+
+            {/* Professional Fields - B2B Requirement */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="professionalNumber" className="block text-sm font-medium text-gray-700">
+                  Nº Colegiado
+                </label>
+                <input
+                  id="professionalNumber"
+                  name="professionalNumber"
+                  type="text"
+                  required
+                  value={formData.professionalNumber}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Ej: 12345"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+                  País
+                </label>
+                <select
+                  id="country"
+                  name="country"
+                  required
+                  value={formData.country}
+                  onChange={handleInputChange} // React select handling might differ slightly but this usually works for native select
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Selección</option>
+                  <option value="España">España</option>
+                  <option value="Andorra">Andorra</option>
+                  <option value="Francia">Francia</option>
+                  <option value="Otro">Otro (UE)</option>
+                </select>
+              </div>
             </div>
 
             {/* Password */}
@@ -260,6 +323,27 @@ export default function RegisterPage() {
                     <Eye className="h-4 w-4 text-gray-400" />
                   )}
                 </button>
+              </div>
+            </div>
+
+            {/* Terms Checkbox */}
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <input
+                  id="termsAccepted"
+                  name="termsAccepted"
+                  type="checkbox"
+                  required
+                  checked={formData.termsAccepted}
+                  onChange={handleInputChange}
+                  className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="termsAccepted" className="font-medium text-gray-700">
+                  Acepto los <Link href="/terms" className="text-blue-600 hover:text-blue-500">Términos de Servicio</Link> y la <Link href="/privacy" className="text-blue-600 hover:text-blue-500">Política de Privacidad</Link>
+                </label>
+                <p className="text-gray-500 mt-1 text-xs">Aquesta eina ofereix suport clínic orientatiu exclusivament per a professionals de la psicologia. No realitza diagnòstics ni substitueix el criteri clínic.</p>
               </div>
             </div>
           </div>

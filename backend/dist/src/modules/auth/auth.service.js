@@ -38,7 +38,15 @@ let AuthService = AuthService_1 = class AuthService {
                 this.logger.warn(`Login attempt with non-existent email: ${email}`);
                 return null;
             }
-            if (user.status !== client_1.UserStatus.ACTIVE) {
+            if (user.status === client_1.UserStatus.PENDING_REVIEW) {
+                this.logger.warn(`Login attempt with pending user: ${email}`);
+                throw new common_1.UnauthorizedException('Tu cuenta está en revisión. Te notificaremos cuando sea validada.');
+            }
+            if (user.status === client_1.UserStatus.REJECTED) {
+                this.logger.warn(`Login attempt with rejected user: ${email}`);
+                throw new common_1.UnauthorizedException('Tu solicitud de registro ha sido rechazada.');
+            }
+            if (user.status !== client_1.UserStatus.ACTIVE && user.status !== client_1.UserStatus.VALIDATED) {
                 this.logger.warn(`Login attempt with inactive user: ${email}`);
                 throw new common_1.UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
             }
@@ -94,8 +102,10 @@ let AuthService = AuthService_1 = class AuthService {
                     passwordHash,
                     firstName: registerDto.firstName,
                     lastName: registerDto.lastName,
+                    professionalNumber: registerDto.professionalNumber,
+                    country: registerDto.country,
                     role: registerDto.role || client_1.UserRole.PSYCHOLOGIST,
-                    status: client_1.UserStatus.ACTIVE,
+                    status: client_1.UserStatus.PENDING_REVIEW,
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 },

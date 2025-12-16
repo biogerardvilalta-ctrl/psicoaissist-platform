@@ -35,7 +35,9 @@ let TranscriptionService = class TranscriptionService {
             "He estado durmiendo mal y me siento muy cansado todo el día. Creo que es ansiedad.",
             "Las cosas van mejor con mi pareja, hemos podido hablar tranquilamente.",
             "Tengo miedo de fallar en mis objetivos, siento que no soy suficiente.",
-            "Hoy ha sido un buen día, me siento con más energía y optimismo."
+            "Hoy ha sido un buen día, me siento con más energía y optimismo.",
+            "La verdad es que me siento muy triste, a veces llora sin motivo aparente.",
+            "No le veo sentido a nada, a veces pienso que no quiero vivir así."
         ];
         const randomTranscription = mockTranscriptions[Math.floor(Math.random() * mockTranscriptions.length)];
         console.log('📝 Simulated Transcription:', randomTranscription);

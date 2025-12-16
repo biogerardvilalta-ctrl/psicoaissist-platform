@@ -19,7 +19,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   /**
    * Valida las credenciales del usuario
@@ -35,13 +35,23 @@ export class AuthService {
         return null;
       }
 
-      if (user.status !== UserStatus.ACTIVE) {
+      if (user.status === UserStatus.PENDING_REVIEW) {
+        this.logger.warn(`Login attempt with pending user: ${email}`);
+        throw new UnauthorizedException('Tu cuenta está en revisión. Te notificaremos cuando sea validada.');
+      }
+
+      if (user.status === UserStatus.REJECTED) {
+        this.logger.warn(`Login attempt with rejected user: ${email}`);
+        throw new UnauthorizedException('Tu solicitud de registro ha sido rechazada.');
+      }
+
+      if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED) {
         this.logger.warn(`Login attempt with inactive user: ${email}`);
         throw new UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
       }
 
       const isPasswordValid = await this.encryptionService.comparePassword(password, user.passwordHash);
-      
+
       if (!isPasswordValid) {
         this.logger.warn(`Failed login attempt for user: ${email}`);
         await this.logAuthAttempt(user.id, false);
@@ -62,13 +72,13 @@ export class AuthService {
    */
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
-    
+
     if (!user) {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
 
     const tokens = await this.generateTokens(user);
-    
+
     // Actualizar último login
     await this.prisma.user.update({
       where: { id: user.id },
@@ -112,8 +122,10 @@ export class AuthService {
           passwordHash,
           firstName: registerDto.firstName,
           lastName: registerDto.lastName,
+          professionalNumber: registerDto.professionalNumber,
+          country: registerDto.country,
           role: registerDto.role || UserRole.PSYCHOLOGIST,
-          status: UserStatus.ACTIVE,
+          status: UserStatus.PENDING_REVIEW,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -124,7 +136,7 @@ export class AuthService {
       // Enviar email de bienvenida
       try {
         await this.emailService.sendWelcomeEmail(
-          user.email, 
+          user.email,
           `${user.firstName} ${user.lastName}`
         );
       } catch (emailError) {
@@ -133,7 +145,7 @@ export class AuthService {
       }
 
       const tokens = await this.generateTokens(user);
-      
+
       return {
         user: {
           id: user.id,
@@ -211,7 +223,7 @@ export class AuthService {
       // En una implementación completa, aquí agregaríamos el token a una blacklist
       // Por ahora, simplemente loggeamos el evento
       this.logger.log(`User logged out: ${userId}`);
-      
+
       return { message: 'Logout exitoso' };
     } catch (error) {
       this.logger.error(`Error during logout: ${error.message}`);
