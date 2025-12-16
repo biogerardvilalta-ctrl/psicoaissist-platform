@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { ReportsService } from './reports.service';
 import { CreateReportDto, UpdateReportDto } from './dto/reports.dto';
 export declare class ReportsController {
@@ -5,6 +6,8 @@ export declare class ReportsController {
     constructor(reportsService: ReportsService);
     create(req: any, createReportDto: CreateReportDto): Promise<{
         id: string;
+        userId: string;
+        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -14,12 +17,13 @@ export declare class ReportsController {
         templateId: string | null;
         aiGenerated: boolean;
         aiConfidence: number | null;
+        professionalSignature: string | null;
+        humanReviewConfirmed: boolean;
+        logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
-        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
-        userId: string;
         sessionId: string | null;
     }>;
     findAll(req: any): Promise<({
@@ -28,6 +32,8 @@ export declare class ReportsController {
         };
     } & {
         id: string;
+        userId: string;
+        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -37,17 +43,20 @@ export declare class ReportsController {
         templateId: string | null;
         aiGenerated: boolean;
         aiConfidence: number | null;
+        professionalSignature: string | null;
+        humanReviewConfirmed: boolean;
+        logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
-        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
-        userId: string;
         sessionId: string | null;
     })[]>;
     findOne(req: any, id: string): Promise<{
         content: string;
         id: string;
+        userId: string;
+        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -57,16 +66,19 @@ export declare class ReportsController {
         templateId: string | null;
         aiGenerated: boolean;
         aiConfidence: number | null;
+        professionalSignature: string | null;
+        humanReviewConfirmed: boolean;
+        logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
-        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
-        userId: string;
         sessionId: string | null;
     }>;
     update(req: any, id: string, updateReportDto: UpdateReportDto): Promise<{
         id: string;
+        userId: string;
+        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -76,19 +88,23 @@ export declare class ReportsController {
         templateId: string | null;
         aiGenerated: boolean;
         aiConfidence: number | null;
+        professionalSignature: string | null;
+        humanReviewConfirmed: boolean;
+        logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
-        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
-        userId: string;
         sessionId: string | null;
     }>;
     generateDraft(req: any, generateReportDraftDto: any): Promise<{
         content: string;
     }>;
+    download(req: any, id: string, res: Response): Promise<void>;
     remove(req: any, id: string): Promise<{
         id: string;
+        userId: string;
+        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -98,12 +114,13 @@ export declare class ReportsController {
         templateId: string | null;
         aiGenerated: boolean;
         aiConfidence: number | null;
+        professionalSignature: string | null;
+        humanReviewConfirmed: boolean;
+        logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
-        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
-        userId: string;
         sessionId: string | null;
     }>;
 }

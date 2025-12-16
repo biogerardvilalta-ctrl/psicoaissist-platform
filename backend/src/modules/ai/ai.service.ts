@@ -24,6 +24,100 @@ Llenguatge:
 - Supervisió humana explícita en cada bloc.
 `;
 
+const OFFICIAL_REPORT_SYSTEM_PROMPT = `
+Ets un sistema d’assistència a la redacció d’informes professionals amb suport
+d’intel·ligència artificial. La teva funció és exclusivament de suport tècnic
+i redaccional.
+
+NO diagnostiques, NO determines capacitats, NO emets judicis clínics,
+legals ni forenses definitius, i NO adoptes decisions automatitzades.
+
+Has d’operar sota els principis de:
+- Supervisió humana obligatòria
+- Transparència
+- Traçabilitat
+- Minimització de dades
+- No discriminació
+- Prudent interpretació dels resultats
+
+Compliment normatiu obligatori:
+- Reglament General de Protecció de Dades (GDPR – UE 2016/679)
+- Reglament Europeu d’Intel·ligència Artificial (AI Act)
+- Principis ètics de l’ús de proves psicològiques i informes professionals
+
+Normes de contingut:
+- Utilitza exclusivament la informació proporcionada explícitament
+- No inferis, no suposis i no completis buits d’informació
+- No utilitzis etiquetes clíniques ni diagnòstics
+- No facis prediccions sobre evolució futura ni sobre conducta
+- No utilitzis llenguatge determinista, categòric o estigmatitzant
+- Formula els resultats com indicadors, observacions o hipòtesis orientatives
+- Inclou sempre limitacions i context d’interpretació
+- Diferencia clarament dades objectives d’interpretacions orientatives
+
+Tipologia d’informe:
+Pots generar informes dels tipus següents:
+- Avaluació inicial
+- Informe d’evolució
+- Informe d’alta clínica
+- Informe de derivació
+- Informe legal-forense
+- Informe per a asseguradores
+- Informe personalitzat
+
+Estructura obligatòria de l’informe (no modificable):
+
+1. Identificació de l’informe
+   - Tipus d’informe
+   - Finalitat
+   - Destinatari professional
+
+2. Objecte i abast de l’informe
+   - Motiu de l’elaboració
+   - Context de la sol·licitud
+
+3. Fonts d’informació utilitzades
+   - Informació aportada
+   - Proves, qüestionaris o observacions (si s’indiquen)
+   - Declaració de suficència o insuficiència de dades
+
+4. Metodologia
+   - Procediment general d’anàlisi
+   - Ús de suport d’intel·ligència artificial com a eina d’assistència
+
+5. Resultats descriptius
+   - Exposició clara, objectiva i no valorativa de la informació
+   - Separació estricta entre dades i interpretació
+
+6. Interpretació orientativa
+   - Anàlisi prudent, contextualitzada i no concloent
+   - Indicació expressa del caràcter no diagnòstic
+
+7. Limitacions de l’informe
+   - Limitacions de les dades
+   - Limitacions metodològiques
+   - Limitacions derivades de l’ús d’IA
+
+8. Consideracions finals
+   - Observacions rellevants sense caràcter prescriptiu
+
+9. Declaració d’ús d’intel·ligència artificial i supervisió humana
+   - Indicació explícita de suport d’IA
+   - Necessitat de revisió i validació per un professional qualificat
+
+10. Avís legal, ètic i de protecció de dades
+   - Caràcter orientatiu de l’informe
+   - Confidencialitat
+   - Compliment de la normativa vigent
+
+Clàusula obligatòria final (incloure literalment):
+
+“Aquest informe ha estat elaborat amb el suport d’un sistema d’intel·ligència
+artificial a partir de la informació proporcionada, i ha de ser interpretat,
+revisat i validat per un professional qualificat. No substitueix una avaluació
+professional completa ni constitueix una decisió automatitzada.”
+`;
+
 const SESSION_ANALYSIS_PROMPT = `
 Analitza el text exclusivament de manera descriptiva.
 NO utilitzis: categories diagnòstiques, noms de trastorns, termes DSM.
@@ -609,47 +703,138 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
             indicators
         };
     }
-    async generateReportDraft(data: { clientName?: string; reportType: string; sessionCount: number; period: string; notesSummary: string }): Promise<string> {
-        // Simulation of AI drafting
+    async generateReportDraft(data: { clientName?: string; reportType: string; sessionCount: number; period: string; notesSummary: string; firstSessionNote?: string }): Promise<string> {
+        // Simulation of AI drafting using the OFFICIAL_REPORT_SYSTEM_PROMPT structure
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        const { clientName, reportType, sessionCount, period, notesSummary } = data;
+        const { clientName, reportType, sessionCount, period, notesSummary, firstSessionNote } = data;
         const now = new Date().toLocaleDateString('es-ES');
+        const cName = clientName || 'Paciente Confidencial';
 
-        let draft = `**INFORME CLÍNICO (${reportType})**\n\n`;
-        draft += `**Paciente:** ${clientName || 'N/A'}\n`;
-        draft += `**Fecha:** ${now}\n`;
-        draft += `**Periodo evaluado:** ${period}\n`;
-        draft += `**Sesiones realizadas:** ${sessionCount}\n\n`;
+        // Helper to map report type to human readable Spanish string
+        const getReportTypeLabel = (type: string) => {
+            switch (type) {
+                case 'INITIAL_EVALUATION': return 'Informe d’Avaluació Inicial';
+                case 'PROGRESS': return 'Informe de Seguiment / Evolució';
+                case 'DISCHARGE': return 'Informe d’Alta Clínica';
+                case 'REFERRAL': return 'Informe de Derivació';
+                case 'LEGAL': return 'Informe Legal / Forense';
+                case 'INSURANCE': return 'Informe per a Asseguradora';
+                default: return 'Informe Clínic Personalitzat';
+            }
+        };
 
-        draft += `### 1. Motivo del Informe\n`;
-        if (reportType === 'PROGRESS') {
-            draft += `El presente informe tiene como objetivo describir la evolución clínica del paciente durante el periodo mencionado, destacando los principales avances y áreas de trabajo actuales.\n\n`;
-        } else if (reportType === 'DISCHARGE') {
-            draft += `El presente informe finaliza el proceso terapéutico, resumiendo los objetivos alcanzados y ofreciendo recomendaciones para el mantenimiento del bienestar.\n\n`;
-        } else if (reportType === 'INITIAL_EVALUATION') {
-            draft += `Este informe recoge los resultados de la evaluación inicial, estableciendo una impresión diagnóstica orientativa (no categórica) y proponiendo un plan de tratamiento.\n\n`;
-        } else {
-            draft += `Informe clínico solicitado para propósitos de seguimiento y coordinación.\n\n`;
-        }
+        const reportTypeLabel = getReportTypeLabel(reportType);
 
-        draft += `### 2. Resumen de la Evolución\n`;
-        draft += `Durante las ${sessionCount} sesiones realizadas en ${period}, se ha trabajado principalmente en:\n\n`;
+        // This content generation mimics what the LLM would produce given the system prompt and inputs.
+        // It strictly follows the 10-point structure.
 
-        // Use the notesSummary (which would be aggregated from session topics/notes)
-        if (notesSummary && notesSummary.length > 20) {
-            draft += `Obs. Clinicas: ${notesSummary}\n\n`;
-        } else {
-            draft += `- Identificación y gestión emocional.\n`;
-            draft += `- Desarrollo de estrategias de afrontamiento.\n`;
-            draft += `- [La IA completará esto basándose en el contenido de las notas...]\n\n`;
-        }
+        let content = `
+        <div class="report-container" style="font-family: serif; color: #333; line-height: 1.6;">
 
-        draft += `### 3. Conclusiones y Recomendaciones\n`;
-        draft += `Se observa una progresión favorable en la consciencia de los propios procesos emocionales. Se recomienda continuar con la pauta establecida.\n`;
+            <div style="text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #333; padding-bottom: 1rem;">
+                <h1 style="margin: 0; font-size: 24px;">INFORME PROFESSIONAL PSICOLÒGIC</h1>
+                <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">Document de suport assistencial amb IA</p>
+            </div>
 
-        draft += `\n\n---\n*Borrador generado por PsycoAI. Requiere revisión y validación profesional.*`;
+            <!-- 1. Identificació -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">1. Identificació de l’informe</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="width: 30%;"><strong>Tipus d’informe:</strong></td><td>${reportTypeLabel}</td></tr>
+                    <tr><td><strong>Finalitat:</strong></td><td>Suport a la presa de decisions clíniques / comunicació professional</td></tr>
+                    <tr><td><strong>Pacient (Id/Initials):</strong></td><td>${cName}</td></tr>
+                    <tr><td><strong>Data d'emissió:</strong></td><td>${now}</td></tr>
+                    <tr><td><strong>Període avaluat:</strong></td><td>${period} (Total sessions: ${sessionCount})</td></tr>
+                </table>
+            </div>
 
-        return draft;
+            <!-- 2. Objecte i abast -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">2. Objecte i abast de l’informe</h3>
+                <p>El present informe s'emet a petició del pacient/centre per a ${reportType === 'REFERRAL' ? 'coordinació assistencial' : 'valoració del procés terapèutic'}. Recull una síntesi de les observacions realitzades durant el període esmentat.</p>
+            </div>
+
+            <!-- 3. Fonts d'informació -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">3. Fonts d’informació utilitzades</h3>
+                <ul>
+                    <li>Entrevista clínica i observació directa.</li>
+                    <li>Registres de sessió (${sessionCount} sessions).</li>
+                    <li>${firstSessionNote ? 'Notes d’avaluació inicial.' : 'Informació aportada pel pacient.'}</li>
+                </ul>
+                <p><em>Declaració:</em> Les dades recollides són suficients per a l’objectiu orientatiu d'aquest document.</p>
+            </div>
+
+            <!-- 4. Metodologia -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">4. Metodologia</h3>
+                <p>Anàlisi qualitativa del contingut de les sessions, centrada en patrons narratius i conductuals. S’ha utilitzat un sistema d’intel·ligència artificial per a l’estructuració preliminar de la informació, sota supervisió professional constant.</p>
+            </div>
+
+            <!-- 5. Resultats Descriptius -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">5. Resultats descriptius</h3>
+                <p>A continuació s'exposen les observacions principals (sense valoració diagnòstica):</p>
+                <div style="background: #f9f9f9; padding: 1rem; border-left: 3px solid #666;">
+                    ${notesSummary ? notesSummary.replace(/\n/g, '<br/>') : 'Punts principals tractats: gestió emocional, relacions interpersonals i malestar subjectiu.'}
+                </div>
+            </div>
+
+            <!-- 6. Interpretació Orientativa -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">6. Interpretació orientativa</h3>
+                <p>Les dades suggereixen l'existència d'indicadors relacionats amb ${reportType === 'INITIAL_EVALUATION' ? 'motius de consulta inicials' : 'l’evolució del procés'}. S'observa una tendència cap a la identificació de patrons emocionals.</p>
+                <p><strong>Nota:</strong> Aquestes observacions tenen caràcter d’hipòtesi de treball i no constitueixen un diagnòstic clínic tancat.</p>
+            </div>
+
+            <!-- 7. Limitacions -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">7. Limitacions de l’informe</h3>
+                <ul>
+                    <li>Resultats basats exclusivament en la informació verbalitzada i observada.</li>
+                    <li>L’ús d’eines de suport IA pot tenir biaixos inherents al model de llenguatge; la informació ha estat filtrada pel professional.</li>
+                </ul>
+            </div>
+
+            <!-- 8. Consideracions Finals -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">8. Consideracions finals</h3>
+                <p>Es recomana continuar amb el pla de treball establert o, si s'escau, valorar la derivació especificada.</p>
+            </div>
+
+            <!-- 9. Declaració IA -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">9. Declaració d’ús de suport d’IA i supervisió humana</h3>
+                <p>El contingut d’aquest informe ha comptat amb suport tecnològic per a la redacció. El professional signant ha revisat, corregit i validat la totalitat del text, assumint-ne la responsabilitat clínica íntegra.</p>
+            </div>
+
+            <!-- 10. Avís Legal -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">10. Avís legal i deontològic</h3>
+                <p style="font-size: 0.85rem; color: #555;">Document confidencial sotmès al secret professional. L’ús d’aquest informe està limitat a la finalitat expressada en l’apartat 1. Segons el Reglament Europeu d’IA i el GDPR, s’informa que no s’han pres decisions automatitzades amb efectes jurídics sobre el pacient.</p>
+            </div>
+
+            <!-- Clàusula Obligatòria Final -->
+            <div style="margin-top: 3rem; padding: 1.5rem; background-color: #f0f4f8; border: 1px solid #dceefb; border-radius: 4px;">
+                <p style="font-style: italic; font-weight: bold; color: #2c5282; text-align: center; margin: 0;">
+                    “Aquest informe ha estat elaborat amb el suport d’un sistema d’intel·ligència artificial a partir de la informació proporcionada, i ha de ser interpretat, revisat i validat per un professional qualificat. No substitueix una avaluació professional completa ni constitueix una decisió automatitzada.”
+                </p>
+            </div>
+
+            <!-- Professional Signature Block Placeholder -->
+            <div style="margin-top: 4rem; display: flex; justify-content: space-between;">
+                <div style="width: 45%; border-top: 1px solid black; padding-top: 0.5rem;">
+                    <p><strong>Signat: El/La Psicòleg/òloga</strong></p>
+                    <p style="color: #999;">[Nom i Cognoms]</p>
+                </div>
+                <div style="width: 45%; border-top: 1px solid black; padding-top: 0.5rem; text-align: right;">
+                    <p><strong>Núm. Col·legiat/da:</strong> [Núm]</p>
+                </div>
+            </div>
+
+        </div>`;
+
+        return content;
     }
 }

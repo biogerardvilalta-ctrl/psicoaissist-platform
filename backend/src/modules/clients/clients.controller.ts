@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Put } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { CreateClientDto, UpdateClientDto, ClientResponseDto } from './dto/clients.dto';
+import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto } from './dto/clients.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -15,7 +15,7 @@ export class ClientsController {
     @Post()
     @ApiOperation({ summary: 'Crear nuevo cliente/paciente' })
     @ApiResponse({ status: 201, type: ClientResponseDto })
-    create(@Req() req: Request & { user: any }, @Body() createClientDto: CreateClientDto) {
+    create(@Req() req: Request & { user: any }, @Body() createClientDto: CreateClientDto | CreateClientEncryptedDto) {
         return this.clientsService.create(req.user.id, createClientDto);
     }
 

@@ -11,6 +11,12 @@ export declare class CreateClientDto {
     birthDate?: string;
     tags?: string[];
 }
+export declare class CreateClientEncryptedDto {
+    encryptedData: string;
+    keyId: string;
+    riskLevel?: RiskLevel;
+    tags?: string[];
+}
 export declare class UpdateClientDto extends CreateClientDto {
     isActive?: boolean;
 }

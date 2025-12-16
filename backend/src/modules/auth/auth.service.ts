@@ -71,13 +71,32 @@ export class AuthService {
    * Realiza el login y devuelve tokens JWT
    */
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.validateUser(loginDto.email, loginDto.password);
+    let email = loginDto.email;
+    let password = loginDto.password;
+
+    if (loginDto.encryptedData) {
+      try {
+        const decryptedJson = await this.encryptionService.decryptAsymmetric(loginDto.encryptedData);
+        const credentials = JSON.parse(decryptedJson);
+        email = credentials.email;
+        password = credentials.password;
+      } catch (error) {
+        throw new UnauthorizedException('Fallo al desencriptar credenciales: ' + error.message);
+      }
+    }
+
+    if (!email || !password) {
+      throw new UnauthorizedException('Email y contraseña son requeridos');
+    }
+
+    const user = await this.validateUser(email, password);
 
     if (!user) {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
 
     const tokens = await this.generateTokens(user);
+    const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(user.id);
 
     // Actualizar último login
     await this.prisma.user.update({
@@ -95,6 +114,10 @@ export class AuthService {
         status: user.status,
       },
       tokens,
+      encryptionKey: {
+        id: encryptionKey.id,
+        key: encryptionKey.keyValue,
+      },
     };
   }
 
@@ -145,6 +168,7 @@ export class AuthService {
       }
 
       const tokens = await this.generateTokens(user);
+      const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(user.id);
 
       return {
         user: {
@@ -156,6 +180,10 @@ export class AuthService {
           status: user.status,
         },
         tokens,
+        encryptionKey: {
+          id: encryptionKey.id,
+          key: encryptionKey.keyValue,
+        },
       };
     } catch (error) {
       this.logger.error(`Error registering user: ${error.message}`);
@@ -295,5 +323,12 @@ export class AuthService {
     } catch (error) {
       this.logger.error(`Error logging auth attempt: ${error.message}`);
     }
+  }
+
+  /**
+   * Obtiene la clave pública del servidor
+   */
+  getPublicKey(): string {
+    return this.encryptionService.getPublicKey();
   }
 }

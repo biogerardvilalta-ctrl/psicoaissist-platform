@@ -28,6 +28,7 @@ export default function RegisterPage() {
     termsAccepted: false,
   });
 
+  const [legalLiabilityAccepted, setLegalLiabilityAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -67,6 +68,11 @@ export default function RegisterPage() {
 
     if (!formData.professionalNumber.trim()) {
       setError('El número de colegiado es requerido');
+      return false;
+    }
+
+    if (!legalLiabilityAccepted) {
+      setError('Debes certificar la veracidad de tu colegiación profesional');
       return false;
     }
 
@@ -110,6 +116,7 @@ export default function RegisterPage() {
         email: formData.email,
         professionalNumber: formData.professionalNumber,
         country: formData.country,
+        legalLiabilityAccepted
       });
 
       // Simulamos delay de red
@@ -323,6 +330,30 @@ export default function RegisterPage() {
                     <Eye className="h-4 w-4 text-gray-400" />
                   )}
                 </button>
+              </div>
+            </div>
+
+            {/* Liability Checkbox */}
+            <div className="flex items-start p-3 bg-red-50 rounded-md border border-red-100">
+              <div className="flex items-center h-5">
+                <input
+                  id="legalLiabilityAccepted"
+                  name="legalLiabilityAccepted"
+                  type="checkbox"
+                  required
+                  checked={legalLiabilityAccepted}
+                  onChange={(e) => setLegalLiabilityAccepted(e.target.checked)}
+                  className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="legalLiabilityAccepted" className="font-medium text-gray-800">
+                  Certificación de Habilitación Profesional
+                </label>
+                <p className="text-gray-600 mt-1 text-xs text-justify">
+                  Certifico que el <strong>número de colegiado</strong> introducido es verídico y se encuentra vigente.
+                  Entiendo que la falsedad en este dato constituye un delito de intrusismo profesional y falsedad documental, conllevando las <strong>responsabilidades penales</strong> correspondientes según la normativa vigente.
+                </p>
               </div>
             </div>
 

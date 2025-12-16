@@ -66,11 +66,28 @@ let AuthService = AuthService_1 = class AuthService {
         }
     }
     async login(loginDto) {
-        const user = await this.validateUser(loginDto.email, loginDto.password);
+        let email = loginDto.email;
+        let password = loginDto.password;
+        if (loginDto.encryptedData) {
+            try {
+                const decryptedJson = await this.encryptionService.decryptAsymmetric(loginDto.encryptedData);
+                const credentials = JSON.parse(decryptedJson);
+                email = credentials.email;
+                password = credentials.password;
+            }
+            catch (error) {
+                throw new common_1.UnauthorizedException('Fallo al desencriptar credenciales: ' + error.message);
+            }
+        }
+        if (!email || !password) {
+            throw new common_1.UnauthorizedException('Email y contraseña son requeridos');
+        }
+        const user = await this.validateUser(email, password);
         if (!user) {
             throw new common_1.UnauthorizedException('Credenciales incorrectas');
         }
         const tokens = await this.generateTokens(user);
+        const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(user.id);
         await this.prisma.user.update({
             where: { id: user.id },
             data: { lastLogin: new Date() },
@@ -85,6 +102,10 @@ let AuthService = AuthService_1 = class AuthService {
                 status: user.status,
             },
             tokens,
+            encryptionKey: {
+                id: encryptionKey.id,
+                key: encryptionKey.keyValue,
+            },
         };
     }
     async register(registerDto) {
@@ -118,6 +139,7 @@ let AuthService = AuthService_1 = class AuthService {
                 this.logger.warn(`Failed to send welcome email to ${user.email}: ${emailError.message}`);
             }
             const tokens = await this.generateTokens(user);
+            const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(user.id);
             return {
                 user: {
                     id: user.id,
@@ -128,6 +150,10 @@ let AuthService = AuthService_1 = class AuthService {
                     status: user.status,
                 },
                 tokens,
+                encryptionKey: {
+                    id: encryptionKey.id,
+                    key: encryptionKey.keyValue,
+                },
             };
         }
         catch (error) {
@@ -230,6 +256,9 @@ let AuthService = AuthService_1 = class AuthService {
         catch (error) {
             this.logger.error(`Error logging auth attempt: ${error.message}`);
         }
+    }
+    getPublicKey() {
+        return this.encryptionService.getPublicKey();
     }
 };
 exports.AuthService = AuthService;

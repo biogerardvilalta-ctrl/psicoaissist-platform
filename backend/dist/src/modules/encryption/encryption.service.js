@@ -8,12 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var EncryptionService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EncryptionService = void 0;
 const common_1 = require("@nestjs/common");
 const crypto = require("crypto");
 const prisma_service_1 = require("../../common/prisma/prisma.service");
-let EncryptionService = class EncryptionService {
+let EncryptionService = EncryptionService_1 = class EncryptionService {
     constructor(prisma) {
         this.prisma = prisma;
         this.algorithm = 'aes-256-gcm';
@@ -139,9 +140,45 @@ let EncryptionService = class EncryptionService {
     hashForIndex(data) {
         return crypto.createHash('sha256').update(data).digest('hex');
     }
+    getServerKeyPair() {
+        if (!EncryptionService_1.serverKeyPair) {
+            const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+                modulusLength: 2048,
+                publicKeyEncoding: {
+                    type: 'spki',
+                    format: 'pem',
+                },
+                privateKeyEncoding: {
+                    type: 'pkcs8',
+                    format: 'pem',
+                },
+            });
+            EncryptionService_1.serverKeyPair = { publicKey, privateKey };
+        }
+        return EncryptionService_1.serverKeyPair;
+    }
+    getPublicKey() {
+        return this.getServerKeyPair().publicKey;
+    }
+    async decryptAsymmetric(encryptedBase64) {
+        try {
+            const privateKey = this.getServerKeyPair().privateKey;
+            const buffer = Buffer.from(encryptedBase64, 'base64');
+            const decrypted = crypto.privateDecrypt({
+                key: privateKey,
+                padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                oaepHash: 'sha256',
+            }, buffer);
+            return decrypted.toString('utf8');
+        }
+        catch (error) {
+            throw new Error(`Asymmetric decryption failed: ${error.message}`);
+        }
+    }
 };
 exports.EncryptionService = EncryptionService;
-exports.EncryptionService = EncryptionService = __decorate([
+EncryptionService.serverKeyPair = null;
+exports.EncryptionService = EncryptionService = EncryptionService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], EncryptionService);

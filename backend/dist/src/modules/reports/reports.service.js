@@ -15,11 +15,13 @@ const prisma_service_1 = require("../../common/prisma/prisma.service");
 const encryption_service_1 = require("../encryption/encryption.service");
 const ai_service_1 = require("../ai/ai.service");
 const client_1 = require("@prisma/client");
+const pdf_service_1 = require("./pdf.service");
 let ReportsService = class ReportsService {
-    constructor(prisma, encryption, aiService) {
+    constructor(prisma, encryption, aiService, pdfService) {
         this.prisma = prisma;
         this.encryption = encryption;
         this.aiService = aiService;
+        this.pdfService = pdfService;
     }
     async create(userId, createReportDto) {
         const initialContent = createReportDto.content || '';
@@ -36,7 +38,7 @@ let ReportsService = class ReportsService {
                 sessionId: createReportDto.sessionId,
                 title: createReportDto.title,
                 reportType: createReportDto.reportType,
-                status: client_1.ReportStatus.DRAFT,
+                status: createReportDto.status || client_1.ReportStatus.DRAFT,
                 encryptedContent: packedData,
                 encryptionKeyId: keyId,
             }
@@ -67,21 +69,31 @@ let ReportsService = class ReportsService {
         }
         let content = '';
         try {
-            const iv = report.encryptedContent.subarray(0, 16).toString('base64');
-            const tag = report.encryptedContent.subarray(16, 32).toString('base64');
-            const encryptedData = report.encryptedContent.subarray(32);
-            const result = await this.encryption.decryptData({
-                encryptedData,
-                iv,
-                tag,
-                keyId: report.encryptionKeyId
-            });
-            if (result.success) {
-                content = result.data.content;
+            if (report.encryptedContent && report.encryptedContent.length > 32) {
+                const iv = report.encryptedContent.subarray(0, 16).toString('base64');
+                const tag = report.encryptedContent.subarray(16, 32).toString('base64');
+                const encryptedData = report.encryptedContent.subarray(32);
+                const result = await this.encryption.decryptData({
+                    encryptedData,
+                    iv,
+                    tag,
+                    keyId: report.encryptionKeyId
+                });
+                if (result.success) {
+                    content = result.data.content;
+                }
+                else {
+                    console.error(`Failed to decrypt report ${id}:`, result.error);
+                    content = '(Error de desencriptación: Clave inválida o datos corruptos)';
+                }
+            }
+            else {
+                content = '(Sin contenido encriptado)';
             }
         }
         catch (error) {
             console.error('Error decrypting report:', error);
+            content = `(Error procesando informe: ${error.message})`;
         }
         return { ...report, content };
     }
@@ -95,9 +107,17 @@ let ReportsService = class ReportsService {
         const data = {};
         if (updateReportDto.title)
             data.title = updateReportDto.title;
+        if (updateReportDto.professionalSignature !== undefined)
+            data.professionalSignature = updateReportDto.professionalSignature;
+        if (updateReportDto.humanReviewConfirmed !== undefined)
+            data.humanReviewConfirmed = updateReportDto.humanReviewConfirmed;
         if (updateReportDto.status) {
             data.status = updateReportDto.status;
             if (updateReportDto.status === client_1.ReportStatus.COMPLETED) {
+                const isConfirmed = updateReportDto.humanReviewConfirmed === true || (report.humanReviewConfirmed === true && updateReportDto.humanReviewConfirmed !== false);
+                if (!isConfirmed) {
+                    throw new common_1.BadRequestException('No se puede finalizar el informe sin validación humana confirmada/supervisada.');
+                }
                 data.completedAt = new Date();
             }
         }
@@ -138,20 +158,26 @@ let ReportsService = class ReportsService {
             throw new common_1.NotFoundException('No se encontraron sesiones para generar el informe.');
         }
         let notesSummary = "";
-        for (const session of sessions) {
+        let firstSessionNote = "";
+        for (let i = 0; i < sessions.length; i++) {
+            const session = sessions[i];
             if (session.encryptedNotes) {
                 try {
                     const iv = session.encryptedNotes.subarray(0, 16).toString('base64');
                     const tag = session.encryptedNotes.subarray(16, 32).toString('base64');
                     const encryptedData = session.encryptedNotes.subarray(32);
-                    const result = await this.encryption.decryptString({
+                    const result = await this.encryption.decryptData({
                         encryptedData,
                         iv,
                         tag,
                         keyId: session.encryptionKeyId
                     });
-                    if (result.success) {
-                        notesSummary += `[${session.startTime.toLocaleDateString()}] ${result.data}\n`;
+                    if (result.success && result.data && result.data.notes) {
+                        const noteText = result.data.notes;
+                        notesSummary += `[${session.startTime.toLocaleDateString()}] ${noteText}\n`;
+                        if (i === 0) {
+                            firstSessionNote = noteText;
+                        }
                     }
                 }
                 catch (e) {
@@ -166,9 +192,44 @@ let ReportsService = class ReportsService {
             reportType: data.reportType,
             sessionCount: sessions.length,
             period,
-            notesSummary
+            notesSummary,
+            firstSessionNote
         });
         return { content: draftContent };
+    }
+    async downloadPdf(id, userId) {
+        const report = await this.findOne(id, userId);
+        let clientName = "Paciente Confidencial";
+        if (report.clientId) {
+            const client = await this.prisma.client.findUnique({
+                where: { id: report.clientId }
+            });
+            if (client && client.encryptedPersonalData) {
+                try {
+                    const iv = client.encryptedPersonalData.subarray(0, 16).toString('base64');
+                    const tag = client.encryptedPersonalData.subarray(16, 32).toString('base64');
+                    const encryptedData = client.encryptedPersonalData.subarray(32);
+                    const result = await this.encryption.decryptData({
+                        encryptedData,
+                        iv,
+                        tag,
+                        keyId: client.encryptionKeyId
+                    });
+                    if (result.success) {
+                        clientName = `${result.data.firstName} ${result.data.lastName}`;
+                    }
+                }
+                catch (error) {
+                    console.error('Error decrypting client data for PDF:', error);
+                }
+            }
+        }
+        return this.pdfService.generateReportPdf({
+            title: report.title,
+            clientName: clientName,
+            type: report.reportType,
+            content: report.content
+        });
     }
 };
 exports.ReportsService = ReportsService;
@@ -176,6 +237,7 @@ exports.ReportsService = ReportsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         encryption_service_1.EncryptionService,
-        ai_service_1.AiService])
+        ai_service_1.AiService,
+        pdf_service_1.PdfService])
 ], ReportsService);
 //# sourceMappingURL=reports.service.js.map

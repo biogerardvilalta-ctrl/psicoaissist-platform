@@ -10,6 +10,16 @@ export enum ReportType {
     CUSTOM = 'CUSTOM',
 }
 
+export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
+    [ReportType.INITIAL_EVALUATION]: 'Evaluación Inicial',
+    [ReportType.PROGRESS]: 'Evolución',
+    [ReportType.DISCHARGE]: 'Alta Clínica',
+    [ReportType.REFERRAL]: 'Derivación',
+    [ReportType.LEGAL]: 'Legal / Forense',
+    [ReportType.INSURANCE]: 'Informe para Seguros',
+    [ReportType.CUSTOM]: 'Personalizado',
+};
+
 export enum ReportStatus {
     DRAFT = 'DRAFT',
     IN_REVIEW = 'IN_REVIEW',
@@ -39,6 +49,7 @@ export interface CreateReportData {
     reportType: ReportType;
     sessionId?: string;
     content?: string;
+    status?: ReportStatus;
 }
 
 export interface GenerateDraftData {
@@ -49,7 +60,7 @@ export interface GenerateDraftData {
 }
 
 export class ReportsAPI {
-    private static readonly BASE_PATH = '/api/reports';
+    private static readonly BASE_PATH = '/api/v1/reports';
 
     static async getAll(): Promise<Report[]> {
         return httpClient.get<Report[]>(this.BASE_PATH);
@@ -69,6 +80,12 @@ export class ReportsAPI {
 
     static async delete(id: string): Promise<void> {
         return httpClient.delete(`${this.BASE_PATH}/${id}`);
+    }
+
+    static async download(id: string): Promise<Blob> {
+        return httpClient.get<Blob>(`${this.BASE_PATH}/${id}/download`, {
+            responseType: 'blob'
+        } as RequestInit);
     }
 
     static async generateDraft(data: GenerateDraftData): Promise<{ content: string }> {

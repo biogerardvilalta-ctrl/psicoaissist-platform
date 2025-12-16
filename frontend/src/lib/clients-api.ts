@@ -46,6 +46,30 @@ export class ClientsAPI {
     }
 
     static async create(data: CreateClientData) {
+        if (typeof window !== 'undefined') {
+            const keyStr = localStorage.getItem('psycoai_encryption_key');
+            if (keyStr) {
+                try {
+                    const keyData = JSON.parse(keyStr);
+                    if (keyData && keyData.key) {
+                        const { CryptoService } = await import('./crypto');
+                        const encrypted = await CryptoService.encrypt(data, keyData.key);
+                        return httpClient.post(this.BASE_URL, {
+                            encryptedData: encrypted,
+                            keyId: keyData.id,
+                            tags: data.tags,
+                            riskLevel: data.riskLevel
+                        });
+                    }
+                } catch (e) {
+                    console.error("Client-side encryption failed:", e);
+                    // Fallback or throw? User requested encryption. Better to throw or warn.
+                    // But for robustness, if key invalid, maybe fallback?
+                    // User said "se tiene que encriptar".
+                    throw new Error("No se pudo encriptar los datos del cliente.");
+                }
+            }
+        }
         return httpClient.post<Client>(this.BASE_URL, data);
     }
 

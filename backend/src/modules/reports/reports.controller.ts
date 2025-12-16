@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { ReportsService } from './reports.service';
 import { CreateReportDto, UpdateReportDto } from './dto/reports.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -31,6 +32,19 @@ export class ReportsController {
     @Post('generate-draft')
     generateDraft(@Request() req, @Body() generateReportDraftDto: any) { // Use valid DTO
         return this.reportsService.generateDraft(req.user.id, generateReportDraftDto);
+    }
+
+    @Get(':id/download')
+    async download(@Request() req, @Param('id') id: string, @Res() res: Response) {
+        const buffer = await this.reportsService.downloadPdf(id, req.user.id);
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="informe-${id}.pdf"`,
+            'Content-Length': buffer.length,
+        });
+
+        res.end(buffer);
     }
 
     @Delete(':id')

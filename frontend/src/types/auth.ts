@@ -17,9 +17,15 @@ export interface AuthTokens {
   refreshToken: string;
 }
 
+export interface EncryptionKey {
+  id: string;
+  key: string;
+}
+
 export interface AuthState {
   user: User | null;
   tokens: AuthTokens | null;
+  encryptionKey: EncryptionKey | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -41,4 +47,5 @@ export interface RegisterRequest {
 export interface AuthResponse {
   user: User;
   tokens: AuthTokens;
+  encryptionKey?: EncryptionKey;
 }

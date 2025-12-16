@@ -5,12 +5,19 @@ import { UserRole } from '@prisma/client';
 export class LoginDto {
   @ApiProperty({ example: 'usuario@ejemplo.com' })
   @IsEmail()
-  email: string;
+  @IsOptional() // Optional if encryptedData is present
+  email?: string;
 
-  @ApiProperty({ example: 'contraseña123' })
+  @ApiProperty({ example: 'password123', description: 'Contraseña del usuario' })
   @IsString()
   @MinLength(6)
-  password: string;
+  @IsOptional() // Optional if encryptedData is present
+  password?: string;
+
+  @ApiProperty({ description: 'Datos de login encriptados (RSA-OAEP Base64)', required: false })
+  @IsString()
+  @IsOptional()
+  encryptedData?: string;
 }
 
 export class RegisterDto {
@@ -79,6 +86,12 @@ export class AuthResponseDto {
 
   @ApiProperty()
   tokens: TokensDto;
+
+  @ApiProperty()
+  encryptionKey: {
+    id: string;
+    key: string;
+  };
 }
 
 export class ChangePasswordDto {

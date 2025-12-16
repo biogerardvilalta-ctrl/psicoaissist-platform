@@ -80,12 +80,12 @@ export declare class SessionsController {
     }>;
     remove(req: any, id: string): Promise<{
         id: string;
+        userId: string;
+        createdAt: Date;
         status: import(".prisma/client").$Enums.SessionStatus;
         encryptionKeyId: string | null;
-        createdAt: Date;
         updatedAt: Date;
         clientId: string;
-        userId: string;
         startTime: Date;
         endTime: Date | null;
         duration: number | null;

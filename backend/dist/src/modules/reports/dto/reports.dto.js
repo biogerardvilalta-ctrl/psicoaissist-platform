@@ -16,7 +16,7 @@ class CreateReportDto {
 }
 exports.CreateReportDto = CreateReportDto;
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateReportDto.prototype, "clientId", void 0);
 __decorate([
@@ -29,14 +29,21 @@ __decorate([
 ], CreateReportDto.prototype, "reportType", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateReportDto.prototype, "sessionId", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateReportDto.prototype, "content", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.ReportStatus),
+    __metadata("design:type", String)
+], CreateReportDto.prototype, "status", void 0);
 class UpdateReportDto {
 }
 exports.UpdateReportDto = UpdateReportDto;
@@ -55,11 +62,21 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateReportDto.prototype, "content", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateReportDto.prototype, "professionalSignature", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdateReportDto.prototype, "humanReviewConfirmed", void 0);
 class GenerateReportDraftDto {
 }
 exports.GenerateReportDraftDto = GenerateReportDraftDto;
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], GenerateReportDraftDto.prototype, "clientId", void 0);
 __decorate([
@@ -68,7 +85,7 @@ __decorate([
 ], GenerateReportDraftDto.prototype, "reportType", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.IsUUID)(undefined, { each: true }),
+    (0, class_validator_1.IsString)({ each: true }),
     __metadata("design:type", Array)
 ], GenerateReportDraftDto.prototype, "sessionIds", void 0);
 __decorate([

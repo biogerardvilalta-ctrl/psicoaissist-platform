@@ -20,7 +20,7 @@ export class EncryptionService {
   private readonly algorithm = 'aes-256-gcm';
   private readonly keyLength = 32; // 256 bits
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   /**
    * Encrypt data for a specific user
@@ -30,11 +30,11 @@ export class EncryptionService {
       const key = await this.getOrCreateEncryptionKey(userId);
       const iv = crypto.randomBytes(16);
       const cipher = crypto.createCipheriv(this.algorithm, Buffer.from(key.keyValue, 'base64'), iv);
-      
+
       const serializedData = JSON.stringify(data);
       let encrypted = cipher.update(serializedData, 'utf8');
       encrypted = Buffer.concat([encrypted, cipher.final()]);
-      
+
       const tag = cipher.getAuthTag();
 
       return {
@@ -67,14 +67,14 @@ export class EncryptionService {
         Buffer.from(key.keyValue, 'base64'),
         Buffer.from(encryptedData.iv, 'base64')
       );
-      
+
       decipher.setAuthTag(Buffer.from(encryptedData.tag, 'base64'));
-      
+
       let decrypted = decipher.update(encryptedData.encryptedData, null, 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       const parsedData = JSON.parse(decrypted);
-      
+
       return {
         data: parsedData,
         success: true,
@@ -114,7 +114,7 @@ export class EncryptionService {
 
     // Generate new key
     const keyValue = crypto.randomBytes(this.keyLength).toString('base64');
-    
+
     const newKey = await this.prisma.encryptionKey.create({
       data: {
         userId,
@@ -129,9 +129,9 @@ export class EncryptionService {
   }
 
   /**
-   * Get or create encryption key for user
+   * Get or create encryption key for user (Public for specific uses like client-side encryption)
    */
-  private async getOrCreateEncryptionKey(userId: string) {
+  async getOrCreateEncryptionKey(userId: string) {
     let key = await this.prisma.encryptionKey.findFirst({
       where: {
         userId,
@@ -205,5 +205,61 @@ export class EncryptionService {
    */
   hashForIndex(data: string): string {
     return crypto.createHash('sha256').update(data).digest('hex');
+  }
+
+  // --- RSA Asymmetric Encryption for Login ---
+
+  private static serverKeyPair: { publicKey: string; privateKey: string } | null = null;
+
+  /**
+   * Get or generate the server's RSA key pair (Singleton per server instance for simplicity)
+   * In a real clustered env, this should be stored in Redis/DB interactively.
+   */
+  private getServerKeyPair() {
+    if (!EncryptionService.serverKeyPair) {
+      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: {
+          type: 'spki',
+          format: 'pem',
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem',
+        },
+      });
+      EncryptionService.serverKeyPair = { publicKey, privateKey };
+    }
+    return EncryptionService.serverKeyPair;
+  }
+
+  /**
+   * Get the server's public key
+   */
+  getPublicKey(): string {
+    return this.getServerKeyPair().publicKey;
+  }
+
+  /**
+   * Decrypt data encrypted with the server's public key
+   */
+  async decryptAsymmetric(encryptedBase64: string): Promise<string> {
+    try {
+      const privateKey = this.getServerKeyPair().privateKey;
+      const buffer = Buffer.from(encryptedBase64, 'base64');
+
+      const decrypted = crypto.privateDecrypt(
+        {
+          key: privateKey,
+          padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+          oaepHash: 'sha256',
+        },
+        buffer
+      );
+
+      return decrypted.toString('utf8');
+    } catch (error) {
+      throw new Error(`Asymmetric decryption failed: ${error.message}`);
+    }
   }
 }

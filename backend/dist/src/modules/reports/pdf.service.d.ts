@@ -1,5 +1,6 @@
 export declare class PdfService {
     generateReportPdf(reportData: any): Promise<Buffer>;
-    private addHeader;
+    private drawHeader;
     private addFooter;
+    private parseHtmlContent;
 }

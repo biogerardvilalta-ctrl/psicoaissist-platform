@@ -34,4 +34,7 @@ export declare class AuthController {
     }, changePasswordDto: ChangePasswordDto): Promise<{
         message: string;
     }>;
+    getPublicKey(): {
+        publicKey: string;
+    };
 }

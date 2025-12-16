@@ -16,28 +16,30 @@ export declare class AdminController {
     getUsers(page?: string, limit?: string, search?: string, plan?: string, status?: string): Promise<{
         users: {
             passwordHash: any;
+            _count: {
+                sessions: number;
+                reports: number;
+                clients: number;
+            };
             subscription: {
                 id: string;
-                status: string;
+                userId: string;
                 createdAt: Date;
+                status: string;
                 updatedAt: Date;
                 stripeSubscriptionId: string;
                 planType: string;
                 currentPeriodStart: Date;
                 currentPeriodEnd: Date;
                 canceledAt: Date | null;
-                userId: string;
-            };
-            _count: {
-                clients: number;
-                sessions: number;
-                reports: number;
             };
             id: string;
+            createdAt: Date;
+            status: import(".prisma/client").$Enums.UserStatus;
+            updatedAt: Date;
             email: string;
             stripeCustomerId: string | null;
             role: import(".prisma/client").$Enums.UserRole;
-            status: import(".prisma/client").$Enums.UserStatus;
             verified: boolean;
             verificationToken: string | null;
             resetPasswordToken: string | null;
@@ -48,8 +50,6 @@ export declare class AdminController {
             country: string | null;
             professionalNumber: string | null;
             speciality: string | null;
-            createdAt: Date;
-            updatedAt: Date;
             lastLogin: Date | null;
         }[];
         pagination: {
@@ -61,30 +61,14 @@ export declare class AdminController {
     }>;
     getUserDetails(id: string): Promise<{
         passwordHash: any;
-        clients: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            encryptedPersonalData: Buffer;
-            encryptedClinicalData: Buffer | null;
-            encryptedSensitiveData: Buffer | null;
-            tags: string[];
-            riskLevel: import(".prisma/client").$Enums.RiskLevel;
-            isActive: boolean;
-            encryptionKeyId: string;
-            dataVersion: number;
-            firstSessionAt: Date | null;
-            lastSessionAt: Date | null;
-            lastModifiedBy: string;
-        }[];
         sessions: {
             id: string;
-            status: import(".prisma/client").$Enums.SessionStatus;
-            createdAt: Date;
-            updatedAt: Date;
             userId: string;
+            createdAt: Date;
+            status: import(".prisma/client").$Enums.SessionStatus;
             encryptionKeyId: string | null;
+            updatedAt: Date;
+            clientId: string;
             startTime: Date;
             endTime: Date | null;
             duration: number | null;
@@ -101,49 +85,70 @@ export declare class AdminController {
             consentTimestamp: Date | null;
             consentVersion: string | null;
             startedAt: Date | null;
-            clientId: string;
         }[];
         reports: {
             id: string;
-            status: import(".prisma/client").$Enums.ReportStatus;
-            createdAt: Date;
-            updatedAt: Date;
             userId: string;
-            encryptionKeyId: string;
-            clientId: string;
+            createdAt: Date;
             title: string;
             reportType: import(".prisma/client").$Enums.ReportType;
-            sessionId: string | null;
+            status: import(".prisma/client").$Enums.ReportStatus;
             version: number;
             encryptedContent: Buffer;
             encryptedMetadata: Buffer | null;
             templateId: string | null;
             aiGenerated: boolean;
             aiConfidence: number | null;
+            professionalSignature: string | null;
+            humanReviewConfirmed: boolean;
+            logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
+            encryptionKeyId: string;
+            updatedAt: Date;
             completedAt: Date | null;
+            clientId: string;
+            sessionId: string | null;
+        }[];
+        _count: {
+            sessions: number;
+            reports: number;
+            clients: number;
+        };
+        clients: {
+            id: string;
+            userId: string;
+            isActive: boolean;
+            createdAt: Date;
+            encryptionKeyId: string;
+            updatedAt: Date;
+            encryptedPersonalData: Buffer;
+            encryptedClinicalData: Buffer | null;
+            encryptedSensitiveData: Buffer | null;
+            tags: string[];
+            riskLevel: import(".prisma/client").$Enums.RiskLevel;
+            dataVersion: number;
+            firstSessionAt: Date | null;
+            lastSessionAt: Date | null;
+            lastModifiedBy: string;
         }[];
         subscription: {
             id: string;
-            status: string;
+            userId: string;
             createdAt: Date;
+            status: string;
             updatedAt: Date;
             stripeSubscriptionId: string;
             planType: string;
             currentPeriodStart: Date;
             currentPeriodEnd: Date;
             canceledAt: Date | null;
-            userId: string;
-        };
-        _count: {
-            clients: number;
-            sessions: number;
-            reports: number;
         };
         id: string;
+        createdAt: Date;
+        status: import(".prisma/client").$Enums.UserStatus;
+        updatedAt: Date;
         email: string;
         stripeCustomerId: string | null;
         role: import(".prisma/client").$Enums.UserRole;
-        status: import(".prisma/client").$Enums.UserStatus;
         verified: boolean;
         verificationToken: string | null;
         resetPasswordToken: string | null;
@@ -154,8 +159,6 @@ export declare class AdminController {
         country: string | null;
         professionalNumber: string | null;
         speciality: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         lastLogin: Date | null;
     }>;
     updateUserStatus(id: string, body: {
@@ -177,15 +180,15 @@ export declare class AdminController {
             };
         } & {
             id: string;
-            status: string;
+            userId: string;
             createdAt: Date;
+            status: string;
             updatedAt: Date;
             stripeSubscriptionId: string;
             planType: string;
             currentPeriodStart: Date;
             currentPeriodEnd: Date;
             canceledAt: Date | null;
-            userId: string;
         })[];
         pagination: {
             page: number;

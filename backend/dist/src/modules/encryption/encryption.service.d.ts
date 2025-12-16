@@ -20,11 +20,23 @@ export declare class EncryptionService {
     encryptString(plaintext: string, userId: string): Promise<EncryptedData>;
     decryptString(encryptedData: EncryptedData): Promise<DecryptionResult<string>>;
     generateNewKey(userId: string): Promise<string>;
-    private getOrCreateEncryptionKey;
+    getOrCreateEncryptionKey(userId: string): Promise<{
+        id: string;
+        userId: string;
+        keyValue: string;
+        algorithm: string;
+        isActive: boolean;
+        createdAt: Date;
+        expiresAt: Date | null;
+    }>;
     private getEncryptionKey;
     rotateKey(userId: string): Promise<string>;
     hashPassword(password: string): Promise<string>;
     comparePassword(password: string, hash: string): Promise<boolean>;
     generateSecureToken(length?: number): string;
     hashForIndex(data: string): string;
+    private static serverKeyPair;
+    private getServerKeyPair;
+    getPublicKey(): string;
+    decryptAsymmetric(encryptedBase64: string): Promise<string>;
 }

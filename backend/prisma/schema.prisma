@@ -206,6 +206,11 @@ model Report {
   aiGenerated     Boolean      @default(false) @map("ai_generated")
   aiConfidence    Float?       @map("ai_confidence")
   
+  // Safeguards
+  professionalSignature String? @map("professional_signature")
+  humanReviewConfirmed Boolean @default(false) @map("human_review_confirmed")
+  logMetadata     Json?        @map("log_metadata")
+  
   // Audit and timestamps
   encryptionKeyId String       @map("encryption_key_id")
   createdAt       DateTime     @default(now()) @map("created_at")

@@ -36,8 +36,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         { name: 'Pacientes', href: '/dashboard/clients', icon: Users },
         { name: 'Sesiones', href: '/dashboard/sessions', icon: Calendar },
-        { name: 'Legal', href: '/dashboard/compliance', icon: Shield },
         { name: 'Informes', href: '/dashboard/reports', icon: FileText },
+        { name: 'Legal', href: '/dashboard/compliance', icon: Shield, extraMargin: true },
     ];
 
     return (
@@ -66,7 +66,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                             className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
                                                 ? 'bg-blue-50 text-blue-700'
                                                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                                                }`}
+                                                } ${item.extraMargin ? 'ml-8' : ''}`}
                                         >
                                             <Icon className="w-4 h-4 mr-2" />
                                             {item.name}

@@ -19,14 +19,22 @@ exports.LoginDto = LoginDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 'usuario@ejemplo.com' }),
     (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], LoginDto.prototype, "email", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'contraseña123' }),
+    (0, swagger_1.ApiProperty)({ example: 'password123', description: 'Contraseña del usuario' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(6),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], LoginDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Datos de login encriptados (RSA-OAEP Base64)', required: false }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], LoginDto.prototype, "encryptedData", void 0);
 class RegisterDto {
 }
 exports.RegisterDto = RegisterDto;
@@ -116,6 +124,10 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", TokensDto)
 ], AuthResponseDto.prototype, "tokens", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Object)
+], AuthResponseDto.prototype, "encryptionKey", void 0);
 class ChangePasswordDto {
 }
 exports.ChangePasswordDto = ChangePasswordDto;

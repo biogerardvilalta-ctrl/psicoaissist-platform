@@ -203,4 +203,10 @@ export class AuthController {
       throw error;
     }
   }
+  @ApiOperation({ summary: 'Obtener clave pública para encriptación de login' })
+  @ApiResponse({ status: 200, description: 'Clave pública RSA (PEM)' })
+  @Get('public-key')
+  getPublicKey() {
+    return { publicKey: this.authService.getPublicKey() };
+  }
 }

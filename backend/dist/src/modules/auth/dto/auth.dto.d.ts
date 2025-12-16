@@ -1,7 +1,8 @@
 import { UserRole } from '@prisma/client';
 export declare class LoginDto {
-    email: string;
-    password: string;
+    email?: string;
+    password?: string;
+    encryptedData?: string;
 }
 export declare class RegisterDto {
     email: string;
@@ -27,6 +28,10 @@ export declare class UserResponseDto {
 export declare class AuthResponseDto {
     user: UserResponseDto;
     tokens: TokensDto;
+    encryptionKey: {
+        id: string;
+        key: string;
+    };
 }
 export declare class ChangePasswordDto {
     currentPassword: string;

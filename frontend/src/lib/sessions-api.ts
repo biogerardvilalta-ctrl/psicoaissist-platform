@@ -11,43 +11,37 @@ export enum SessionStatus {
 export enum SessionType {
     INDIVIDUAL = 'INDIVIDUAL',
     GROUP = 'GROUP',
+    FAMILY = 'FAMILY',
     COUPLE = 'COUPLE',
-    FAMILY = 'FAMILY'
+    CONSULTATION = 'CONSULTATION',
+    EMERGENCY = 'EMERGENCY'
 }
 
 export interface Session {
     id: string;
     clientId: string;
-    userId: string;
-    startTime: string; // ISO Date
+    clientName?: string; // Often joined
+    startTime: string;
     endTime?: string;
-    status: SessionStatus;
-    sessionType: SessionType;
+    duration?: number;
+    status: SessionStatus | 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+    sessionType: string;
+    notesSummary?: string; // Optional preview
     notes?: string;
-    clientName?: string;
+    isMinor?: boolean;
     aiMetadata?: {
-        summary: string;
-        emotionalElements: string[];
-        narrativeIndicators: string[];
-        orientativeObservations: string[];
-        clinicalFollowUpSupport: {
-            suggestions: string[];
-            possibleLines: string[];
-            modelReferences: string[];
-        };
-        discurs_pacient?: {
-            resum_descriptiu: string;
-            fragments_relevants: string[];
-        };
-        temes_emergents_sessio?: {
-            regles_seleccio: any;
-            temes_seleccionats: any[];
-            temes_descartats: any[];
+        summary?: string;
+        emotionalElements?: string[];
+        narrativeIndicators?: string[];
+        orientativeObservations?: string[];
+        clinicalFollowUpSupport?: {
+            suggestions?: string[];
+            possibleLines?: string[];
+            modelReferences?: string[];
         };
         diagnostic_final?: {
-            nota_general: string;
-            tests_sugerits_final: {
-                regles: any;
+            nota_general?: string;
+            tests_sugerits_final?: {
                 suggeriments: Array<{
                     tema: string;
                     categoria: string;
@@ -55,66 +49,44 @@ export interface Session {
                         codi: string;
                         nom: string;
                         objectiu_general: string;
-                        why_this_test_was_suggested?: {
-                            based_on: string[];
-                            tema_associat: string;
-                            descripcio_orientativa: string;
-                            font: string;
-                            decisio_automatica: boolean;
-                        };
                     }>;
                 }>;
+                regles?: {
+                    font?: string;
+                    criteri_seleccio?: string;
+                };
             };
         };
         disclaimer?: string;
     };
-    aiSuggestions?: string[];
-    isMinor?: boolean;
 }
 
-export interface CreateSessionData {
-    clientId: string;
-    startTime: string; // ISO Date
-    endTime?: string;
-    sessionType: SessionType;
-    notes?: string;
-    isMinor?: boolean;
+export class SessionsAPI {
+    private static readonly BASE_PATH = '/api/v1/sessions';
+
+    static async getAll(filters?: { clientId?: string; status?: string; from?: string; to?: string }): Promise<Session[]> {
+        const params = new URLSearchParams();
+        if (filters?.clientId) params.append('clientId', filters.clientId);
+        if (filters?.status) params.append('status', filters.status);
+        if (filters?.from) params.append('from', filters.from);
+        if (filters?.to) params.append('to', filters.to);
+
+        return httpClient.get<Session[]>(`${this.BASE_PATH}?${params.toString()}`);
+    }
+
+    static async getById(id: string): Promise<Session> {
+        return httpClient.get<Session>(`${this.BASE_PATH}/${id}`);
+    }
+
+    static async create(data: { clientId: string; startTime: string; sessionType: string; notes?: string }): Promise<Session> {
+        return httpClient.post<Session>(this.BASE_PATH, data);
+    }
+
+    static async update(id: string, data: Partial<Session>): Promise<Session> {
+        return httpClient.patch<Session>(`${this.BASE_PATH}/${id}`, data);
+    }
+
+    static async delete(id: string): Promise<void> {
+        return httpClient.delete<void>(`${this.BASE_PATH}/${id}`);
+    }
 }
-
-export interface UpdateSessionData {
-    startTime?: string;
-    endTime?: string;
-    status?: SessionStatus;
-    notes?: string;
-    consentSigned?: boolean;
-    consentVersion?: string;
-    isMinor?: boolean;
-}
-
-export const SessionsAPI = {
-    getAll: async (): Promise<Session[]> => {
-        return httpClient.get<Session[]>('/api/v1/sessions');
-    },
-
-    getById: async (id: string): Promise<Session> => {
-        return httpClient.get<Session>(`/api/v1/sessions/${id}`);
-    },
-
-    create: async (data: CreateSessionData): Promise<Session> => {
-        return httpClient.post<Session>('/api/v1/sessions', data);
-    },
-
-    update: async (id: string, data: UpdateSessionData): Promise<Session> => {
-        return httpClient.patch<Session>(`/api/v1/sessions/${id}`, data);
-    },
-
-    delete: async (id: string): Promise<void> => {
-        return httpClient.delete<void>(`/api/v1/sessions/${id}`);
-    },
-
-    getByDateRange: async (start: Date, end: Date): Promise<Session[]> => {
-        const startStr = start.toISOString();
-        const endStr = end.toISOString();
-        return httpClient.get<Session[]>(`/api/v1/sessions/calendar?start=${startStr}&end=${endStr}`);
-    },
-};

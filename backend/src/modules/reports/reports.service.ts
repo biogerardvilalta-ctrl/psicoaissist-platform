@@ -1,16 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateReportDto, UpdateReportDto } from './dto/reports.dto';
 import { EncryptionService } from '../encryption/encryption.service';
 import { AiService } from '../ai/ai.service';
 import { ReportStatus } from '@prisma/client';
 
+import { PdfService } from './pdf.service';
+
 @Injectable()
 export class ReportsService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly encryption: EncryptionService,
-        private readonly aiService: AiService
+        private readonly aiService: AiService,
+        private readonly pdfService: PdfService
     ) { }
 
     async create(userId: string, createReportDto: CreateReportDto) {
@@ -38,7 +41,7 @@ export class ReportsService {
                 sessionId: createReportDto.sessionId,
                 title: createReportDto.title,
                 reportType: createReportDto.reportType,
-                status: ReportStatus.DRAFT,
+                status: createReportDto.status || ReportStatus.DRAFT,
                 encryptedContent: packedData,
                 encryptionKeyId: keyId,
             }
@@ -74,22 +77,30 @@ export class ReportsService {
         // Decrypt content
         let content = '';
         try {
-            const iv = report.encryptedContent.subarray(0, 16).toString('base64');
-            const tag = report.encryptedContent.subarray(16, 32).toString('base64');
-            const encryptedData = report.encryptedContent.subarray(32);
+            if (report.encryptedContent && report.encryptedContent.length > 32) {
+                const iv = report.encryptedContent.subarray(0, 16).toString('base64');
+                const tag = report.encryptedContent.subarray(16, 32).toString('base64');
+                const encryptedData = report.encryptedContent.subarray(32);
 
-            const result = await this.encryption.decryptData<{ content: string }>({
-                encryptedData,
-                iv,
-                tag,
-                keyId: report.encryptionKeyId
-            });
+                const result = await this.encryption.decryptData<{ content: string }>({
+                    encryptedData,
+                    iv,
+                    tag,
+                    keyId: report.encryptionKeyId
+                });
 
-            if (result.success) {
-                content = result.data.content;
+                if (result.success) {
+                    content = result.data.content;
+                } else {
+                    console.error(`Failed to decrypt report ${id}:`, result.error);
+                    content = '(Error de desencriptación: Clave inválida o datos corruptos)';
+                }
+            } else {
+                content = '(Sin contenido encriptado)';
             }
         } catch (error) {
             console.error('Error decrypting report:', error);
+            content = `(Error procesando informe: ${error.message})`;
         }
 
         return { ...report, content };
@@ -106,9 +117,18 @@ export class ReportsService {
 
         const data: any = {};
         if (updateReportDto.title) data.title = updateReportDto.title;
+        if (updateReportDto.professionalSignature !== undefined) data.professionalSignature = updateReportDto.professionalSignature;
+        if (updateReportDto.humanReviewConfirmed !== undefined) data.humanReviewConfirmed = updateReportDto.humanReviewConfirmed;
+
         if (updateReportDto.status) {
             data.status = updateReportDto.status;
             if (updateReportDto.status === ReportStatus.COMPLETED) {
+                // Validation: Cannot complete without human review
+                const isConfirmed = updateReportDto.humanReviewConfirmed === true || ((report as any).humanReviewConfirmed === true && updateReportDto.humanReviewConfirmed !== false);
+
+                if (!isConfirmed) {
+                    throw new BadRequestException('No se puede finalizar el informe sin validación humana confirmada/supervisada.');
+                }
                 data.completedAt = new Date();
             }
         }
@@ -162,22 +182,31 @@ export class ReportsService {
 
         // 2. Decrypt notes and aggregate
         let notesSummary = "";
-        for (const session of sessions) {
+        let firstSessionNote = "";
+
+        for (let i = 0; i < sessions.length; i++) {
+            const session = sessions[i];
             if (session.encryptedNotes) {
                 try {
                     const iv = session.encryptedNotes.subarray(0, 16).toString('base64');
                     const tag = session.encryptedNotes.subarray(16, 32).toString('base64');
                     const encryptedData = session.encryptedNotes.subarray(32);
 
-                    const result = await this.encryption.decryptString({
+                    const result = await this.encryption.decryptData<{ notes: string }>({
                         encryptedData,
                         iv,
                         tag,
                         keyId: session.encryptionKeyId
                     });
 
-                    if (result.success) {
-                        notesSummary += `[${session.startTime.toLocaleDateString()}] ${result.data}\n`;
+                    if (result.success && result.data && result.data.notes) {
+                        const noteText = result.data.notes;
+                        notesSummary += `[${session.startTime.toLocaleDateString()}] ${noteText}\n`;
+
+                        // Capture first session note for "Reason for Consultation" context
+                        if (i === 0) {
+                            firstSessionNote = noteText;
+                        }
                     }
                 } catch (e) {
                     console.error("Failed to decrypt session note for draft", e);
@@ -186,25 +215,58 @@ export class ReportsService {
         }
 
         // 3. Call AI Service
-        // Fetch client name for context
         const client = await this.prisma.client.findUnique({ where: { id: data.clientId } });
-        // Note: Name is encrypted in Client, might need to ask ClientsService or EncryptionService to decrypt it.
-        // For now, simpler placeholder or assume we have it if we used ClientsService. 
-        // Let's use "Paciente" generic or try decrypt if we have access.
-        // But Clients naming is complex (encryptedPersonalData). 
-        // Let's pass empty name and let Frontend fill it? Or better, just generic.
-
         const period = `${sessions[0].startTime.toLocaleDateString()} - ${sessions[sessions.length - 1].startTime.toLocaleDateString()}`;
 
         // Call AI Service
         const draftContent = await this.aiService.generateReportDraft({
-            clientName: "Paciente", // Placeholder until client decryption is solved or passed from frontend
+            clientName: "Paciente",
             reportType: data.reportType,
             sessionCount: sessions.length,
             period,
-            notesSummary
+            notesSummary,
+            firstSessionNote // Pass these specific notes
         });
-
         return { content: draftContent };
+    }
+
+    async downloadPdf(id: string, userId: string): Promise<Buffer> {
+        const report = await this.findOne(id, userId);
+
+        let clientName = "Paciente Confidencial";
+
+        if (report.clientId) {
+            const client = await this.prisma.client.findUnique({
+                where: { id: report.clientId }
+            });
+
+            if (client && client.encryptedPersonalData) {
+                try {
+                    const iv = client.encryptedPersonalData.subarray(0, 16).toString('base64');
+                    const tag = client.encryptedPersonalData.subarray(16, 32).toString('base64');
+                    const encryptedData = client.encryptedPersonalData.subarray(32);
+
+                    const result = await this.encryption.decryptData<{ firstName: string; lastName: string }>({
+                        encryptedData,
+                        iv,
+                        tag,
+                        keyId: client.encryptionKeyId
+                    });
+
+                    if (result.success) {
+                        clientName = `${result.data.firstName} ${result.data.lastName}`;
+                    }
+                } catch (error) {
+                    console.error('Error decrypting client data for PDF:', error);
+                }
+            }
+        }
+
+        return this.pdfService.generateReportPdf({
+            title: report.title,
+            clientName: clientName,
+            type: report.reportType,
+            content: report.content
+        });
     }
 }

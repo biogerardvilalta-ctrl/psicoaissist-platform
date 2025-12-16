@@ -39,23 +39,39 @@ let ClientsService = ClientsService_1 = class ClientsService {
     }
     async create(userId, createClientDto) {
         try {
-            const personalData = {
-                firstName: createClientDto.firstName,
-                lastName: createClientDto.lastName,
-                email: createClientDto.email,
-                phone: createClientDto.phone,
-                emergencyContact: createClientDto.emergencyContact,
-                diagnosis: createClientDto.diagnosis,
-                notes: createClientDto.notes,
-                birthDate: createClientDto.birthDate,
-            };
-            const encrypted = await this.encryptionService.encryptData(personalData, userId);
-            const packedData = this.packEncryptedData(encrypted);
+            let packedData;
+            let keyId;
+            let personalData;
+            if ('encryptedData' in createClientDto) {
+                packedData = Buffer.from(createClientDto.encryptedData, 'base64');
+                keyId = createClientDto.keyId;
+                const unpacked = this.unpackEncryptedData(packedData, keyId);
+                const decryptResult = await this.encryptionService.decryptData(unpacked);
+                if (!decryptResult.success || !decryptResult.data) {
+                    throw new Error('Invalid encrypted data received');
+                }
+                personalData = decryptResult.data;
+            }
+            else {
+                personalData = {
+                    firstName: createClientDto.firstName,
+                    lastName: createClientDto.lastName,
+                    email: createClientDto.email,
+                    phone: createClientDto.phone,
+                    emergencyContact: createClientDto.emergencyContact,
+                    diagnosis: createClientDto.diagnosis,
+                    notes: createClientDto.notes,
+                    birthDate: createClientDto.birthDate,
+                };
+                const encrypted = await this.encryptionService.encryptData(personalData, userId);
+                packedData = this.packEncryptedData(encrypted);
+                keyId = encrypted.keyId;
+            }
             const client = await this.prisma.client.create({
                 data: {
                     user: { connect: { id: userId } },
                     encryptedPersonalData: packedData,
-                    encryptionKeyId: encrypted.keyId,
+                    encryptionKeyId: keyId,
                     tags: createClientDto.tags || [],
                     riskLevel: createClientDto.riskLevel,
                     lastModifiedBy: userId,

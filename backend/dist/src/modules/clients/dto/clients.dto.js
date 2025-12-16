@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientResponseDto = exports.UpdateClientDto = exports.CreateClientDto = void 0;
+exports.ClientResponseDto = exports.UpdateClientDto = exports.CreateClientEncryptedDto = exports.CreateClientDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 const client_1 = require("@prisma/client");
@@ -75,8 +75,37 @@ __decorate([
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.IsString)({ each: true }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], CreateClientDto.prototype, "tags", void 0);
+class CreateClientEncryptedDto {
+}
+exports.CreateClientEncryptedDto = CreateClientEncryptedDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Base64 encoded string containing [IV(16b)][Tag(16b)][Cipher]' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateClientEncryptedDto.prototype, "encryptedData", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'ID of the encryption key used' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateClientEncryptedDto.prototype, "keyId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ enum: client_1.RiskLevel, default: client_1.RiskLevel.LOW }),
+    (0, class_validator_1.IsEnum)(client_1.RiskLevel),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateClientEncryptedDto.prototype, "riskLevel", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ type: [String] }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateClientEncryptedDto.prototype, "tags", void 0);
 class UpdateClientDto extends CreateClientDto {
 }
 exports.UpdateClientDto = UpdateClientDto;

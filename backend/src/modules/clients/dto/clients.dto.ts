@@ -52,6 +52,30 @@ export class CreateClientDto {
     @IsArray()
     @IsString({ each: true })
     @IsOptional()
+    @IsOptional()
+    tags?: string[];
+}
+
+export class CreateClientEncryptedDto {
+    @ApiProperty({ description: 'Base64 encoded string containing [IV(16b)][Tag(16b)][Cipher]' })
+    @IsString()
+    @IsNotEmpty()
+    encryptedData: string;
+
+    @ApiProperty({ description: 'ID of the encryption key used' })
+    @IsString()
+    @IsNotEmpty()
+    keyId: string;
+
+    @ApiPropertyOptional({ enum: RiskLevel, default: RiskLevel.LOW })
+    @IsEnum(RiskLevel)
+    @IsOptional()
+    riskLevel?: RiskLevel;
+
+    @ApiPropertyOptional({ type: [String] })
+    @IsArray()
+    @IsString({ each: true })
+    @IsOptional()
     tags?: string[];
 }
 

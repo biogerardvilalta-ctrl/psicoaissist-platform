@@ -2,22 +2,22 @@
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
 import { AuthAPI } from '@/lib/auth-api';
-import type { AuthState, AuthTokens, User, LoginRequest, RegisterRequest } from '@/types/auth';
+import type { AuthState, AuthTokens, User, LoginRequest, RegisterRequest, EncryptionKey } from '@/types/auth';
 
 // Auth Actions
 type AuthAction =
   | { type: 'LOGIN_START' }
-  | { type: 'LOGIN_SUCCESS'; payload: { user: User; tokens: AuthTokens } }
+  | { type: 'LOGIN_SUCCESS'; payload: { user: User; tokens: AuthTokens; encryptionKey?: EncryptionKey } }
   | { type: 'LOGIN_FAILURE'; payload: string }
   | { type: 'REGISTER_START' }
-  | { type: 'REGISTER_SUCCESS'; payload: { user: User; tokens: AuthTokens } }
+  | { type: 'REGISTER_SUCCESS'; payload: { user: User; tokens: AuthTokens; encryptionKey?: EncryptionKey } }
   | { type: 'REGISTER_FAILURE'; payload: string }
   | { type: 'LOGOUT' }
-  | { type: 'REFRESH_TOKEN_SUCCESS'; payload: { user: User; tokens: AuthTokens } }
+  | { type: 'REFRESH_TOKEN_SUCCESS'; payload: { user: User; tokens: AuthTokens; encryptionKey?: EncryptionKey } }
   | { type: 'SET_USER'; payload: User }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'CLEAR_ERROR' }
-  | { type: 'RESTORE_SESSION'; payload: { user: User; tokens: AuthTokens } };
+  | { type: 'RESTORE_SESSION'; payload: { user: User; tokens: AuthTokens; encryptionKey?: EncryptionKey } };
 
 // Auth Context Interface
 interface AuthContextType extends AuthState {
@@ -33,6 +33,7 @@ interface AuthContextType extends AuthState {
 const initialState: AuthState = {
   user: null,
   tokens: null,
+  encryptionKey: null,
   isAuthenticated: false,
   isLoading: true, // Start with loading true to check for existing session
   error: null,
@@ -57,6 +58,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
         ...state,
         user: action.payload.user,
         tokens: action.payload.tokens,
+        encryptionKey: action.payload.encryptionKey || state.encryptionKey || null,
         isAuthenticated: true,
         isLoading: false,
         error: null,
@@ -78,6 +80,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
         ...state,
         user: null,
         tokens: null,
+        encryptionKey: null,
         isAuthenticated: false,
         isLoading: false,
         error: null,
@@ -111,6 +114,7 @@ const STORAGE_KEYS = {
   ACCESS_TOKEN: 'psycoai_access_token',
   REFRESH_TOKEN: 'psycoai_refresh_token',
   USER: 'psycoai_user',
+  ENCRYPTION_KEY: 'psycoai_encryption_key',
 } as const;
 
 // Storage Utilities
@@ -167,10 +171,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   // Save tokens and user to localStorage
-  const saveSession = useCallback((user: User, tokens: AuthTokens) => {
+  const saveSession = useCallback((user: User, tokens: AuthTokens, encryptionKey?: EncryptionKey) => {
     storage.setItem(STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken);
     storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken);
     storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+    if (encryptionKey) {
+      storage.setItem(STORAGE_KEYS.ENCRYPTION_KEY, JSON.stringify(encryptionKey));
+    }
   }, []);
 
   // Clear session from localStorage
@@ -184,6 +191,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const accessToken = storage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
       const refreshToken = storage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
       const userStr = storage.getItem(STORAGE_KEYS.USER);
+      const encryptionKeyStr = storage.getItem(STORAGE_KEYS.ENCRYPTION_KEY);
 
       console.log('🔄 Checking localStorage for session...');
       console.log('- Access Token:', accessToken ? 'Found' : 'Not found');
@@ -193,9 +201,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (accessToken && refreshToken && userStr) {
         const user = JSON.parse(userStr);
         const tokens = { accessToken, refreshToken };
+        let encryptionKey: EncryptionKey | undefined;
+
+        if (encryptionKeyStr) {
+          try {
+            encryptionKey = JSON.parse(encryptionKeyStr);
+          } catch (e) {
+            console.error('Error parsing encryption key', e);
+          }
+        }
 
         console.log('🔄 Restoring session for user:', user.email);
-        dispatch({ type: 'RESTORE_SESSION', payload: { user, tokens } });
+        dispatch({ type: 'RESTORE_SESSION', payload: { user, tokens, encryptionKey } });
         return true;
       } else {
         console.log('❌ No valid session found in localStorage');
@@ -218,14 +235,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const response = await AuthAPI.login(credentials);
 
-      const { user, tokens } = response;
+      const { user, tokens, encryptionKey } = response;
 
       if (!user || !tokens) {
         throw new Error('Respuesta de login inválida');
       }
 
-      saveSession(user, tokens);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, tokens } });
+      saveSession(user, tokens, encryptionKey);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, tokens, encryptionKey } });
 
       console.log('✅ Login successful for:', user.email);
 
@@ -245,10 +262,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log('📝 Register attempt:', userData.email);
 
       const response = await AuthAPI.register(userData);
-      const { user, tokens } = response;
+      const { user, tokens, encryptionKey } = response;
 
-      saveSession(user, tokens);
-      dispatch({ type: 'REGISTER_SUCCESS', payload: { user, tokens } });
+      saveSession(user, tokens, encryptionKey);
+      dispatch({ type: 'REGISTER_SUCCESS', payload: { user, tokens, encryptionKey } });
 
       console.log('✅ Register successful for:', user.email);
 
@@ -278,10 +295,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log('🔄 Refreshing token...');
 
       const response = await AuthAPI.refreshToken(currentRefreshToken);
-      const { user, tokens } = response;
+      const { user, tokens, encryptionKey } = response;
 
-      saveSession(user, tokens);
-      dispatch({ type: 'REFRESH_TOKEN_SUCCESS', payload: { user, tokens } });
+      saveSession(user, tokens, encryptionKey);
+      dispatch({ type: 'REFRESH_TOKEN_SUCCESS', payload: { user, tokens, encryptionKey } });
 
     } catch (error) {
       console.error('Failed to refresh token:', error);

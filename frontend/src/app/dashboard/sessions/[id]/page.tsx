@@ -441,12 +441,12 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     </div>
 
                                     {/* 2. Elements Emocionals */}
-                                    {session.aiMetadata.emotionalElements?.length > 0 && (
+                                    {(session.aiMetadata.emotionalElements?.length || 0) > 0 && (
                                         <div>
                                             <h4 className="text-sm font-semibold text-blue-900 mb-2">Elements emocionals expressats</h4>
                                             <p className="text-xs text-slate-500 mb-2">Durant el relat apareixen expressions associades a:</p>
                                             <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1 mb-2">
-                                                {session.aiMetadata.emotionalElements.map((item, i) => (
+                                                {session.aiMetadata.emotionalElements?.map((item, i) => (
                                                     <li key={i}>{item}</li>
                                                 ))}
                                             </ul>
@@ -457,11 +457,11 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     )}
 
                                     {/* 3. Indicadors Narratius */}
-                                    {session.aiMetadata.narrativeIndicators?.length > 0 && (
+                                    {(session.aiMetadata.narrativeIndicators?.length || 0) > 0 && (
                                         <div>
                                             <h4 className="text-sm font-semibold text-blue-900 mb-2">Indicadors narratius observats</h4>
                                             <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1 mb-2">
-                                                {session.aiMetadata.narrativeIndicators.map((item, i) => (
+                                                {session.aiMetadata.narrativeIndicators?.map((item, i) => (
                                                     <li key={i}>{item}</li>
                                                 ))}
                                             </ul>
@@ -472,12 +472,12 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     )}
 
                                     {/* 4. Observacions Orientatives */}
-                                    {session.aiMetadata.orientativeObservations?.length > 0 && (
+                                    {(session.aiMetadata.orientativeObservations?.length || 0) > 0 && (
                                         <div>
                                             <h4 className="text-sm font-semibold text-blue-900 mb-2">Observacions orientatives (IA)</h4>
                                             <p className="text-xs text-slate-500 mb-2">Com a hipòtesis obertes i no concloents, alguns professionals podrien considerar rellevant explorar:</p>
                                             <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
-                                                {session.aiMetadata.orientativeObservations.map((item, i) => (
+                                                {session.aiMetadata.orientativeObservations?.map((item, i) => (
                                                     <li key={i}>{item}</li>
                                                 ))}
                                             </ul>
@@ -489,29 +489,29 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                         <div className="bg-white p-4 rounded-lg border border-purple-100 shadow-sm space-y-4">
                                             <h4 className="text-sm font-semibold text-purple-900">Suport per al seguiment clínic</h4>
 
-                                            {session.aiMetadata.clinicalFollowUpSupport.suggestions?.length > 0 && (
+                                            {(session.aiMetadata.clinicalFollowUpSupport.suggestions?.length || 0) > 0 && (
                                                 <div>
                                                     <p className="text-xs font-semibold text-slate-600 mb-1">Suggeriment orientatiu:</p>
                                                     <ul className="list-disc pl-5 text-sm text-slate-600">
-                                                        {session.aiMetadata.clinicalFollowUpSupport.suggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                                        {session.aiMetadata.clinicalFollowUpSupport.suggestions?.map((s, i) => <li key={i}>{s}</li>)}
                                                     </ul>
                                                 </div>
                                             )}
 
-                                            {session.aiMetadata.clinicalFollowUpSupport.possibleLines?.length > 0 && (
+                                            {(session.aiMetadata.clinicalFollowUpSupport.possibleLines?.length || 0) > 0 && (
                                                 <div>
                                                     <p className="text-xs font-semibold text-slate-600 mb-1">Línies de treball possibles:</p>
                                                     <ul className="list-disc pl-5 text-sm text-slate-600">
-                                                        {session.aiMetadata.clinicalFollowUpSupport.possibleLines.map((s, i) => <li key={i}>{s}</li>)}
+                                                        {session.aiMetadata.clinicalFollowUpSupport.possibleLines?.map((s, i) => <li key={i}>{s}</li>)}
                                                     </ul>
                                                 </div>
                                             )}
 
-                                            {session.aiMetadata.clinicalFollowUpSupport.modelReferences?.length > 0 && (
+                                            {(session.aiMetadata.clinicalFollowUpSupport.modelReferences?.length || 0) > 0 && (
                                                 <div>
                                                     <p className="text-xs font-semibold text-slate-600 mb-1">Referència a models terapèutics (no prescriptiu):</p>
                                                     <ul className="list-disc pl-5 text-sm text-slate-600">
-                                                        {session.aiMetadata.clinicalFollowUpSupport.modelReferences.map((s, i) => <li key={i}>{s}</li>)}
+                                                        {session.aiMetadata.clinicalFollowUpSupport.modelReferences?.map((s, i) => <li key={i}>{s}</li>)}
                                                     </ul>
                                                 </div>
                                             )}

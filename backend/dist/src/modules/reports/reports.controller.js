@@ -36,6 +36,15 @@ let ReportsController = class ReportsController {
     generateDraft(req, generateReportDraftDto) {
         return this.reportsService.generateDraft(req.user.id, generateReportDraftDto);
     }
+    async download(req, id, res) {
+        const buffer = await this.reportsService.downloadPdf(id, req.user.id);
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="informe-${id}.pdf"`,
+            'Content-Length': buffer.length,
+        });
+        res.end(buffer);
+    }
     remove(req, id) {
         return this.reportsService.remove(id, req.user.id);
     }
@@ -81,6 +90,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], ReportsController.prototype, "generateDraft", null);
+__decorate([
+    (0, common_1.Get)(':id/download'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", Promise)
+], ReportsController.prototype, "download", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Request)()),

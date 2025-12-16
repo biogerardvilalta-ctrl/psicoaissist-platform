@@ -83,5 +83,6 @@ export declare class AiService {
         sessionCount: number;
         period: string;
         notesSummary: string;
+        firstSessionNote?: string;
     }): Promise<string>;
 }

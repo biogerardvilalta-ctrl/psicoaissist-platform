@@ -132,6 +132,9 @@ let AuthController = AuthController_1 = class AuthController {
             throw error;
         }
     }
+    getPublicKey() {
+        return { publicKey: this.authService.getPublicKey() };
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -202,6 +205,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, auth_dto_1.ChangePasswordDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "changePassword", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Obtener clave pública para encriptación de login' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Clave pública RSA (PEM)' }),
+    (0, common_1.Get)('public-key'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "getPublicKey", null);
 exports.AuthController = AuthController = AuthController_1 = __decorate([
     (0, swagger_1.ApiTags)('Auth'),
     (0, common_1.Controller)('auth'),

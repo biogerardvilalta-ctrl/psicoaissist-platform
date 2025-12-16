@@ -2,7 +2,7 @@ import { IsString, IsEnum, IsOptional, IsUUID, IsNumber, IsBoolean, IsArray } fr
 import { ReportType, ReportStatus } from '@prisma/client';
 
 export class CreateReportDto {
-    @IsUUID()
+    @IsString()
     clientId: string;
 
     @IsString()
@@ -12,12 +12,18 @@ export class CreateReportDto {
     reportType: ReportType;
 
     @IsOptional()
-    @IsUUID()
+    @IsString()
     sessionId?: string;
 
     @IsOptional()
     @IsString()
+    @IsOptional()
+    @IsString()
     content?: string; // HTML or Markdown content
+
+    @IsOptional()
+    @IsEnum(ReportStatus)
+    status?: ReportStatus;
 }
 
 export class UpdateReportDto {
@@ -32,17 +38,25 @@ export class UpdateReportDto {
     @IsOptional()
     @IsString()
     content?: string;
+
+    @IsOptional()
+    @IsString()
+    professionalSignature?: string;
+
+    @IsOptional()
+    @IsBoolean()
+    humanReviewConfirmed?: boolean;
 }
 
 export class GenerateReportDraftDto {
-    @IsUUID()
+    @IsString()
     clientId: string;
 
     @IsEnum(ReportType)
     reportType: ReportType;
 
     @IsArray()
-    @IsUUID(undefined, { each: true })
+    @IsString({ each: true })
     sessionIds: string[]; // Sessions to include in the analysis
 
     @IsOptional()

@@ -26,4 +26,5 @@ export declare class AuthService {
         message: string;
     }>;
     private logAuthAttempt;
+    getPublicKey(): string;
 }

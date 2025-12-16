@@ -35,10 +35,8 @@ class HttpClient {
       console.log('📡 Response status:', response.status, response.statusText);
 
       if (!response.ok) {
-        if (response.status === 401) {
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('auth:unauthorized'));
-          }
+        if (response.status === 401 && typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('auth:unauthorized'));
         }
         const errorData = await response.json().catch(() => ({}))
         console.error('❌ HTTP Error response:', errorData);
@@ -52,6 +50,14 @@ class HttpClient {
         return {} as T
       }
 
+      // Check for manually specified response responseType in options
+      if ((options as any).responseType === 'blob') {
+        return await response.blob() as any;
+      }
+      if ((options as any).responseType === 'text') {
+        return await response.text() as any;
+      }
+
       const responseData = await response.json();
       console.log('✅ Response data:', responseData);
       return responseData;
@@ -61,17 +67,20 @@ class HttpClient {
     }
   }
 
-  async get<T>(endpoint: string, params?: Record<string, string>): Promise<T> {
+  async get<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const params = (options as any)?.params;
     const query = params ? '?' + new URLSearchParams(params).toString() : ''
     return this.request<T>(`${endpoint}${query}`, {
       method: 'GET',
+      ...options
     })
   }
 
-  async post<T>(endpoint: string, data?: any): Promise<T> {
+  async post<T>(endpoint: string, data?: any, options?: RequestInit): Promise<T> { // Added options
     return this.request<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
+      ...options
     })
   }
 

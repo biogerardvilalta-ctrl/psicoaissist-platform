@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService, EncryptedData } from '../encryption/encryption.service';
-import { CreateClientDto, UpdateClientDto, ClientResponseDto } from './dto/clients.dto';
+import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto } from './dto/clients.dto';
 import { UserRole } from '@prisma/client';
 
 interface ClientPersonalData {
@@ -57,44 +57,58 @@ export class ClientsService {
         };
     }
 
-    async create(userId: string, createClientDto: CreateClientDto): Promise<ClientResponseDto> {
+    async create(userId: string, createClientDto: CreateClientDto | CreateClientEncryptedDto): Promise<ClientResponseDto> {
         try {
-            // 1. Separate sensitive data
-            const personalData: ClientPersonalData = {
-                firstName: createClientDto.firstName,
-                lastName: createClientDto.lastName,
-                email: createClientDto.email,
-                phone: createClientDto.phone,
-                emergencyContact: createClientDto.emergencyContact,
-                diagnosis: createClientDto.diagnosis,
-                notes: createClientDto.notes,
-                birthDate: createClientDto.birthDate,
-            };
+            let packedData: Buffer;
+            let keyId: string;
+            let personalData: ClientPersonalData;
 
-            // 2. Encrypt
-            const encrypted = await this.encryptionService.encryptData(personalData, userId);
+            if ('encryptedData' in createClientDto) {
+                // Client-side encryption flow
+                packedData = Buffer.from(createClientDto.encryptedData, 'base64');
+                keyId = createClientDto.keyId;
 
-            // 3. Pack to Buffer
-            const packedData = this.packEncryptedData(encrypted);
+                // Verify we can decrypt it (and get data for response)
+                const unpacked = this.unpackEncryptedData(packedData, keyId);
+                const decryptResult = await this.encryptionService.decryptData<ClientPersonalData>(unpacked);
 
-            // 4. Save to DB
+                if (!decryptResult.success || !decryptResult.data) {
+                    throw new Error('Invalid encrypted data received');
+                }
+                personalData = decryptResult.data;
+            } else {
+                // Server-side encryption flow (Legacy/Fallback)
+                personalData = {
+                    firstName: createClientDto.firstName,
+                    lastName: createClientDto.lastName,
+                    email: createClientDto.email,
+                    phone: createClientDto.phone,
+                    emergencyContact: createClientDto.emergencyContact,
+                    diagnosis: createClientDto.diagnosis,
+                    notes: createClientDto.notes,
+                    birthDate: createClientDto.birthDate,
+                };
+
+                const encrypted = await this.encryptionService.encryptData(personalData, userId);
+                packedData = this.packEncryptedData(encrypted);
+                keyId = encrypted.keyId;
+            }
+
+            // Save to DB
             const client = await this.prisma.client.create({
                 data: {
                     user: { connect: { id: userId } },
                     encryptedPersonalData: packedData,
-                    encryptionKeyId: encrypted.keyId,
+                    encryptionKeyId: keyId,
                     tags: createClientDto.tags || [],
                     riskLevel: createClientDto.riskLevel,
                     lastModifiedBy: userId,
-
-                    // Initialize empty optional fields if needed or leave null
-                    // Schema has default(LOW) for riskLevel, etc.
                 },
             });
 
             this.logger.log(`Client created for user ${userId}`);
 
-            // 5. Build Response
+            // Build Response
             return {
                 id: client.id,
                 ...personalData,
