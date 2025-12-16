@@ -82,12 +82,12 @@ export default function DashboardPage() {
 
             <StatsCard
               title="Horas de Consulta"
-              value="0"
+              value={stats?.formattedHours || "0h 0m"}
               icon={Clock}
               iconBgColor="bg-purple-100"
               iconColor="text-purple-600"
-              subtitle="Este mes"
-              trend={{ value: "8%", isPositive: true }}
+              subtitle="Total acumulado"
+              trend={{ value: "", isPositive: true }} // Trend for hours not calculated yet, or hide it
             />
 
             <StatsCard
@@ -102,28 +102,26 @@ export default function DashboardPage() {
           </div>
 
           {/* Charts and analytics section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <ProgressChart
               title="Sesiones por Tipo"
               totalValue={stats?.totalSessions || 0}
-              trend={{ percentage: 12, isPositive: true, period: "este mes" }}
-              data={[
-                { label: "Individual", value: 32, color: "bg-blue-500" },
-                { label: "Grupal", value: 12, color: "bg-green-500" },
-                { label: "Familiar", value: 4, color: "bg-purple-500" }
-              ]}
+              trend={stats?.sessionTrend}
+              data={stats?.sessionTypes || []}
             />
 
             <ProgressChart
               title="Técnicas Terapéuticas"
-              totalValue={85}
-              trend={{ percentage: 8, isPositive: true, period: "este mes" }}
-              data={[
-                { label: "TCC", value: 35, color: "bg-indigo-500" },
-                { label: "Mindfulness", value: 25, color: "bg-cyan-500" },
-                { label: "EMDR", value: 15, color: "bg-pink-500" },
-                { label: "Otras", value: 10, color: "bg-gray-500" }
-              ]}
+              totalValue={stats?.techniques.reduce((acc, t) => acc + t.value, 0) || 0}
+              trend={{ value: "detectadas", isPositive: true }}
+              data={stats?.techniques || []}
+            />
+
+            <ProgressChart
+              title="Pruebas Realizadas"
+              totalValue={stats?.tests.reduce((acc, t) => acc + t.value, 0) || 0}
+              trend={{ value: "IA sugeridas", isPositive: true }}
+              data={stats?.tests || []}
             />
           </div>
 

@@ -1,0 +1,113 @@
+import { PrismaService } from '../../common/prisma/prisma.service';
+import { CreateReportDto, UpdateReportDto } from './dto/reports.dto';
+import { EncryptionService } from '../encryption/encryption.service';
+import { AiService } from '../ai/ai.service';
+export declare class ReportsService {
+    private readonly prisma;
+    private readonly encryption;
+    private readonly aiService;
+    constructor(prisma: PrismaService, encryption: EncryptionService, aiService: AiService);
+    create(userId: string, createReportDto: CreateReportDto): Promise<{
+        id: string;
+        title: string;
+        reportType: import(".prisma/client").$Enums.ReportType;
+        status: import(".prisma/client").$Enums.ReportStatus;
+        version: number;
+        encryptedContent: Buffer;
+        encryptedMetadata: Buffer | null;
+        templateId: string | null;
+        aiGenerated: boolean;
+        aiConfidence: number | null;
+        encryptionKeyId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        completedAt: Date | null;
+        clientId: string;
+        userId: string;
+        sessionId: string | null;
+    }>;
+    findAll(userId: string): Promise<({
+        client: {
+            id: string;
+        };
+    } & {
+        id: string;
+        title: string;
+        reportType: import(".prisma/client").$Enums.ReportType;
+        status: import(".prisma/client").$Enums.ReportStatus;
+        version: number;
+        encryptedContent: Buffer;
+        encryptedMetadata: Buffer | null;
+        templateId: string | null;
+        aiGenerated: boolean;
+        aiConfidence: number | null;
+        encryptionKeyId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        completedAt: Date | null;
+        clientId: string;
+        userId: string;
+        sessionId: string | null;
+    })[]>;
+    findOne(id: string, userId: string): Promise<{
+        content: string;
+        id: string;
+        title: string;
+        reportType: import(".prisma/client").$Enums.ReportType;
+        status: import(".prisma/client").$Enums.ReportStatus;
+        version: number;
+        encryptedContent: Buffer;
+        encryptedMetadata: Buffer | null;
+        templateId: string | null;
+        aiGenerated: boolean;
+        aiConfidence: number | null;
+        encryptionKeyId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        completedAt: Date | null;
+        clientId: string;
+        userId: string;
+        sessionId: string | null;
+    }>;
+    update(id: string, userId: string, updateReportDto: UpdateReportDto): Promise<{
+        id: string;
+        title: string;
+        reportType: import(".prisma/client").$Enums.ReportType;
+        status: import(".prisma/client").$Enums.ReportStatus;
+        version: number;
+        encryptedContent: Buffer;
+        encryptedMetadata: Buffer | null;
+        templateId: string | null;
+        aiGenerated: boolean;
+        aiConfidence: number | null;
+        encryptionKeyId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        completedAt: Date | null;
+        clientId: string;
+        userId: string;
+        sessionId: string | null;
+    }>;
+    remove(id: string, userId: string): Promise<{
+        id: string;
+        title: string;
+        reportType: import(".prisma/client").$Enums.ReportType;
+        status: import(".prisma/client").$Enums.ReportStatus;
+        version: number;
+        encryptedContent: Buffer;
+        encryptedMetadata: Buffer | null;
+        templateId: string | null;
+        aiGenerated: boolean;
+        aiConfidence: number | null;
+        encryptionKeyId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        completedAt: Date | null;
+        clientId: string;
+        userId: string;
+        sessionId: string | null;
+    }>;
+    generateDraft(userId: string, data: any): Promise<{
+        content: string;
+    }>;
+}

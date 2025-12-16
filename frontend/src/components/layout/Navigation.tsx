@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRole } from '@/hooks/useRole';
-import { Heart, Home, Users, Settings, Shield, BarChart3, CreditCard } from 'lucide-react';
+import { Heart, Home, Users, Settings, Shield, BarChart3, CreditCard, FileText } from 'lucide-react';
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -21,7 +21,7 @@ export default function Navigation() {
       icon: Home,
       show: true
     },
-    
+
     // Psychologist items
     {
       name: 'Dashboard',
@@ -29,7 +29,13 @@ export default function Navigation() {
       icon: BarChart3,
       show: isPsychologist()
     },
-    
+    {
+      name: 'Informes',
+      href: '/dashboard/reports',
+      icon: FileText,
+      show: isPsychologist()
+    },
+
     // Admin items
     {
       name: 'Admin Panel',
@@ -49,7 +55,7 @@ export default function Navigation() {
       icon: CreditCard,
       show: isAdmin()
     },
-    
+
     // Common settings
     {
       name: 'Configuración',
@@ -82,11 +88,10 @@ export default function Navigation() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2 transition-colors ${
-                      isActive(item.href)
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                    }`}
+                    className={`px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2 transition-colors ${isActive(item.href)
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      }`}
                   >
                     <Icon className="w-4 h-4" />
                     <span>{item.name}</span>

@@ -6,21 +6,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DashboardModule = void 0;
+exports.ReportsModule = void 0;
 const common_1 = require("@nestjs/common");
-const dashboard_service_1 = require("./dashboard.service");
-const dashboard_controller_1 = require("./dashboard.controller");
-const prisma_module_1 = require("../../common/prisma/prisma.module");
+const reports_service_1 = require("./reports.service");
+const reports_controller_1 = require("./reports.controller");
+const pdf_service_1 = require("./pdf.service");
 const clients_module_1 = require("../clients/clients.module");
 const encryption_module_1 = require("../encryption/encryption.module");
-let DashboardModule = class DashboardModule {
+const ai_module_1 = require("../ai/ai.module");
+let ReportsModule = class ReportsModule {
 };
-exports.DashboardModule = DashboardModule;
-exports.DashboardModule = DashboardModule = __decorate([
+exports.ReportsModule = ReportsModule;
+exports.ReportsModule = ReportsModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule, clients_module_1.ClientsModule, encryption_module_1.EncryptionModule],
-        controllers: [dashboard_controller_1.DashboardController],
-        providers: [dashboard_service_1.DashboardService],
+        imports: [clients_module_1.ClientsModule, encryption_module_1.EncryptionModule, ai_module_1.AiModule],
+        controllers: [reports_controller_1.ReportsController],
+        providers: [reports_service_1.ReportsService, pdf_service_1.PdfService],
+        exports: [reports_service_1.ReportsService, pdf_service_1.PdfService]
     })
-], DashboardModule);
-//# sourceMappingURL=dashboard.module.js.map
+], ReportsModule);
+//# sourceMappingURL=reports.module.js.map

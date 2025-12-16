@@ -6,10 +6,9 @@ interface ProgressChartProps {
   title: string;
   data: ChartDataPoint[];
   totalValue: number;
-  trend: {
-    percentage: number;
+  trend?: {
+    value: string;
     isPositive: boolean;
-    period: string;
   };
 }
 
@@ -21,7 +20,7 @@ interface ChartDataPoint {
 
 export default function ProgressChart({ title, data, totalValue, trend }: ProgressChartProps) {
   const maxValue = Math.max(...data.map(d => d.value));
-  
+
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
       <div className="flex items-center justify-between mb-4">
@@ -29,12 +28,13 @@ export default function ProgressChart({ title, data, totalValue, trend }: Progre
           <h3 className="text-lg font-medium text-gray-900">{title}</h3>
           <p className="text-2xl font-bold text-gray-900 mt-1">{totalValue}</p>
         </div>
-        <div className={`flex items-center text-sm font-medium ${
-          trend.isPositive ? 'text-green-600' : 'text-red-600'
-        }`}>
-          {trend.isPositive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
-          {trend.percentage}% {trend.period}
-        </div>
+        {trend && (
+          <div className={`flex items-center text-sm font-medium ${trend.isPositive ? 'text-green-600' : 'text-red-600'
+            }`}>
+            {trend.isPositive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
+            {trend.value}
+          </div>
+        )}
       </div>
 
       {/* Simple bar chart */}
@@ -48,10 +48,9 @@ export default function ProgressChart({ title, data, totalValue, trend }: Progre
               <div className="flex-1">
                 <div className="bg-gray-200 rounded-full h-3">
                   <div
-                    className={`h-3 rounded-full transition-all duration-500 ${
-                      item.color || 'bg-blue-500'
-                    }`}
-                    style={{ 
+                    className={`h-3 rounded-full transition-all duration-500 ${item.color || 'bg-blue-500'
+                      }`}
+                    style={{
                       width: `${maxValue > 0 ? (item.value / maxValue) * 100 : 0}%`,
                       minWidth: item.value > 0 ? '8px' : '0px'
                     }}

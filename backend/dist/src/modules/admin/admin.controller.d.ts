@@ -112,8 +112,8 @@ export declare class AdminController {
             encryptionKeyId: string;
             clientId: string;
             title: string;
-            sessionId: string | null;
             reportType: import(".prisma/client").$Enums.ReportType;
+            sessionId: string | null;
             version: number;
             encryptedContent: Buffer;
             encryptedMetadata: Buffer | null;

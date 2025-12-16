@@ -80,27 +80,27 @@ export declare class SessionsController {
     }>;
     remove(req: any, id: string): Promise<{
         id: string;
+        status: import(".prisma/client").$Enums.SessionStatus;
+        encryptionKeyId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        clientId: string;
+        userId: string;
         startTime: Date;
         endTime: Date | null;
         duration: number | null;
         sessionType: import(".prisma/client").$Enums.SessionType;
-        status: import(".prisma/client").$Enums.SessionStatus;
         isMinor: boolean;
         encryptedTranscription: Buffer | null;
         encryptedNotes: Buffer | null;
         encryptedAudioPath: string | null;
         aiSuggestions: import("@prisma/client/runtime/library").JsonValue | null;
         aiMetadata: import("@prisma/client/runtime/library").JsonValue | null;
-        encryptionKeyId: string | null;
         audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
         recordingConsent: boolean;
         consentSigned: boolean;
         consentTimestamp: Date | null;
         consentVersion: string | null;
         startedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        clientId: string;
-        userId: string;
     }>;
 }

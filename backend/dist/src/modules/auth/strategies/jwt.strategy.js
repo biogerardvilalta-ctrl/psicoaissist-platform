@@ -20,10 +20,10 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
     constructor(configService, prisma) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromExtractors([
-                passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
                 (request) => {
                     return request?.cookies?.accessToken;
                 },
+                passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ]),
             ignoreExpiration: false,
             secretOrKey: configService.get('JWT_SECRET'),

@@ -9,6 +9,7 @@ export declare class DashboardController {
         activeClients: number;
         totalSessions: number;
         totalReports: number;
+        formattedHours: string;
         clientTrend: {
             value: string;
             isPositive: boolean;
@@ -21,5 +22,20 @@ export declare class DashboardController {
             value: string;
             isPositive: boolean;
         };
+        sessionTypes: {
+            label: string;
+            value: number;
+            color: string;
+        }[];
+        techniques: {
+            label: string;
+            value: number;
+            color: string;
+        }[];
+        tests: {
+            label: string;
+            value: number;
+            color: string;
+        }[];
     }>;
 }

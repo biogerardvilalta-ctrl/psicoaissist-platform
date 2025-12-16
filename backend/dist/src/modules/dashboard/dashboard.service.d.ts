@@ -1,13 +1,17 @@
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { ClientsService } from '../clients/clients.service';
+import { EncryptionService } from '../encryption/encryption.service';
 export declare class DashboardService {
     private readonly prisma;
     private readonly clientsService;
-    constructor(prisma: PrismaService, clientsService: ClientsService);
+    private readonly encryption;
+    constructor(prisma: PrismaService, clientsService: ClientsService, encryption: EncryptionService);
+    private unpackEncryptedData;
     getStats(userId: string): Promise<{
         activeClients: number;
         totalSessions: number;
         totalReports: number;
+        formattedHours: string;
         clientTrend: {
             value: string;
             isPositive: boolean;
@@ -20,6 +24,24 @@ export declare class DashboardService {
             value: string;
             isPositive: boolean;
         };
+        sessionTypes: {
+            label: string;
+            value: number;
+            color: string;
+        }[];
+        techniques: {
+            label: string;
+            value: number;
+            color: string;
+        }[];
+        tests: {
+            label: string;
+            value: number;
+            color: string;
+        }[];
     }>;
+    private getColorForType;
+    private getColorForTechnique;
+    private getRandomColor;
     private calculateTrend;
 }

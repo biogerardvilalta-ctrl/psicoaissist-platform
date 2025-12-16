@@ -13,11 +13,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
-        // También extraer del cookie si existe
+        // Primero intentar extraer del cookie (suele ser más fiable/actualizado por el backend)
         (request) => {
           return request?.cookies?.accessToken;
         },
+        // Luego el header
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
       secretOrKey: configService.get('JWT_SECRET'),

@@ -609,4 +609,47 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
             indicators
         };
     }
+    async generateReportDraft(data: { clientName?: string; reportType: string; sessionCount: number; period: string; notesSummary: string }): Promise<string> {
+        // Simulation of AI drafting
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        const { clientName, reportType, sessionCount, period, notesSummary } = data;
+        const now = new Date().toLocaleDateString('es-ES');
+
+        let draft = `**INFORME CLÍNICO (${reportType})**\n\n`;
+        draft += `**Paciente:** ${clientName || 'N/A'}\n`;
+        draft += `**Fecha:** ${now}\n`;
+        draft += `**Periodo evaluado:** ${period}\n`;
+        draft += `**Sesiones realizadas:** ${sessionCount}\n\n`;
+
+        draft += `### 1. Motivo del Informe\n`;
+        if (reportType === 'PROGRESS') {
+            draft += `El presente informe tiene como objetivo describir la evolución clínica del paciente durante el periodo mencionado, destacando los principales avances y áreas de trabajo actuales.\n\n`;
+        } else if (reportType === 'DISCHARGE') {
+            draft += `El presente informe finaliza el proceso terapéutico, resumiendo los objetivos alcanzados y ofreciendo recomendaciones para el mantenimiento del bienestar.\n\n`;
+        } else if (reportType === 'INITIAL_EVALUATION') {
+            draft += `Este informe recoge los resultados de la evaluación inicial, estableciendo una impresión diagnóstica orientativa (no categórica) y proponiendo un plan de tratamiento.\n\n`;
+        } else {
+            draft += `Informe clínico solicitado para propósitos de seguimiento y coordinación.\n\n`;
+        }
+
+        draft += `### 2. Resumen de la Evolución\n`;
+        draft += `Durante las ${sessionCount} sesiones realizadas en ${period}, se ha trabajado principalmente en:\n\n`;
+
+        // Use the notesSummary (which would be aggregated from session topics/notes)
+        if (notesSummary && notesSummary.length > 20) {
+            draft += `Obs. Clinicas: ${notesSummary}\n\n`;
+        } else {
+            draft += `- Identificación y gestión emocional.\n`;
+            draft += `- Desarrollo de estrategias de afrontamiento.\n`;
+            draft += `- [La IA completará esto basándose en el contenido de las notas...]\n\n`;
+        }
+
+        draft += `### 3. Conclusiones y Recomendaciones\n`;
+        draft += `Se observa una progresión favorable en la consciencia de los propios procesos emocionales. Se recomienda continuar con la pauta establecida.\n`;
+
+        draft += `\n\n---\n*Borrador generado por PsycoAI. Requiere revisión y validación profesional.*`;
+
+        return draft;
+    }
 }

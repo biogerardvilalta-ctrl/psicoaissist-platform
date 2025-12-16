@@ -15,7 +15,7 @@ import { UsersModule } from './modules/users/users.module';
 import { ClientsModule } from './modules/clients/clients.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
-// import { ReportsModule } from './modules/reports/reports.module';
+import { ReportsModule } from './modules/reports/reports.module';
 import { AiModule } from './modules/ai/ai.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { AdminModule } from './modules/admin/admin.module';
@@ -83,8 +83,8 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     ClientsModule,
     DashboardModule,
     SessionsModule,
-    // ReportsModule,
-    // ReportsModule,
+    SessionsModule,
+    ReportsModule,
     AiModule,
     // HealthModule,
   ],
