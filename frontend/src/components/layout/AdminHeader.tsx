@@ -107,7 +107,7 @@ export default function AdminHeader() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings" className="w-full cursor-pointer flex items-center">
+                  <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center">
                     <CogIcon className="mr-2 h-4 w-4" />
                     <span>Configuración</span>
                   </Link>

@@ -58,13 +58,27 @@ export class SessionsService {
             keyId = encrypted.keyId;
         }
 
+        // Fetch user preferences for default duration
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { defaultDuration: true }
+        });
+        const durationMinutes = user?.defaultDuration || 60;
+
         // 3. Create Session
+        const startDate = new Date(createSessionDto.startTime);
+        let endDate = createSessionDto.endTime ? new Date(createSessionDto.endTime) : undefined;
+
+        if (!endDate) {
+            endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+        }
+
         const session = await this.prisma.session.create({
             data: {
                 userId,
                 clientId: createSessionDto.clientId,
-                startTime: new Date(createSessionDto.startTime),
-                endTime: createSessionDto.endTime ? new Date(createSessionDto.endTime) : undefined,
+                startTime: startDate,
+                endTime: endDate,
                 sessionType: createSessionDto.sessionType,
                 status: SessionStatus.SCHEDULED,
                 encryptedNotes: encryptedNotesBuffer,

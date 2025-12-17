@@ -30,6 +30,15 @@ model User {
   speciality      String?
   enableReminders Boolean  @default(false) @map("enable_reminders")
   
+  // Agenda Settings
+  defaultDuration Int      @default(60) @map("default_duration")
+  bufferTime      Int      @default(10) @map("buffer_time")
+  workStartHour   String   @default("09:00") @map("work_start_hour")
+  workEndHour     String   @default("18:00") @map("work_end_hour")
+  
+  // AI Settings
+  preferredLanguage String @default("es") @map("preferred_language")
+  
   // Stripe integration
   stripeCustomerId String? @unique @map("stripe_customer_id")
   

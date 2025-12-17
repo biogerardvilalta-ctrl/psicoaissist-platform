@@ -113,6 +113,11 @@ export class AuthService {
         role: user.role,
         status: user.status,
         enableReminders: user.enableReminders,
+        defaultDuration: user.defaultDuration,
+        bufferTime: user.bufferTime,
+        workStartHour: user.workStartHour,
+        workEndHour: user.workEndHour,
+        preferredLanguage: user.preferredLanguage,
       },
       tokens,
       encryptionKey: {
@@ -180,6 +185,11 @@ export class AuthService {
           role: user.role,
           status: user.status,
           enableReminders: user.enableReminders, // Add this
+          defaultDuration: user.defaultDuration,
+          bufferTime: user.bufferTime,
+          workStartHour: user.workStartHour,
+          workEndHour: user.workEndHour,
+          preferredLanguage: user.preferredLanguage,
         },
         tokens,
         encryptionKey: {
@@ -346,7 +356,12 @@ export class AuthService {
           lastName: data.lastName,
           professionalNumber: data.professionalNumber,
           country: data.country,
-          enableReminders: data.enableReminders, // Asegúrate de que esto esté en el schema y migrado
+          enableReminders: data.enableReminders,
+          defaultDuration: data.defaultDuration,
+          bufferTime: data.bufferTime,
+          workStartHour: data.workStartHour,
+          workEndHour: data.workEndHour,
+          preferredLanguage: data.preferredLanguage,
           updatedAt: new Date(),
         },
       });

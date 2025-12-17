@@ -80,7 +80,22 @@ export class UserResponseDto {
   status: string;
 
   @ApiProperty()
-  enableReminders: boolean; // Add this field
+  enableReminders: boolean;
+
+  @ApiProperty()
+  defaultDuration: number;
+
+  @ApiProperty()
+  bufferTime: number;
+
+  @ApiProperty()
+  workStartHour: string;
+
+  @ApiProperty()
+  workEndHour: string;
+
+  @ApiProperty()
+  preferredLanguage: string;
 }
 
 export class AuthResponseDto {
@@ -134,4 +149,24 @@ export class UpdateProfileDto {
   @ApiProperty({ required: false })
   @IsOptional()
   enableReminders?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  defaultDuration?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  bufferTime?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  workStartHour?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  workEndHour?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  preferredLanguage?: string;
 }

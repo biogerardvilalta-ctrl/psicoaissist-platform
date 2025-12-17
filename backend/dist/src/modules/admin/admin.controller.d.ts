@@ -49,6 +49,11 @@ export declare class AdminController {
             professionalNumber: string | null;
             speciality: string | null;
             enableReminders: boolean;
+            defaultDuration: number;
+            bufferTime: number;
+            workStartHour: string;
+            workEndHour: string;
+            preferredLanguage: string;
             createdAt: Date;
             updatedAt: Date;
             lastLogin: Date | null;
@@ -160,6 +165,11 @@ export declare class AdminController {
         professionalNumber: string | null;
         speciality: string | null;
         enableReminders: boolean;
+        defaultDuration: number;
+        bufferTime: number;
+        workStartHour: string;
+        workEndHour: string;
+        preferredLanguage: string;
         createdAt: Date;
         updatedAt: Date;
         lastLogin: Date | null;

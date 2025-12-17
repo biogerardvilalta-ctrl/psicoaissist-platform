@@ -117,7 +117,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem asChild>
-                                        <Link href="/settings" className="w-full cursor-pointer flex items-center">
+                                        <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center">
                                             <Settings className="mr-2 h-4 w-4" />
                                             <span>Configuración</span>
                                         </Link>

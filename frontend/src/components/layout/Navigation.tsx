@@ -59,7 +59,7 @@ export default function Navigation() {
     // Common settings
     {
       name: 'Configuración',
-      href: '/settings',
+      href: '/dashboard/settings',
       icon: Settings,
       show: true
     }

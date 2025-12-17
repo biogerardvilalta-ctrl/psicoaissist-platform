@@ -25,6 +25,11 @@ export declare class UserResponseDto {
     role: UserRole;
     status: string;
     enableReminders: boolean;
+    defaultDuration: number;
+    bufferTime: number;
+    workStartHour: string;
+    workEndHour: string;
+    preferredLanguage: string;
 }
 export declare class AuthResponseDto {
     user: UserResponseDto;
@@ -47,4 +52,9 @@ export declare class UpdateProfileDto {
     professionalNumber?: string;
     country?: string;
     enableReminders?: boolean;
+    defaultDuration?: number;
+    bufferTime?: number;
+    workStartHour?: string;
+    workEndHour?: string;
+    preferredLanguage?: string;
 }
