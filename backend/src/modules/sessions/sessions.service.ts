@@ -126,6 +126,8 @@ export class SessionsService {
         }
 
         let decryptedNotes: string | undefined;
+        let decryptedTranscription: string | undefined;
+
         if (session.encryptedNotes && session.encryptionKeyId) {
             try {
                 const unpacked = this.unpackEncryptedData(session.encryptedNotes, session.encryptionKeyId);
@@ -138,7 +140,19 @@ export class SessionsService {
             }
         }
 
-        return this.mapToDto(session, decryptedNotes);
+        if (session.encryptedTranscription && session.encryptionKeyId) {
+            try {
+                const unpacked = this.unpackEncryptedData(session.encryptedTranscription, session.encryptionKeyId);
+                const result = await this.encryption.decryptData<{ transcription: string }>(unpacked);
+                if (result.success && result.data) {
+                    decryptedTranscription = result.data.transcription;
+                }
+            } catch (error) {
+                console.error(`Failed to decrypt transcription for session ${id}`, error);
+            }
+        }
+
+        return this.mapToDto(session, decryptedNotes, decryptedTranscription);
     }
 
     async update(id: string, userId: string, updateSessionDto: UpdateSessionDto) {
@@ -148,26 +162,55 @@ export class SessionsService {
         }
 
         let encryptedNotesBuffer = session.encryptedNotes;
+        let encryptedTranscriptionBuffer = session.encryptedTranscription;
         let keyId = session.encryptionKeyId;
-        let notesToReturn = updateSessionDto.notes;
 
+        let notesToReturn = updateSessionDto.notes;
+        let transcriptionToReturn = updateSessionDto.transcription;
+
+        // Handle Notes Encryption
         if (updateSessionDto.notes !== undefined) {
-            // If empty string, clear notes
             if (!updateSessionDto.notes) {
                 encryptedNotesBuffer = null;
-                keyId = null; // Ideally keep keyId or not? Schema allows null.
+                // Don't null keyId yet if transcription exists
             } else {
                 const encrypted = await this.encryption.encryptData({ notes: updateSessionDto.notes }, userId);
                 encryptedNotesBuffer = this.packEncryptedData(encrypted);
-                keyId = encrypted.keyId;
+                keyId = encrypted.keyId; // Update keyId
             }
         } else if (session.encryptedNotes && session.encryptionKeyId) {
-            // Keep existing notes, decrypt for return
             try {
                 const unpacked = this.unpackEncryptedData(session.encryptedNotes, session.encryptionKeyId);
                 const result = await this.encryption.decryptData<{ notes: string }>(unpacked);
                 if (result.success) notesToReturn = result.data.notes;
             } catch (e) { }
+        }
+
+        // Handle Transcription Encryption
+        if (updateSessionDto.transcription !== undefined) {
+            if (!updateSessionDto.transcription) {
+                encryptedTranscriptionBuffer = null;
+            } else {
+                const encrypted = await this.encryption.encryptData({ transcription: updateSessionDto.transcription }, userId);
+                encryptedTranscriptionBuffer = this.packEncryptedData(encrypted);
+                keyId = encrypted.keyId; // Update keyId
+            }
+        } else if (session.encryptedTranscription && session.encryptionKeyId) {
+            // Keep existing transcription decrypt for return
+            try {
+                const unpacked = this.unpackEncryptedData(session.encryptedTranscription, session.encryptionKeyId);
+                const result = await this.encryption.decryptData<{ transcription: string }>(unpacked);
+                if (result.success) transcriptionToReturn = result.data.transcription;
+            } catch (e) { }
+        }
+
+        // Handle Methodology (Store in AI Metadata)
+        let aiMetadataToUpdate: any = session.aiMetadata || {};
+        if (updateSessionDto.methodology !== undefined) {
+            aiMetadataToUpdate = {
+                ...aiMetadataToUpdate,
+                manual_methodology: updateSessionDto.methodology
+            };
         }
 
         const updatedSession = await this.prisma.session.update({
@@ -177,6 +220,7 @@ export class SessionsService {
                 endTime: updateSessionDto.endTime ? new Date(updateSessionDto.endTime) : undefined,
                 status: updateSessionDto.status,
                 encryptedNotes: encryptedNotesBuffer,
+                encryptedTranscription: encryptedTranscriptionBuffer,
                 encryptionKeyId: keyId,
                 // GDPR Consent updates
                 consentSigned: updateSessionDto.consentSigned,
@@ -184,6 +228,7 @@ export class SessionsService {
                 consentTimestamp: updateSessionDto.consentSigned ? new Date() : undefined,
                 startedAt: updateSessionDto.status === SessionStatus.IN_PROGRESS && session.status !== SessionStatus.IN_PROGRESS ? new Date() : undefined,
                 isMinor: updateSessionDto.isMinor,
+                aiMetadata: aiMetadataToUpdate
             },
             include: { client: true }
         });
@@ -202,7 +247,14 @@ export class SessionsService {
                 // Run in background (fire and forget pattern for response speed, but awaited here for simplicity in MVP)
                 // In production, might want to use a job queue.
                 const isMinor = updatedSession.isMinor;
-                const analysis = await this.aiService.generateSessionAnalysis(id, notesToReturn, isMinor);
+                // Combine notes and transcription for analysis if both exist? Or just notes?
+                // For now, let's assume 'notesToReturn' is what the AI analyzes. 
+                // However, user might want to analyze the transcription. 
+                // Let's pass 'notesToReturn' + 'transcriptionToReturn' combined?
+                // Current AI Service expects string.
+                const fullText = (notesToReturn || '') + '\n\n' + (transcriptionToReturn || '');
+
+                const analysis = await this.aiService.generateSessionAnalysis(id, fullText, isMinor);
                 const finalSession = await this.prisma.session.update({
                     where: { id },
                     data: {
@@ -217,7 +269,8 @@ export class SessionsService {
                             diagnostic_final: analysis.diagnostic_final,
                             disclaimer: analysis.disclaimer,
                             audit_session: analysis.audit_session,
-                            clinical_report_text: analysis.clinical_report_text
+                            clinical_report_text: analysis.clinical_report_text,
+                            manual_methodology: updateSessionDto.methodology || aiMetadataToUpdate.manual_methodology // ensure persisting methodology
                         },
                         aiSuggestions: analysis.clinicalFollowUpSupport.suggestions as any
                     },
@@ -225,14 +278,14 @@ export class SessionsService {
                 });
 
                 // Use the session with AI data for response
-                return this.mapToDto(finalSession, notesToReturn);
+                return this.mapToDto(finalSession, notesToReturn, transcriptionToReturn);
             } catch (error) {
                 console.error('AI Analysis failed', error);
                 // Don't fail the request if AI fails
             }
         }
 
-        return this.mapToDto(updatedSession, notesToReturn);
+        return this.mapToDto(updatedSession, notesToReturn, transcriptionToReturn);
     }
 
     async remove(id: string, userId: string) {
@@ -259,7 +312,7 @@ export class SessionsService {
         };
     }
 
-    private async mapToDto(session: any, decryptedNotes?: string) {
+    private async mapToDto(session: any, decryptedNotes?: string, decryptedTranscription?: string) {
         let clientName = "Unknown";
 
         if (session.client && session.client.encryptedPersonalData && session.client.encryptionKeyId) {
@@ -290,6 +343,8 @@ export class SessionsService {
             status: session.status,
             sessionType: session.sessionType,
             notes: decryptedNotes,
+            transcription: decryptedTranscription,
+            methodology: session.aiMetadata?.manual_methodology,
             clientName: clientName,
             client: session.client,
             aiMetadata: session.aiMetadata,

@@ -69,7 +69,20 @@ export class UpdateSessionDto {
     @ApiProperty({ required: false })
     @IsOptional()
     @IsString()
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
     notes?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    transcription?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    methodology?: string;
 
     @ApiProperty({ required: false })
     @IsOptional()
@@ -86,6 +99,9 @@ export class SessionResponseDto {
     status: SessionStatus;
     sessionType: SessionType;
     notes?: string; // Decrypted notes
+    transcription?: string; // Decrypted transcription
+    methodology?: string; // Extracted methodology
     clientName?: string; // For display
     isMinor?: boolean;
+    aiMetadata?: any;
 }

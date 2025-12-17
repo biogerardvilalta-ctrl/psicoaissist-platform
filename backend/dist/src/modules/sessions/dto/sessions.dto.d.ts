@@ -26,6 +26,8 @@ export declare class UpdateSessionDto {
     consentSigned?: boolean;
     consentVersion?: string;
     notes?: string;
+    transcription?: string;
+    methodology?: string;
     isMinor?: boolean;
 }
 export declare class SessionResponseDto {
@@ -37,6 +39,9 @@ export declare class SessionResponseDto {
     status: SessionStatus;
     sessionType: SessionType;
     notes?: string;
+    transcription?: string;
+    methodology?: string;
     clientName?: string;
     isMinor?: boolean;
+    aiMetadata?: any;
 }

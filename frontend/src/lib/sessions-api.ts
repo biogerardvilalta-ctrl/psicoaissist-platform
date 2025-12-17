@@ -28,6 +28,8 @@ export interface Session {
     sessionType: string;
     notesSummary?: string; // Optional preview
     notes?: string;
+    transcription?: string;
+    methodology?: string;
     isMinor?: boolean;
     aiMetadata?: {
         summary?: string;

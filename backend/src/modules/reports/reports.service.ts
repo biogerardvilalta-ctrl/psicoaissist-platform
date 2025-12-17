@@ -200,6 +200,7 @@ export class ReportsService {
             select: {
                 startTime: true,
                 encryptedNotes: true,
+                encryptedTranscription: true,
                 encryptionKeyId: true
             },
             orderBy: { startTime: 'asc' }
@@ -215,6 +216,9 @@ export class ReportsService {
 
         for (let i = 0; i < sessions.length; i++) {
             const session = sessions[i];
+            let sessionContent = "";
+
+            // Decrypt Notes
             if (session.encryptedNotes) {
                 try {
                     const iv = session.encryptedNotes.subarray(0, 16).toString('base64');
@@ -230,7 +234,7 @@ export class ReportsService {
 
                     if (result.success && result.data && result.data.notes) {
                         const noteText = result.data.notes;
-                        notesSummary += `[${session.startTime.toLocaleDateString()}] ${noteText}\n`;
+                        sessionContent += `[Notas Clínicas]: ${noteText}\n`;
 
                         // Capture first session note for "Reason for Consultation" context
                         if (i === 0) {
@@ -240,6 +244,32 @@ export class ReportsService {
                 } catch (e) {
                     console.error("Failed to decrypt session note for draft", e);
                 }
+            }
+
+            // Decrypt Transcription
+            if (session.encryptedTranscription) {
+                try {
+                    const iv = session.encryptedTranscription.subarray(0, 16).toString('base64');
+                    const tag = session.encryptedTranscription.subarray(16, 32).toString('base64');
+                    const encryptedData = session.encryptedTranscription.subarray(32);
+
+                    const result = await this.encryption.decryptData<{ transcription: string }>({
+                        encryptedData,
+                        iv,
+                        tag,
+                        keyId: session.encryptionKeyId
+                    });
+
+                    if (result.success && result.data && result.data.transcription) {
+                        sessionContent += `[Transcripción]: ${result.data.transcription}\n`;
+                    }
+                } catch (e) {
+                    console.error("Failed to decrypt session transcription for draft", e);
+                }
+            }
+
+            if (sessionContent) {
+                notesSummary += `\n--- Sesión del ${session.startTime.toLocaleDateString()} ---\n${sessionContent}`;
             }
         }
 

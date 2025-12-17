@@ -170,6 +170,7 @@ let ReportsService = class ReportsService {
             select: {
                 startTime: true,
                 encryptedNotes: true,
+                encryptedTranscription: true,
                 encryptionKeyId: true
             },
             orderBy: { startTime: 'asc' }
@@ -181,6 +182,7 @@ let ReportsService = class ReportsService {
         let firstSessionNote = "";
         for (let i = 0; i < sessions.length; i++) {
             const session = sessions[i];
+            let sessionContent = "";
             if (session.encryptedNotes) {
                 try {
                     const iv = session.encryptedNotes.subarray(0, 16).toString('base64');
@@ -194,7 +196,7 @@ let ReportsService = class ReportsService {
                     });
                     if (result.success && result.data && result.data.notes) {
                         const noteText = result.data.notes;
-                        notesSummary += `[${session.startTime.toLocaleDateString()}] ${noteText}\n`;
+                        sessionContent += `[Notas Clínicas]: ${noteText}\n`;
                         if (i === 0) {
                             firstSessionNote = noteText;
                         }
@@ -203,6 +205,28 @@ let ReportsService = class ReportsService {
                 catch (e) {
                     console.error("Failed to decrypt session note for draft", e);
                 }
+            }
+            if (session.encryptedTranscription) {
+                try {
+                    const iv = session.encryptedTranscription.subarray(0, 16).toString('base64');
+                    const tag = session.encryptedTranscription.subarray(16, 32).toString('base64');
+                    const encryptedData = session.encryptedTranscription.subarray(32);
+                    const result = await this.encryption.decryptData({
+                        encryptedData,
+                        iv,
+                        tag,
+                        keyId: session.encryptionKeyId
+                    });
+                    if (result.success && result.data && result.data.transcription) {
+                        sessionContent += `[Transcripción]: ${result.data.transcription}\n`;
+                    }
+                }
+                catch (e) {
+                    console.error("Failed to decrypt session transcription for draft", e);
+                }
+            }
+            if (sessionContent) {
+                notesSummary += `\n--- Sesión del ${session.startTime.toLocaleDateString()} ---\n${sessionContent}`;
             }
         }
         const client = await this.prisma.client.findUnique({ where: { id: data.clientId } });

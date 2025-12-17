@@ -351,40 +351,70 @@ export class AiService {
 
         // 1. Elements Emocionals Expressats (Descriptive)
         const emotionalElements: string[] = [];
-        if (lowerNotes.includes('triste') || lowerNotes.includes('llora') || lowerNotes.includes('buit')) {
+        if (lowerNotes.includes('triste') || lowerNotes.includes('llora') || lowerNotes.includes('buit') || lowerNotes.includes('pena') || lowerNotes.includes('dolor')) {
             emotionalElements.push('intensitat emocional');
             emotionalElements.push('sensacions descrites com a buit o desconnexió');
         }
-        if (lowerNotes.includes('miedo') || lowerNotes.includes('ansiedad') || lowerNotes.includes('nervios')) {
+        if (lowerNotes.includes('miedo') || lowerNotes.includes('ansiedad') || lowerNotes.includes('nervios') || lowerNotes.includes('angustia') || lowerNotes.includes('pánico')) {
             emotionalElements.push('anticipació d’esdeveniments futurs');
             emotionalElements.push('inquietud expressada en el relat');
+        }
+        if (lowerNotes.includes('rabia') || lowerNotes.includes('enfado') || lowerNotes.includes('grito') || lowerNotes.includes('odio')) {
+            emotionalElements.push('expressió d’hostilitat o frustració');
+            emotionalElements.push('reaccions reactives davant l’entorn');
+        }
+        if (lowerNotes.includes('alegria') || lowerNotes.includes('feliz') || lowerNotes.includes('contento') || lowerNotes.includes('animado')) {
+            emotionalElements.push('valència afectiva positiva');
+            emotionalElements.push('connexió amb experiències gratificants');
+        }
+
+        // Failsafe if empty
+        if (emotionalElements.length === 0) {
+            emotionalElements.push('To general del discurs aparentment estable.');
+            emotionalElements.push('Narrativa centrada en aspectes funcionals o descriptius sense marcadors emocionals d’alta intensitat.');
         }
 
         // 2. Indicadors Narratius Observats (Patterns)
         const narrativeIndicators: string[] = [];
-        if (lowerNotes.includes('siempre') || lowerNotes.includes('nunca') || lowerNotes.includes('todo')) {
+        if (lowerNotes.includes('siempre') || lowerNotes.includes('nunca') || lowerNotes.includes('todo') || lowerNotes.includes('nada') || lowerNotes.includes('jamás')) {
             narrativeIndicators.push('Presència de patrons narratius amb formulacions generals o absolutes');
         }
-        if (lowerNotes.includes('miedo') || lowerNotes.includes('ansiedad')) {
+        if (lowerNotes.includes('miedo') || lowerNotes.includes('ansiedad') || lowerNotes.includes('preocup')) {
             narrativeIndicators.push('Repetició de temes relacionats amb preocupació anticipatòria');
         }
-        if (lowerNotes.includes('suicid') || lowerNotes.includes('muer') || lowerNotes.includes('acabar')) {
-            narrativeIndicators.push('Expressions verbals que alguns professionals consideren rellevants per a l’exploració clínica');
+        if (lowerNotes.includes('suicid') || lowerNotes.includes('muer') || lowerNotes.includes('acabar') || lowerNotes.includes('matar') || lowerNotes.includes('no vale la pena')) {
+            narrativeIndicators.push('Expressions verbals que alguns professionals consideren rellevants per a l’exploració clínica (Possibles idees de mort/autolesió)');
+        }
+        if (lowerNotes.includes('pero') && (lowerNotes.match(/pero/g) || []).length > 3) {
+            narrativeIndicators.push('Ús freqüent de conjuncions adversatives ("però") suggerint conflicte intern o justificació');
+        }
+
+        // Failsafe if empty
+        if (narrativeIndicators.length === 0) {
+            narrativeIndicators.push('Discurs fluid i coherent sense disrupcions significatives.');
+            narrativeIndicators.push('Absència d’indicadors de risc imminent o bloquejos en aquest fragment.');
         }
 
         // 3. Observacions Orientatives (Hypotheses)
         const orientativeObservations: string[] = [
-            'com la persona descriu l’evolució d’aquestes sensacions',
-            'l’impacte subjectiu d’aquestes experiències en el seu dia a dia'
+            'com la persona descriu l’evolució d’aquestes sensacions en la línia temporal',
+            'l’impacte subjectiu d’aquestes experiències en el seu funcionament diari'
         ];
         if (lowerNotes.includes('ansiedad')) {
             orientativeObservations.push('el context en què apareixen els pensaments anticipatoris');
         }
+        if (lowerNotes.includes('familia') || lowerNotes.includes('padre') || lowerNotes.includes('madre')) {
+            orientativeObservations.push('el paper del sistema familiar percebut en la narrativa actual');
+        }
 
         // 4. Suport per al seguiment clínic (Suggestions)
         const suggestions = [
-            'En contextos similars, alguns professionals exploren la història i el significat personal associat a aquestes vivències.'
+            'En contexts similars, alguns professionals exploren la història i el significat personal associat a aquestes vivències.'
         ];
+
+        if (lowerNotes.length < 50) {
+            suggestions.push('Es suggereix ampliar la recollida d’informació, atesa la brevetat del registre actual.');
+        }
 
         const possibleLines = [
             'Alguns professionals consideren facilitar la identificació i diferenciació de les emocions presents en el relat',
@@ -392,22 +422,23 @@ export class AiService {
         ];
 
         const modelReferences = [
-            'CBT: Alguns professionals utilitzen aquest model per explorar la relació entre pensaments, emocions i conductes, segons el moment del procés terapèutic.'
+            'CBT: Alguns professionals utilitzen aquest model per explorar la relació entre pensaments, emocions i conductes.',
+            'Sistémica: Exploració de patrons relacionals si s\'escau.'
         ];
 
         // 5. Structures for the new JSON format
         const discurs_pacient = {
-            resum_descriptiu: `Resum descriptiu basat en el text transcrit. ${notes.substring(0, 100)}...`, // Placeholder for demo
+            resum_descriptiu: `Resum descriptiu orientatiu (Simulat): La sessió conté ${notes.length} caracters. El text sembla centrar-se en experiències personals.`,
             fragments_relevants: [
-                "Fragment rellevant 1 del discurs...",
-                "Fragment rellevant 2 del discurs..."
+                "Fragment seleccionat per rellevància clínica potencial (Simulació)...",
+                "Segon fragment destacat del discurs..."
             ]
         };
 
         const temes_emergents = [];
         const temes_descartats = [];
 
-        // Populate temes_emergents based on keywords
+        // Populate temes_emergents based on keywords (EXPANDED LIST)
         if (isMinor) {
             // Minors Logic: Restricted topics
             if (lowerNotes.includes('ansiedad') || lowerNotes.includes('miedo') || lowerNotes.includes('nervios')) {
@@ -427,6 +458,10 @@ export class AiService {
             }
             if (lowerNotes.includes('emocion') || lowerNotes.includes('siente')) {
                 temes_emergents.push({ tema: "regulacio_emocional", descripcio: "Gestió d'emocions", nivell: "emergent" });
+            }
+            // ADDITIONAL MINOR KEYWORDS
+            if (lowerNotes.includes('cole') || lowerNotes.includes('escuela') || lowerNotes.includes('profe') || lowerNotes.includes('deberes')) {
+                temes_emergents.push({ tema: "atencio_i_impulsivitat", descripcio: "Aspectes escolars/acadèmics", nivell: "emergent" });
             }
 
         } else {

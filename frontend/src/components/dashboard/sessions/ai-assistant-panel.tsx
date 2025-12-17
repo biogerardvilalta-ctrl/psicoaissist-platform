@@ -1,25 +1,22 @@
 
 'use client';
 
-import { useState } from 'react';
-import { Sparkles, Brain, MessageSquare, RefreshCw, XCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Sparkles, Brain, MessageSquare, RefreshCw, XCircle, AlertTriangle, Lightbulb } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AiAPI, AiAnalysisResult } from '@/lib/ai-api';
 import { useToast } from '@/hooks/use-toast';
 
-// ... imports ...
-import { useEffect, useRef } from 'react';
-import { AlertTriangle, Lightbulb } from 'lucide-react';
-
-interface AiAssistantPanelProps {
+export interface AiAssistantPanelProps {
     sessionId: string;
     isActive: boolean;
     liveContext?: string;
+    onSuggestionClick?: (text: string) => void;
 }
 
-export function AiAssistantPanel({ sessionId, isActive, liveContext }: AiAssistantPanelProps) {
+export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestionClick }: AiAssistantPanelProps) {
     const { toast } = useToast();
     const [questions, setQuestions] = useState<string[]>([]);
     const [considerations, setConsiderations] = useState<string[]>([]);
@@ -155,10 +152,21 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext }: AiAssista
                                 <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Possibles preguntes a explorar</h4>
                                 <div className="space-y-3">
                                     {questions.map((q, index) => (
-                                        <div key={`q-${index}`} className="bg-white p-3 rounded-lg border shadow-sm text-sm animate-in fade-in slide-in-from-bottom-2 group relative">
+                                        <div
+                                            key={`q-${index}`}
+                                            className="bg-white p-3 rounded-lg border shadow-sm text-sm animate-in fade-in slide-in-from-bottom-2 group relative cursor-pointer hover:bg-slate-50 transition-colors"
+                                            onClick={() => {
+                                                if (onSuggestionClick) onSuggestionClick(q);
+                                                setQuestions(prev => prev.filter((_, i) => i !== index));
+                                            }}
+                                            title="Clic per afegir a notes"
+                                        >
                                             <button
                                                 className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-100 rounded-full transition-opacity"
-                                                onClick={() => setQuestions(prev => prev.filter((_, i) => i !== index))}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setQuestions(prev => prev.filter((_, i) => i !== index));
+                                                }}
                                                 title="Descartar"
                                             >
                                                 <XCircle className="h-4 w-4 text-slate-400 hover:text-red-500" />
@@ -167,7 +175,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext }: AiAssista
                                                 <MessageSquare className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
                                                 <p>{q}</p>
                                             </div>
-                                            <p className="text-[10px] text-slate-400 mt-2 italic text-right">Editable pel professional</p>
+                                            <p className="text-[10px] text-slate-400 mt-2 italic text-right">Clic per afegir a notes</p>
                                         </div>
                                     ))}
                                 </div>

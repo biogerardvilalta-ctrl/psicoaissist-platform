@@ -25,8 +25,7 @@ export default function QuickActions() {
       color: 'bg-blue-100 group-hover:bg-blue-200 text-blue-600',
       hoverColor: 'hover:border-blue-500 hover:bg-blue-50',
       action: () => {
-        // TODO: Navegar a nueva sesión
-        console.log('Nueva sesión AI');
+        router.push('/dashboard/sessions/new?start=true');
       }
     },
     {
@@ -48,8 +47,7 @@ export default function QuickActions() {
       color: 'bg-purple-100 group-hover:bg-purple-200 text-purple-600',
       hoverColor: 'hover:border-purple-500 hover:bg-purple-50',
       action: () => {
-        // TODO: Navegar a generador de informes
-        console.log('Generar informe');
+        router.push('/dashboard/reports/new');
       }
     },
     {
@@ -60,8 +58,7 @@ export default function QuickActions() {
       color: 'bg-orange-100 group-hover:bg-orange-200 text-orange-600',
       hoverColor: 'hover:border-orange-500 hover:bg-orange-50',
       action: () => {
-        // TODO: Navegar a calendario
-        console.log('Programar cita');
+        router.push('/dashboard/sessions/new');
       }
     }
   ];

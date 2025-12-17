@@ -12,6 +12,8 @@ export declare class SessionsController {
         status: any;
         sessionType: any;
         notes: string;
+        transcription: string;
+        methodology: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -27,6 +29,8 @@ export declare class SessionsController {
         status: any;
         sessionType: any;
         notes: string;
+        transcription: string;
+        methodology: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -42,6 +46,8 @@ export declare class SessionsController {
         status: any;
         sessionType: any;
         notes: string;
+        transcription: string;
+        methodology: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -57,6 +63,8 @@ export declare class SessionsController {
         status: any;
         sessionType: any;
         notes: string;
+        transcription: string;
+        methodology: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -72,6 +80,8 @@ export declare class SessionsController {
         status: any;
         sessionType: any;
         notes: string;
+        transcription: string;
+        methodology: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -80,15 +90,16 @@ export declare class SessionsController {
     }>;
     remove(req: any, id: string): Promise<{
         id: string;
-        userId: string;
+        status: import(".prisma/client").$Enums.SessionStatus;
         encryptionKeyId: string | null;
         createdAt: Date;
         updatedAt: Date;
+        clientId: string;
+        userId: string;
         startTime: Date;
         endTime: Date | null;
         duration: number | null;
         sessionType: import(".prisma/client").$Enums.SessionType;
-        status: import(".prisma/client").$Enums.SessionStatus;
         isMinor: boolean;
         encryptedTranscription: Buffer | null;
         encryptedNotes: Buffer | null;
@@ -101,6 +112,5 @@ export declare class SessionsController {
         consentTimestamp: Date | null;
         consentVersion: string | null;
         startedAt: Date | null;
-        clientId: string;
     }>;
 }

@@ -108,6 +108,7 @@ let SessionsService = class SessionsService {
             throw new common_1.NotFoundException('Session not found');
         }
         let decryptedNotes;
+        let decryptedTranscription;
         if (session.encryptedNotes && session.encryptionKeyId) {
             try {
                 const unpacked = this.unpackEncryptedData(session.encryptedNotes, session.encryptionKeyId);
@@ -120,7 +121,19 @@ let SessionsService = class SessionsService {
                 console.error(`Failed to decrypt session ${id}`, error);
             }
         }
-        return this.mapToDto(session, decryptedNotes);
+        if (session.encryptedTranscription && session.encryptionKeyId) {
+            try {
+                const unpacked = this.unpackEncryptedData(session.encryptedTranscription, session.encryptionKeyId);
+                const result = await this.encryption.decryptData(unpacked);
+                if (result.success && result.data) {
+                    decryptedTranscription = result.data.transcription;
+                }
+            }
+            catch (error) {
+                console.error(`Failed to decrypt transcription for session ${id}`, error);
+            }
+        }
+        return this.mapToDto(session, decryptedNotes, decryptedTranscription);
     }
     async update(id, userId, updateSessionDto) {
         const session = await this.prisma.session.findUnique({ where: { id } });
@@ -128,12 +141,13 @@ let SessionsService = class SessionsService {
             throw new common_1.NotFoundException('Session not found');
         }
         let encryptedNotesBuffer = session.encryptedNotes;
+        let encryptedTranscriptionBuffer = session.encryptedTranscription;
         let keyId = session.encryptionKeyId;
         let notesToReturn = updateSessionDto.notes;
+        let transcriptionToReturn = updateSessionDto.transcription;
         if (updateSessionDto.notes !== undefined) {
             if (!updateSessionDto.notes) {
                 encryptedNotesBuffer = null;
-                keyId = null;
             }
             else {
                 const encrypted = await this.encryption.encryptData({ notes: updateSessionDto.notes }, userId);
@@ -150,6 +164,32 @@ let SessionsService = class SessionsService {
             }
             catch (e) { }
         }
+        if (updateSessionDto.transcription !== undefined) {
+            if (!updateSessionDto.transcription) {
+                encryptedTranscriptionBuffer = null;
+            }
+            else {
+                const encrypted = await this.encryption.encryptData({ transcription: updateSessionDto.transcription }, userId);
+                encryptedTranscriptionBuffer = this.packEncryptedData(encrypted);
+                keyId = encrypted.keyId;
+            }
+        }
+        else if (session.encryptedTranscription && session.encryptionKeyId) {
+            try {
+                const unpacked = this.unpackEncryptedData(session.encryptedTranscription, session.encryptionKeyId);
+                const result = await this.encryption.decryptData(unpacked);
+                if (result.success)
+                    transcriptionToReturn = result.data.transcription;
+            }
+            catch (e) { }
+        }
+        let aiMetadataToUpdate = session.aiMetadata || {};
+        if (updateSessionDto.methodology !== undefined) {
+            aiMetadataToUpdate = {
+                ...aiMetadataToUpdate,
+                manual_methodology: updateSessionDto.methodology
+            };
+        }
         const updatedSession = await this.prisma.session.update({
             where: { id },
             data: {
@@ -157,12 +197,14 @@ let SessionsService = class SessionsService {
                 endTime: updateSessionDto.endTime ? new Date(updateSessionDto.endTime) : undefined,
                 status: updateSessionDto.status,
                 encryptedNotes: encryptedNotesBuffer,
+                encryptedTranscription: encryptedTranscriptionBuffer,
                 encryptionKeyId: keyId,
                 consentSigned: updateSessionDto.consentSigned,
                 consentVersion: updateSessionDto.consentVersion,
                 consentTimestamp: updateSessionDto.consentSigned ? new Date() : undefined,
                 startedAt: updateSessionDto.status === sessions_dto_1.SessionStatus.IN_PROGRESS && session.status !== sessions_dto_1.SessionStatus.IN_PROGRESS ? new Date() : undefined,
                 isMinor: updateSessionDto.isMinor,
+                aiMetadata: aiMetadataToUpdate
             },
             include: { client: true }
         });
@@ -175,7 +217,8 @@ let SessionsService = class SessionsService {
         if (updateSessionDto.status === sessions_dto_1.SessionStatus.COMPLETED && notesToReturn) {
             try {
                 const isMinor = updatedSession.isMinor;
-                const analysis = await this.aiService.generateSessionAnalysis(id, notesToReturn, isMinor);
+                const fullText = (notesToReturn || '') + '\n\n' + (transcriptionToReturn || '');
+                const analysis = await this.aiService.generateSessionAnalysis(id, fullText, isMinor);
                 const finalSession = await this.prisma.session.update({
                     where: { id },
                     data: {
@@ -190,19 +233,20 @@ let SessionsService = class SessionsService {
                             diagnostic_final: analysis.diagnostic_final,
                             disclaimer: analysis.disclaimer,
                             audit_session: analysis.audit_session,
-                            clinical_report_text: analysis.clinical_report_text
+                            clinical_report_text: analysis.clinical_report_text,
+                            manual_methodology: updateSessionDto.methodology || aiMetadataToUpdate.manual_methodology
                         },
                         aiSuggestions: analysis.clinicalFollowUpSupport.suggestions
                     },
                     include: { client: true }
                 });
-                return this.mapToDto(finalSession, notesToReturn);
+                return this.mapToDto(finalSession, notesToReturn, transcriptionToReturn);
             }
             catch (error) {
                 console.error('AI Analysis failed', error);
             }
         }
-        return this.mapToDto(updatedSession, notesToReturn);
+        return this.mapToDto(updatedSession, notesToReturn, transcriptionToReturn);
     }
     async remove(id, userId) {
         const session = await this.prisma.session.findUnique({ where: { id } });
@@ -222,7 +266,7 @@ let SessionsService = class SessionsService {
             keyId: keyId,
         };
     }
-    async mapToDto(session, decryptedNotes) {
+    async mapToDto(session, decryptedNotes, decryptedTranscription) {
         let clientName = "Unknown";
         if (session.client && session.client.encryptedPersonalData && session.client.encryptionKeyId) {
             try {
@@ -245,6 +289,8 @@ let SessionsService = class SessionsService {
             status: session.status,
             sessionType: session.sessionType,
             notes: decryptedNotes,
+            transcription: decryptedTranscription,
+            methodology: session.aiMetadata?.manual_methodology,
             clientName: clientName,
             client: session.client,
             aiMetadata: session.aiMetadata,
