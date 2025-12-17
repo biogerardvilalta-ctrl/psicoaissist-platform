@@ -20,7 +20,7 @@ const demoUsers: AdminUser[] = [
     id: '1',
     firstName: 'Ana',
     lastName: 'García',
-    email: 'ana.garcia@psycoai.com',
+    email: 'ana.garcia@psychoai.com',
     role: 'PSYCHOLOGIST',
     status: 'ACTIVE',
     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -165,7 +165,7 @@ export function useAdminStats() {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Intentar cargar datos reales
       try {
         const data = await AdminAPI.getDashboardStats();
@@ -211,7 +211,7 @@ export function useAdminUsers(filters?: UserFilters) {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Intentar cargar datos reales
       try {
         const data = await AdminAPI.getUsers(newFilters || filters);
@@ -228,19 +228,19 @@ export function useAdminUsers(filters?: UserFilters) {
         // Usar datos demo si la API falla
         const limit = (newFilters || filters)?.limit || 10;
         const search = (newFilters || filters)?.search?.toLowerCase() || '';
-        
+
         // Filtrar usuarios demo por búsqueda si existe
         let filteredUsers = demoUsers;
         if (search) {
-          filteredUsers = demoUsers.filter(user => 
+          filteredUsers = demoUsers.filter(user =>
             user.firstName.toLowerCase().includes(search) ||
             user.lastName.toLowerCase().includes(search) ||
             user.email.toLowerCase().includes(search)
           );
         }
-        
+
         const usersToShow = filteredUsers.slice(0, limit);
-        
+
         setTimeout(() => {
           setUsers(usersToShow);
           setPagination({
@@ -296,11 +296,11 @@ export function useAdminUsers(filters?: UserFilters) {
     }
   }, [fetchUsers, filters]);
 
-  return { 
-    users, 
-    pagination, 
-    loading, 
-    error, 
+  return {
+    users,
+    pagination,
+    loading,
+    error,
     refetch: fetchUsers,
     getUserById,
     updateUser

@@ -18,10 +18,10 @@ export default function LoginPage() {
     password: '',
     rememberMe: false,
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, isLoading, error, clearError, isAuthenticated, user } = useAuth();
@@ -50,7 +50,7 @@ export default function LoginPage() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    
+
     // Clear messages when user starts typing
     if (error) clearError();
     if (successMessage) setSuccessMessage(null);
@@ -60,24 +60,24 @@ export default function LoginPage() {
     if (!formData.email.trim()) {
       return false;
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       return false;
     }
-    
+
     if (!formData.password) {
       return false;
     }
-    
+
     return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     try {
       await login({ email: formData.email, password: formData.password });
       // Redirect is handled by useEffect when user state changes
@@ -97,12 +97,12 @@ export default function LoginPage() {
               <Heart className="w-8 h-8 text-white" />
             </div>
           </div>
-          
+
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
             Bienvenido de vuelta
           </h2>
           <p className="text-gray-600">
-            Accede a tu cuenta de PsycoAI
+            Accede a tu cuenta de PsychoAI
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export default function LoginPage() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="text-sm font-medium text-blue-900 mb-2">🎮 Credenciales de prueba:</h3>
           <div className="text-xs text-blue-700 space-y-1">
-            <div><strong>Admin:</strong> admin@psycoai.com / admin123</div>
+            <div><strong>Admin:</strong> admin@psychoai.com / admin123</div>
             <div><strong>Usuario:</strong> cualquier@email.com / demo123</div>
           </div>
         </div>

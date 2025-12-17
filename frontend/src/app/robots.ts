@@ -5,6 +5,6 @@ export default function robots() {
       allow: '/',
       disallow: ['/dashboard/', '/admin/', '/api/'],
     },
-    sitemap: 'https://psycoai.com/sitemap.xml',
+    sitemap: 'https://psychoai.com/sitemap.xml',
   };
 }

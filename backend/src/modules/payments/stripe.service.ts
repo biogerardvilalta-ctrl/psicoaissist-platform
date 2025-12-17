@@ -14,11 +14,11 @@ export class StripeService {
     private config: ConfigType<typeof stripeConfig>,
   ) {
     // Activar modo demo si no hay clave válida de Stripe
-    this.isDemoMode = !this.config.secretKey || 
-                     this.config.secretKey === '' || 
-                     this.config.secretKey.trim() === '' ||
-                     this.config.secretKey.includes('sk_test_51234567890abcdef');
-    
+    this.isDemoMode = !this.config.secretKey ||
+      this.config.secretKey === '' ||
+      this.config.secretKey.trim() === '' ||
+      this.config.secretKey.includes('sk_test_51234567890abcdef');
+
     if (!this.isDemoMode) {
       try {
         this.stripe = new Stripe(this.config.secretKey, {
@@ -30,7 +30,7 @@ export class StripeService {
         this.isDemoMode = true;
       }
     }
-    
+
     if (this.isDemoMode) {
       this.logger.log('StripeService: Running in DEMO mode');
     }
@@ -151,7 +151,7 @@ export class StripeService {
       };
     }
     const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
-    
+
     return this.stripe.subscriptions.update(subscriptionId, {
       items: [
         {
@@ -198,7 +198,7 @@ export class StripeService {
     if (this.isDemoMode) {
       return {
         id: customerId,
-        email: 'demo@psycoai.com',
+        email: 'demo@psychoai.com',
         name: 'Demo User',
         object: 'customer',
       };

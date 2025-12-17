@@ -6,7 +6,7 @@ export default function PrivacyPolicyPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-8">
             Política de Privacidad
           </h1>
-          
+
           <div className="prose max-w-none">
             <p className="text-gray-600 mb-6">
               <strong>Última actualización:</strong> 12 de diciembre de 2025
@@ -120,8 +120,8 @@ export default function PrivacyPolicyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Transferencias Internacionales</h2>
               <p className="text-gray-700 mb-6">
-                Todos los datos se procesan y almacenan en servidores ubicados en la Unión Europea. 
-                No realizamos transferencias internacionales de datos fuera del EEE sin las garantías 
+                Todos los datos se procesan y almacenan en servidores ubicados en la Unión Europea.
+                No realizamos transferencias internacionales de datos fuera del EEE sin las garantías
                 adecuadas del GDPR.
               </p>
             </section>
@@ -133,7 +133,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <div className="bg-gray-100 p-4 rounded-lg">
                 <p className="text-gray-800 font-medium">Delegado de Protección de Datos</p>
-                <p className="text-gray-700">Email: dpo@psycoai.com</p>
+                <p className="text-gray-700">Email: dpo@psychoai.com</p>
                 <p className="text-gray-700">Teléfono: +34 900 123 456</p>
                 <p className="text-gray-700">Dirección: Calle Serrano 123, 28006 Madrid, España</p>
               </div>
@@ -142,7 +142,7 @@ export default function PrivacyPolicyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Autoridad de Control</h2>
               <p className="text-gray-700 mb-6">
-                Tiene derecho a presentar una queja ante la Agencia Española de Protección de Datos (AEPD) 
+                Tiene derecho a presentar una queja ante la Agencia Española de Protección de Datos (AEPD)
                 si considera que el tratamiento de sus datos personales no cumple con la normativa.
               </p>
             </section>

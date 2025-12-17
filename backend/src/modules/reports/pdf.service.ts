@@ -127,7 +127,7 @@ export class PdfService {
         doc.font('Helvetica-Bold').fontSize(20).fillColor('white').text('P', 63, 53);
 
         // Text Logo
-        doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text('PsycoAI', 100, 45);
+        doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text('PsychoAI', 100, 45);
         doc.font('Helvetica').fontSize(10).fillColor('#64748B').text('Asistente Clínico Inteligente', 100, 68);
 
         // Top right decorative line

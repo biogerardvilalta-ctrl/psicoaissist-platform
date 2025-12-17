@@ -1,12 +1,12 @@
-import { 
-  Controller, 
-  Post, 
-  Get, 
-  Body, 
-  Headers, 
-  RawBodyRequest, 
-  Req, 
-  UseGuards, 
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Headers,
+  RawBodyRequest,
+  Req,
+  UseGuards,
   HttpCode,
   HttpStatus,
   Patch,
@@ -16,9 +16,9 @@ import { PaymentsService } from './payments.service';
 import { UsageLimitsService } from './usage-limits.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FeatureGuard, RequireFeature } from '../auth/guards/feature.guard';
-import { 
-  CreateCheckoutSessionDto, 
-  CreateCustomerDto, 
+import {
+  CreateCheckoutSessionDto,
+  CreateCustomerDto,
   UpdateSubscriptionDto,
   PlanType
 } from './dto/payments.dto';
@@ -29,7 +29,7 @@ export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,
     private readonly usageLimitsService: UsageLimitsService,
-  ) {}
+  ) { }
 
   @Get('plans')
   async getPlans() {
@@ -47,10 +47,10 @@ export class PaymentsController {
   ) {
     // Endpoint temporal para testing sin autenticación
     console.log('Demo checkout session requested:', createCheckoutDto);
-    
+
     // Usar un usuario real de la base de datos para el demo
     // Podemos usar el admin o cualquier usuario de los seeded
-    const demoUserId = 'cmj66cjcg0000ojxfyrhpepoh'; // admin@psycoai.com del seed
+    const demoUserId = 'cmj66cjcg0000ojxfyrhpepoh'; // admin@psychoai.com del seed
 
     return this.paymentsService.createCheckoutSessionDemo(
       createCheckoutDto,

@@ -2,15 +2,15 @@ export function StructuredData() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "PsycoAI",
+    "name": "PsychoAI",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web",
     "description": "Asistente IA para psicólogos que proporciona transcripción automática, análisis inteligente e informes profesionales para mejorar la práctica psicológica.",
-    "url": "https://psycoai.com",
+    "url": "https://psychoai.com",
     "author": {
       "@type": "Organization",
-      "name": "PsycoAI",
-      "url": "https://psycoai.com"
+      "name": "PsychoAI",
+      "url": "https://psychoai.com"
     },
     "offers": [
       {
@@ -24,13 +24,13 @@ export function StructuredData() {
       {
         "@type": "Offer",
         "name": "Plan Pro",
-        "price": "59", 
+        "price": "59",
         "priceCurrency": "EUR",
         "billingIncrement": "P1M",
         "description": "Para profesionales establecidos que buscan escalar"
       },
       {
-        "@type": "Offer", 
+        "@type": "Offer",
         "name": "Plan Premium",
         "price": "99",
         "priceCurrency": "EUR",

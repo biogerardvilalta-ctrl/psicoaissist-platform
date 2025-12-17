@@ -17,16 +17,16 @@ async function main() {
   // Create users with hashed passwords
   console.log('👥 Creating users...');
   const hashedPassword = await bcrypt.hash('password123', 10);
-  
+
   const adminUser = await prisma.user.create({
     data: {
-      email: 'admin@psycoai.com',
+      email: 'admin@psychoai.com',
       passwordHash: hashedPassword,
       role: UserRole.ADMIN,
       status: UserStatus.ACTIVE,
       verified: true,
       firstName: 'Admin',
-      lastName: 'PsycoAI',
+      lastName: 'PsychoAI',
       country: 'España',
       lastLogin: new Date(),
     },
@@ -111,7 +111,7 @@ async function main() {
   // Create clients for psychologists (simplified for seed - using mock encrypted data)
   console.log('🧑‍⚕️ Creating clients...');
   const clients = [];
-  
+
   // Mock encrypted data (in real app this would be properly encrypted)
   const mockEncryptedData = Buffer.from(JSON.stringify({
     firstName: 'Encrypted First Name',
@@ -121,7 +121,7 @@ async function main() {
     phone: '+34600000000',
     address: 'Encrypted Address'
   }));
-  
+
   // Clients for Ana (psychologist1)
   for (let i = 1; i <= 5; i++) {
     const client = await prisma.client.create({

@@ -7,7 +7,7 @@ async function main() {
     console.log('🔄 Resetting passwords...');
     const adminHash = await bcrypt.hash('admin123', 10);
     await prisma.user.update({
-        where: { email: 'admin@psycoai.com' },
+        where: { email: 'admin@psychoai.com' },
         data: { passwordHash: adminHash }
     });
     console.log('✅ Admin password set to: admin123');

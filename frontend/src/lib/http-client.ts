@@ -19,8 +19,8 @@ class HttpClient {
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
-        ...(typeof window !== 'undefined' && localStorage.getItem('psycoai_access_token')
-          ? { 'Authorization': `Bearer ${localStorage.getItem('psycoai_access_token')}` }
+        ...(typeof window !== 'undefined' && localStorage.getItem('psychoai_access_token')
+          ? { 'Authorization': `Bearer ${localStorage.getItem('psychoai_access_token')}` }
           : {}),
         ...options.headers,
       },

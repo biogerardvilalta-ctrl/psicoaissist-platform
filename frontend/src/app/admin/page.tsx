@@ -25,12 +25,12 @@ export default function AdminDashboard() {
       setUsersLoading(true);
       setUsersError(null);
       console.log('🔄 Loading users data...');
-      
+
       // Intentar cargar datos reales primero
       try {
         const usersData = await AdminAPI.getUsers({ limit: 5 });
         console.log('📝 Users data received:', usersData);
-        
+
         if (usersData && Array.isArray(usersData.users)) {
           setUsers(usersData.users);
           console.log('✅ Users set successfully:', usersData.users.length, 'users');
@@ -39,14 +39,14 @@ export default function AdminDashboard() {
         }
       } catch (apiError) {
         console.warn('API admin/users no disponible, usando datos demo:', apiError);
-        
+
         // Datos demo cuando la API falle
         const demoUsers: AdminUser[] = [
           {
             id: '1',
             firstName: 'Ana',
             lastName: 'García',
-            email: 'ana.garcia@psycoai.com',
+            email: 'ana.garcia@psychoai.com',
             role: 'PSYCHOLOGIST',
             status: 'ACTIVE',
             createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
             subscription: { planType: 'PREMIUM', status: 'ACTIVE' }
           }
         ];
-        
+
         setTimeout(() => {
           setUsers(demoUsers);
           console.log('✅ Demo users loaded successfully');
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
         {/* Page Title */}
         <div className="mb-8">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Panel de Administración</h1>
-          <p className="mt-1 text-sm text-gray-600">Gestiona usuarios y suscripciones de PsycoAI</p>
+          <p className="mt-1 text-sm text-gray-600">Gestiona usuarios y suscripciones de PsychoAI</p>
         </div>
 
         {/* Enhanced Stats Cards */}

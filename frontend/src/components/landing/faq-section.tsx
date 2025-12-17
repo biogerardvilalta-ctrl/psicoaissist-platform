@@ -6,8 +6,8 @@ import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 const faqs = [
   {
     id: 1,
-    question: '¿Es PsycoAI seguro para datos confidenciales de pacientes?',
-    answer: 'Absolutamente. PsycoAI cumple con GDPR, LOPD-GDD y estándares internacionales de seguridad. Utilizamos encriptación AES-256, servidores en Europa, y jamás almacenamos datos sin encriptar. Cada sesión se procesa de forma aislada y segura.',
+    question: '¿Es PsychoAI seguro para datos confidenciales de pacientes?',
+    answer: 'Absolutamente. PsychoAI cumple con GDPR, LOPD-GDD y estándares internacionales de seguridad. Utilizamos encriptación AES-256, servidores en Europa, y jamás almacenamos datos sin encriptar. Cada sesión se procesa de forma aislada y segura.',
     category: 'Seguridad'
   },
   {
@@ -31,7 +31,7 @@ const faqs = [
   {
     id: 5,
     question: '¿Funciona con sesiones por videollamada?',
-    answer: 'Por supuesto. PsycoAI es compatible con Zoom, Google Meet, Teams y otras plataformas. Puedes usar nuestro bot de audio o grabar directamente desde tu dispositivo. La calidad de transcripción es la misma que en sesiones presenciales.',
+    answer: 'Por supuesto. PsychoAI es compatible con Zoom, Google Meet, Teams y otras plataformas. Puedes usar nuestro bot de audio o grabar directamente desde tu dispositivo. La calidad de transcripción es la misma que en sesiones presenciales.',
     category: 'Funcionalidad'
   },
   {
@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     id: 8,
-    question: '¿Puedo integrar PsycoAI con mi sistema actual?',
+    question: '¿Puedo integrar PsychoAI con mi sistema actual?',
     answer: 'Ofrecemos APIs y integraciones con los principales sistemas de gestión de clínicas. También puedes exportar datos para importar en tu sistema existente. Nuestro equipo técnico puede ayudarte con la integración.',
     category: 'Integración'
   },
@@ -70,8 +70,8 @@ export function FAQSection() {
   const [openItems, setOpenItems] = useState<number[]>([]);
 
   const toggleItem = (id: number) => {
-    setOpenItems(prev => 
-      prev.includes(id) 
+    setOpenItems(prev =>
+      prev.includes(id)
         ? prev.filter(item => item !== id)
         : [...prev, id]
     );
@@ -91,7 +91,7 @@ export function FAQSection() {
             Resolvemos tus dudas
           </p>
           <p className="mt-4 text-xl text-gray-600">
-            Las respuestas a las preguntas más comunes sobre PsycoAI.
+            Las respuestas a las preguntas más comunes sobre PsychoAI.
           </p>
         </div>
 
@@ -102,7 +102,7 @@ export function FAQSection() {
               Todas
             </button>
             {categories.slice(0, 4).map(category => (
-              <button 
+              <button
                 key={category}
                 className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
               >
@@ -115,7 +115,7 @@ export function FAQSection() {
         {/* FAQ Items */}
         <div className="space-y-4">
           {faqs.map((faq) => (
-            <div 
+            <div
               key={faq.id}
               className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
             >
@@ -139,7 +139,7 @@ export function FAQSection() {
                   )}
                 </div>
               </button>
-              
+
               {openItems.includes(faq.id) && (
                 <div className="px-6 pb-4">
                   <div className="prose text-gray-600 leading-relaxed">
@@ -162,7 +162,7 @@ export function FAQSection() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:soporte@psycoai.com"
+                href="mailto:soporte@psychoai.com"
                 className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
               >
                 Enviar email
@@ -179,8 +179,8 @@ export function FAQSection() {
 
         {/* Knowledge base link */}
         <div className="mt-8 text-center">
-          <a 
-            href="/docs" 
+          <a
+            href="/docs"
             className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
           >
             Ver documentación completa →

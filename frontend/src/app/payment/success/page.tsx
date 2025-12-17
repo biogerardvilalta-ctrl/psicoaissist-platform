@@ -13,9 +13,9 @@ export default function PaymentSuccessPage() {
   useEffect(() => {
     const sessionIdParam = searchParams.get('session_id') || '';
     const planParam = searchParams.get('plan') || '';
-    
+
     setSessionId(sessionIdParam);
-    
+
     // Convertir el plan type a nombre legible
     const planNames: Record<string, string> = {
       'basic': 'Plan Básico',
@@ -37,9 +37,9 @@ export default function PaymentSuccessPage() {
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
           ¡Pago Completado!
         </h1>
-        
+
         <p className="text-gray-600 mb-4">
-          Tu suscripción al <strong>{planName}</strong> ha sido activada exitosamente. Ya puedes acceder a todas las funciones de PsycoAI.
+          Tu suscripción al <strong>{planName}</strong> ha sido activada exitosamente. Ya puedes acceder a todas las funciones de PsychoAI.
         </p>
 
         {/* Demo mode indicator */}
@@ -71,7 +71,7 @@ export default function PaymentSuccessPage() {
             Ir al Dashboard
             <ArrowRight className="w-4 h-4 ml-2" />
           </Link>
-          
+
           <Link
             href="/"
             className="w-full inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"

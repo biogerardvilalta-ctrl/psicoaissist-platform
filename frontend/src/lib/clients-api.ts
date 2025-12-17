@@ -47,7 +47,7 @@ export class ClientsAPI {
 
     static async create(data: CreateClientData) {
         if (typeof window !== 'undefined') {
-            const keyStr = localStorage.getItem('psycoai_encryption_key');
+            const keyStr = localStorage.getItem('psychoai_encryption_key');
             if (keyStr) {
                 try {
                     const keyData = JSON.parse(keyStr);

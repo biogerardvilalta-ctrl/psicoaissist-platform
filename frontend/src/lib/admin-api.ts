@@ -65,10 +65,10 @@ export class AdminAPI {
   // User Management
   static async getUsers(filters?: UserFilters): Promise<PaginatedUsers> {
     console.log('👥 Fetching users with filters:', filters);
-    
+
     try {
       const params = new URLSearchParams();
-      
+
       if (filters?.search) params.append('search', filters.search);
       if (filters?.status && filters.status !== 'ALL') params.append('status', filters.status);
       if (filters?.role && filters.role !== 'ALL') params.append('role', filters.role);
@@ -77,11 +77,11 @@ export class AdminAPI {
 
       const queryString = params.toString();
       const url = `${this.BASE_URL}/users${queryString ? `?${queryString}` : ''}`;
-      
+
       console.log('🌐 Making request to:', url);
       const response = await httpClient.get(url);
       console.log('✅ Users API response:', response);
-      
+
       // Verificar la estructura de la respuesta
       if (response && (response as any).users && Array.isArray((response as any).users)) {
         return response as PaginatedUsers;
@@ -188,9 +188,9 @@ export class AdminAPI {
       },
       {
         id: '4',
-        email: 'admin@psycoai.com',
+        email: 'admin@psychoai.com',
         firstName: 'Admin',
-        lastName: 'PsycoAI',
+        lastName: 'PsychoAI',
         role: 'ADMIN',
         status: 'ACTIVE',
         subscription: { planType: 'PREMIUM', status: 'active' },
@@ -215,7 +215,7 @@ export class AdminAPI {
     // Apply filters
     if (filters?.search) {
       const searchLower = filters.search.toLowerCase();
-      mockUsers = mockUsers.filter(user => 
+      mockUsers = mockUsers.filter(user =>
         user.firstName.toLowerCase().includes(searchLower) ||
         user.lastName.toLowerCase().includes(searchLower) ||
         user.email.toLowerCase().includes(searchLower)

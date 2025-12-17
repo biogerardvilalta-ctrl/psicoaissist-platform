@@ -70,7 +70,7 @@ const defaultActivities: AdminActivityItem[] = [
     id: '4',
     type: 'login',
     title: 'Administrador conectado',
-    description: 'admin@psycoai.com inició sesión',
+    description: 'admin@psychoai.com inició sesión',
     timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000)
   },
   {
@@ -85,13 +85,13 @@ const defaultActivities: AdminActivityItem[] = [
 function formatTimeAgo(date: Date): string {
   const now = new Date();
   const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-  
+
   if (diffInMinutes < 1) return 'Hace un momento';
   if (diffInMinutes < 60) return `Hace ${diffInMinutes}m`;
-  
+
   const diffInHours = Math.floor(diffInMinutes / 60);
   if (diffInHours < 24) return `Hace ${diffInHours}h`;
-  
+
   const diffInDays = Math.floor(diffInHours / 24);
   return `Hace ${diffInDays}d`;
 }
@@ -117,20 +117,20 @@ export default function AdminActivityFeed({ activities = defaultActivities }: Ad
           {activities.map((activity, index) => {
             const config = activityConfig[activity.type];
             const Icon = config.icon;
-            
+
             return (
               <div key={activity.id} className="relative">
                 {/* Timeline line */}
                 {index < activities.length - 1 && (
                   <div className="absolute left-4 top-8 w-0.5 h-12 bg-gray-200"></div>
                 )}
-                
+
                 <div className="flex items-start space-x-3">
                   {/* Icon */}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${config.color} flex-shrink-0`}>
                     <Icon className="w-4 h-4" />
                   </div>
-                  
+
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">

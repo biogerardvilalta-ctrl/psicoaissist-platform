@@ -17,37 +17,37 @@ export function Header() {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <Heart className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">PsycoAI</span>
+            <span className="text-xl font-bold text-gray-900">PsychoAI</span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a 
-              href="#features" 
+            <a
+              href="#features"
               className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Características
             </a>
-            <a 
-              href="#pricing" 
+            <a
+              href="#pricing"
               className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Precios
             </a>
-            <a 
-              href="#testimonials" 
+            <a
+              href="#testimonials"
               className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Testimonios
             </a>
-            <a 
-              href="/docs" 
+            <a
+              href="/docs"
               className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Documentación
             </a>
-            <a 
-              href="/blog" 
+            <a
+              href="/blog"
               className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Blog
@@ -95,36 +95,36 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
             <nav className="space-y-4">
-              <a 
-                href="#features" 
+              <a
+                href="#features"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Características
               </a>
-              <a 
-                href="#pricing" 
+              <a
+                href="#pricing"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Precios
               </a>
-              <a 
-                href="#testimonials" 
+              <a
+                href="#testimonials"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Testimonios
               </a>
-              <a 
-                href="/docs" 
+              <a
+                href="/docs"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Documentación
               </a>
-              <a 
-                href="/blog" 
+              <a
+                href="/blog"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >

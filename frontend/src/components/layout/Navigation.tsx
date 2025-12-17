@@ -76,7 +76,7 @@ export default function Navigation() {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
               <Heart className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">PsycoAI</span>
+            <span className="text-xl font-bold text-gray-900">PsychoAI</span>
           </Link>
 
           {/* Navigation Links */}

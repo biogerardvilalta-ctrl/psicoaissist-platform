@@ -806,7 +806,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
             const commonFooter = `
                 <div style="margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 10px; color: #999; text-align: center;">
                     <p>Aquest informe ha estat redactat amb el suport d’una eina d’intel·ligència artificial i revisat per un/a professional col·legiat/da.</p>
-                    <p style="margin-top: 5px;">PsycoAI Platform - Versió amb seguretat avançada</p>
+                    <p style="margin-top: 5px;">PsychoAI Platform - Versió amb seguretat avançada</p>
                 </div>
             </div>`;
 

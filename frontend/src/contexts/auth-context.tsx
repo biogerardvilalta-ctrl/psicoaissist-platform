@@ -111,10 +111,10 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 
 // Storage Keys
 const STORAGE_KEYS = {
-  ACCESS_TOKEN: 'psycoai_access_token',
-  REFRESH_TOKEN: 'psycoai_refresh_token',
-  USER: 'psycoai_user',
-  ENCRYPTION_KEY: 'psycoai_encryption_key',
+  ACCESS_TOKEN: 'psychoai_access_token',
+  REFRESH_TOKEN: 'psychoai_refresh_token',
+  USER: 'psychoai_user',
+  ENCRYPTION_KEY: 'psychoai_encryption_key',
 } as const;
 
 // Storage Utilities

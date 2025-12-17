@@ -7,7 +7,7 @@ const testimonials = [
     location: 'Madrid, España',
     image: '/avatars/maria.jpg', // Placeholder
     rating: 5,
-    quote: 'PsycoAI ha revolucionado mi práctica. La transcripción automática me ahorra 3 horas diarias y las sugerencias de IA son sorprendentemente acertadas.',
+    quote: 'PsychoAI ha revolucionado mi práctica. La transcripción automática me ahorra 3 horas diarias y las sugerencias de IA son sorprendentemente acertadas.',
     highlight: 'Ahorra 3 horas diarias',
   },
   {
@@ -16,7 +16,7 @@ const testimonials = [
     location: 'Barcelona, España',
     image: '/avatars/carlos.jpg', // Placeholder
     rating: 5,
-    quote: 'Lo que más me gusta es la seguridad. Como psicólogo, la confidencialidad es crucial y PsycoAI cumple con todos los estándares. Mis clientes confían plenamente.',
+    quote: 'Lo que más me gusta es la seguridad. Como psicólogo, la confidencialidad es crucial y PsychoAI cumple con todos los estándares. Mis clientes confían plenamente.',
     highlight: 'Máxima seguridad',
   },
   {
@@ -34,7 +34,7 @@ const testimonials = [
     location: 'Sevilla, España',
     image: '/avatars/luis.jpg', // Placeholder
     rating: 5,
-    quote: 'Desde que implementamos PsycoAI en nuestra clínica, la productividad aumentó un 40%. Los psicólogos pueden atender más pacientes sin sacrificar calidad.',
+    quote: 'Desde que implementamos PsychoAI en nuestra clínica, la productividad aumentó un 40%. Los psicólogos pueden atender más pacientes sin sacrificar calidad.',
     highlight: '+40% productividad',
   },
   {
@@ -70,7 +70,7 @@ export function TestimonialsSection() {
             Más de 500 psicólogos confían en nosotros
           </p>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
-            Descubre cómo PsycoAI está transformando la práctica psicológica en España y Latinoamérica.
+            Descubre cómo PsychoAI está transformando la práctica psicológica en España y Latinoamérica.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export function TestimonialsSection() {
         {/* Testimonials grid */}
         <div className="mt-16 grid grid-cols-1 gap-8 lg:grid-cols-2">
           {testimonials.map((testimonial, index) => (
-            <div 
+            <div
               key={testimonial.name}
               className="relative bg-white p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >

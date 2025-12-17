@@ -188,7 +188,7 @@ let StripeService = StripeService_1 = class StripeService {
         if (this.isDemoMode) {
             return {
                 id: customerId,
-                email: 'demo@psycoai.com',
+                email: 'demo@psychoai.com',
                 name: 'Demo User',
                 object: 'customer',
             };

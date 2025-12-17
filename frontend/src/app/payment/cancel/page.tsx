@@ -14,7 +14,7 @@ export default function PaymentCancelPage() {
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
           Pago Cancelado
         </h1>
-        
+
         <p className="text-gray-600 mb-8">
           No se ha procesado ningún cargo. Tu suscripción no ha sido activada.
         </p>
@@ -39,7 +39,7 @@ export default function PaymentCancelPage() {
             <RefreshCw className="w-4 h-4 mr-2" />
             Intentar nuevamente
           </Link>
-          
+
           <Link
             href="/"
             className="w-full inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
@@ -57,10 +57,10 @@ export default function PaymentCancelPage() {
           </p>
           <div className="space-y-2">
             <a
-              href="mailto:soporte@psycoai.com"
+              href="mailto:soporte@psychoai.com"
               className="block text-sm text-blue-600 hover:underline"
             >
-              📧 soporte@psycoai.com
+              📧 soporte@psychoai.com
             </a>
             <a
               href="/chat"

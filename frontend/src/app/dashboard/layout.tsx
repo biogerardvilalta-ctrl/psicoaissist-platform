@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
                                     <Heart className="w-5 h-5 text-white" />
                                 </div>
-                                <h1 className="text-xl font-bold text-gray-900 hidden sm:block">PsycoAI</h1>
+                                <h1 className="text-xl font-bold text-gray-900 hidden sm:block">PsychoAI</h1>
                             </Link>
 
                             <nav className="hidden md:flex items-center gap-4">

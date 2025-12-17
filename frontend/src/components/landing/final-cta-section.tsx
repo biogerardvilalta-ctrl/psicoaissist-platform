@@ -26,8 +26,8 @@ export function FinalCTASection() {
         </h2>
 
         <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-          Únete a más de <strong>500 psicólogos</strong> que ya están ahorrando 
-          <strong> 3+ horas diarias</strong> y mejorando la calidad de su atención con PsycoAI.
+          Únete a más de <strong>500 psicólogos</strong> que ya están ahorrando
+          <strong> 3+ horas diarias</strong> y mejorando la calidad de su atención con PsychoAI.
         </p>
 
         {/* Value propositions */}
@@ -39,7 +39,7 @@ export function FinalCTASection() {
             <h3 className="font-semibold text-white mb-1">Setup Instantáneo</h3>
             <p className="text-sm text-blue-200">Listo en menos de 5 minutos</p>
           </div>
-          
+
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-3">
               <Shield className="w-6 h-6 text-blue-400" />
@@ -47,7 +47,7 @@ export function FinalCTASection() {
             <h3 className="font-semibold text-white mb-1">100% Seguro</h3>
             <p className="text-sm text-blue-200">GDPR & ISO 27001 certified</p>
           </div>
-          
+
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-3">
               <Users className="w-6 h-6 text-purple-400" />
@@ -55,7 +55,7 @@ export function FinalCTASection() {
             <h3 className="font-semibold text-white mb-1">Soporte 24/7</h3>
             <p className="text-sm text-blue-200">Equipo experto en español</p>
           </div>
-          
+
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-3">
               <Clock className="w-6 h-6 text-yellow-400" />
@@ -74,7 +74,7 @@ export function FinalCTASection() {
             Empezar gratis ahora
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
-          
+
           <a
             href="/demo"
             className="inline-flex items-center justify-center px-8 py-4 border-2 border-white/30 text-white font-semibold text-lg rounded-xl hover:bg-white/10 hover:border-white/50 transition-all duration-200"
@@ -88,7 +88,7 @@ export function FinalCTASection() {
           <p className="text-blue-200 text-sm mb-4">
             ✓ Sin tarjeta de crédito necesaria • ✓ Configuración gratuita • ✓ Soporte incluido
           </p>
-          
+
           {/* Customer logos/testimonials */}
           <div className="flex justify-center items-center space-x-8 opacity-60">
             <div className="text-xs text-blue-300">

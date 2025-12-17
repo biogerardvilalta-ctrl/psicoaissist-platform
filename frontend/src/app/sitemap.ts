@@ -1,6 +1,6 @@
 export default function sitemap() {
-  const baseUrl = 'https://psycoai.com';
-  
+  const baseUrl = 'https://psychoai.com';
+
   return [
     {
       url: baseUrl,
