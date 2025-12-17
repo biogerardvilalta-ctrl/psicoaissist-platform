@@ -105,6 +105,8 @@ export class ClientsService {
                     tags: createClientDto.tags || [],
                     riskLevel: createClientDto.riskLevel,
                     lastModifiedBy: userId,
+                    sendEmailReminders: createClientDto.sendEmailReminders,
+                    sendWhatsappReminders: createClientDto.sendWhatsappReminders,
                 },
             });
 
@@ -127,6 +129,8 @@ export class ClientsService {
                 tags: client.tags,
                 createdAt: client.createdAt,
                 updatedAt: client.updatedAt,
+                sendEmailReminders: client.sendEmailReminders,
+                sendWhatsappReminders: client.sendWhatsappReminders,
             };
         } catch (error) {
             this.logger.error(`Error creating client: ${error.message}`);
@@ -170,6 +174,8 @@ export class ClientsService {
                             createdAt: client.createdAt,
                             updatedAt: client.updatedAt,
                             lastSessionAt: client.lastSessionAt,
+                            sendEmailReminders: client.sendEmailReminders,
+                            sendWhatsappReminders: client.sendWhatsappReminders,
                         };
                     } catch (e) {
                         this.logger.error(`Error processing client ${client.id}: ${e.message}`);
@@ -215,6 +221,8 @@ export class ClientsService {
             createdAt: client.createdAt,
             updatedAt: client.updatedAt,
             lastSessionAt: client.lastSessionAt,
+            sendEmailReminders: client.sendEmailReminders,
+            sendWhatsappReminders: client.sendWhatsappReminders,
         };
     }
 
@@ -263,6 +271,8 @@ export class ClientsService {
                 riskLevel: updateClientDto.riskLevel ?? client.riskLevel,
                 isActive: updateClientDto.isActive ?? client.isActive,
                 lastModifiedBy: userId,
+                sendEmailReminders: updateClientDto.sendEmailReminders ?? client.sendEmailReminders,
+                sendWhatsappReminders: updateClientDto.sendWhatsappReminders ?? client.sendWhatsappReminders,
             },
         });
 
@@ -283,6 +293,8 @@ export class ClientsService {
             createdAt: updatedClient.createdAt,
             updatedAt: updatedClient.updatedAt,
             lastSessionAt: updatedClient.lastSessionAt,
+            sendEmailReminders: updatedClient.sendEmailReminders,
+            sendWhatsappReminders: updatedClient.sendWhatsappReminders,
         };
     }
 

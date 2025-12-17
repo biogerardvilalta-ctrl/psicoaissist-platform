@@ -51,12 +51,16 @@ let RemindersService = RemindersService_1 = class RemindersService {
                     continue;
                 }
                 let clientName = 'Paciente';
+                let clientEmail = '';
+                let clientPhone = '';
                 if (session.client.encryptedPersonalData && session.client.encryptionKeyId) {
                     try {
                         const unpacked = this.unpackClientData(session.client.encryptedPersonalData, session.client.encryptionKeyId);
                         const result = await this.encryption.decryptData(unpacked);
                         if (result.success && result.data) {
                             clientName = `${result.data.firstName} ${result.data.lastName}`;
+                            clientEmail = result.data.email;
+                            clientPhone = result.data.phone;
                         }
                     }
                     catch (e) {
@@ -71,11 +75,17 @@ let RemindersService = RemindersService_1 = class RemindersService {
                     time: timeStr,
                     type: session.sessionType
                 });
+                if (session.client.sendEmailReminders && clientEmail) {
+                    this.logger.log(`📧 Sending Reminder Email to Client ${clientName} (${clientEmail})`);
+                }
+                if (session.client.sendWhatsappReminders && clientPhone) {
+                    this.logger.log(`📱 Sending Whatsapp Reminder to Client ${clientName} (${clientPhone})`);
+                }
                 await this.prisma.session.update({
                     where: { id: session.id },
                     data: { reminderSent: true }
                 });
-                this.logger.log(`Reminder sent for session ${session.id} to ${session.user.email}`);
+                this.logger.log(`Reminder processed for session ${session.id}`);
             }
             catch (error) {
                 this.logger.error(`Failed to process reminder for session ${session.id}`, error);

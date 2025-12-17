@@ -10,12 +10,16 @@ export declare class CreateClientDto {
     riskLevel?: RiskLevel;
     birthDate?: string;
     tags?: string[];
+    sendEmailReminders?: boolean;
+    sendWhatsappReminders?: boolean;
 }
 export declare class CreateClientEncryptedDto {
     encryptedData: string;
     keyId: string;
     riskLevel?: RiskLevel;
     tags?: string[];
+    sendEmailReminders?: boolean;
+    sendWhatsappReminders?: boolean;
 }
 export declare class UpdateClientDto extends CreateClientDto {
     isActive?: boolean;
@@ -32,4 +36,6 @@ export declare class ClientResponseDto {
     createdAt: Date;
     updatedAt: Date;
     lastSessionAt?: Date;
+    sendEmailReminders: boolean;
+    sendWhatsappReminders: boolean;
 }

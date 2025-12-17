@@ -53,7 +53,19 @@ export class CreateClientDto {
     @IsString({ each: true })
     @IsOptional()
     @IsOptional()
+    @IsString({ each: true })
+    @IsOptional()
     tags?: string[];
+
+    @ApiPropertyOptional({ default: true })
+    @IsBoolean()
+    @IsOptional()
+    sendEmailReminders?: boolean;
+
+    @ApiPropertyOptional({ default: true })
+    @IsBoolean()
+    @IsOptional()
+    sendWhatsappReminders?: boolean;
 }
 
 export class CreateClientEncryptedDto {
@@ -76,7 +88,18 @@ export class CreateClientEncryptedDto {
     @IsArray()
     @IsString({ each: true })
     @IsOptional()
+    @IsOptional()
     tags?: string[];
+
+    @ApiPropertyOptional({ default: true })
+    @IsBoolean()
+    @IsOptional()
+    sendEmailReminders?: boolean;
+
+    @ApiPropertyOptional({ default: true })
+    @IsBoolean()
+    @IsOptional()
+    sendWhatsappReminders?: boolean;
 }
 
 export class UpdateClientDto extends CreateClientDto {
@@ -119,4 +142,10 @@ export class ClientResponseDto {
 
     @ApiProperty({ required: false })
     lastSessionAt?: Date;
+
+    @ApiProperty()
+    sendEmailReminders: boolean;
+
+    @ApiProperty()
+    sendWhatsappReminders: boolean;
 }

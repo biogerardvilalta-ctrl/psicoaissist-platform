@@ -113,6 +113,10 @@ model Client {
   encryptionKeyId String   @map("encryption_key_id")
   dataVersion     Int      @default(1) @map("data_version")
   
+  // Reminder Preferences
+  sendEmailReminders    Boolean @default(true) @map("send_email_reminders")
+  sendWhatsappReminders Boolean @default(true) @map("send_whatsapp_reminders")
+  
   // Dates and audit
   firstSessionAt  DateTime? @map("first_session_at")
   lastSessionAt   DateTime? @map("last_session_at")

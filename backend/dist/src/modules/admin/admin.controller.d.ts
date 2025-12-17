@@ -80,6 +80,8 @@ export declare class AdminController {
             isActive: boolean;
             encryptionKeyId: string;
             dataVersion: number;
+            sendEmailReminders: boolean;
+            sendWhatsappReminders: boolean;
             firstSessionAt: Date | null;
             lastSessionAt: Date | null;
             lastModifiedBy: string;

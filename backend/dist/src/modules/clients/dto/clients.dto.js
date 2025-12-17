@@ -76,8 +76,22 @@ __decorate([
     (0, class_validator_1.IsString)({ each: true }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], CreateClientDto.prototype, "tags", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ default: true }),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], CreateClientDto.prototype, "sendEmailReminders", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ default: true }),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], CreateClientDto.prototype, "sendWhatsappReminders", void 0);
 class CreateClientEncryptedDto {
 }
 exports.CreateClientEncryptedDto = CreateClientEncryptedDto;
@@ -104,8 +118,21 @@ __decorate([
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.IsString)({ each: true }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], CreateClientEncryptedDto.prototype, "tags", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ default: true }),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], CreateClientEncryptedDto.prototype, "sendEmailReminders", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ default: true }),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], CreateClientEncryptedDto.prototype, "sendWhatsappReminders", void 0);
 class UpdateClientDto extends CreateClientDto {
 }
 exports.UpdateClientDto = UpdateClientDto;
@@ -162,4 +189,12 @@ __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", Date)
 ], ClientResponseDto.prototype, "lastSessionAt", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Boolean)
+], ClientResponseDto.prototype, "sendEmailReminders", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Boolean)
+], ClientResponseDto.prototype, "sendWhatsappReminders", void 0);
 //# sourceMappingURL=clients.dto.js.map

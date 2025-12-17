@@ -41,6 +41,8 @@ const formSchema = z.object({
     diagnosis: z.string().optional(),
     riskLevel: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
     notes: z.string().optional(),
+    sendEmailReminders: z.boolean().default(true),
+    sendWhatsappReminders: z.boolean().default(true),
 });
 
 type ClientFormValues = z.infer<typeof formSchema>;
@@ -68,6 +70,8 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
             diagnosis: initialData?.diagnosis || "",
             riskLevel: initialData?.riskLevel || "LOW",
             notes: initialData?.notes || "",
+            sendEmailReminders: initialData?.sendEmailReminders ?? true,
+            sendWhatsappReminders: initialData?.sendWhatsappReminders ?? true,
         },
     });
 
@@ -242,6 +246,64 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                             />
                                         </FormControl>
                                         <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <BookUser className="h-5 w-5 text-green-600" />
+                                Preferencias de Comunicación
+                            </CardTitle>
+                            <CardDescription>
+                                Configura cómo se enviarán los recordatorios de citas.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="grid gap-6">
+                            <FormField
+                                control={form.control}
+                                name="sendEmailReminders"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                        <div className="space-y-0.5">
+                                            <FormLabel className="text-base">Recordatorios por Email</FormLabel>
+                                            <CardDescription>
+                                                Enviar recordatorios automáticos a la dirección de correo registrada.
+                                            </CardDescription>
+                                        </div>
+                                        <FormControl>
+                                            <input
+                                                type="checkbox"
+                                                checked={field.value}
+                                                onChange={field.onChange}
+                                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="sendWhatsappReminders"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                        <div className="space-y-0.5">
+                                            <FormLabel className="text-base">Recordatorios por WhatsApp</FormLabel>
+                                            <CardDescription>
+                                                Enviar recordatorios automáticos al número de teléfono registrado.
+                                            </CardDescription>
+                                        </div>
+                                        <FormControl>
+                                            <input
+                                                type="checkbox"
+                                                checked={field.value}
+                                                onChange={field.onChange}
+                                                className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                            />
+                                        </FormControl>
                                     </FormItem>
                                 )}
                             />

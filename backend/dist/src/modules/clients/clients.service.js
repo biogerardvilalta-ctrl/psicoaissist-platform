@@ -78,6 +78,8 @@ let ClientsService = ClientsService_1 = class ClientsService {
                     tags: createClientDto.tags || [],
                     riskLevel: createClientDto.riskLevel,
                     lastModifiedBy: userId,
+                    sendEmailReminders: createClientDto.sendEmailReminders,
+                    sendWhatsappReminders: createClientDto.sendWhatsappReminders,
                 },
             });
             this.logger.log(`Client created for user ${userId}`);
@@ -96,6 +98,8 @@ let ClientsService = ClientsService_1 = class ClientsService {
                 tags: client.tags,
                 createdAt: client.createdAt,
                 updatedAt: client.updatedAt,
+                sendEmailReminders: client.sendEmailReminders,
+                sendWhatsappReminders: client.sendWhatsappReminders,
             };
         }
         catch (error) {
@@ -129,6 +133,8 @@ let ClientsService = ClientsService_1 = class ClientsService {
                         createdAt: client.createdAt,
                         updatedAt: client.updatedAt,
                         lastSessionAt: client.lastSessionAt,
+                        sendEmailReminders: client.sendEmailReminders,
+                        sendWhatsappReminders: client.sendWhatsappReminders,
                     };
                 }
                 catch (e) {
@@ -164,6 +170,8 @@ let ClientsService = ClientsService_1 = class ClientsService {
             createdAt: client.createdAt,
             updatedAt: client.updatedAt,
             lastSessionAt: client.lastSessionAt,
+            sendEmailReminders: client.sendEmailReminders,
+            sendWhatsappReminders: client.sendWhatsappReminders,
         };
     }
     async update(userId, clientId, updateClientDto) {
@@ -200,6 +208,8 @@ let ClientsService = ClientsService_1 = class ClientsService {
                 riskLevel: updateClientDto.riskLevel ?? client.riskLevel,
                 isActive: updateClientDto.isActive ?? client.isActive,
                 lastModifiedBy: userId,
+                sendEmailReminders: updateClientDto.sendEmailReminders ?? client.sendEmailReminders,
+                sendWhatsappReminders: updateClientDto.sendWhatsappReminders ?? client.sendWhatsappReminders,
             },
         });
         await this.auditService.log({
@@ -218,6 +228,8 @@ let ClientsService = ClientsService_1 = class ClientsService {
             createdAt: updatedClient.createdAt,
             updatedAt: updatedClient.updatedAt,
             lastSessionAt: updatedClient.lastSessionAt,
+            sendEmailReminders: updatedClient.sendEmailReminders,
+            sendWhatsappReminders: updatedClient.sendWhatsappReminders,
         };
     }
     async remove(userId, clientId) {

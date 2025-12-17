@@ -16,6 +16,8 @@ export interface Client {
     diagnosis?: string;
     notes?: string;
     emergencyContact?: string;
+    sendEmailReminders?: boolean;
+    sendWhatsappReminders?: boolean;
 }
 
 export type CreateClientData = {
@@ -28,6 +30,8 @@ export type CreateClientData = {
     notes?: string;
     riskLevel?: Client['riskLevel'];
     tags?: string[];
+    sendEmailReminders?: boolean;
+    sendWhatsappReminders?: boolean;
 };
 
 export type UpdateClientData = Partial<CreateClientData> & {
@@ -58,7 +62,9 @@ export class ClientsAPI {
                             encryptedData: encrypted,
                             keyId: keyData.id,
                             tags: data.tags,
-                            riskLevel: data.riskLevel
+                            riskLevel: data.riskLevel,
+                            sendEmailReminders: data.sendEmailReminders,
+                            sendWhatsappReminders: data.sendWhatsappReminders
                         });
                     }
                 } catch (e) {

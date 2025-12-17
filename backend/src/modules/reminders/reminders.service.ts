@@ -58,17 +58,23 @@ export class RemindersService {
                     continue;
                 }
 
-                // 1. Decrypt client name
+                // 1. Decrypt client name and contact info
                 let clientName = 'Paciente';
+                let clientEmail = '';
+                let clientPhone = '';
+
                 if (session.client.encryptedPersonalData && session.client.encryptionKeyId) {
                     try {
                         const unpacked = this.unpackClientData(
                             session.client.encryptedPersonalData,
                             session.client.encryptionKeyId
                         );
-                        const result = await this.encryption.decryptData<DecryptedClientData>(unpacked);
+                        // Using 'any' as interface temporary to avoid redefining DecryptedClientData with phone/email fields strictly
+                        const result = await this.encryption.decryptData<any>(unpacked);
                         if (result.success && result.data) {
                             clientName = `${result.data.firstName} ${result.data.lastName}`;
+                            clientEmail = result.data.email;
+                            clientPhone = result.data.phone;
                         }
                     } catch (e) {
                         this.logger.error(`Failed to decrypt client for session ${session.id}`, e);
@@ -79,6 +85,7 @@ export class RemindersService {
                 const dateStr = format(session.startTime, "EEEE d 'de' MMMM", { locale: es });
                 const timeStr = format(session.startTime, "HH:mm");
 
+                // Notify Professional
                 await this.emailService.sendSessionReminder(session.user.email, {
                     clientName,
                     date: dateStr,
@@ -86,13 +93,28 @@ export class RemindersService {
                     type: session.sessionType
                 });
 
+                // 2b. Notify Client by Email
+                if (session.client.sendEmailReminders && clientEmail) {
+                    this.logger.log(`📧 Sending Reminder Email to Client ${clientName} (${clientEmail})`);
+                    // Reuse/adapt sendSessionReminder or create specific method. For now reusing template but sending to client.
+                    // Ideally we need a separate template 'sendClientSessionReminder'.
+                    // Simulating send:
+                    // await this.emailService.sendClientSessionReminder(clientEmail, { ... });
+                }
+
+                // 2c. Notify Client by WhatsApp
+                if (session.client.sendWhatsappReminders && clientPhone) {
+                    this.logger.log(`📱 Sending Whatsapp Reminder to Client ${clientName} (${clientPhone})`);
+                    // Mock WhatsApp Service
+                }
+
                 // 3. Mark as sent
                 await this.prisma.session.update({
                     where: { id: session.id },
                     data: { reminderSent: true }
                 });
 
-                this.logger.log(`Reminder sent for session ${session.id} to ${session.user.email}`);
+                this.logger.log(`Reminder processed for session ${session.id}`);
 
             } catch (error) {
                 this.logger.error(`Failed to process reminder for session ${session.id}`, error);
