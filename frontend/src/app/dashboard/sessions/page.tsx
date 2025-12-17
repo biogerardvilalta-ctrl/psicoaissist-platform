@@ -11,7 +11,8 @@ import {
     FileText,
     CheckCircle,
     User,
-    XCircle
+    XCircle,
+    Play
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -334,9 +335,15 @@ export default function SessionsPage() {
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent align="end">
                                                                 <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                                <DropdownMenuItem onClick={() => router.push(`/dashboard/sessions/${session.id}`)}>
-                                                                    <FileText className="mr-2 h-4 w-4" /> Ver detalles
-                                                                </DropdownMenuItem>
+                                                                {session.status === SessionStatus.SCHEDULED ? (
+                                                                    <DropdownMenuItem onClick={() => router.push(`/dashboard/sessions/${session.id}?start=true`)}>
+                                                                        <Play className="mr-2 h-4 w-4 text-blue-600" /> Iniciar sesión
+                                                                    </DropdownMenuItem>
+                                                                ) : (
+                                                                    <DropdownMenuItem onClick={() => router.push(`/dashboard/sessions/${session.id}`)}>
+                                                                        <FileText className="mr-2 h-4 w-4" /> Ver detalles
+                                                                    </DropdownMenuItem>
+                                                                )}
                                                                 {session.status === SessionStatus.SCHEDULED && (
                                                                     <DropdownMenuItem onClick={() => handleCancel(session.id)}>
                                                                         <XCircle className="mr-2 h-4 w-4 text-orange-500" /> Cancelar sesión

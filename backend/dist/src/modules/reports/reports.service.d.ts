@@ -11,8 +11,6 @@ export declare class ReportsService {
     constructor(prisma: PrismaService, encryption: EncryptionService, aiService: AiService, pdfService: PdfService);
     create(userId: string, createReportDto: CreateReportDto): Promise<{
         id: string;
-        userId: string;
-        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -26,9 +24,11 @@ export declare class ReportsService {
         humanReviewConfirmed: boolean;
         logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
+        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
+        userId: string;
         sessionId: string | null;
     }>;
     findAll(userId: string): Promise<({
@@ -37,8 +37,6 @@ export declare class ReportsService {
         };
     } & {
         id: string;
-        userId: string;
-        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -52,16 +50,16 @@ export declare class ReportsService {
         humanReviewConfirmed: boolean;
         logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
+        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
+        userId: string;
         sessionId: string | null;
     })[]>;
     findOne(id: string, userId: string): Promise<{
         content: string;
         id: string;
-        userId: string;
-        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -75,15 +73,15 @@ export declare class ReportsService {
         humanReviewConfirmed: boolean;
         logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
+        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
+        userId: string;
         sessionId: string | null;
     }>;
     update(id: string, userId: string, updateReportDto: UpdateReportDto): Promise<{
         id: string;
-        userId: string;
-        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -97,15 +95,15 @@ export declare class ReportsService {
         humanReviewConfirmed: boolean;
         logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
+        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
+        userId: string;
         sessionId: string | null;
     }>;
     remove(id: string, userId: string): Promise<{
         id: string;
-        userId: string;
-        createdAt: Date;
         title: string;
         reportType: import(".prisma/client").$Enums.ReportType;
         status: import(".prisma/client").$Enums.ReportStatus;
@@ -119,9 +117,11 @@ export declare class ReportsService {
         humanReviewConfirmed: boolean;
         logMetadata: import("@prisma/client/runtime/library").JsonValue | null;
         encryptionKeyId: string;
+        createdAt: Date;
         updatedAt: Date;
         completedAt: Date | null;
         clientId: string;
+        userId: string;
         sessionId: string | null;
     }>;
     generateDraft(userId: string, data: any): Promise<{

@@ -48,11 +48,23 @@ let PdfService = class PdfService {
             doc.fillColor(TEXT_COLOR);
             doc.y = startY + 110;
             this.parseHtmlContent(doc, reportData.content || '(Sin contenido)', PRIMARY_COLOR);
+            doc.moveDown(4);
+            const signatureY = doc.y;
+            if (signatureY > doc.page.height - 150) {
+                doc.addPage();
+            }
+            doc.font('Helvetica-Bold').fontSize(11).fillColor(TEXT_COLOR);
+            doc.text('Signat: El/La Psicòleg/òloga', 50, doc.y, { align: 'left' });
+            doc.moveDown(0.5);
+            doc.font('Helvetica').fontSize(11);
+            doc.text(reportData.psychologistName || '[Nom i Cognoms]', { align: 'left' });
+            doc.moveDown(0.2);
+            doc.text(`Núm. Col·legiat/da: ${reportData.professionalNumber || '[Núm]'}`, { align: 'left' });
             const pages = doc.bufferedPageRange();
             for (let i = 0; i < pages.count; i++) {
                 doc.switchToPage(i);
                 doc.rect(0, 0, 15, doc.page.height).fill(PRIMARY_COLOR);
-                this.addFooter(doc, i + 1, pages.count);
+                this.addFooter(doc, i + 1, pages.count, reportData.psychologistName, reportData.professionalNumber);
             }
             doc.end();
         });
@@ -64,11 +76,19 @@ let PdfService = class PdfService {
         doc.font('Helvetica').fontSize(10).fillColor('#64748B').text('Asistente Clínico Inteligente', 100, 68);
         doc.moveTo(350, 60).lineTo(545, 60).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
     }
-    addFooter(doc, pageNum, totalPages) {
+    addFooter(doc, pageNum, totalPages, psychologistName, professionalNumber) {
         const bottom = doc.page.height - 50;
-        doc.moveTo(50, bottom - 10).lineTo(545, bottom - 10).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
+        doc.moveTo(50, bottom - 25).lineTo(545, bottom - 25).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
+        if (psychologistName) {
+            doc.font('Helvetica-Bold').fontSize(9).fillColor('#475569');
+            doc.text(`${psychologistName}`, 50, bottom - 10, { width: 300 });
+            doc.font('Helvetica').fontSize(8).fillColor('#64748B');
+            if (professionalNumber) {
+                doc.text(`Col. Nº ${professionalNumber}`, 50, bottom + 2);
+            }
+        }
         doc.font('Helvetica').fontSize(8).fillColor('#94A3B8');
-        doc.text('Este documento contiene información clínica confidencial. El uso está restringido al profesional autorizado.', 50, bottom, { width: 350 });
+        doc.text('Este documento contiene información clínica confidencial. El uso está restringido al profesional autorizado.', 200, bottom, { width: 220, align: 'center' });
         doc.text(`Página ${pageNum} de ${totalPages}`, 450, bottom, { align: 'right', width: 100 });
     }
     parseHtmlContent(doc, html, headerColor) {

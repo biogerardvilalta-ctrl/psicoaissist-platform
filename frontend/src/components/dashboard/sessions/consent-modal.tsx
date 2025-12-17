@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ShieldCheck, Info } from 'lucide-react';
+import { ShieldCheck, Info, FileText } from 'lucide-react';
 
 interface ConsentModalProps {
     isOpen: boolean;
@@ -69,6 +69,15 @@ export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: Consent
                             <p className="text-xs text-muted-foreground mt-1">
                                 Les dades d'àudio s'eliminaran automàticament després del processament.
                             </p>
+                            <a
+                                href="/documents/consentiment-informat.html"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-1"
+                            >
+                                <FileText className="h-3 w-3" />
+                                Descarregar document d'informació sobre el tractament de dades
+                            </a>
                         </div>
                     </div>
                 </div>

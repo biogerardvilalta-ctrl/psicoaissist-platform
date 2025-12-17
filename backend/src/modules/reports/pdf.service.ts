@@ -68,6 +68,25 @@ export class PdfService {
 
             this.parseHtmlContent(doc, reportData.content || '(Sin contenido)', PRIMARY_COLOR);
 
+            // --- Signature Block ---
+            doc.moveDown(4);
+            const signatureY = doc.y;
+
+            // Check if we need a new page for signature
+            if (signatureY > doc.page.height - 150) {
+                doc.addPage();
+            }
+
+            doc.font('Helvetica-Bold').fontSize(11).fillColor(TEXT_COLOR);
+            doc.text('Signat: El/La Psicòleg/òloga', 50, doc.y, { align: 'left' });
+
+            doc.moveDown(0.5);
+            doc.font('Helvetica').fontSize(11);
+            doc.text(reportData.psychologistName || '[Nom i Cognoms]', { align: 'left' });
+
+            doc.moveDown(0.2);
+            doc.text(`Núm. Col·legiat/da: ${reportData.professionalNumber || '[Núm]'}`, { align: 'left' });
+
             // --- Footer & Pagination ---
             // We'll apply this to all pages at the end ideally, but for now simple footer on current is fine.
             // For proper "all pages", we iterate buffered pages.
@@ -80,7 +99,7 @@ export class PdfService {
                 doc.rect(0, 0, 15, doc.page.height).fill(PRIMARY_COLOR);
 
                 // Footer
-                this.addFooter(doc, i + 1, pages.count);
+                this.addFooter(doc, i + 1, pages.count, reportData.psychologistName, reportData.professionalNumber);
             }
 
             doc.end();
@@ -102,13 +121,23 @@ export class PdfService {
         doc.moveTo(350, 60).lineTo(545, 60).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
     }
 
-    private addFooter(doc: PDFKit.PDFDocument, pageNum: number, totalPages: number) {
+    private addFooter(doc: PDFKit.PDFDocument, pageNum: number, totalPages: number, psychologistName?: string, professionalNumber?: string) {
         const bottom = doc.page.height - 50;
 
-        doc.moveTo(50, bottom - 10).lineTo(545, bottom - 10).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
+        doc.moveTo(50, bottom - 25).lineTo(545, bottom - 25).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
+
+        // Professional Info
+        if (psychologistName) {
+            doc.font('Helvetica-Bold').fontSize(9).fillColor('#475569');
+            doc.text(`${psychologistName}`, 50, bottom - 10, { width: 300 });
+            doc.font('Helvetica').fontSize(8).fillColor('#64748B');
+            if (professionalNumber) {
+                doc.text(`Col. Nº ${professionalNumber}`, 50, bottom + 2);
+            }
+        }
 
         doc.font('Helvetica').fontSize(8).fillColor('#94A3B8');
-        doc.text('Este documento contiene información clínica confidencial. El uso está restringido al profesional autorizado.', 50, bottom, { width: 350 });
+        doc.text('Este documento contiene información clínica confidencial. El uso está restringido al profesional autorizado.', 200, bottom, { width: 220, align: 'center' });
 
         doc.text(`Página ${pageNum} de ${totalPages}`, 450, bottom, { align: 'right', width: 100 });
     }

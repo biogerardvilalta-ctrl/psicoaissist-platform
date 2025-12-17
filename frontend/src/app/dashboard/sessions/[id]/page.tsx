@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
     ArrowLeft,
     Calendar,
@@ -35,6 +35,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 export default function SessionDetailPage({ params }: { params: { id: string } }) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { toast } = useToast();
     const [session, setSession] = useState<Session | null>(null);
     const [client, setClient] = useState<Client | null>(null);
@@ -44,6 +45,17 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const [isSavingNotes, setIsSavingNotes] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+    const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
+
+    // Auto-start check effect
+    useEffect(() => {
+        const shouldStart = searchParams.get('start') === 'true';
+        if (shouldStart && session && session.status === SessionStatus.SCHEDULED) {
+            setIsConsentModalOpen(true);
+            // Optional: clean up the query param to prevent re-triggering on refresh if desirable?
+            // For now, leaving it is fine as it's a specific navigation action.
+        }
+    }, [searchParams, session]);
 
     const fetchSession = async () => {
         try {
@@ -100,8 +112,6 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
         const s = seconds % 60;
         return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
-
-    const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
 
     const handleStatusChange = async (newStatus: SessionStatus, extraPayload: any = {}) => {
         if (!session) return;

@@ -224,11 +224,18 @@ let ReportsService = class ReportsService {
                 }
             }
         }
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId }
+        });
+        const psychologistName = user ? `${user.firstName} ${user.lastName}` : 'Psicólogo';
+        const professionalNumber = user?.professionalNumber || 'N/A';
         return this.pdfService.generateReportPdf({
             title: report.title,
             clientName: clientName,
             type: report.reportType,
-            content: report.content
+            content: report.content,
+            psychologistName,
+            professionalNumber
         });
     }
 };
