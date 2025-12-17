@@ -36,6 +36,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // ... (previous imports)
+import { useSocket } from '@/hooks/use-socket';
 
 export default function SessionDetailPage({ params }: { params: { id: string } }) {
     const router = useRouter();
@@ -54,6 +55,18 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
     const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('transcription');
+
+    // START: WebSocket Integration
+    // Connect to 'sessions' namespace
+    const socketUrl = (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001') + '/sessions';
+    const { socket, isConnected } = useSocket(socketUrl);
+
+    useEffect(() => {
+        if (socket && isConnected && session?.id) {
+            socket.emit('joinSession', { sessionId: session.id });
+        }
+    }, [socket, isConnected, session?.id]);
+    // END: WebSocket Integration
 
     // ... (useEffect for auto-start and timer remain same)
 
@@ -502,11 +515,11 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     )}
 
                                     {/* Suggested Tests */}
-                                    {session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.length > 0 && (
+                                    {(session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.length || 0) > 0 && (
                                         <div>
                                             <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Instruments d'Avaluació Suggerits</h4>
                                             <div className="space-y-3">
-                                                {session.aiMetadata.diagnostic_final.tests_sugerits_final.suggeriments.map((block: any, i: number) => (
+                                                {session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.map((block: any, i: number) => (
                                                     <div key={i} className="bg-slate-50 rounded-md p-3 border">
                                                         <p className="font-medium text-sm text-slate-800 mb-2">{block.tema} <span className="text-xs font-normal text-slate-500">({block.categoria})</span></p>
                                                         <ul className="space-y-2">
@@ -567,6 +580,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                             sessionId={session.id}
                             isActive={session.status === SessionStatus.IN_PROGRESS}
                             liveContext={transcription + ' ' + notes} // Pass BOTH contexts to AI
+                            socket={socket} // Pass socket
+                            isConnected={isConnected} // Pass connection status
                             onSuggestionClick={(text) => {
                                 setNotes(prev => prev + (prev ? '\n\n' : '') + `[Pregunta suggerida]: ${text}`);
                                 setActiveTab('clinical_notes');

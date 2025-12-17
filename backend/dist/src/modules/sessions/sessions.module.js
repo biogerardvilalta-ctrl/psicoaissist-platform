@@ -10,6 +10,7 @@ exports.SessionsModule = void 0;
 const common_1 = require("@nestjs/common");
 const sessions_service_1 = require("./sessions.service");
 const sessions_controller_1 = require("./sessions.controller");
+const sessions_gateway_1 = require("./sessions.gateway");
 const encryption_module_1 = require("../encryption/encryption.module");
 const ai_module_1 = require("../ai/ai.module");
 const prisma_module_1 = require("../../common/prisma/prisma.module");
@@ -20,7 +21,7 @@ exports.SessionsModule = SessionsModule = __decorate([
     (0, common_1.Module)({
         imports: [encryption_module_1.EncryptionModule, prisma_module_1.PrismaModule, ai_module_1.AiModule],
         controllers: [sessions_controller_1.SessionsController],
-        providers: [sessions_service_1.SessionsService],
+        providers: [sessions_service_1.SessionsService, sessions_gateway_1.SessionsGateway],
         exports: [sessions_service_1.SessionsService],
     })
 ], SessionsModule);
