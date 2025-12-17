@@ -27,4 +27,5 @@ export declare class AuthService {
     }>;
     private logAuthAttempt;
     getPublicKey(): string;
+    updateProfile(userId: string, data: any): Promise<any>;
 }

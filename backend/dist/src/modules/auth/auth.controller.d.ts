@@ -37,4 +37,7 @@ export declare class AuthController {
     getPublicKey(): {
         publicKey: string;
     };
+    updateProfile(req: Request & {
+        user: any;
+    }, updateProfileDto: any): Promise<any>;
 }

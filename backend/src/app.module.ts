@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { ScheduleModule } from '@nestjs/schedule';
 
 // Configuration
 import { DatabaseConfig } from './config/database.config';
@@ -20,6 +21,7 @@ import { AiModule } from './modules/ai/ai.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { RemindersModule } from './modules/reminders/reminders.module';
 // import { HealthModule } from './modules/health/health.module';
 
 // Shared services
@@ -35,6 +37,9 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
       load: [DatabaseConfig, JwtConfig, RedisConfig],
       envFilePath: ['.env.local', '.env'],
     }),
+
+    // Cron Jobs
+    ScheduleModule.forRoot(),
 
     // Rate limiting
     ThrottlerModule.forRootAsync({
@@ -88,6 +93,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     ReportsModule,
     AiModule,
     AuditModule,
+    RemindersModule,
     // HealthModule,
   ],
   controllers: [],

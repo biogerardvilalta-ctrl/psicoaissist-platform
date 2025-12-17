@@ -135,6 +135,16 @@ let AuthController = AuthController_1 = class AuthController {
     getPublicKey() {
         return { publicKey: this.authService.getPublicKey() };
     }
+    async updateProfile(req, updateProfileDto) {
+        try {
+            const result = await this.authService.updateProfile(req.user.id, updateProfileDto);
+            return result;
+        }
+        catch (error) {
+            this.logger.error(`Update profile error: ${error.message}`);
+            throw error;
+        }
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -213,6 +223,18 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "getPublicKey", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Actualizar perfil del usuario actual' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Perfil actualizado exitosamente' }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Patch)('me'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "updateProfile", null);
 exports.AuthController = AuthController = AuthController_1 = __decorate([
     (0, swagger_1.ApiTags)('Auth'),
     (0, common_1.Controller)('auth'),

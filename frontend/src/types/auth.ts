@@ -10,6 +10,7 @@ export interface User {
     status: string;
     currentPeriodEnd?: string;
   };
+  enableReminders: boolean;
 }
 
 export interface AuthTokens {

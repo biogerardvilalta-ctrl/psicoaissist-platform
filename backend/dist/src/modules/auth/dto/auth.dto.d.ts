@@ -24,6 +24,7 @@ export declare class UserResponseDto {
     lastName: string;
     role: UserRole;
     status: string;
+    enableReminders: boolean;
 }
 export declare class AuthResponseDto {
     user: UserResponseDto;
@@ -39,4 +40,11 @@ export declare class ChangePasswordDto {
 }
 export declare class RefreshTokenDto {
     refreshToken: string;
+}
+export declare class UpdateProfileDto {
+    firstName?: string;
+    lastName?: string;
+    professionalNumber?: string;
+    country?: string;
+    enableReminders?: boolean;
 }

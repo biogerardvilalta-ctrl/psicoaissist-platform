@@ -10,6 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const throttler_1 = require("@nestjs/throttler");
+const schedule_1 = require("@nestjs/schedule");
 const database_config_1 = require("./config/database.config");
 const jwt_config_1 = require("./config/jwt.config");
 const redis_config_1 = require("./config/redis.config");
@@ -23,6 +24,7 @@ const ai_module_1 = require("./modules/ai/ai.module");
 const payments_module_1 = require("./modules/payments/payments.module");
 const admin_module_1 = require("./modules/admin/admin.module");
 const audit_module_1 = require("./modules/audit/audit.module");
+const reminders_module_1 = require("./modules/reminders/reminders.module");
 const prisma_module_1 = require("./common/prisma/prisma.module");
 const monitoring_module_1 = require("./common/monitoring.module");
 const encryption_module_1 = require("./modules/encryption/encryption.module");
@@ -37,6 +39,7 @@ exports.AppModule = AppModule = __decorate([
                 load: [database_config_1.DatabaseConfig, jwt_config_1.JwtConfig, redis_config_1.RedisConfig],
                 envFilePath: ['.env.local', '.env'],
             }),
+            schedule_1.ScheduleModule.forRoot(),
             throttler_1.ThrottlerModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
@@ -67,6 +70,7 @@ exports.AppModule = AppModule = __decorate([
             reports_module_1.ReportsModule,
             ai_module_1.AiModule,
             audit_module_1.AuditModule,
+            reminders_module_1.RemindersModule,
         ],
         controllers: [],
         providers: [],

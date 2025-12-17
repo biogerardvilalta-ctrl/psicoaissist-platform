@@ -28,6 +28,7 @@ model User {
   country         String?
   professionalNumber String? @map("professional_number")
   speciality      String?
+  enableReminders Boolean  @default(false) @map("enable_reminders")
   
   // Stripe integration
   stripeCustomerId String? @unique @map("stripe_customer_id")
@@ -152,6 +153,7 @@ model Session {
   sessionType     SessionType   @map("session_type")
   status          SessionStatus
   isMinor         Boolean       @default(false) @map("is_minor")
+  reminderSent    Boolean       @default(false) @map("reminder_sent")
   
   // Encrypted content
   encryptedTranscription Bytes? @map("encrypted_transcription")

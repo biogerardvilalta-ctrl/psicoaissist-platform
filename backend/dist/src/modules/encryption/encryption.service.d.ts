@@ -22,11 +22,11 @@ export declare class EncryptionService {
     generateNewKey(userId: string): Promise<string>;
     getOrCreateEncryptionKey(userId: string): Promise<{
         id: string;
+        createdAt: Date;
         userId: string;
+        isActive: boolean;
         keyValue: string;
         algorithm: string;
-        isActive: boolean;
-        createdAt: Date;
         expiresAt: Date | null;
     }>;
     private getEncryptionKey;

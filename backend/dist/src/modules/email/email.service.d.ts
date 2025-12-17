@@ -8,9 +8,16 @@ export declare class EmailService {
     sendSubscriptionConfirmation(to: string, planName: string): Promise<void>;
     sendPasswordReset(to: string, resetToken: string): Promise<void>;
     sendSubscriptionCancellation(to: string): Promise<void>;
+    sendSessionReminder(to: string, sessionData: {
+        clientName: string;
+        date: string;
+        time: string;
+        type: string;
+    }): Promise<void>;
     private sendEmail;
     private getWelcomeTemplate;
     private getSubscriptionTemplate;
     private getPasswordResetTemplate;
     private getCancellationTemplate;
+    private getSessionReminderTemplate;
 }

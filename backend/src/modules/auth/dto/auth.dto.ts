@@ -78,6 +78,9 @@ export class UserResponseDto {
 
   @ApiProperty()
   status: string;
+
+  @ApiProperty()
+  enableReminders: boolean; // Add this field
 }
 
 export class AuthResponseDto {
@@ -109,4 +112,26 @@ export class RefreshTokenDto {
   @ApiProperty()
   @IsString()
   refreshToken: string;
+}
+
+export class UpdateProfileDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  firstName?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  lastName?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  professionalNumber?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  country?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  enableReminders?: boolean;
 }

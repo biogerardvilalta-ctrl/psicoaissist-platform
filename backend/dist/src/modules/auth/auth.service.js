@@ -100,6 +100,7 @@ let AuthService = AuthService_1 = class AuthService {
                 lastName: user.lastName,
                 role: user.role,
                 status: user.status,
+                enableReminders: user.enableReminders,
             },
             tokens,
             encryptionKey: {
@@ -148,6 +149,7 @@ let AuthService = AuthService_1 = class AuthService {
                     lastName: user.lastName,
                     role: user.role,
                     status: user.status,
+                    enableReminders: user.enableReminders,
                 },
                 tokens,
                 encryptionKey: {
@@ -259,6 +261,28 @@ let AuthService = AuthService_1 = class AuthService {
     }
     getPublicKey() {
         return this.encryptionService.getPublicKey();
+    }
+    async updateProfile(userId, data) {
+        try {
+            const user = await this.prisma.user.update({
+                where: { id: userId },
+                data: {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    professionalNumber: data.professionalNumber,
+                    country: data.country,
+                    enableReminders: data.enableReminders,
+                    updatedAt: new Date(),
+                },
+            });
+            this.logger.log(`Profile updated for user: ${userId}`);
+            const { passwordHash, ...result } = user;
+            return result;
+        }
+        catch (error) {
+            this.logger.error(`Error updating profile: ${error.message}`);
+            throw error;
+        }
     }
 };
 exports.AuthService = AuthService;

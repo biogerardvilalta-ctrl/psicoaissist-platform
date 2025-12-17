@@ -209,4 +209,22 @@ export class AuthController {
   getPublicKey() {
     return { publicKey: this.authService.getPublicKey() };
   }
+
+  @ApiOperation({ summary: 'Actualizar perfil del usuario actual' })
+  @ApiResponse({ status: 200, description: 'Perfil actualizado exitosamente' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  async updateProfile(
+    @Req() req: Request & { user: any },
+    @Body() updateProfileDto: any, // Debería ser UpdateProfileDto, pero para evitar import circular si es necesario
+  ) {
+    try {
+      const result = await this.authService.updateProfile(req.user.id, updateProfileDto);
+      return result;
+    } catch (error) {
+      this.logger.error(`Update profile error: ${error.message}`);
+      throw error;
+    }
+  }
 }

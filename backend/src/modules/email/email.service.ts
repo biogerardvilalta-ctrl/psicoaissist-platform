@@ -34,6 +34,16 @@ export class EmailService {
     await this.sendEmail(to, template);
   }
 
+  async sendSessionReminder(to: string, sessionData: {
+    clientName: string;
+    date: string;
+    time: string;
+    type: string
+  }): Promise<void> {
+    const template = this.getSessionReminderTemplate(sessionData);
+    await this.sendEmail(to, template);
+  }
+
   private async sendEmail(to: string, template: EmailTemplate): Promise<void> {
     // Mock implementation - logs to console
     // In production, replace with actual email service
@@ -224,6 +234,54 @@ export class EmailService {
         de tu período actual.
 
         Reactivar: https://psychoai.com/pricing
+      `
+    };
+  }
+
+  private getSessionReminderTemplate(data: { clientName: string; date: string; time: string; type: string }): EmailTemplate {
+    return {
+      subject: 'Recordatorio de Sesión - PsychoAI',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Recordatorio de Sesión</h1>
+          </div>
+          <div style="padding: 20px; background: #ffff;">
+            <p style="color: #333; font-size: 16px;">Hola,</p>
+            <p style="color: #555; line-height: 1.6;">
+              Tienes una sesión programada para mañana. Aquí están los detalles:
+            </p>
+            
+            <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 5px 0;"><strong>Paciente:</strong> ${data.clientName}</p>
+              <p style="margin: 5px 0;"><strong>Fecha:</strong> ${data.date}</p>
+              <p style="margin: 5px 0;"><strong>Hora:</strong> ${data.time}</p>
+              <p style="margin: 5px 0;"><strong>Tipo:</strong> ${data.type}</p>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://psychoai.com/dashboard/sessions" 
+                 style="background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                Ver Agenda
+              </a>
+            </div>
+          </div>
+          <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
+            © 2025 PsychoAI
+          </div>
+        </div>
+      `,
+      text: `
+        Recordatorio de Sesión
+
+        Tienes una sesión programada para mañana:
+        
+        Paciente: ${data.clientName}
+        Fecha: ${data.date}
+        Hora: ${data.time}
+        Tipo: ${data.type}
+
+        Ver agenda: https://psychoai.com/dashboard/sessions
       `
     };
   }

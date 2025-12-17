@@ -111,4 +111,17 @@ export class AuthAPI {
       throw error;
     }
   }
+
+  static async updateProfile(data: Partial<User>): Promise<User> {
+    console.log('👤 AuthAPI.updateProfile llamado', data);
+
+    try {
+      const response = await httpClient.patch(`${this.BASE_URL}/me`, data);
+      console.log('✅ Update profile response:', response);
+      return (response as any).data || response;
+    } catch (error) {
+      console.error('❌ Error en AuthAPI.updateProfile:', error);
+      throw error;
+    }
+  }
 }
