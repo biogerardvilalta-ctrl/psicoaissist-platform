@@ -78,11 +78,16 @@ export declare class AiService {
         }[];
     }>;
     generateReportDraft(data: {
-        clientName?: string;
+        clientName: string;
         reportType: string;
+        sections: string[];
+        tone: string;
+        legalSensitivity: string;
         sessionCount: number;
         period: string;
         notesSummary: string;
         firstSessionNote?: string;
+        additionalInstructions?: string;
+        languageProfile?: string;
     }): Promise<string>;
 }

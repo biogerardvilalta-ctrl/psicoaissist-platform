@@ -35,8 +35,6 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateReportDto.prototype, "content", void 0);
 __decorate([
@@ -44,6 +42,11 @@ __decorate([
     (0, class_validator_1.IsEnum)(client_1.ReportStatus),
     __metadata("design:type", String)
 ], CreateReportDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateReportDto.prototype, "humanReviewConfirmed", void 0);
 class UpdateReportDto {
 }
 exports.UpdateReportDto = UpdateReportDto;

@@ -17,13 +17,15 @@ export class CreateReportDto {
 
     @IsOptional()
     @IsString()
-    @IsOptional()
-    @IsString()
     content?: string; // HTML or Markdown content
 
     @IsOptional()
     @IsEnum(ReportStatus)
     status?: ReportStatus;
+
+    @IsOptional()
+    @IsBoolean()
+    humanReviewConfirmed?: boolean;
 }
 
 export class UpdateReportDto {

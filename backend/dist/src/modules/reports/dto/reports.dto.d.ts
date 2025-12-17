@@ -6,6 +6,7 @@ export declare class CreateReportDto {
     sessionId?: string;
     content?: string;
     status?: ReportStatus;
+    humanReviewConfirmed?: boolean;
 }
 export declare class UpdateReportDto {
     title?: string;

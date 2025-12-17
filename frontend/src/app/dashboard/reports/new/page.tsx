@@ -25,6 +25,7 @@ export default function NewReportPage() {
     const [reportTitle, setReportTitle] = useState('');
     const [savedReportId, setSavedReportId] = useState<string | null>(null);
     const [savedReportStatus, setSavedReportStatus] = useState<ReportStatus | null>(null);
+    const [humanReviewConfirmed, setHumanReviewConfirmed] = useState(false);
 
     // Data Loading
     const [clients, setClients] = useState<any[]>([]); // Placeholder type
@@ -140,7 +141,8 @@ export default function NewReportPage() {
                 await ReportsAPI.update(savedReportId, {
                     title: reportTitle,
                     content: draftContent,
-                    status: ReportStatus.DRAFT
+                    status: ReportStatus.DRAFT,
+                    humanReviewConfirmed // Optional usually for drafts but good to track
                 });
                 setSavedReportStatus(ReportStatus.DRAFT);
                 // If we are editing (not finalized), we might stay on step 3 or go to success?
@@ -153,7 +155,8 @@ export default function NewReportPage() {
                     title: reportTitle,
                     reportType,
                     content: draftContent,
-                    status: ReportStatus.DRAFT
+                    status: ReportStatus.DRAFT,
+                    humanReviewConfirmed
                 });
                 setSavedReportId(report.id);
                 setSavedReportStatus(ReportStatus.DRAFT);
@@ -178,7 +181,8 @@ export default function NewReportPage() {
                 await ReportsAPI.update(savedReportId, {
                     title: reportTitle,
                     content: draftContent,
-                    status: ReportStatus.COMPLETED
+                    status: ReportStatus.COMPLETED,
+                    humanReviewConfirmed
                 });
                 setSavedReportStatus(ReportStatus.COMPLETED);
                 nextStep();
@@ -188,7 +192,8 @@ export default function NewReportPage() {
                     title: reportTitle,
                     reportType,
                     content: draftContent,
-                    status: ReportStatus.COMPLETED
+                    status: ReportStatus.COMPLETED,
+                    humanReviewConfirmed
                 });
                 setSavedReportId(report.id);
                 setSavedReportStatus(ReportStatus.COMPLETED);
@@ -348,6 +353,43 @@ export default function NewReportPage() {
                             </div>
                         </div>
 
+                        {/* LEGAL / FORENSIC MANDATORY CHECKBOX */}
+                        {reportType === ReportType.LEGAL && (
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-4 my-4">
+                                <div className="flex items-start">
+                                    <div className="flex-shrink-0">
+                                        <AlertCircle className="h-5 w-5 text-red-600" aria-hidden="true" />
+                                    </div>
+                                    <div className="ml-3">
+                                        <h3 className="text-sm font-medium text-red-800">Revisió Obligatòria (Mode Safe Forensic)</h3>
+                                        <div className="mt-2 text-sm text-red-700">
+                                            <p className="mb-2">
+                                                Estàs redactant un informe <strong>LEGAL/FORENSE</strong>. Per normativa, aquest tipus d'informe requereix una validació humana estricta.
+                                            </p>
+                                            <ul className="list-disc pl-5 space-y-1 mb-3">
+                                                <li>Verifica que no hi hagi afirmacions causals ("Això demostra que...").</li>
+                                                <li>Diferencia clarament entre fets observats i manifestacions del pacient.</li>
+                                                <li>Assegura't que el llenguatge és objectiu i no judicialitzador.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-4 ml-8">
+                                    <label className="flex items-start cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            className="mt-1 h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                                            checked={humanReviewConfirmed}
+                                            onChange={(e) => setHumanReviewConfirmed(e.target.checked)}
+                                        />
+                                        <span className="ml-2 text-sm font-bold text-gray-900">
+                                            Confirmo que he revisat íntegrament l’informe, n’assumeixo la responsabilitat professional i certifico que compleix amb els criteris ètics i legals.
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="flex justify-between pt-4">
                             <button onClick={prevStep} className="px-4 py-2 border rounded-lg">Atrás</button>
                             <div className="flex gap-2">
@@ -360,8 +402,8 @@ export default function NewReportPage() {
                                 </button>
                                 <button
                                     onClick={handleSaveReport}
-                                    disabled={isLoading || !reportTitle}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                                    disabled={isLoading || !reportTitle || (reportType === ReportType.LEGAL && !humanReviewConfirmed)}
+                                    className={`px-4 py-2 text-white rounded-lg disabled:opacity-50 ${reportType === ReportType.LEGAL && !humanReviewConfirmed ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
                                 >
                                     {isLoading ? 'Guardando...' : 'Finalizar y Guardar'}
                                 </button>
@@ -369,6 +411,7 @@ export default function NewReportPage() {
                         </div>
                     </div>
                 )}
+
                 {/* Step 4: Finalize */}
                 {step === 4 && (
                     <div className="space-y-6 text-center py-12">

@@ -50,6 +50,7 @@ export interface CreateReportData {
     sessionId?: string;
     content?: string;
     status?: ReportStatus;
+    humanReviewConfirmed?: boolean;
 }
 
 export interface GenerateDraftData {

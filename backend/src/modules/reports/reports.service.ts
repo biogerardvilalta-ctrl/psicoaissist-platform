@@ -3,7 +3,8 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateReportDto, UpdateReportDto } from './dto/reports.dto';
 import { EncryptionService } from '../encryption/encryption.service';
 import { AiService } from '../ai/ai.service';
-import { ReportStatus } from '@prisma/client';
+import { ReportStatus, ReportType } from '@prisma/client';
+import { PSYCHOLOGICAL_REPORTS } from '../../config/psychological-reports.config';
 
 import { PdfService } from './pdf.service';
 
@@ -44,6 +45,7 @@ export class ReportsService {
                 status: createReportDto.status || ReportStatus.DRAFT,
                 encryptedContent: packedData,
                 encryptionKeyId: keyId,
+                humanReviewConfirmed: createReportDto.humanReviewConfirmed || false,
             }
         });
     }
@@ -124,11 +126,38 @@ export class ReportsService {
             data.status = updateReportDto.status;
             if (updateReportDto.status === ReportStatus.COMPLETED) {
                 // Validation: Cannot complete without human review
-                const isConfirmed = updateReportDto.humanReviewConfirmed === true || ((report as any).humanReviewConfirmed === true && updateReportDto.humanReviewConfirmed !== false);
+                let isConfirmed = updateReportDto.humanReviewConfirmed === true || ((report as any).humanReviewConfirmed === true && updateReportDto.humanReviewConfirmed !== false);
+
+                // STRICT: Forensic reports require explicit confirmation
+                if (report.reportType === ReportType.LEGAL) {
+                    if (!isConfirmed) {
+                        throw new BadRequestException('Els informes legal-forenses requereixen revisió humana obligatòria abans de finalitzar-se.');
+                    }
+
+                    // STRICT: Semantic content validation
+                    if (updateReportDto.content) {
+                        this.validateForensicContent(updateReportDto.content);
+                    }
+                }
 
                 if (!isConfirmed) {
                     throw new BadRequestException('No se puede finalizar el informe sin validación humana confirmada/supervisada.');
                 }
+
+                // Add Audit Metadata on completion
+                const auditMeta = {
+                    completedAt: new Date(),
+                    completedByUserId: userId,
+                    aiAssisted: report.aiGenerated,
+                    aiModel: 'gpt-4o', // or current model
+                    humanReviewConfirmed: true,
+                    complianceChecked: true
+                };
+
+                // Merge into existing logMetadata or create new
+                const existingMeta = (report.logMetadata as any) || {};
+                data.logMetadata = { ...existingMeta, ...auditMeta };
+
                 data.completedAt = new Date();
             }
         }
@@ -216,18 +245,70 @@ export class ReportsService {
 
         // 3. Call AI Service
         const client = await this.prisma.client.findUnique({ where: { id: data.clientId } });
+        let clientName = 'Paciente';
+
+        // Decrypt Client Name
+        if (client && client.encryptedPersonalData) {
+            try {
+                const iv = client.encryptedPersonalData.subarray(0, 16).toString('base64');
+                const tag = client.encryptedPersonalData.subarray(16, 32).toString('base64');
+                const encryptedData = client.encryptedPersonalData.subarray(32);
+
+                const result = await this.encryption.decryptData<{ firstName: string; lastName: string }>({
+                    encryptedData,
+                    iv,
+                    tag,
+                    keyId: client.encryptionKeyId
+                });
+
+                if (result.success) {
+                    clientName = `${result.data.firstName || ''} ${result.data.lastName || ''}`.trim();
+                }
+            } catch (e) {
+                console.error("Failed to decrypt client name for AI draft", e);
+            }
+        }
+
         const period = `${sessions[0].startTime.toLocaleDateString()} - ${sessions[sessions.length - 1].startTime.toLocaleDateString()}`;
 
         // Call AI Service
+        const config = PSYCHOLOGICAL_REPORTS[data.reportType];
+
+        if (!config) {
+            throw new BadRequestException('Tipo de informe no válido');
+        }
+
         const draftContent = await this.aiService.generateReportDraft({
-            clientName: "Paciente",
+            clientName,
             reportType: data.reportType,
+            sections: config.sections,
+            tone: config.tone,
+            legalSensitivity: config.legalSensitivity,
             sessionCount: sessions.length,
             period,
             notesSummary,
-            firstSessionNote // Pass these specific notes
+            firstSessionNote: config.useFirstSession ? firstSessionNote : undefined,
+            additionalInstructions: data.additionalInstructions
         });
         return { content: draftContent };
+    }
+
+    private validateForensicContent(content: string) {
+        const forbiddenPatterns = [
+            /concloent/i,
+            /definitivament/i,
+            /causalitat directa/i,
+            /innegablement/i,
+            /la veritat és/i,
+            /és culpable/i,
+            /és innocent/i
+        ];
+
+        const violations = forbiddenPatterns.filter(pattern => pattern.test(content));
+
+        if (violations.length > 0) {
+            throw new BadRequestException(`El contingut conté expressions no permeses en informes forenses (violació de neutralitat): ${violations.join(', ')}`);
+        }
     }
 
     async downloadPdf(id: string, userId: string): Promise<Buffer> {

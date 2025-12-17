@@ -87,15 +87,14 @@ export declare class SessionsService {
     remove(id: string, userId: string): Promise<{
         id: string;
         userId: string;
-        createdAt: Date;
-        status: import(".prisma/client").$Enums.SessionStatus;
         encryptionKeyId: string | null;
+        createdAt: Date;
         updatedAt: Date;
-        clientId: string;
         startTime: Date;
         endTime: Date | null;
         duration: number | null;
         sessionType: import(".prisma/client").$Enums.SessionType;
+        status: import(".prisma/client").$Enums.SessionStatus;
         isMinor: boolean;
         encryptedTranscription: Buffer | null;
         encryptedNotes: Buffer | null;
@@ -108,6 +107,7 @@ export declare class SessionsService {
         consentTimestamp: Date | null;
         consentVersion: string | null;
         startedAt: Date | null;
+        clientId: string;
     }>;
     private unpackClientData;
     private mapToDto;

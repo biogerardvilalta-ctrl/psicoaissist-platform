@@ -15,6 +15,7 @@ const prisma_service_1 = require("../../common/prisma/prisma.service");
 const encryption_service_1 = require("../encryption/encryption.service");
 const ai_service_1 = require("../ai/ai.service");
 const client_1 = require("@prisma/client");
+const psychological_reports_config_1 = require("../../config/psychological-reports.config");
 const pdf_service_1 = require("./pdf.service");
 let ReportsService = class ReportsService {
     constructor(prisma, encryption, aiService, pdfService) {
@@ -41,6 +42,7 @@ let ReportsService = class ReportsService {
                 status: createReportDto.status || client_1.ReportStatus.DRAFT,
                 encryptedContent: packedData,
                 encryptionKeyId: keyId,
+                humanReviewConfirmed: createReportDto.humanReviewConfirmed || false,
             }
         });
     }
@@ -114,10 +116,28 @@ let ReportsService = class ReportsService {
         if (updateReportDto.status) {
             data.status = updateReportDto.status;
             if (updateReportDto.status === client_1.ReportStatus.COMPLETED) {
-                const isConfirmed = updateReportDto.humanReviewConfirmed === true || (report.humanReviewConfirmed === true && updateReportDto.humanReviewConfirmed !== false);
+                let isConfirmed = updateReportDto.humanReviewConfirmed === true || (report.humanReviewConfirmed === true && updateReportDto.humanReviewConfirmed !== false);
+                if (report.reportType === client_1.ReportType.LEGAL) {
+                    if (!isConfirmed) {
+                        throw new common_1.BadRequestException('Els informes legal-forenses requereixen revisió humana obligatòria abans de finalitzar-se.');
+                    }
+                    if (updateReportDto.content) {
+                        this.validateForensicContent(updateReportDto.content);
+                    }
+                }
                 if (!isConfirmed) {
                     throw new common_1.BadRequestException('No se puede finalizar el informe sin validación humana confirmada/supervisada.');
                 }
+                const auditMeta = {
+                    completedAt: new Date(),
+                    completedByUserId: userId,
+                    aiAssisted: report.aiGenerated,
+                    aiModel: 'gpt-4o',
+                    humanReviewConfirmed: true,
+                    complianceChecked: true
+                };
+                const existingMeta = report.logMetadata || {};
+                data.logMetadata = { ...existingMeta, ...auditMeta };
                 data.completedAt = new Date();
             }
         }
@@ -186,16 +206,59 @@ let ReportsService = class ReportsService {
             }
         }
         const client = await this.prisma.client.findUnique({ where: { id: data.clientId } });
+        let clientName = 'Paciente';
+        if (client && client.encryptedPersonalData) {
+            try {
+                const iv = client.encryptedPersonalData.subarray(0, 16).toString('base64');
+                const tag = client.encryptedPersonalData.subarray(16, 32).toString('base64');
+                const encryptedData = client.encryptedPersonalData.subarray(32);
+                const result = await this.encryption.decryptData({
+                    encryptedData,
+                    iv,
+                    tag,
+                    keyId: client.encryptionKeyId
+                });
+                if (result.success) {
+                    clientName = `${result.data.firstName || ''} ${result.data.lastName || ''}`.trim();
+                }
+            }
+            catch (e) {
+                console.error("Failed to decrypt client name for AI draft", e);
+            }
+        }
         const period = `${sessions[0].startTime.toLocaleDateString()} - ${sessions[sessions.length - 1].startTime.toLocaleDateString()}`;
+        const config = psychological_reports_config_1.PSYCHOLOGICAL_REPORTS[data.reportType];
+        if (!config) {
+            throw new common_1.BadRequestException('Tipo de informe no válido');
+        }
         const draftContent = await this.aiService.generateReportDraft({
-            clientName: "Paciente",
+            clientName,
             reportType: data.reportType,
+            sections: config.sections,
+            tone: config.tone,
+            legalSensitivity: config.legalSensitivity,
             sessionCount: sessions.length,
             period,
             notesSummary,
-            firstSessionNote
+            firstSessionNote: config.useFirstSession ? firstSessionNote : undefined,
+            additionalInstructions: data.additionalInstructions
         });
         return { content: draftContent };
+    }
+    validateForensicContent(content) {
+        const forbiddenPatterns = [
+            /concloent/i,
+            /definitivament/i,
+            /causalitat directa/i,
+            /innegablement/i,
+            /la veritat és/i,
+            /és culpable/i,
+            /és innocent/i
+        ];
+        const violations = forbiddenPatterns.filter(pattern => pattern.test(content));
+        if (violations.length > 0) {
+            throw new common_1.BadRequestException(`El contingut conté expressions no permeses en informes forenses (violació de neutralitat): ${violations.join(', ')}`);
+        }
     }
     async downloadPdf(id, userId) {
         const report = await this.findOne(id, userId);

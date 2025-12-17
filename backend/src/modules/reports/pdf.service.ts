@@ -73,9 +73,22 @@ export class PdfService {
             const signatureY = doc.y;
 
             // Check if we need a new page for signature
-            if (signatureY > doc.page.height - 150) {
+            if (signatureY > doc.page.height - 200) {
                 doc.addPage();
             }
+
+            // --- Mandatory Legal Disclaimer (3.2) ---
+            doc.moveDown(2);
+            doc.rect(50, doc.y, 495, 45).fill('#F8FAFC');
+            doc.fillColor('#64748B').fontSize(9);
+            doc.text(
+                'Aquest informe ha estat elaborat per un/a psicòleg/a col·legiat/da. La redacció ha comptat amb el suport d’una eina d’intel·ligència artificial, i ha estat íntegrament revisada, validada i assumida pel/la professional signant.',
+                60,
+                doc.y - 35,
+                { width: 475, align: 'center' }
+            );
+
+            doc.moveDown(2);
 
             doc.font('Helvetica-Bold').fontSize(11).fillColor(TEXT_COLOR);
             doc.text('Signat: El/La Psicòleg/òloga', 50, doc.y, { align: 'left' });

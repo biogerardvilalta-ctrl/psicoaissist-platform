@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { getPromptByType } from './prompt.selector';
 
 const FORBIDDEN_WORDS_REGEX = /(ansietat|depressió|trastorn|diagnòstic|dsm|criteris|patologia|paciente sufre|debe|obligatorio|compleix criteris|hauries de|és recomanable que)/i;
 
@@ -703,137 +704,194 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
             indicators
         };
     }
-    async generateReportDraft(data: { clientName?: string; reportType: string; sessionCount: number; period: string; notesSummary: string; firstSessionNote?: string }): Promise<string> {
-        // Simulation of AI drafting using the OFFICIAL_REPORT_SYSTEM_PROMPT structure
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+    async generateReportDraft(data: {
+        clientName: string;
+        reportType: string;
+        sections: string[];
+        tone: string;
+        legalSensitivity: string;
+        sessionCount: number;
+        period: string;
+        notesSummary: string;
+        firstSessionNote?: string;
+        additionalInstructions?: string;
+        languageProfile?: string; // Added language profile
+    }): Promise<string> {
 
-        const { clientName, reportType, sessionCount, period, notesSummary, firstSessionNote } = data;
-        const now = new Date().toLocaleDateString('es-ES');
-        const cName = clientName || 'Paciente Confidencial';
+        // --- 1. PROMPT SELECTION LOGIC ---
+        const promptTemplate = getPromptByType(data.reportType);
 
-        // Helper to map report type to human readable Spanish string
-        const getReportTypeLabel = (type: string) => {
-            switch (type) {
-                case 'INITIAL_EVALUATION': return 'Informe d’Avaluació Inicial';
-                case 'PROGRESS': return 'Informe de Seguiment / Evolució';
-                case 'DISCHARGE': return 'Informe d’Alta Clínica';
-                case 'REFERRAL': return 'Informe de Derivació';
-                case 'LEGAL': return 'Informe Legal / Forense';
-                case 'INSURANCE': return 'Informe per a Asseguradora';
-                default: return 'Informe Clínic Personalitzat';
+        // Language Profile Logic
+        const getLanguageBlock = (profile: string) => {
+            switch (profile) {
+                case 'INFANTIL': return 'Llenguatge adaptat a menors, prudent i evolutiu.';
+                case 'ESCOLAR': return 'Llenguatge clar, educatiu i no clínic.';
+                case 'ADULT': default: return 'Llenguatge clínic estàndard per adults.';
             }
         };
 
-        const reportTypeLabel = getReportTypeLabel(reportType);
+        const languageBlock = getLanguageBlock(data.languageProfile || 'ADULT');
 
-        // This content generation mimics what the LLM would produce given the system prompt and inputs.
-        // It strictly follows the 10-point structure.
+        const prompt = promptTemplate({
+            sessionCount: data.sessionCount,
+            period: data.period,
+            notesSummary: data.notesSummary,
+            firstSessionNote: data.firstSessionNote || 'No disponible',
+            customSections: data.sections.join('\n') || (data.additionalInstructions ? data.additionalInstructions : 'Estructura lliure'),
+            languageProfile: languageBlock // Injecting strict language rules
+        });
 
-        let content = `
-        <div class="report-container" style="font-family: serif; color: #333; line-height: 1.6;">
+        // --- 2. SIMULATION LOGIC ---
 
-            <div style="text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #333; padding-bottom: 1rem;">
-                <h1 style="margin: 0; font-size: 24px;">INFORME PROFESSIONAL PSICOLÒGIC</h1>
-                <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">Document de suport assistencial amb IA</p>
-            </div>
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
-            <!-- 1. Identificació -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">1. Identificació de l’informe</h3>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr><td style="width: 30%;"><strong>Tipus d’informe:</strong></td><td>${reportTypeLabel}</td></tr>
-                    <tr><td><strong>Finalitat:</strong></td><td>Suport a la presa de decisions clíniques / comunicació professional</td></tr>
-                    <tr><td><strong>Pacient (Id/Initials):</strong></td><td>${cName}</td></tr>
-                    <tr><td><strong>Data d'emissió:</strong></td><td>${now}</td></tr>
-                    <tr><td><strong>Període avaluat:</strong></td><td>${period} (Total sessions: ${sessionCount})</td></tr>
-                </table>
-            </div>
+        const now = new Date().toLocaleDateString('es-ES');
 
-            <!-- 2. Objecte i abast -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">2. Objecte i abast de l’informe</h3>
-                <p>El present informe s'emet a petició del pacient/centre per a ${reportType === 'REFERRAL' ? 'coordinació assistencial' : 'valoració del procés terapèutic'}. Recull una síntesi de les observacions realitzades durant el període esmentat.</p>
-            </div>
+        // --- 3. SIMULATED RESPONSE GENERATOR (Type-Specific) ---
+        // This replaces the generic loop to ensure each report looks distinct as per the prompt instructions.
 
-            <!-- 3. Fonts d'informació -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">3. Fonts d’informació utilitzades</h3>
-                <ul>
-                    <li>Entrevista clínica i observació directa.</li>
-                    <li>Registres de sessió (${sessionCount} sessions).</li>
-                    <li>${firstSessionNote ? 'Notes d’avaluació inicial.' : 'Informació aportada pel pacient.'}</li>
-                </ul>
-                <p><em>Declaració:</em> Les dades recollides són suficients per a l’objectiu orientatiu d'aquest document.</p>
-            </div>
-
-            <!-- 4. Metodologia -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">4. Metodologia</h3>
-                <p>Anàlisi qualitativa del contingut de les sessions, centrada en patrons narratius i conductuals. S’ha utilitzat un sistema d’intel·ligència artificial per a l’estructuració preliminar de la informació, sota supervisió professional constant.</p>
-            </div>
-
-            <!-- 5. Resultats Descriptius -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">5. Resultats descriptius</h3>
-                <p>A continuació s'exposen les observacions principals (sense valoració diagnòstica):</p>
-                <div style="background: #f9f9f9; padding: 1rem; border-left: 3px solid #666;">
-                    ${notesSummary ? notesSummary.replace(/\n/g, '<br/>') : 'Punts principals tractats: gestió emocional, relacions interpersonals i malestar subjectiu.'}
+        const getSimulatedResponse = (type: string) => {
+            const commonHeader = `
+            <div class="report-container" style="font-family: 'Segoe UI', serif; color: #333; line-height: 1.6; max-width: 800px; margin: 0 auto;">
+                <div style="text-align: center; margin-bottom: 3rem; border-bottom: 2px solid #333; padding-bottom: 1rem;">
+                    <h1 style="margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">INFORME PROFESSIONAL PSICOLÒGIC</h1>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666; text-transform: uppercase;">Document Confidencial</p>
                 </div>
-            </div>
+                <div style="margin-bottom: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 4px;">
+                    <h3 style="margin-top:0; margin-bottom: 1rem; border-bottom: 1px solid #ddd; font-size: 14px; text-transform: uppercase; color: #666;">Dades de Identificació</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                        <tr><td style="width: 35%; padding: 4px 0;"><strong>Tipus d’informe:</strong></td><td>${type}</td></tr>
+                        <tr><td style="padding: 4px 0;"><strong>Pacient:</strong></td><td>${data.clientName}</td></tr>
+                        <tr><td style="padding: 4px 0;"><strong>Data d'emissió:</strong></td><td>${now}</td></tr>
+                        <tr><td style="padding: 4px 0;"><strong>Període avaluat:</strong></td><td>${data.period}</td></tr>
+                         <tr><td style="padding: 4px 0;"><strong>Perfil Lingüístic:</strong></td><td>${data.languageProfile || 'ADULT'}</td></tr>
+                    </table>
+                </div>`;
 
-            <!-- 6. Interpretació Orientativa -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">6. Interpretació orientativa</h3>
-                <p>Les dades suggereixen l'existència d'indicadors relacionats amb ${reportType === 'INITIAL_EVALUATION' ? 'motius de consulta inicials' : 'l’evolució del procés'}. S'observa una tendència cap a la identificació de patrons emocionals.</p>
-                <p><strong>Nota:</strong> Aquestes observacions tenen caràcter d’hipòtesi de treball i no constitueixen un diagnòstic clínic tancat.</p>
-            </div>
-
-            <!-- 7. Limitacions -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">7. Limitacions de l’informe</h3>
-                <ul>
-                    <li>Resultats basats exclusivament en la informació verbalitzada i observada.</li>
-                    <li>L’ús d’eines de suport IA pot tenir biaixos inherents al model de llenguatge; la informació ha estat filtrada pel professional.</li>
-                </ul>
-            </div>
-
-            <!-- 8. Consideracions Finals -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">8. Consideracions finals</h3>
-                <p>Es recomana continuar amb el pla de treball establert o, si s'escau, valorar la derivació especificada.</p>
-            </div>
-
-            <!-- 9. Declaració IA -->
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">9. Declaració d’ús de suport d’IA i supervisió humana</h3>
-                <p>El contingut d’aquest informe ha comptat amb suport tecnològic per a la redacció. El professional signant ha revisat, corregit i validat la totalitat del text, assumint-ne la responsabilitat clínica íntegra.</p>
-            </div>
-
-            <!-- 10. Avís Legal -->
-            <div style="margin-bottom: 2rem;">
-                <h3 style="margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; font-size: 16px;">10. Avís legal i deontològic</h3>
-                <p style="font-size: 0.85rem; color: #555;">Document confidencial sotmès al secret professional. L’ús d’aquest informe està limitat a la finalitat expressada en l’apartat 1. Segons el Reglament Europeu d’IA i el GDPR, s’informa que no s’han pres decisions automatitzades amb efectes jurídics sobre el pacient.</p>
-            </div>
-
-            <!-- Clàusula Obligatòria Final -->
-            <div style="margin-top: 3rem; padding: 1.5rem; background-color: #f0f4f8; border: 1px solid #dceefb; border-radius: 4px;">
-                <p style="font-style: italic; font-weight: bold; color: #2c5282; text-align: center; margin: 0;">
-                    “Aquest informe ha estat elaborat amb el suport d’un sistema d’intel·ligència artificial a partir de la informació proporcionada, i ha de ser interpretat, revisat i validat per un professional qualificat. No substitueix una avaluació professional completa ni constitueix una decisió automatitzada.”
-                </p>
-            </div>
-
-            <!-- Professional Signature Block Placeholder -->
-            <div style="margin-top: 4rem; display: flex; justify-content: space-between;">
-                <div style="width: 45%; border-top: 1px solid black; padding-top: 0.5rem;">
-                    <p><strong>Signat: El/La Psicòleg/òloga</strong></p>
-                    <p style="color: #999;">[Nom i Cognoms]</p>
+            const commonFooter = `
+                <div style="margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 10px; color: #999; text-align: center;">
+                    <p>Aquest informe ha estat redactat amb el suport d’una eina d’intel·ligència artificial i revisat per un/a professional col·legiat/da.</p>
+                    <p style="margin-top: 5px;">PsycoAI Platform - Versió amb seguretat avançada</p>
                 </div>
-                <div style="width: 45%; border-top: 1px solid black; padding-top: 0.5rem; text-align: right;">
-                    <p><strong>Núm. Col·legiat/da:</strong> [Núm]</p>
-                </div>
-            </div>
+            </div>`;
 
-        </div>`;
+            let bodyContent = '';
+
+            switch (type) {
+                case 'INITIAL_EVALUATION':
+                    bodyContent = `
+                    <h3>1. Motiu de consulta</h3>
+                    <p>El pacient ${data.clientName} assisteix a consulta descrivint un malestar generalitzat relacionat amb... [Text generat per IA basat en: ${data.firstSessionNote || 'Notes inicials'}]</p>
+                    
+                    <h3>2. Antecedents rellevants</h3>
+                    <p>No consten antecedents psiquiàtrics previs destacables, segons la informació recollida en les ${data.sessionCount} sessions realitzades.</p>
+                    
+                    <h3>3. Observacions clíniques inicials</h3>
+                    <p>Durant les primeres entrevistes, s'observa uan actitud col·laboradora però amb indicadors d'ansietat...</p>
+                    
+                    <h3>4. Hipòtesis orientatives</h3>
+                    <p>La simptomatologia suggeriria una reacció adaptativa a estressors recents, sense que es pugui establir un diagnòstic tancat en aquest moment.</p>
+                    
+                    <h3>5. Proposta d’intervenció</h3>
+                    <p>S’aconsella iniciar un procés de psicoteràpia cognitiu-conductual focalitzat en...</p>
+                    `;
+                    break;
+
+                case 'PROGRESS':
+                    bodyContent = `
+                    <h3>1. Context del procés terapèutic</h3>
+                    <p>S'han realitzat un total de ${data.sessionCount} sessions durant el període ${data.period}.</p>
+                    
+                    <h3>2. Evolució clínica</h3>
+                    <p>S'observa una progressiva disminució de la simptomatologia ansiosa reportada inicialment.</p>
+                    
+                    <h3>3. Canvis observats</h3>
+                    <p>El pacient ha començat a implementar estratègies d'afrontament més funcionals...</p>
+                    
+                    <h3>4. Orientacions actuals</h3>
+                    <p>Es recomana mantenir la periodicitat de les sessions per consolidar els canvis.</p>
+                    `;
+                    break;
+
+                case 'DISCHARGE':
+                    bodyContent = `
+                    <h3>1. Motiu d’alta</h3>
+                    <p>El pacient ha assolit els objectius terapèutics establerts a l'inici del tractament.</p>
+                    
+                    <h3>2. Resum del procés</h3>
+                    <p>Des de l'inici (${data.firstSessionNote}), s'ha treballat en la regulació emocional...</p>
+                    
+                    <h3>3. Objectius assolits</h3>
+                    <p>- Millora de la gestió de l'estrès.<br>- Reducció de la simptomatologia física.</p>
+                    
+                    <h3>4. Recomanacions finals</h3>
+                    <p>Es suggereix mantenir hàbits saludables i sol·licitar visita de seguiment en 6 mesos si fos necessari.</p>
+                    `;
+                    break;
+
+                case 'REFERRAL':
+                    bodyContent = `
+                    <h3>1. Motiu de derivació</h3>
+                    <p>Es sol·licita valoració per part de servei especialitzat en psiquiatria.</p>
+                    
+                    <h3>2. Estat actual</h3>
+                    <p>Persistència de simptomatologia tot i l'abordatge psicoterapèutic durant ${data.sessionCount} sessions.</p>
+                    
+                    <h3>3. Objectiu</h3>
+                    <p>Valoració de necessitat de suport farmacològic complementari.</p>
+                    `;
+                    break;
+
+                case 'LEGAL': // FORENSIC
+                    bodyContent = `
+                    <div style="border: 1px solid #d63384; padding: 10px; margin-bottom: 20px; color: #d63384; font-size: 12px; font-weight: bold;">
+                        MODE SAFE FORENSIC ACTIU: Llenguatge restrictiu aplicat.
+                    </div>
+
+                    <h3>1. Objecte de l’informe</h3>
+                    <p>Valoració de l'estat psicològic actual a petició de part.</p>
+                    
+                    <h3>2. Metodologia</h3>
+                    <p>Entrevistes clíniques i observació conductual durant ${data.sessionCount} sessions.</p>
+                    
+                    <h3>3. Fets observats</h3>
+                    <p>Es constata una presentació personal adequada i un discurs coherent.</p>
+                    
+                    <h3>4. Manifestacions del/la pacient</h3>
+                    <p>El pacient manifesta: "Em sento incapaç de tornar a la feina des dels fets".</p>
+                    
+                    <h3>5. Consideracions tècniques</h3>
+                    <p>La simptomatologia observada és compatible amb quadres reactius, sense que es pugui determinar causalitat directa única amb la informació disponible.</p>
+                    
+                    <h3>6. Conclusions</h3>
+                    <p>A data d'avui, el pacient presenta indicadors de malestar clínicament significatiu. No es detecten indicadors de simulació en l'exploració actual.</p>
+                    `;
+                    break;
+
+                case 'INSURANCE':
+                    bodyContent = `
+                    <h3>1. Motiu de la intervenció</h3>
+                    <p>Tractament psicològic per ansietat.</p>
+                    
+                    <h3>2. Dades del tractament</h3>
+                    <p>Iniciat el ${data.period}. Nombre de sessions: ${data.sessionCount}.</p>
+                    
+                    <h3>3. Evolució</h3>
+                    <p>Favorable. Es preveu la necessitat de 10 sessions addicionals.</p>
+                    `;
+                    break;
+
+                default: // CUSTOM
+                    bodyContent = data.sections.map((sec, i) => `
+                        <h3>${i + 1}. ${sec}</h3>
+                        <p>[Contingut personalitzat per a la secció "${sec}"]</p>
+                    `).join('');
+            }
+
+            return commonHeader + bodyContent + commonFooter;
+        };
+
+        const content = getSimulatedResponse(data.reportType);
 
         return content;
     }
