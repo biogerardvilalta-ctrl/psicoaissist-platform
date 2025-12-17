@@ -15,11 +15,14 @@ const prisma_service_1 = require("../../common/prisma/prisma.service");
 const encryption_service_1 = require("../encryption/encryption.service");
 const sessions_dto_1 = require("./dto/sessions.dto");
 const ai_service_1 = require("../ai/ai.service");
+const audit_service_1 = require("../audit/audit.service");
+const client_1 = require("@prisma/client");
 let SessionsService = class SessionsService {
-    constructor(prisma, encryption, aiService) {
+    constructor(prisma, encryption, aiService, auditService) {
         this.prisma = prisma;
         this.encryption = encryption;
         this.aiService = aiService;
+        this.auditService = auditService;
     }
     packEncryptedData(data) {
         const iv = Buffer.from(data.iv, 'base64');
@@ -65,6 +68,13 @@ let SessionsService = class SessionsService {
         await this.prisma.client.update({
             where: { id: createSessionDto.clientId },
             data: { lastSessionAt: session.startTime }
+        });
+        await this.auditService.log({
+            userId,
+            action: client_1.AuditAction.CREATE,
+            resourceType: 'SESSION',
+            resourceId: session.id,
+            details: `Programada sesión de tipo ${createSessionDto.sessionType} con cliente (ID: ${createSessionDto.clientId})`
         });
         return this.mapToDto(session, createSessionDto.notes);
     }
@@ -246,6 +256,17 @@ let SessionsService = class SessionsService {
                 console.error('AI Analysis failed', error);
             }
         }
+        if (updateSessionDto.status) {
+            const actionDetail = updateSessionDto.status === sessions_dto_1.SessionStatus.COMPLETED ? 'Completada' :
+                updateSessionDto.status === sessions_dto_1.SessionStatus.CANCELLED ? 'Cancelada' : 'Actualizada';
+            await this.auditService.log({
+                userId,
+                action: client_1.AuditAction.UPDATE,
+                resourceType: 'SESSION',
+                resourceId: id,
+                details: `${actionDetail} sesión con cliente (ID: ${session.clientId})`
+            });
+        }
         return this.mapToDto(updatedSession, notesToReturn, transcriptionToReturn);
     }
     async remove(id, userId) {
@@ -253,7 +274,15 @@ let SessionsService = class SessionsService {
         if (!session || session.userId !== userId) {
             throw new common_1.NotFoundException('Session not found');
         }
-        return this.prisma.session.delete({ where: { id } });
+        await this.prisma.session.delete({ where: { id } });
+        await this.auditService.log({
+            userId,
+            action: client_1.AuditAction.DELETE,
+            resourceType: 'SESSION',
+            resourceId: id,
+            details: `Eliminada sesión (ID: ${id})`
+        });
+        return { success: true };
     }
     unpackClientData(buffer, keyId) {
         const iv = buffer.subarray(0, 16);
@@ -304,6 +333,7 @@ exports.SessionsService = SessionsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         encryption_service_1.EncryptionService,
-        ai_service_1.AiService])
+        ai_service_1.AiService,
+        audit_service_1.AuditService])
 ], SessionsService);
 //# sourceMappingURL=sessions.service.js.map

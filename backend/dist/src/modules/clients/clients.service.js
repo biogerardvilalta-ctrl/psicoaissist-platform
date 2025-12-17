@@ -14,10 +14,13 @@ exports.ClientsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../common/prisma/prisma.service");
 const encryption_service_1 = require("../encryption/encryption.service");
+const client_1 = require("@prisma/client");
+const audit_service_1 = require("../audit/audit.service");
 let ClientsService = ClientsService_1 = class ClientsService {
-    constructor(prisma, encryptionService) {
+    constructor(prisma, encryptionService, auditService) {
         this.prisma = prisma;
         this.encryptionService = encryptionService;
+        this.auditService = auditService;
         this.logger = new common_1.Logger(ClientsService_1.name);
     }
     packEncryptedData(data) {
@@ -78,6 +81,13 @@ let ClientsService = ClientsService_1 = class ClientsService {
                 },
             });
             this.logger.log(`Client created for user ${userId}`);
+            await this.auditService.log({
+                userId,
+                action: client_1.AuditAction.CREATE,
+                resourceType: 'CLIENT',
+                resourceId: client.id,
+                details: `Registrado nuevo paciente (ID: ${client.id})`
+            });
             return {
                 id: client.id,
                 ...personalData,
@@ -192,6 +202,13 @@ let ClientsService = ClientsService_1 = class ClientsService {
                 lastModifiedBy: userId,
             },
         });
+        await this.auditService.log({
+            userId,
+            action: client_1.AuditAction.UPDATE,
+            resourceType: 'CLIENT',
+            resourceId: updatedClient.id,
+            details: `Actualizados datos de paciente (ID: ${updatedClient.id})`
+        });
         return {
             id: updatedClient.id,
             ...newData,
@@ -217,12 +234,20 @@ let ClientsService = ClientsService_1 = class ClientsService {
                 lastModifiedBy: userId,
             },
         });
+        await this.auditService.log({
+            userId,
+            action: client_1.AuditAction.DELETE,
+            resourceType: 'CLIENT',
+            resourceId: clientId,
+            details: `Archivado paciente (ID: ${clientId})`
+        });
     }
 };
 exports.ClientsService = ClientsService;
 exports.ClientsService = ClientsService = ClientsService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        encryption_service_1.EncryptionService])
+        encryption_service_1.EncryptionService,
+        audit_service_1.AuditService])
 ], ClientsService);
 //# sourceMappingURL=clients.service.js.map

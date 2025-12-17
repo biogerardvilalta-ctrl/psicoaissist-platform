@@ -7,6 +7,8 @@ import { ReportStatus, ReportType } from '@prisma/client';
 import { PSYCHOLOGICAL_REPORTS } from '../../config/psychological-reports.config';
 
 import { PdfService } from './pdf.service';
+import { AuditService } from '../audit/audit.service';
+import { AuditAction } from '@prisma/client';
 
 @Injectable()
 export class ReportsService {
@@ -14,7 +16,8 @@ export class ReportsService {
         private readonly prisma: PrismaService,
         private readonly encryption: EncryptionService,
         private readonly aiService: AiService,
-        private readonly pdfService: PdfService
+        private readonly pdfService: PdfService,
+        private readonly auditService: AuditService,
     ) { }
 
     async create(userId: string, createReportDto: CreateReportDto) {
@@ -35,7 +38,7 @@ export class ReportsService {
             encryptedData
         ]);
 
-        return this.prisma.report.create({
+        const report = await this.prisma.report.create({
             data: {
                 userId,
                 clientId: createReportDto.clientId,
@@ -48,6 +51,16 @@ export class ReportsService {
                 humanReviewConfirmed: createReportDto.humanReviewConfirmed || false,
             }
         });
+
+        await this.auditService.log({
+            userId,
+            action: AuditAction.CREATE,
+            resourceType: 'REPORT',
+            resourceId: report.id,
+            details: `Creado informe: ${createReportDto.title} (Tipo: ${createReportDto.reportType})`
+        });
+
+        return report;
     }
 
     async findAll(userId: string) {
@@ -176,18 +189,44 @@ export class ReportsService {
             data.encryptionKeyId = keyId;
         }
 
-        return this.prisma.report.update({
+        const updatedReport = await this.prisma.report.update({
             where: { id },
             data
         });
+
+        // Log specific status changes or general update
+        let detail = `Actualizado informe (ID: ${id})`;
+        if (updateReportDto.status === ReportStatus.COMPLETED) {
+            detail = `Finalizado informe (ID: ${id})`;
+        }
+
+        await this.auditService.log({
+            userId,
+            action: AuditAction.UPDATE,
+            resourceType: 'REPORT',
+            resourceId: id,
+            details: detail
+        });
+
+        return updatedReport;
     }
 
     async remove(id: string, userId: string) {
         // Soft delete
-        return this.prisma.report.update({
+        const result = await this.prisma.report.update({
             where: { id, userId },
             data: { status: 'DELETED' }
         });
+
+        await this.auditService.log({
+            userId,
+            action: AuditAction.DELETE,
+            resourceType: 'REPORT',
+            resourceId: id,
+            details: `Eliminado informe (ID: ${id})`
+        });
+
+        return result;
     }
 
     async generateDraft(userId: string, data: any) { // Type as GenerateReportDraftDto
@@ -320,6 +359,14 @@ export class ReportsService {
             firstSessionNote: config.useFirstSession ? firstSessionNote : undefined,
             additionalInstructions: data.additionalInstructions
         });
+
+        await this.auditService.log({
+            userId,
+            action: AuditAction.CREATE, // Virtual creation
+            resourceType: 'REPORT_DRAFT',
+            details: `Generado borrador de informe ${data.reportType} con IA para Cliente ID: ${data.clientId}`
+        });
+
         return { content: draftContent };
     }
 

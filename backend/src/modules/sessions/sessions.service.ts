@@ -9,13 +9,21 @@ interface EncryptedSessionData {
     notes?: string;
 }
 
+import { AuditService } from '../audit/audit.service';
+import { AuditAction } from '@prisma/client';
+
 @Injectable()
 export class SessionsService {
     constructor(
         private prisma: PrismaService,
         private encryption: EncryptionService,
         private aiService: AiService,
+        private auditService: AuditService,
     ) { }
+
+    // ... (keep private methods)
+
+
 
     private packEncryptedData(data: { iv: string; tag: string; encryptedData: Buffer }): Buffer {
         const iv = Buffer.from(data.iv, 'base64'); // 16 bytes
@@ -72,6 +80,15 @@ export class SessionsService {
         await this.prisma.client.update({
             where: { id: createSessionDto.clientId },
             data: { lastSessionAt: session.startTime }
+        });
+
+        // Log Activity
+        await this.auditService.log({
+            userId,
+            action: AuditAction.CREATE,
+            resourceType: 'SESSION',
+            resourceId: session.id,
+            details: `Programada sesión de tipo ${createSessionDto.sessionType} con cliente (ID: ${createSessionDto.clientId})`
         });
 
         return this.mapToDto(session, createSessionDto.notes);
@@ -285,6 +302,20 @@ export class SessionsService {
             }
         }
 
+        // Log cancellation or completion specifically
+        if (updateSessionDto.status) {
+            const actionDetail = updateSessionDto.status === SessionStatus.COMPLETED ? 'Completada' :
+                updateSessionDto.status === SessionStatus.CANCELLED ? 'Cancelada' : 'Actualizada';
+
+            await this.auditService.log({
+                userId,
+                action: AuditAction.UPDATE,
+                resourceType: 'SESSION',
+                resourceId: id,
+                details: `${actionDetail} sesión con cliente (ID: ${session.clientId})`
+            });
+        }
+
         return this.mapToDto(updatedSession, notesToReturn, transcriptionToReturn);
     }
 
@@ -294,7 +325,17 @@ export class SessionsService {
         if (!session || session.userId !== userId) {
             throw new NotFoundException('Session not found');
         }
-        return this.prisma.session.delete({ where: { id } });
+        await this.prisma.session.delete({ where: { id } });
+
+        await this.auditService.log({
+            userId,
+            action: AuditAction.DELETE,
+            resourceType: 'SESSION',
+            resourceId: id,
+            details: `Eliminada sesión (ID: ${id})`
+        });
+
+        return { success: true };
     }
 
     // --- Helpers ---

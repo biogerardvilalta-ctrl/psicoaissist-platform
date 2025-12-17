@@ -200,34 +200,38 @@ export class DashboardService {
             const combinedText = noteContent.toLowerCase();
 
             // Scan Techniques
-            techniqueKeywords.forEach(tech => {
-                // Use word boundary for short acronyms to avoid false positives (e.g. "act" in "actuación")
-                // For longer phrases with spaces, simple inclusion might be enough but regex is safer.
-                // Escape special characters in the keyword just in case (though our list is mostly safe)
-                const safeTech = tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').toLowerCase();
+            // Scan Techniques from Methodology Field (Priority)
+            const aiData = s.aiMetadata as any;
+            const manualMethodology = aiData?.manual_methodology as string;
 
-                // If it's short (<= 4 chars) use boundaries, otherwise simple include is often robust enough and faster/simpler, 
-                // but let's stick to word boundaries for consistency where possible.
-                // Note: \b doesn't work well with non-ascii chars like "ó". 
-                // So for terms with special chars, simple include is better or robust regex.
-                // Let's use simple includes for multi-word or non-ASCII, and \b for simple ASCII acronyms.
+            if (manualMethodology && manualMethodology.trim().length > 0) {
+                // Split by common separators (comma, semicolon, newline)
+                const methods = manualMethodology.split(/[,;\n]+/).map(m => m.trim()).filter(m => m.length > 0);
 
-                const isAcronym = /^[a-zA-Z0-9]{1,5}$/.test(tech);
+                methods.forEach(method => {
+                    // Capitalize first letter of each word or just sentence case
+                    // Let's normalize to Title Case for consistency
+                    const normalized = method.replace(/\b\w/g, c => c.toUpperCase());
+                    techniqueCounts.set(normalized, (techniqueCounts.get(normalized) || 0) + 1);
+                });
+            } else {
+                // Fallback: Scan notes if no manual methodology set
+                techniqueKeywords.forEach(tech => {
+                    const safeTech = tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').toLowerCase();
+                    const isAcronym = /^[a-zA-Z0-9]{1,5}$/.test(tech);
 
-                if (isAcronym) {
-                    // Word boundary check
-                    const regex = new RegExp(`\\b${safeTech}\\b`, 'i');
-                    if (regex.test(combinedText)) {
-                        // Use the display label from the array (capitalized correctly)
-                        techniqueCounts.set(tech, (techniqueCounts.get(tech) || 0) + 1);
+                    if (isAcronym) {
+                        const regex = new RegExp(`\\b${safeTech}\\b`, 'i');
+                        if (regex.test(combinedText)) {
+                            techniqueCounts.set(tech, (techniqueCounts.get(tech) || 0) + 1);
+                        }
+                    } else {
+                        if (combinedText.includes(safeTech)) {
+                            techniqueCounts.set(tech, (techniqueCounts.get(tech) || 0) + 1);
+                        }
                     }
-                } else {
-                    // Simple inclusion for things like "Terapia Breve"
-                    if (combinedText.includes(safeTech)) {
-                        techniqueCounts.set(tech, (techniqueCounts.get(tech) || 0) + 1);
-                    }
-                }
-            });
+                });
+            }
 
             // Scan Tests using same logic
             testKeywords.forEach(test => {

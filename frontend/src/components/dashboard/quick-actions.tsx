@@ -25,7 +25,7 @@ export default function QuickActions() {
       color: 'bg-blue-100 group-hover:bg-blue-200 text-blue-600',
       hoverColor: 'hover:border-blue-500 hover:bg-blue-50',
       action: () => {
-        router.push('/dashboard/sessions/new?start=true');
+        router.push('/dashboard/sessions');
       }
     },
     {

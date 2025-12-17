@@ -2,11 +2,13 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { CreateSessionDto, UpdateSessionDto } from './dto/sessions.dto';
 import { AiService } from '../ai/ai.service';
+import { AuditService } from '../audit/audit.service';
 export declare class SessionsService {
     private prisma;
     private encryption;
     private aiService;
-    constructor(prisma: PrismaService, encryption: EncryptionService, aiService: AiService);
+    private auditService;
+    constructor(prisma: PrismaService, encryption: EncryptionService, aiService: AiService, auditService: AuditService);
     private packEncryptedData;
     private unpackEncryptedData;
     create(userId: string, createSessionDto: CreateSessionDto): Promise<{
@@ -95,29 +97,7 @@ export declare class SessionsService {
         isMinor: any;
     }>;
     remove(id: string, userId: string): Promise<{
-        id: string;
-        status: import(".prisma/client").$Enums.SessionStatus;
-        encryptionKeyId: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        clientId: string;
-        userId: string;
-        startTime: Date;
-        endTime: Date | null;
-        duration: number | null;
-        sessionType: import(".prisma/client").$Enums.SessionType;
-        isMinor: boolean;
-        encryptedTranscription: Buffer | null;
-        encryptedNotes: Buffer | null;
-        encryptedAudioPath: string | null;
-        aiSuggestions: import("@prisma/client/runtime/library").JsonValue | null;
-        aiMetadata: import("@prisma/client/runtime/library").JsonValue | null;
-        audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
-        recordingConsent: boolean;
-        consentSigned: boolean;
-        consentTimestamp: Date | null;
-        consentVersion: string | null;
-        startedAt: Date | null;
+        success: boolean;
     }>;
     private unpackClientData;
     private mapToDto;

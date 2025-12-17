@@ -149,21 +149,32 @@ let DashboardService = class DashboardService {
                 }
             }
             const combinedText = noteContent.toLowerCase();
-            techniqueKeywords.forEach(tech => {
-                const safeTech = tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').toLowerCase();
-                const isAcronym = /^[a-zA-Z0-9]{1,5}$/.test(tech);
-                if (isAcronym) {
-                    const regex = new RegExp(`\\b${safeTech}\\b`, 'i');
-                    if (regex.test(combinedText)) {
-                        techniqueCounts.set(tech, (techniqueCounts.get(tech) || 0) + 1);
+            const aiData = s.aiMetadata;
+            const manualMethodology = aiData?.manual_methodology;
+            if (manualMethodology && manualMethodology.trim().length > 0) {
+                const methods = manualMethodology.split(/[,;\n]+/).map(m => m.trim()).filter(m => m.length > 0);
+                methods.forEach(method => {
+                    const normalized = method.replace(/\b\w/g, c => c.toUpperCase());
+                    techniqueCounts.set(normalized, (techniqueCounts.get(normalized) || 0) + 1);
+                });
+            }
+            else {
+                techniqueKeywords.forEach(tech => {
+                    const safeTech = tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').toLowerCase();
+                    const isAcronym = /^[a-zA-Z0-9]{1,5}$/.test(tech);
+                    if (isAcronym) {
+                        const regex = new RegExp(`\\b${safeTech}\\b`, 'i');
+                        if (regex.test(combinedText)) {
+                            techniqueCounts.set(tech, (techniqueCounts.get(tech) || 0) + 1);
+                        }
                     }
-                }
-                else {
-                    if (combinedText.includes(safeTech)) {
-                        techniqueCounts.set(tech, (techniqueCounts.get(tech) || 0) + 1);
+                    else {
+                        if (combinedText.includes(safeTech)) {
+                            techniqueCounts.set(tech, (techniqueCounts.get(tech) || 0) + 1);
+                        }
                     }
-                }
-            });
+                });
+            }
             testKeywords.forEach(test => {
                 const safeTest = test.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').toLowerCase();
                 const isAcronym = /^[a-zA-Z0-9-]{1,6}$/.test(test);

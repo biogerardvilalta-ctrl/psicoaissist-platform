@@ -2,7 +2,8 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService, EncryptedData } from '../encryption/encryption.service';
 import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto } from './dto/clients.dto';
-import { UserRole } from '@prisma/client';
+import { UserRole, AuditAction } from '@prisma/client';
+import { AuditService } from '../audit/audit.service';
 
 interface ClientPersonalData {
     firstName: string;
@@ -22,6 +23,7 @@ export class ClientsService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly encryptionService: EncryptionService,
+        private readonly auditService: AuditService,
     ) { }
 
     /**
@@ -107,6 +109,14 @@ export class ClientsService {
             });
 
             this.logger.log(`Client created for user ${userId}`);
+
+            await this.auditService.log({
+                userId,
+                action: AuditAction.CREATE,
+                resourceType: 'CLIENT',
+                resourceId: client.id,
+                details: `Registrado nuevo paciente (ID: ${client.id})`
+            });
 
             // Build Response
             return {
@@ -256,6 +266,14 @@ export class ClientsService {
             },
         });
 
+        await this.auditService.log({
+            userId,
+            action: AuditAction.UPDATE,
+            resourceType: 'CLIENT',
+            resourceId: updatedClient.id,
+            details: `Actualizados datos de paciente (ID: ${updatedClient.id})`
+        });
+
         return {
             id: updatedClient.id,
             ...newData,
@@ -284,6 +302,14 @@ export class ClientsService {
                 isActive: false,
                 lastModifiedBy: userId,
             },
+        });
+
+        await this.auditService.log({
+            userId,
+            action: AuditAction.DELETE,
+            resourceType: 'CLIENT',
+            resourceId: clientId,
+            details: `Archivado paciente (ID: ${clientId})`
         });
     }
 }

@@ -17,12 +17,15 @@ const ai_service_1 = require("../ai/ai.service");
 const client_1 = require("@prisma/client");
 const psychological_reports_config_1 = require("../../config/psychological-reports.config");
 const pdf_service_1 = require("./pdf.service");
+const audit_service_1 = require("../audit/audit.service");
+const client_2 = require("@prisma/client");
 let ReportsService = class ReportsService {
-    constructor(prisma, encryption, aiService, pdfService) {
+    constructor(prisma, encryption, aiService, pdfService, auditService) {
         this.prisma = prisma;
         this.encryption = encryption;
         this.aiService = aiService;
         this.pdfService = pdfService;
+        this.auditService = auditService;
     }
     async create(userId, createReportDto) {
         const initialContent = createReportDto.content || '';
@@ -32,7 +35,7 @@ let ReportsService = class ReportsService {
             Buffer.from(tag, 'base64'),
             encryptedData
         ]);
-        return this.prisma.report.create({
+        const report = await this.prisma.report.create({
             data: {
                 userId,
                 clientId: createReportDto.clientId,
@@ -45,6 +48,14 @@ let ReportsService = class ReportsService {
                 humanReviewConfirmed: createReportDto.humanReviewConfirmed || false,
             }
         });
+        await this.auditService.log({
+            userId,
+            action: client_2.AuditAction.CREATE,
+            resourceType: 'REPORT',
+            resourceId: report.id,
+            details: `Creado informe: ${createReportDto.title} (Tipo: ${createReportDto.reportType})`
+        });
+        return report;
     }
     async findAll(userId) {
         return this.prisma.report.findMany({
@@ -150,16 +161,36 @@ let ReportsService = class ReportsService {
             ]);
             data.encryptionKeyId = keyId;
         }
-        return this.prisma.report.update({
+        const updatedReport = await this.prisma.report.update({
             where: { id },
             data
         });
+        let detail = `Actualizado informe (ID: ${id})`;
+        if (updateReportDto.status === client_1.ReportStatus.COMPLETED) {
+            detail = `Finalizado informe (ID: ${id})`;
+        }
+        await this.auditService.log({
+            userId,
+            action: client_2.AuditAction.UPDATE,
+            resourceType: 'REPORT',
+            resourceId: id,
+            details: detail
+        });
+        return updatedReport;
     }
     async remove(id, userId) {
-        return this.prisma.report.update({
+        const result = await this.prisma.report.update({
             where: { id, userId },
             data: { status: 'DELETED' }
         });
+        await this.auditService.log({
+            userId,
+            action: client_2.AuditAction.DELETE,
+            resourceType: 'REPORT',
+            resourceId: id,
+            details: `Eliminado informe (ID: ${id})`
+        });
+        return result;
     }
     async generateDraft(userId, data) {
         const sessions = await this.prisma.session.findMany({
@@ -267,6 +298,12 @@ let ReportsService = class ReportsService {
             firstSessionNote: config.useFirstSession ? firstSessionNote : undefined,
             additionalInstructions: data.additionalInstructions
         });
+        await this.auditService.log({
+            userId,
+            action: client_2.AuditAction.CREATE,
+            resourceType: 'REPORT_DRAFT',
+            details: `Generado borrador de informe ${data.reportType} con IA para Cliente ID: ${data.clientId}`
+        });
         return { content: draftContent };
     }
     validateForensicContent(content) {
@@ -332,6 +369,7 @@ exports.ReportsService = ReportsService = __decorate([
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         encryption_service_1.EncryptionService,
         ai_service_1.AiService,
-        pdf_service_1.PdfService])
+        pdf_service_1.PdfService,
+        audit_service_1.AuditService])
 ], ReportsService);
 //# sourceMappingURL=reports.service.js.map

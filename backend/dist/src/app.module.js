@@ -22,6 +22,7 @@ const reports_module_1 = require("./modules/reports/reports.module");
 const ai_module_1 = require("./modules/ai/ai.module");
 const payments_module_1 = require("./modules/payments/payments.module");
 const admin_module_1 = require("./modules/admin/admin.module");
+const audit_module_1 = require("./modules/audit/audit.module");
 const prisma_module_1 = require("./common/prisma/prisma.module");
 const monitoring_module_1 = require("./common/monitoring.module");
 const encryption_module_1 = require("./modules/encryption/encryption.module");
@@ -65,6 +66,7 @@ exports.AppModule = AppModule = __decorate([
             sessions_module_1.SessionsModule,
             reports_module_1.ReportsModule,
             ai_module_1.AiModule,
+            audit_module_1.AuditModule,
         ],
         controllers: [],
         providers: [],
