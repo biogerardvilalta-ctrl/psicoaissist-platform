@@ -23,6 +23,33 @@ Llenguatge:
 - No assertiu, no categòric.
 - Basat en fenomènic (el que es veu/sent), no en clínic (el que es diagnostica).
 - Supervisió humana explícita en cada bloc.
+- Supervisió humana explícita en cada bloc.
+`;
+
+const LIVE_SESSION_SYSTEM_PROMPT = `
+Ets un assistent en temps real per a psicòlegs durant una sessió.
+La teva tasca és analitzar el text entrant (transcripció o notes) i generar suggeriments breus i útils.
+
+ESTRICTAMENT PROHIBIT:
+- Diagnosticar o etiquetar clínicament.
+- Utilitzar terminologia DSM/CIE.
+- Jutjar o avaluar el pacient.
+
+FUNCIONS:
+1. "questions": Proposa 2-3 preguntes d'exploració oberta basades en el que s'ha dit.
+   - Si el context és buit o molt breu, proposa preguntes d'inici (icebreakers).
+   - Estil: Curiositat empàtica, no interrogatori.
+2. "considerations": Proposa 1-2 breus recordatoris per al professional (ex: "Validar l'emoció", "Explorar freqüència").
+   - Usa fórmules com "Alguns professionals...", "Considerar explorar...".
+3. "indicators": Identifica 1-2 elements fenomenològics clau (descriptius).
+   - Ex: "To de veu baix", "Repetició de paraula 'culpa'".
+
+FORMAT DE RESPOSTA (JSON):
+{
+  "questions": ["pregunta 1", "pregunta 2"],
+  "considerations": ["consideració 1"],
+  "indicators": [{ "type": "observation", "label": "descripció neutra" }]
+}
 `;
 
 const OFFICIAL_REPORT_SYSTEM_PROMPT = `
@@ -262,8 +289,15 @@ const TEST_MAPPING_MENORS = {
     }
 };
 
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 @Injectable()
 export class AiService {
+    private genAI: GoogleGenerativeAI;
+
+    constructor() {
+        this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+    }
 
     private filterContent(text: string): string | null {
         if (FORBIDDEN_WORDS_REGEX.test(text)) {
@@ -697,47 +731,48 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
      * Generates real-time suggestions during a session.
      */
     async getLiveSuggestions(context: string): Promise<{ questions: string[]; considerations: string[]; indicators: { type: string; label: string }[] }> {
-        const indicators: { type: string; label: string }[] = [];
-        const recentContext = context.slice(-300).toLowerCase();
+        try {
+            const prompt = `
+CONTEXT ACTUAL (Text viu de la sessió):
+"${context || '(Sessió iniciada, sense text encara)'}"
 
-        // Safe Suggestion Bank - Strictly Open Questions
-        const baseQuestions = [
-            'Com descriuries aquesta sensació?',
-            'Què creus que desencadena aquest malestar?',
-            'Hi ha hagut moments diferents recentment?',
-            'Com afecta això al teu dia a dia?'
-        ];
+Genera suggeriments en temps real format JSON.
+`;
 
-        let finalQuestions: string[] = [];
-        let finalConsiderations: string[] = [];
+            const model = this.genAI.getGenerativeModel({
+                model: "gemini-flash-latest", // Use latest available flash model
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    temperature: 0.7,
+                },
+                systemInstruction: LIVE_SESSION_SYSTEM_PROMPT
+            });
 
-        // Contextual logic (Descriptive -> Suggestion)
-        if (recentContext.includes('triste') || recentContext.includes('llora')) {
-            indicators.push({ type: 'mood', label: 'Expressió de tristesa descrita verbalment' });
-            finalQuestions.push('Des de quan te sents així?');
+            const result = await model.generateContent(prompt);
+            const response = result.response;
+            const text = response.text();
+
+            try {
+                const parsed = JSON.parse(text);
+                return {
+                    questions: parsed.questions || [],
+                    considerations: parsed.considerations || [],
+                    indicators: parsed.indicators || []
+                };
+            } catch (e) {
+                console.error("Error parsing live AI JSON", e);
+                return { questions: [], considerations: [], indicators: [] };
+            }
+
+        } catch (error) {
+            console.error("Error generating live suggestions:", error);
+            // Fallback if AI fails (keep basic static fallback just in case)
+            return {
+                questions: ['Com et sents ara mateix?', 'Pots explicar-m\'ho millor?'],
+                considerations: ['Error de connexió amb IA'],
+                indicators: []
+            };
         }
-        if (recentContext.includes('miedo') || recentContext.includes('ansiedad')) {
-            indicators.push({ type: 'pattern', label: 'Referències a inquietud expressada en el relat' });
-            finalConsiderations.push('Alguns professionals també consideren estratègies de regulació durant la sessió, si ho veuen oportú.');
-        }
-        if (recentContext.includes('suicid') || recentContext.includes('no vol viure')) {
-            // CRITICAL: NO LABELS/INDICATORS for risk. Only considerations.
-            // "patterns" or "risk" type indicators are REMOVED to avoid classification.
-            finalConsiderations.push('Alguns professionals, en situacions similars, tenen en compte aspectes relacionats amb la seguretat i el benestar durant la sessió, segons el seu criteri.');
-        }
-
-        // Add random base suggestion if empty
-        if (finalQuestions.length < 2) {
-            finalQuestions.push(...baseQuestions.sort(() => 0.5 - Math.random()).slice(0, 2));
-        }
-
-        // LEAVE AS IS, BUT RETURN STRUCTURED
-        // Limit
-        return {
-            questions: finalQuestions.slice(0, 3),
-            considerations: finalConsiderations.slice(0, 2),
-            indicators
-        };
     }
     async generateReportDraft(data: {
         clientName: string;

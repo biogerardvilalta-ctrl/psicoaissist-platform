@@ -234,10 +234,16 @@ let SessionsService = class SessionsService {
                 data: { lastSessionAt: updatedSession.startTime }
             });
         }
-        if (updateSessionDto.status === sessions_dto_1.SessionStatus.COMPLETED && notesToReturn) {
+        if (updateSessionDto.status === sessions_dto_1.SessionStatus.COMPLETED && (notesToReturn || transcriptionToReturn)) {
             try {
                 const isMinor = updatedSession.isMinor;
-                const fullText = (notesToReturn || '') + '\n\n' + (transcriptionToReturn || '');
+                const fullText = `
+[NOTES]:
+${notesToReturn || ''}
+
+[TRANSCRIPTION]:
+${transcriptionToReturn || ''}
+`;
                 const analysis = await this.aiService.generateSessionAnalysis(id, fullText, isMinor);
                 const finalSession = await this.prisma.session.update({
                     where: { id },

@@ -37,13 +37,20 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                     setQuestions(prev => {
                         const incoming = data.questions;
                         const newUnique = incoming.filter((item: string) => !prev.includes(item));
-                        if (newUnique.length === 0) return prev;
-                        toast({
-                            description: "Noves suggerències disponibles",
-                            className: "bg-blue-50 border-blue-200 text-blue-800",
-                            duration: 2000,
-                        });
-                        return [...newUnique, ...prev].slice(0, 5); // Keep max 5
+                        if (newUnique.length > 0) {
+                            // Side effect must be delayed or handled outside, but for simplicity we can just not toast here 
+                            // OR use a useEffect to detect changes. 
+                            // Better pattern: calculated new state first.
+                            setTimeout(() => {
+                                toast({
+                                    description: "Noves suggerències disponibles",
+                                    className: "bg-blue-50 border-blue-200 text-blue-800",
+                                    duration: 2000,
+                                });
+                            }, 0);
+                            return [...newUnique, ...prev].slice(0, 5);
+                        }
+                        return prev;
                     });
                 }
 

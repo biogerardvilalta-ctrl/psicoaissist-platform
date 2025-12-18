@@ -273,7 +273,7 @@ export class SessionsService {
         }
 
         // Trigger AI Analysis if completed
-        if (updateSessionDto.status === SessionStatus.COMPLETED && notesToReturn) {
+        if (updateSessionDto.status === SessionStatus.COMPLETED && (notesToReturn || transcriptionToReturn)) {
             try {
                 // Run in background (fire and forget pattern for response speed, but awaited here for simplicity in MVP)
                 // In production, might want to use a job queue.
@@ -283,7 +283,13 @@ export class SessionsService {
                 // However, user might want to analyze the transcription. 
                 // Let's pass 'notesToReturn' + 'transcriptionToReturn' combined?
                 // Current AI Service expects string.
-                const fullText = (notesToReturn || '') + '\n\n' + (transcriptionToReturn || '');
+                const fullText = `
+[NOTES]:
+${notesToReturn || ''}
+
+[TRANSCRIPTION]:
+${transcriptionToReturn || ''}
+`;
 
                 const analysis = await this.aiService.generateSessionAnalysis(id, fullText, isMinor);
                 const finalSession = await this.prisma.session.update({

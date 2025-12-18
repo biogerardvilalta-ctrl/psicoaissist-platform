@@ -1,4 +1,6 @@
 export declare class AiService {
+    private genAI;
+    constructor();
     private filterContent;
     generateSessionAnalysis(sessionId: string, notes: string, isMinor?: boolean): Promise<{
         summary: string;

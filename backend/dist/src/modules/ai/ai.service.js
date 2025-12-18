@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiService = void 0;
 const common_1 = require("@nestjs/common");
@@ -30,6 +33,32 @@ Llenguatge:
 - No assertiu, no categòric.
 - Basat en fenomènic (el que es veu/sent), no en clínic (el que es diagnostica).
 - Supervisió humana explícita en cada bloc.
+- Supervisió humana explícita en cada bloc.
+`;
+const LIVE_SESSION_SYSTEM_PROMPT = `
+Ets un assistent en temps real per a psicòlegs durant una sessió.
+La teva tasca és analitzar el text entrant (transcripció o notes) i generar suggeriments breus i útils.
+
+ESTRICTAMENT PROHIBIT:
+- Diagnosticar o etiquetar clínicament.
+- Utilitzar terminologia DSM/CIE.
+- Jutjar o avaluar el pacient.
+
+FUNCIONS:
+1. "questions": Proposa 2-3 preguntes d'exploració oberta basades en el que s'ha dit.
+   - Si el context és buit o molt breu, proposa preguntes d'inici (icebreakers).
+   - Estil: Curiositat empàtica, no interrogatori.
+2. "considerations": Proposa 1-2 breus recordatoris per al professional (ex: "Validar l'emoció", "Explorar freqüència").
+   - Usa fórmules com "Alguns professionals...", "Considerar explorar...".
+3. "indicators": Identifica 1-2 elements fenomenològics clau (descriptius).
+   - Ex: "To de veu baix", "Repetició de paraula 'culpa'".
+
+FORMAT DE RESPOSTA (JSON):
+{
+  "questions": ["pregunta 1", "pregunta 2"],
+  "considerations": ["consideració 1"],
+  "indicators": [{ "type": "observation", "label": "descripció neutra" }]
+}
 `;
 const OFFICIAL_REPORT_SYSTEM_PROMPT = `
 Ets un sistema d’assistència a la redacció d’informes professionals amb suport
@@ -261,7 +290,11 @@ const TEST_MAPPING_MENORS = {
         ]
     }
 };
+const generative_ai_1 = require("@google/generative-ai");
 let AiService = class AiService {
+    constructor() {
+        this.genAI = new generative_ai_1.GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+    }
     filterContent(text) {
         if (FORBIDDEN_WORDS_REGEX.test(text)) {
             return null;
@@ -568,35 +601,45 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
         });
     }
     async getLiveSuggestions(context) {
-        const indicators = [];
-        const recentContext = context.slice(-300).toLowerCase();
-        const baseQuestions = [
-            'Com descriuries aquesta sensació?',
-            'Què creus que desencadena aquest malestar?',
-            'Hi ha hagut moments diferents recentment?',
-            'Com afecta això al teu dia a dia?'
-        ];
-        let finalQuestions = [];
-        let finalConsiderations = [];
-        if (recentContext.includes('triste') || recentContext.includes('llora')) {
-            indicators.push({ type: 'mood', label: 'Expressió de tristesa descrita verbalment' });
-            finalQuestions.push('Des de quan te sents així?');
+        try {
+            const prompt = `
+CONTEXT ACTUAL (Text viu de la sessió):
+"${context || '(Sessió iniciada, sense text encara)'}"
+
+Genera suggeriments en temps real format JSON.
+`;
+            const model = this.genAI.getGenerativeModel({
+                model: "gemini-flash-latest",
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    temperature: 0.7,
+                },
+                systemInstruction: LIVE_SESSION_SYSTEM_PROMPT
+            });
+            const result = await model.generateContent(prompt);
+            const response = result.response;
+            const text = response.text();
+            try {
+                const parsed = JSON.parse(text);
+                return {
+                    questions: parsed.questions || [],
+                    considerations: parsed.considerations || [],
+                    indicators: parsed.indicators || []
+                };
+            }
+            catch (e) {
+                console.error("Error parsing live AI JSON", e);
+                return { questions: [], considerations: [], indicators: [] };
+            }
         }
-        if (recentContext.includes('miedo') || recentContext.includes('ansiedad')) {
-            indicators.push({ type: 'pattern', label: 'Referències a inquietud expressada en el relat' });
-            finalConsiderations.push('Alguns professionals també consideren estratègies de regulació durant la sessió, si ho veuen oportú.');
+        catch (error) {
+            console.error("Error generating live suggestions:", error);
+            return {
+                questions: ['Com et sents ara mateix?', 'Pots explicar-m\'ho millor?'],
+                considerations: ['Error de connexió amb IA'],
+                indicators: []
+            };
         }
-        if (recentContext.includes('suicid') || recentContext.includes('no vol viure')) {
-            finalConsiderations.push('Alguns professionals, en situacions similars, tenen en compte aspectes relacionats amb la seguretat i el benestar durant la sessió, segons el seu criteri.');
-        }
-        if (finalQuestions.length < 2) {
-            finalQuestions.push(...baseQuestions.sort(() => 0.5 - Math.random()).slice(0, 2));
-        }
-        return {
-            questions: finalQuestions.slice(0, 3),
-            considerations: finalConsiderations.slice(0, 2),
-            indicators
-        };
     }
     async generateReportDraft(data) {
         const promptTemplate = (0, prompt_selector_1.getPromptByType)(data.reportType);
@@ -755,6 +798,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
 };
 exports.AiService = AiService;
 exports.AiService = AiService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [])
 ], AiService);
 //# sourceMappingURL=ai.service.js.map
