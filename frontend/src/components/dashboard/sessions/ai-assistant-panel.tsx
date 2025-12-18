@@ -250,7 +250,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
 
             <div className="p-3 bg-slate-50/80 backdrop-blur-sm border-t border-slate-100 z-10">
                 <p className="text-[10px] text-center text-slate-400 font-medium">
-                    Ia Assistance © 2025 • PsychoAI
+                    Ia Assistance © 2025 • PsicoAIssist
                 </p>
             </div>
         </Card>

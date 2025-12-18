@@ -25,7 +25,7 @@ export function Footer() {
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <Heart className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold">PsychoAI</span>
+              <span className="text-xl font-bold">PsicoAIssist</span>
             </div>
             <p className="text-gray-300 leading-relaxed">
               Transformando la práctica psicológica con inteligencia artificial.
@@ -119,10 +119,10 @@ export function Footer() {
               <div className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 text-gray-400" />
                 <a
-                  href="mailto:hola@psychoai.com"
+                  href="mailto:hola@psicoaissist.com"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  hola@psychoai.com
+                  hola@psicoaissist.com
                 </a>
               </div>
               <div className="flex items-center space-x-3">
@@ -148,25 +148,25 @@ export function Footer() {
               <h4 className="text-sm font-semibold mb-3">Síguenos</h4>
               <div className="flex space-x-3">
                 <a
-                  href="https://twitter.com/psychoai"
+                  href="https://twitter.com/psicoaissist"
                   className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <Twitter className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://linkedin.com/company/psychoai"
+                  href="https://linkedin.com/company/psicoaissist"
                   className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <Linkedin className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://youtube.com/@psychoai"
+                  href="https://youtube.com/@psicoaissist"
                   className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <Youtube className="w-4 h-4" />
                 </a>
                 <a
-                  href="https://instagram.com/psychoai"
+                  href="https://instagram.com/psicoaissist"
                   className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <Instagram className="w-4 h-4" />
@@ -183,7 +183,7 @@ export function Footer() {
           <div className="md:flex md:items-center md:justify-between">
             <div className="md:flex-1">
               <h3 className="text-lg font-semibold mb-2">
-                Mantente al día con PsychoAI
+                Mantente al día con PsicoAIssist
               </h3>
               <p className="text-gray-400">
                 Recibe las últimas noticias, actualizaciones y consejos directamente en tu email.
@@ -213,7 +213,7 @@ export function Footer() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="text-gray-400 text-sm">
-              © {currentYear} PsychoAI. Todos los derechos reservados.
+              © {currentYear} PsicoAIssist. Todos los derechos reservados.
             </div>
             <div className="mt-4 md:mt-0">
               <ul className="flex space-x-6 text-sm">

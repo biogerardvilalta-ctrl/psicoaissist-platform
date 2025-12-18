@@ -3,8 +3,8 @@ import AdminRoute from '@/components/auth/AdminRoute';
 import { AdminHeader } from '@/components/layout';
 
 export const metadata: Metadata = {
-  title: 'Panel de Administración - PsychoAI',
-  description: 'Panel de administración para gestionar usuarios y suscripciones de PsychoAI',
+  title: 'Panel de Administración - PsicoAIssist',
+  description: 'Panel de administración para gestionar usuarios y suscripciones de PsicoAIssist',
 };
 
 export default function AdminLayout({

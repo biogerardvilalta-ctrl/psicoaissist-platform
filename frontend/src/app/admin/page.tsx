@@ -46,7 +46,7 @@ export default function AdminDashboard() {
             id: '1',
             firstName: 'Ana',
             lastName: 'García',
-            email: 'ana.garcia@psychoai.com',
+            email: 'ana.garcia@psicoaissist.com',
             role: 'PSYCHOLOGIST',
             status: 'ACTIVE',
             createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
         {/* Page Title */}
         <div className="mb-8">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Panel de Administración</h1>
-          <p className="mt-1 text-sm text-gray-600">Gestiona usuarios y suscripciones de PsychoAI</p>
+          <p className="mt-1 text-sm text-gray-600">Gestiona usuarios y suscripciones de PsicoAIssist</p>
         </div>
 
         {/* Enhanced Stats Cards */}

@@ -38,16 +38,16 @@ let EmailService = class EmailService {
     }
     getWelcomeTemplate(name) {
         return {
-            subject: '¡Bienvenido a PsychoAI!',
+            subject: '¡Bienvenido a PsicoAIssist!',
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">¡Bienvenido a PsychoAI!</h1>
+            <h1 style="color: white; margin: 0;">¡Bienvenido a PsicoAIssist!</h1>
           </div>
           <div style="padding: 20px; background: #f8f9fa;">
             <h2 style="color: #333;">Hola ${name},</h2>
             <p style="color: #666; line-height: 1.6;">
-              Nos complace darte la bienvenida a PsychoAI, tu nuevo asistente de inteligencia artificial 
+              Nos complace darte la bienvenida a PsicoAIssist, tu nuevo asistente de inteligencia artificial 
               para optimizar tu práctica psicológica.
             </p>
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -60,27 +60,27 @@ let EmailService = class EmailService {
               </ul>
             </div>
             <div style="text-align: center; margin: 30px 0;">
-              <a href="https://psychoai.com/dashboard" 
+              <a href="https://psicoaissist.com/dashboard" 
                  style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
                 Acceder a mi Dashboard
               </a>
             </div>
             <p style="color: #666; font-size: 14px;">
               Si necesitas ayuda, nuestro equipo está disponible en 
-              <a href="mailto:soporte@psychoai.com">soporte@psychoai.com</a>
+              <a href="mailto:soporte@psicoaissist.com">soporte@psicoaissist.com</a>
             </p>
           </div>
           <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
-            © 2025 PsychoAI. Todos los derechos reservados.
+            © 2025 PsicoAIssist. Todos los derechos reservados.
           </div>
         </div>
       `,
             text: `
-        ¡Bienvenido a PsychoAI!
-
+        ¡Bienvenido a PsicoAIssist!
+        
         Hola ${name},
 
-        Nos complace darte la bienvenida a PsychoAI, tu nuevo asistente de inteligencia artificial 
+        Nos complace darte la bienvenida a PsicoAIssist, tu nuevo asistente de inteligencia artificial 
         para optimizar tu práctica psicológica.
 
         ¿Qué puedes hacer ahora?
@@ -89,11 +89,11 @@ let EmailService = class EmailService {
         - Genera tu primer informe con IA
         - Familiarízate con las herramientas de análisis
 
-        Accede a tu dashboard: https://psychoai.com/dashboard
+        Accede a tu dashboard: https://psicoaissist.com/dashboard
 
-        Si necesitas ayuda, contacta: soporte@psychoai.com
+        Si necesitas ayuda, contacta: soporte@psicoaissist.com
 
-        © 2025 PsychoAI. Todos los derechos reservados.
+        © 2025 PsicoAIssist. Todos los derechos reservados.
       `
         };
     }
@@ -120,7 +120,7 @@ let EmailService = class EmailService {
               </ul>
             </div>
             <div style="text-align: center; margin: 30px 0;">
-              <a href="https://psychoai.com/dashboard" 
+              <a href="https://psicoaissist.com/dashboard" 
                  style="background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
                 Comenzar ahora
               </a>
@@ -135,14 +135,14 @@ let EmailService = class EmailService {
 
         Ahora tienes acceso completo a todas las funcionalidades.
 
-        Comienza: https://psychoai.com/dashboard
+        Comienza: https://psicoaissist.com/dashboard
       `
         };
     }
     getPasswordResetTemplate(resetToken) {
-        const resetUrl = `https://psychoai.com/reset-password?token=${resetToken}`;
+        const resetUrl = `https://psicoaissist.com/reset-password?token=${resetToken}`;
         return {
-            subject: 'Restablecer contraseña - PsychoAI',
+            subject: 'Restablecer contraseña - PsicoAIssist',
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #f59e0b; padding: 20px; text-align: center;">
@@ -179,7 +179,7 @@ let EmailService = class EmailService {
     }
     getCancellationTemplate() {
         return {
-            subject: 'Suscripción cancelada - PsychoAI',
+            subject: 'Suscripción cancelada - PsicoAIssist',
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #6b7280; padding: 20px; text-align: center;">
@@ -195,7 +195,7 @@ let EmailService = class EmailService {
               tu suscripción en cualquier momento.
             </p>
             <div style="text-align: center; margin: 30px 0;">
-              <a href="https://psychoai.com/pricing" 
+              <a href="https://psicoaissist.com/pricing" 
                  style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
                 Ver Planes
               </a>
@@ -209,13 +209,13 @@ let EmailService = class EmailService {
         Tu suscripción ha sido cancelada. Seguirás teniendo acceso hasta el final 
         de tu período actual.
 
-        Reactivar: https://psychoai.com/pricing
+        Reactivar: https://psicoaissist.com/pricing
       `
         };
     }
     getSessionReminderTemplate(data) {
         return {
-            subject: 'Recordatorio de Sesión - PsychoAI',
+            subject: 'Recordatorio de Sesión - PsicoAIssist',
             html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 20px; text-align: center;">
@@ -235,14 +235,14 @@ let EmailService = class EmailService {
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
-              <a href="https://psychoai.com/dashboard/sessions" 
+              <a href="https://psicoaissist.com/dashboard/sessions" 
                  style="background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
                 Ver Agenda
               </a>
             </div>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
-            © 2025 PsychoAI
+            © 2025 PsicoAIssist
           </div>
         </div>
       `,
@@ -256,7 +256,7 @@ let EmailService = class EmailService {
         Hora: ${data.time}
         Tipo: ${data.type}
 
-        Ver agenda: https://psychoai.com/dashboard/sessions
+        Ver agenda: https://psicoaissist.com/dashboard/sessions
       `
         };
     }

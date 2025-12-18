@@ -79,6 +79,7 @@ export class SessionsService {
                 clientId: createSessionDto.clientId,
                 startTime: startDate,
                 endTime: endDate,
+                duration: durationMinutes, // Save calculated duration
                 sessionType: createSessionDto.sessionType,
                 status: SessionStatus.SCHEDULED,
                 encryptedNotes: encryptedNotesBuffer,
@@ -244,11 +245,32 @@ export class SessionsService {
             };
         }
 
+        // Update timestamps based on status transitions
+        let newStartTime = updateSessionDto.startTime ? new Date(updateSessionDto.startTime) : session.startTime;
+        let newEndTime = updateSessionDto.endTime ? new Date(updateSessionDto.endTime) : session.endTime;
+
+        if (updateSessionDto.status === SessionStatus.IN_PROGRESS && session.status !== SessionStatus.IN_PROGRESS) {
+            newStartTime = new Date();
+        }
+
+        if (updateSessionDto.status === SessionStatus.COMPLETED && session.status !== SessionStatus.COMPLETED) {
+            newEndTime = new Date();
+        }
+
+        // Recalculate duration if we have both times
+        let duration = session.duration;
+        if (newStartTime && newEndTime) {
+            const diffMs = newEndTime.getTime() - newStartTime.getTime();
+            const diffMins = Math.round(diffMs / 60000);
+            duration = diffMins > 0 ? diffMins : 0;
+        }
+
         const updatedSession = await this.prisma.session.update({
             where: { id },
             data: {
-                startTime: updateSessionDto.startTime ? new Date(updateSessionDto.startTime) : undefined,
-                endTime: updateSessionDto.endTime ? new Date(updateSessionDto.endTime) : undefined,
+                startTime: newStartTime,
+                endTime: newEndTime,
+                duration: duration, // Update duration
                 status: updateSessionDto.status,
                 encryptedNotes: encryptedNotesBuffer,
                 encryptedTranscription: encryptedTranscriptionBuffer,
@@ -257,7 +279,7 @@ export class SessionsService {
                 consentSigned: updateSessionDto.consentSigned,
                 consentVersion: updateSessionDto.consentVersion,
                 consentTimestamp: updateSessionDto.consentSigned ? new Date() : undefined,
-                startedAt: updateSessionDto.status === SessionStatus.IN_PROGRESS && session.status !== SessionStatus.IN_PROGRESS ? new Date() : undefined,
+                startedAt: updateSessionDto.status === SessionStatus.IN_PROGRESS && session.status !== SessionStatus.IN_PROGRESS ? newStartTime : undefined,
                 isMinor: updateSessionDto.isMinor,
                 aiMetadata: aiMetadataToUpdate
             },

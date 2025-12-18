@@ -142,7 +142,7 @@ export default function DashboardPage() {
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  ¡Bienvenido a PsychoAI! 🚀
+                  ¡Bienvenido a PsicoAIssist! 🚀
                 </h3>
                 <p className="text-gray-600 mb-4">
                   Tu plataforma de inteligencia artificial diseñada específicamente para profesionales de la psicología.

@@ -102,7 +102,7 @@ export default function LoginPage() {
             Bienvenido de vuelta
           </h2>
           <p className="text-gray-600">
-            Accede a tu cuenta de PsychoAI
+            Accede a tu cuenta de PsicoAIssist
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export default function LoginPage() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="text-sm font-medium text-blue-900 mb-2">🎮 Credenciales de prueba:</h3>
           <div className="text-xs text-blue-700 space-y-1">
-            <div><strong>Admin:</strong> admin@psychoai.com / admin123</div>
+            <div><strong>Admin:</strong> admin@psicoaissist.com / admin123</div>
             <div><strong>Usuario:</strong> cualquier@email.com / demo123</div>
           </div>
         </div>

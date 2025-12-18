@@ -171,7 +171,7 @@ export default function RegisterPage() {
           </div>
 
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Únete a PsychoAI
+            Únete a PsicoAIssist
           </h2>
           <p className="text-gray-600">
             Crea tu cuenta y comienza a transformar tu práctica psicológica

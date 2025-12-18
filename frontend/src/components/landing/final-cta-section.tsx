@@ -27,7 +27,7 @@ export function FinalCTASection() {
 
         <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
           Únete a más de <strong>500 psicólogos</strong> que ya están ahorrando
-          <strong> 3+ horas diarias</strong> y mejorando la calidad de su atención con PsychoAI.
+          <strong> 3+ horas diarias</strong> y mejorando la calidad de su atención con PsicoAIssist.
         </p>
 
         {/* Value propositions */}

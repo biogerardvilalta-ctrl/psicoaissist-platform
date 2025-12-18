@@ -65,6 +65,7 @@ let SessionsService = class SessionsService {
                 clientId: createSessionDto.clientId,
                 startTime: startDate,
                 endTime: endDate,
+                duration: durationMinutes,
                 sessionType: createSessionDto.sessionType,
                 status: sessions_dto_1.SessionStatus.SCHEDULED,
                 encryptedNotes: encryptedNotesBuffer,
@@ -210,11 +211,26 @@ let SessionsService = class SessionsService {
                 manual_methodology: updateSessionDto.methodology
             };
         }
+        let newStartTime = updateSessionDto.startTime ? new Date(updateSessionDto.startTime) : session.startTime;
+        let newEndTime = updateSessionDto.endTime ? new Date(updateSessionDto.endTime) : session.endTime;
+        if (updateSessionDto.status === sessions_dto_1.SessionStatus.IN_PROGRESS && session.status !== sessions_dto_1.SessionStatus.IN_PROGRESS) {
+            newStartTime = new Date();
+        }
+        if (updateSessionDto.status === sessions_dto_1.SessionStatus.COMPLETED && session.status !== sessions_dto_1.SessionStatus.COMPLETED) {
+            newEndTime = new Date();
+        }
+        let duration = session.duration;
+        if (newStartTime && newEndTime) {
+            const diffMs = newEndTime.getTime() - newStartTime.getTime();
+            const diffMins = Math.round(diffMs / 60000);
+            duration = diffMins > 0 ? diffMins : 0;
+        }
         const updatedSession = await this.prisma.session.update({
             where: { id },
             data: {
-                startTime: updateSessionDto.startTime ? new Date(updateSessionDto.startTime) : undefined,
-                endTime: updateSessionDto.endTime ? new Date(updateSessionDto.endTime) : undefined,
+                startTime: newStartTime,
+                endTime: newEndTime,
+                duration: duration,
                 status: updateSessionDto.status,
                 encryptedNotes: encryptedNotesBuffer,
                 encryptedTranscription: encryptedTranscriptionBuffer,
@@ -222,7 +238,7 @@ let SessionsService = class SessionsService {
                 consentSigned: updateSessionDto.consentSigned,
                 consentVersion: updateSessionDto.consentVersion,
                 consentTimestamp: updateSessionDto.consentSigned ? new Date() : undefined,
-                startedAt: updateSessionDto.status === sessions_dto_1.SessionStatus.IN_PROGRESS && session.status !== sessions_dto_1.SessionStatus.IN_PROGRESS ? new Date() : undefined,
+                startedAt: updateSessionDto.status === sessions_dto_1.SessionStatus.IN_PROGRESS && session.status !== sessions_dto_1.SessionStatus.IN_PROGRESS ? newStartTime : undefined,
                 isMinor: updateSessionDto.isMinor,
                 aiMetadata: aiMetadataToUpdate
             },

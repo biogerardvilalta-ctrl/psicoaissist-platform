@@ -20,13 +20,13 @@ async function main() {
 
   const adminUser = await prisma.user.create({
     data: {
-      email: 'admin@psychoai.com',
+      email: 'admin@psicoaissist.com',
       passwordHash: hashedPassword,
       role: UserRole.ADMIN,
       status: UserStatus.ACTIVE,
       verified: true,
       firstName: 'Admin',
-      lastName: 'PsychoAI',
+      lastName: 'PsicoAIssist',
       country: 'España',
       lastLogin: new Date(),
     },

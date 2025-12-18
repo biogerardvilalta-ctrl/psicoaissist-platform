@@ -2,15 +2,15 @@ export function StructuredData() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "PsychoAI",
+    "name": "PsicoAIssist",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web",
     "description": "Asistente IA para psicólogos que proporciona transcripción automática, análisis inteligente e informes profesionales para mejorar la práctica psicológica.",
-    "url": "https://psychoai.com",
+    "url": "https://psicoaissist.com",
     "author": {
       "@type": "Organization",
-      "name": "PsychoAI",
-      "url": "https://psychoai.com"
+      "name": "PsicoAIssist",
+      "url": "https://psicoaissist.com"
     },
     "offers": [
       {

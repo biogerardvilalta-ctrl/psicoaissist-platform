@@ -33,7 +33,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
 
     const navItems = [
-        { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+        { name: 'Dashboard', title: 'Dashboard | PsicoAIssist', href: '/dashboard', icon: LayoutDashboard },
         { name: 'Pacientes', href: '/dashboard/clients', icon: Users },
         { name: 'Sesiones', href: '/dashboard/sessions', icon: Calendar },
         { name: 'Informes', href: '/dashboard/reports', icon: FileText },
@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
                                     <Heart className="w-5 h-5 text-white" />
                                 </div>
-                                <h1 className="text-xl font-bold text-gray-900 hidden sm:block">PsychoAI</h1>
+                                <h1 className="text-xl font-bold text-gray-900 hidden sm:block">PsicoAIssist</h1>
                             </Link>
 
                             <nav className="hidden md:flex items-center gap-4">

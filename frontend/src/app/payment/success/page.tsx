@@ -39,7 +39,7 @@ export default function PaymentSuccessPage() {
         </h1>
 
         <p className="text-gray-600 mb-4">
-          Tu suscripción al <strong>{planName}</strong> ha sido activada exitosamente. Ya puedes acceder a todas las funciones de PsychoAI.
+          Tu suscripción al <strong>{planName}</strong> ha sido activada exitosamente. Ya puedes acceder a todas las funciones de PsicoAIssist.
         </p>
 
         {/* Demo mode indicator */}

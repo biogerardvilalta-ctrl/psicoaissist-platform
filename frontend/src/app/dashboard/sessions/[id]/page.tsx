@@ -55,6 +55,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
     const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('transcription');
+    const [isEditing, setIsEditing] = useState(false);
 
     // START: WebSocket Integration
     // Connect to 'sessions' namespace
@@ -205,6 +206,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                 description: 'Información de sesión guardada correctamente.',
             });
             setSession(prev => prev ? { ...prev, notes, transcription, methodology } : null);
+            setIsEditing(false);
         } catch (error) {
             toast({
                 title: 'Error',
@@ -299,6 +301,33 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         </Button>
                     )}
 
+                    {session.status === SessionStatus.COMPLETED && !isEditing && (
+                        <Button
+                            variant="outline"
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            <FileText className="mr-2 h-4 w-4" /> Editar Notas
+                        </Button>
+                    )}
+
+                    {session.status === SessionStatus.COMPLETED && isEditing && (
+                        <Button
+                            className="bg-blue-600 hover:bg-blue-700"
+                            onClick={handleSaveNotes}
+                            disabled={isSavingNotes}
+                        >
+                            {isSavingNotes ? 'Guardando...' : 'Guardar Cambios'}
+                        </Button>
+                    )}
+
+                    {session.status === SessionStatus.COMPLETED && session.duration && (
+                        <div className="mr-4 font-mono text-sm font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-md border border-slate-200 flex items-center gap-2">
+                            <Clock className="h-3 w-3" />
+                            {Math.floor(session.duration / 60)}h {session.duration % 60}m
+                        </div>
+                    )}
+
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
@@ -364,7 +393,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     <FileText className="h-5 w-5 text-blue-600" />
                                     Registro de Sesión
                                 </CardTitle>
-                                {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) && (
+                                {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) && (
                                     <Button size="sm" variant="ghost" onClick={handleSaveNotes} disabled={isSavingNotes}>
                                         {isSavingNotes ? 'Guardando...' : 'Guardar Todo'}
                                     </Button>
@@ -383,7 +412,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                         <label className="text-xs font-semibold text-slate-500 mb-2 block uppercase tracking-wider">
                                             Transcripción en tiempo real / Audio
                                         </label>
-                                        {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) ? (
+                                        {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) ? (
                                             <textarea
                                                 className="w-full h-full bg-transparent outline-none resize-none text-sm text-slate-700 leading-relaxed min-h-[250px]"
                                                 placeholder="La transcripción del audio aparecerá aquí automáticamente..."
@@ -406,7 +435,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     {/* Methodology Section */}
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">Metodología / Técnicas Aplicadas</label>
-                                        {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) ? (
+                                        {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) ? (
                                             <input
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                                 placeholder="Ej: Terapia Cognitivo-Conductual, EMDR, Mindfulness..."
@@ -423,7 +452,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     {/* Clinical Notes Section */}
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">Notas Clínicas Privadas</label>
-                                        {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED) ? (
+                                        {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) ? (
                                             <textarea
                                                 className="w-full min-h-[200px] p-4 bg-white rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
                                                 placeholder="Escribe aquí tus observaciones clínicas, impresiones y plan de tratamiento..."

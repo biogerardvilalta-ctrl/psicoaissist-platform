@@ -73,7 +73,8 @@ export default function CompliancePage() {
             </Tabs>
 
             <div className="text-center text-sm text-muted-foreground pt-8 pb-4 border-t border-slate-100 mt-8">
-                <p>Document generat automàticament • Psych Assistant AI • 2024-2025</p>
+                <p>Document informatiu generat per PsicoAIssist Platform • Compliment Normatiu 2024
+                    -2025</p>
             </div>
         </div>
     );

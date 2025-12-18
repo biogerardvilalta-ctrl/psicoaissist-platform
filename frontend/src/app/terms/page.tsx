@@ -15,7 +15,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Aceptación de los Términos</h2>
               <p className="text-gray-700 mb-4">
-                Al acceder y utilizar PsychoAI, usted acepta estar sujeto a estos Términos y Condiciones.
+                Al acceder y utilizar PsicoAIssist, usted acepta estar sujeto a estos Términos y Condiciones.
                 Si no está de acuerdo con alguna parte de estos términos, no podrá acceder al servicio.
               </p>
               <p className="text-gray-700 mb-6">
@@ -27,7 +27,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Descripción del Servicio</h2>
               <p className="text-gray-700 mb-4">
-                PsychoAI es una plataforma de software como servicio (SaaS) que proporciona:
+                PsicoAIssist es una plataforma de software como servicio (SaaS) que proporciona:
               </p>
               <ul className="list-disc pl-6 text-gray-700 mb-6">
                 <li>Transcripción automática de sesiones psicológicas</li>
@@ -42,7 +42,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Elegibilidad y Registro</h2>
               <h3 className="text-xl font-medium text-gray-800 mb-3">3.1 Requisitos de Elegibilidad</h3>
               <p className="text-gray-700 mb-4">
-                Para usar PsychoAI, debe ser:
+                Para usar PsicoAIssist, debe ser:
               </p>
               <ul className="list-disc pl-6 text-gray-700 mb-4">
                 <li>Un profesional licenciado en psicología o salud mental</li>
@@ -83,7 +83,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Uso Aceptable</h2>
               <h3 className="text-xl font-medium text-gray-800 mb-3">5.1 Uso Permitido</h3>
-              <p className="text-gray-700 mb-4">Puede usar PsychoAI únicamente para:</p>
+              <p className="text-gray-700 mb-4">Puede usar PsicoAIssist únicamente para:</p>
               <ul className="list-disc pl-6 text-gray-700 mb-4">
                 <li>Práctica profesional legítima de psicología</li>
                 <li>Documentación de sesiones con consentimiento del paciente</li>
@@ -107,7 +107,7 @@ export default function TermsPage() {
               <h3 className="text-xl font-medium text-gray-800 mb-3">6.1 Consentimiento del Paciente</h3>
               <p className="text-gray-700 mb-4">
                 Usted es responsable de obtener el consentimiento apropiado de sus pacientes
-                antes de usar PsychoAI para procesar sus datos.
+                antes de usar PsicoAIssist para procesar sus datos.
               </p>
 
               <h3 className="text-xl font-medium text-gray-800 mb-3">6.2 Cumplimiento Profesional</h3>
@@ -126,7 +126,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Propiedad Intelectual</h2>
               <p className="text-gray-700 mb-4">
-                PsychoAI y todo el software, contenido y materiales relacionados son propiedad
+                PsicoAIssist y todo el software, contenido y materiales relacionados son propiedad
                 de la empresa y están protegidos por leyes de propiedad intelectual.
               </p>
               <p className="text-gray-700 mb-6">
@@ -177,8 +177,8 @@ export default function TermsPage() {
                 Para preguntas sobre estos términos:
               </p>
               <div className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-gray-800 font-medium">PsychoAI Legal</p>
-                <p className="text-gray-700">Email: legal@psychoai.com</p>
+                <p className="text-gray-800 font-medium">PsicoAIssist Legal</p>
+                <p className="text-gray-700">Email: legal@psicoaissist.com</p>
                 <p className="text-gray-700">Teléfono: +34 900 123 456</p>
                 <p className="text-gray-700">Dirección: Calle Serrano 123, 28006 Madrid, España</p>
               </div>

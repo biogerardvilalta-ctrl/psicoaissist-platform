@@ -2,7 +2,7 @@
   "name": "psychoai-backend",
   "version": "0.1.0",
   "description": "Backend API for Psychologist Assistant App",
-  "author": "PsychoAI Team",
+  "author": "PsicoAIssist Team",
   "private": true,
   "license": "MIT",
   "scripts": {

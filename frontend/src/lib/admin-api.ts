@@ -188,9 +188,9 @@ export class AdminAPI {
       },
       {
         id: '4',
-        email: 'admin@psychoai.com',
+        email: 'admin@psicoaissist.com',
         firstName: 'Admin',
-        lastName: 'PsychoAI',
+        lastName: 'PsicoAIssist',
         role: 'ADMIN',
         status: 'ACTIVE',
         subscription: { planType: 'PREMIUM', status: 'active' },

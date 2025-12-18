@@ -15,13 +15,13 @@ async function main() {
     const hashedPassword = await bcrypt.hash('password123', 10);
     const adminUser = await prisma.user.create({
         data: {
-            email: 'admin@psychoai.com',
+            email: 'admin@psicoaissist.com',
             passwordHash: hashedPassword,
             role: client_1.UserRole.ADMIN,
             status: client_1.UserStatus.ACTIVE,
             verified: true,
             firstName: 'Admin',
-            lastName: 'PsychoAI',
+            lastName: 'PsicoAIssist',
             country: 'España',
             lastLogin: new Date(),
         },

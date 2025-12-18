@@ -81,7 +81,7 @@ let PdfService = class PdfService {
     drawHeader(doc, primary, secondary) {
         doc.circle(70, 60, 20).fill(primary);
         doc.font('Helvetica-Bold').fontSize(20).fillColor('white').text('P', 63, 53);
-        doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text('PsychoAI', 100, 45);
+        doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text('PsicoAIssist', 100, 45);
         doc.font('Helvetica').fontSize(10).fillColor('#64748B').text('Asistente Clínico Inteligente', 100, 68);
         doc.moveTo(350, 60).lineTo(545, 60).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
     }

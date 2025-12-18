@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: 'PsychoAI - Asistente IA para Psicólogos',
-    template: '%s | PsychoAI'
+    default: 'PsicoAIssist - Asistente IA para Psicólogos',
+    template: '%s | PsicoAIssist'
   },
   description: 'Potencia tu práctica psicológica con IA responsable. Transcripción automática, informes profesionales y análisis inteligente. GDPR compliant.',
   keywords: [
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     'análisis de sesiones',
     'software psicología'
   ],
-  authors: [{ name: 'PsychoAI Team' }],
-  creator: 'PsychoAI',
-  publisher: 'PsychoAI',
+  authors: [{ name: 'PsicoAIssist Team' }],
+  creator: 'PsicoAIssist',
+  publisher: 'PsicoAIssist',
   formatDetection: {
     email: false,
     address: false,
@@ -39,23 +39,23 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_ES',
     url: 'https://psychoai.com',
-    siteName: 'PsychoAI',
-    title: 'PsychoAI - Asistente IA para Psicólogos',
+    siteName: 'PsicoAIssist',
+    title: 'PsicoAIssist - Asistente IA para Psicólogos',
     description: 'Potencia tu práctica psicológica con IA responsable. Transcripción automática, informes profesionales y análisis inteligente.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'PsychoAI - Asistente IA para Psicólogos',
+        alt: 'PsicoAIssist - Asistente IA para Psicólogos',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@psychoai',
-    creator: '@psychoai',
-    title: 'PsychoAI - Asistente IA para Psicólogos',
+    site: '@psicoaissist',
+    creator: '@psicoaissist',
+    title: 'PsicoAIssist - Asistente IA para Psicólogos',
     description: 'Potencia tu práctica psicológica con IA responsable. Transcripción automática, informes profesionales y análisis inteligente.',
     images: ['/twitter-image.jpg'],
   },

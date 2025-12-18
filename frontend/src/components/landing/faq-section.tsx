@@ -6,14 +6,14 @@ import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 const faqs = [
   {
     id: 1,
-    question: '¿Es PsychoAI seguro para datos confidenciales de pacientes?',
-    answer: 'Absolutamente. PsychoAI cumple con GDPR, LOPD-GDD y estándares internacionales de seguridad. Utilizamos encriptación AES-256, servidores en Europa, y jamás almacenamos datos sin encriptar. Cada sesión se procesa de forma aislada y segura.',
+    question: '¿Es PsicoAIssist seguro para datos confidenciales de pacientes?',
+    answer: 'Absolutamente. PsicoAIssist cumple con GDPR, LOPD-GDD y estándares internacionales de seguridad. Utilizamos encriptación AES-256, servidores en Europa, y jamás almacenamos datos sin encriptar. Cada sesión se procesa de forma aislada y segura.',
     category: 'Seguridad'
   },
   {
     id: 2,
     question: '¿Cómo funciona la transcripción automática?',
-    answer: 'Nuestro sistema de IA escucha la sesión en tiempo real y transcribe automáticamente. Reconoce el habla en español (incluyendo acentos regionales), identifica quién habla (terapeuta/paciente) y formatea el texto de manera profesional. La precisión es del 95%+.',
+    answer: 'Nuestro sistema de IA escucha la sesión en tiempo real y transcribe automáticamente. Reconoce el habla en español (incluyendo acentos regionales), identifica quién habla (terapeuta/paciente) y formatea el texto de manera profesional. La precisión es del 95%+. PsicoAIssist no graba audio permanente si no lo deseas.',
     category: 'Funcionalidad'
   },
   {
@@ -31,7 +31,7 @@ const faqs = [
   {
     id: 5,
     question: '¿Funciona con sesiones por videollamada?',
-    answer: 'Por supuesto. PsychoAI es compatible con Zoom, Google Meet, Teams y otras plataformas. Puedes usar nuestro bot de audio o grabar directamente desde tu dispositivo. La calidad de transcripción es la misma que en sesiones presenciales.',
+    answer: 'Por supuesto. PsicoAIssist es compatible con Zoom, Google Meet, Teams y otras plataformas. Puedes usar nuestro bot de audio o grabar directamente desde tu dispositivo. La calidad de transcripción es la misma que en sesiones presenciales.',
     category: 'Funcionalidad'
   },
   {
@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     id: 8,
-    question: '¿Puedo integrar PsychoAI con mi sistema actual?',
+    question: '¿Puedo integrar PsicoAIssist con mi sistema actual?',
     answer: 'Ofrecemos APIs y integraciones con los principales sistemas de gestión de clínicas. También puedes exportar datos para importar en tu sistema existente. Nuestro equipo técnico puede ayudarte con la integración.',
     category: 'Integración'
   },
@@ -91,7 +91,7 @@ export function FAQSection() {
             Resolvemos tus dudas
           </p>
           <p className="mt-4 text-xl text-gray-600">
-            Las respuestas a las preguntas más comunes sobre PsychoAI.
+            Las respuestas a las preguntas más comunes sobre PsicoAIssist.
           </p>
         </div>
 
@@ -162,7 +162,7 @@ export function FAQSection() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:soporte@psychoai.com"
+                href="mailto:soporte@psicoaissist.com"
                 className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
               >
                 Enviar email

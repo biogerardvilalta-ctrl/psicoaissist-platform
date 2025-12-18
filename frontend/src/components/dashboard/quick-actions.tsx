@@ -69,7 +69,7 @@ export default function QuickActions() {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-medium text-gray-900">Acciones Rápidas</h3>
-            <p className="text-sm text-gray-500 mt-1">Comienza a usar PsychoAI con estas opciones</p>
+            <p className="text-sm text-gray-500 mt-1">Comienza a usar PsicoAIssist con estas opciones</p>
           </div>
           <button className="flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors">
             <Plus className="w-4 h-4 mr-1" />
