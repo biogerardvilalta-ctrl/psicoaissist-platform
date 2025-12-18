@@ -21,6 +21,7 @@ export class ReportsService {
     ) { }
 
     async create(userId: string, createReportDto: CreateReportDto) {
+        console.log(`[ReportsService] Creating report for User: ${userId}`, createReportDto);
         // Prepare content for encryption
         const initialContent = createReportDto.content || '';
 
@@ -51,6 +52,7 @@ export class ReportsService {
                 humanReviewConfirmed: createReportDto.humanReviewConfirmed || false,
             }
         });
+        console.log(`[ReportsService] Report created successfully: ${report.id}`);
 
         await this.auditService.log({
             userId,
@@ -64,7 +66,8 @@ export class ReportsService {
     }
 
     async findAll(userId: string) {
-        return this.prisma.report.findMany({
+        console.log(`[ReportsService] Finding all reports for User: ${userId}`);
+        const reports = await this.prisma.report.findMany({
             where: {
                 userId,
                 status: { not: 'DELETED' }
@@ -78,6 +81,8 @@ export class ReportsService {
             },
             orderBy: { createdAt: 'desc' }
         });
+        console.log(`[ReportsService] Found ${reports.length} reports`);
+        return reports;
     }
 
     async findOne(id: string, userId: string) {
@@ -230,6 +235,8 @@ export class ReportsService {
     }
 
     async generateDraft(userId: string, data: any) { // Type as GenerateReportDraftDto
+        console.log(`[ReportsService] Generating Draft for User: ${userId}, Client: ${data.clientId}, Sessions:`, data.sessionIds);
+
         // 1. Fetch sessions
         const sessions = await this.prisma.session.findMany({
             where: {
@@ -245,6 +252,8 @@ export class ReportsService {
             orderBy: { startTime: 'asc' }
         });
 
+        console.log(`[ReportsService] Found ${sessions.length} sessions`);
+
         if (!sessions.length) {
             throw new NotFoundException('No se encontraron sesiones para generar el informe.');
         }
@@ -252,6 +261,7 @@ export class ReportsService {
         // 2. Decrypt notes and aggregate
         let notesSummary = "";
         let firstSessionNote = "";
+        let totalCharCount = 0;
 
         for (let i = 0; i < sessions.length; i++) {
             const session = sessions[i];
@@ -274,11 +284,10 @@ export class ReportsService {
                     if (result.success && result.data && result.data.notes) {
                         const noteText = result.data.notes;
                         sessionContent += `[Notas Clínicas]: ${noteText}\n`;
+                        totalCharCount += noteText.length;
 
                         // Capture first session note for "Reason for Consultation" context
-                        if (i === 0) {
-                            firstSessionNote = noteText;
-                        }
+                        if (i === 0) firstSessionNote = noteText;
                     }
                 } catch (e) {
                     console.error("Failed to decrypt session note for draft", e);
@@ -300,7 +309,9 @@ export class ReportsService {
                     });
 
                     if (result.success && result.data && result.data.transcription) {
-                        sessionContent += `[Transcripción]: ${result.data.transcription}\n`;
+                        const trText = result.data.transcription;
+                        sessionContent += `[Transcripción]: ${trText}\n`;
+                        totalCharCount += trText.length;
                     }
                 } catch (e) {
                     console.error("Failed to decrypt session transcription for draft", e);
@@ -311,6 +322,8 @@ export class ReportsService {
                 notesSummary += `\n--- Sesión del ${session.startTime.toLocaleDateString()} ---\n${sessionContent}`;
             }
         }
+
+        console.log(`[ReportsService] Notes Summary Length: ${notesSummary.length} chars (Total extracted: ${totalCharCount})`);
 
         // 3. Call AI Service
         const client = await this.prisma.client.findUnique({ where: { id: data.clientId } });
@@ -340,12 +353,27 @@ export class ReportsService {
 
         const period = `${sessions[0].startTime.toLocaleDateString()} - ${sessions[sessions.length - 1].startTime.toLocaleDateString()}`;
 
+        // WARN: Check for low content
+        if (totalCharCount < 200) {
+            console.warn(`[ReportsService] Low content detected (${totalCharCount} chars). Injecting warning to AI.`);
+            const lowContentWarning = " \n\n[SYSTEM WARNING]: The provided session data is extremely sparse (only a few sentences). DO NOT Hallucinate details. Instead, explicitly state in the report that the available information is insufficient to generate a complete clinical analysis, and provide a generic template structure with placeholders.";
+            data.additionalInstructions = (data.additionalInstructions || '') + lowContentWarning;
+        }
+
         // Call AI Service
         const config = PSYCHOLOGICAL_REPORTS[data.reportType];
 
         if (!config) {
             throw new BadRequestException('Tipo de informe no válido');
         }
+
+        // Fetch user language preference
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true }
+        });
+
+        console.log(`[ReportsService] Calling AI Service... Report Type: ${data.reportType}, Language: ${user?.preferredLanguage}`);
 
         const draftContent = await this.aiService.generateReportDraft({
             clientName,
@@ -357,8 +385,11 @@ export class ReportsService {
             period,
             notesSummary,
             firstSessionNote: config.useFirstSession ? firstSessionNote : undefined,
-            additionalInstructions: data.additionalInstructions
+            additionalInstructions: data.additionalInstructions,
+            language: user?.preferredLanguage || 'es' // Pass user language
         });
+
+        console.log(`[ReportsService] Draft generated. Length: ${draftContent.length}`);
 
         await this.auditService.log({
             userId,

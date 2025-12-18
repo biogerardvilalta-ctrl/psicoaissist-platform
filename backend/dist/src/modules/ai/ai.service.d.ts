@@ -91,5 +91,6 @@ export declare class AiService {
         firstSessionNote?: string;
         additionalInstructions?: string;
         languageProfile?: string;
+        language?: string;
     }): Promise<string>;
 }

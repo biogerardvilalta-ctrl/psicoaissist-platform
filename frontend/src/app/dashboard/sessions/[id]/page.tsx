@@ -459,7 +459,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     {/* Emotional Elements */}
                                     {session.aiMetadata.emotionalElements && session.aiMetadata.emotionalElements.length > 0 && (
                                         <div>
-                                            <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Elements Emocionals Detectats</h4>
+                                            <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Elements emocionals inferits a partir del discurs</h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {session.aiMetadata.emotionalElements.map((el: string, i: number) => (
                                                     <Badge key={i} variant="secondary" className="bg-amber-50 text-amber-800 hover:bg-amber-100">
@@ -488,7 +488,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                             {/* Suggestions */}
                                             {session.aiMetadata.clinicalFollowUpSupport.suggestions && session.aiMetadata.clinicalFollowUpSupport.suggestions.length > 0 && (
                                                 <div>
-                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Suggeriments Orientatius</h4>
+                                                    <h4 className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Suggeriments Orientatius</h4>
+                                                    <p className="text-[10px] text-slate-500 italic mb-2">A tall de possibles línies de reflexió, sense caràcter prescriptiu:</p>
                                                     <ul className="space-y-2">
                                                         {session.aiMetadata.clinicalFollowUpSupport.suggestions.map((sug: string, i: number) => (
                                                             <li key={i} className="text-sm text-slate-700 bg-blue-50/50 p-2 rounded border border-blue-100 flex gap-2">

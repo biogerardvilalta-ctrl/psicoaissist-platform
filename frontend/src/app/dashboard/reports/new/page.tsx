@@ -2,12 +2,24 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronRight, Check, FileText, User, Calendar, Sparkles, AlertCircle } from 'lucide-react';
+import { ChevronRight, Check, FileText, User, Calendar, Sparkles, AlertCircle, Scale, PenTool, ShieldAlert } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ReportsAPI, ReportType, ReportStatus, REPORT_TYPE_LABELS } from '@/lib/reports-api';
 import { ClientsAPI } from '@/lib/clients-api';
 import { SessionsAPI } from '@/lib/sessions-api';
 import { RichTextEditor } from '@/components/ui/RichTextEditor';
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function NewReportPage() {
     const router = useRouter();
@@ -27,9 +39,15 @@ export default function NewReportPage() {
     const [savedReportStatus, setSavedReportStatus] = useState<ReportStatus | null>(null);
     const [humanReviewConfirmed, setHumanReviewConfirmed] = useState(false);
 
+    // Compliance State
+    const [languageProfile, setLanguageProfile] = useState<'adult' | 'child' | 'school'>('adult');
+    const [showFinalizeModal, setShowFinalizeModal] = useState(false);
+    const [checkContentReviewed, setCheckContentReviewed] = useState(false);
+    const [checkLegalResponsibility, setCheckLegalResponsibility] = useState(false);
+
     // Data Loading
-    const [clients, setClients] = useState<any[]>([]); // Placeholder type
-    const [sessions, setSessions] = useState<any[]>([]); // Placeholder type
+    const [clients, setClients] = useState<any[]>([]);
+    const [sessions, setSessions] = useState<any[]>([]);
 
     // Load Draft if edit param exists
     const searchParams = useSearchParams();
@@ -61,9 +79,8 @@ export default function NewReportPage() {
         }
     }, [editId, toast]);
 
-    // Mock Data Loading (Replace with real API calls later)
+    // Load Clients
     useEffect(() => {
-        // Load Clients
         const loadClients = async () => {
             try {
                 const data = await ClientsAPI.getAll();
@@ -79,12 +96,11 @@ export default function NewReportPage() {
     useEffect(() => {
         if (!selectedClientId) {
             setSessions([]);
-            setSelectedSessionIds([]); // Clear selected sessions when client changes
+            setSelectedSessionIds([]);
             return;
         }
         const loadSessions = async () => {
             try {
-                // Fetch completed sessions for this client
                 const data = await SessionsAPI.getAll({ clientId: selectedClientId, status: 'COMPLETED' });
                 setSessions(data);
             } catch (error) {
@@ -117,7 +133,8 @@ export default function NewReportPage() {
             const result = await ReportsAPI.generateDraft({
                 clientId: selectedClientId,
                 reportType,
-                sessionIds: selectedSessionIds
+                sessionIds: selectedSessionIds,
+                additionalInstructions: `Perfil linguístico: ${languageProfile}`
             });
             setDraftContent(result.content);
             setReportTitle(`Informe de ${reportType === ReportType.PROGRESS ? 'Evolución' : 'Alta'} - ${new Date().toLocaleDateString()}`);
@@ -142,12 +159,9 @@ export default function NewReportPage() {
                     title: reportTitle,
                     content: draftContent,
                     status: ReportStatus.DRAFT,
-                    humanReviewConfirmed // Optional usually for drafts but good to track
+                    humanReviewConfirmed: false
                 });
                 setSavedReportStatus(ReportStatus.DRAFT);
-                // If we are editing (not finalized), we might stay on step 3 or go to success?
-                // User asked for "save draft", usually implies staying or simple confirmation.
-                // Let's go to step 4 for consistency but user can go back or to list.
                 nextStep();
             } else {
                 const report = await ReportsAPI.create({
@@ -156,11 +170,11 @@ export default function NewReportPage() {
                     reportType,
                     content: draftContent,
                     status: ReportStatus.DRAFT,
-                    humanReviewConfirmed
+                    humanReviewConfirmed: false
                 });
                 setSavedReportId(report.id);
                 setSavedReportStatus(ReportStatus.DRAFT);
-                nextStep(); // Move to Success Step
+                nextStep();
             }
         } catch (error) {
             console.error(error);
@@ -177,12 +191,15 @@ export default function NewReportPage() {
     const handleSaveReport = async () => {
         setIsLoading(true);
         try {
+            // NOTE: humanReviewConfirmed is handled by the modal logic now via onFinalizeClick
+            const confirmed = true; // If we are here, modal passed
+
             if (savedReportId) {
                 await ReportsAPI.update(savedReportId, {
                     title: reportTitle,
                     content: draftContent,
                     status: ReportStatus.COMPLETED,
-                    humanReviewConfirmed
+                    humanReviewConfirmed: confirmed
                 });
                 setSavedReportStatus(ReportStatus.COMPLETED);
                 nextStep();
@@ -193,11 +210,11 @@ export default function NewReportPage() {
                     reportType,
                     content: draftContent,
                     status: ReportStatus.COMPLETED,
-                    humanReviewConfirmed
+                    humanReviewConfirmed: confirmed
                 });
                 setSavedReportId(report.id);
                 setSavedReportStatus(ReportStatus.COMPLETED);
-                nextStep(); // Move to Success Step
+                nextStep();
             }
         } catch (error) {
             console.error(error);
@@ -211,8 +228,19 @@ export default function NewReportPage() {
         }
     };
 
+    const onFinalizeClick = () => {
+        setCheckContentReviewed(false);
+        setCheckLegalResponsibility(false);
+        setShowFinalizeModal(true);
+    };
+
+    const confirmFinalize = async () => {
+        setShowFinalizeModal(false);
+        await handleSaveReport();
+    };
+
     return (
-        <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900">Nuevo Informe Clínico</h1>
                 <p className="text-gray-500">Asistente de generación de informes con IA</p>
@@ -241,47 +269,105 @@ export default function NewReportPage() {
 
                 {/* Step 1: Select Patient & Type */}
                 {step === 1 && (
-                    <div className="space-y-6">
-                        <h2 className="text-lg font-semibold flex items-center"><User className="w-5 h-5 mr-2" /> Selección de Paciente</h2>
-                        {/* Client Selector Placeholder */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Paciente</label>
-                                <select
-                                    className="w-full p-2 border rounded-md"
-                                    value={selectedClientId}
-                                    onChange={(e) => setSelectedClientId(e.target.value)}
-                                >
-                                    <option value="">Seleccionar paciente...</option>
-                                    {clients.map(client => (
-                                        <option key={client.id} value={client.id}>
-                                            {client.firstName} {client.lastName}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Tipo de Informe</label>
-                                <select
-                                    className="w-full p-2 border rounded-md"
-                                    value={reportType}
-                                    onChange={(e) => setReportType(e.target.value as ReportType)}
-                                >
-                                    {Object.entries(REPORT_TYPE_LABELS).map(([key, label]) => (
-                                        <option key={key} value={key}>{label}</option>
-                                    ))}
-                                </select>
+                    <div className="space-y-8">
+                        {/* AI Disclaimer Section */}
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+                            <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <div className="text-sm text-blue-800">
+                                <p className="font-semibold mb-1">Informació important sobre l'ús d'IA</p>
+                                <p>
+                                    Aquest informe serà redactat amb el suport d’una eina d’intel·ligència artificial i
+                                    <strong> requerirà revisió humana obligatòria</strong> abans de ser finalitzat.
+                                    L'eina actua com a suport a la redacció i no emet judicis clínics automàtics.
+                                </p>
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-4">
-                            <button
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Left Column: Basic Selection */}
+                            <div className="space-y-6">
+                                <h2 className="text-lg font-semibold flex items-center"><User className="w-5 h-5 mr-2" /> Dades Bàsiques</h2>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Pacient</Label>
+                                        <select
+                                            className="w-full p-2 border rounded-md"
+                                            value={selectedClientId}
+                                            onChange={(e) => setSelectedClientId(e.target.value)}
+                                        >
+                                            <option value="">Seleccionar pacient...</option>
+                                            {clients.map(client => (
+                                                <option key={client.id} value={client.id}>
+                                                    {client.firstName} {client.lastName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Tipus d'Informe</Label>
+                                        <select
+                                            className="w-full p-2 border rounded-md"
+                                            value={reportType}
+                                            onChange={(e) => setReportType(e.target.value as ReportType)}
+                                        >
+                                            {Object.entries(REPORT_TYPE_LABELS).map(([key, label]) => (
+                                                <option key={key} value={key}>{label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Column: Language Profile */}
+                            <div className="space-y-6">
+                                <h2 className="text-lg font-semibold flex items-center"><PenTool className="w-5 h-5 mr-2" /> Perfil Lingüístic</h2>
+                                <div className="bg-gray-50 p-4 rounded-lg space-y-4 border">
+                                    <RadioGroup value={languageProfile} onValueChange={(v) => setLanguageProfile(v as any)}>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="adult" id="r-adult" />
+                                            <Label htmlFor="r-adult">Adult (Estàndard)</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="child" id="r-child" />
+                                            <Label htmlFor="r-child">Infantil / Adolescent</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="school" id="r-school" />
+                                            <Label htmlFor="r-school">Escolar / Educatiu</Label>
+                                        </div>
+                                    </RadioGroup>
+                                    <p className="text-xs text-gray-500 mt-2">
+                                        El llenguatge de l’informe s’adaptarà al context seleccionat. Això no implica canvis en el contingut clínic, que sempre serà revisat pel professional.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Forensic Warning (Dynamic) */}
+                        {reportType === ReportType.LEGAL && (
+                            <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mt-4">
+                                <div className="flex">
+                                    <div className="flex-shrink-0">
+                                        <Scale className="h-5 w-5 text-amber-600" aria-hidden="true" />
+                                    </div>
+                                    <div className="ml-3">
+                                        <p className="text-sm text-amber-700">
+                                            <strong>Mode Legal-Forense Actiu:</strong> Aquest tipus d'informe està destinat a ús legal o administratiu.
+                                            El sistema aplicarà restriccions reforçades i no es permetrà la finalització sense una doble validació expressa.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex justify-end pt-6 border-t">
+                            <Button
                                 onClick={nextStep}
                                 disabled={!selectedClientId}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                                className="bg-blue-600 hover:bg-blue-700"
                             >
                                 Continuar
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
@@ -289,8 +375,10 @@ export default function NewReportPage() {
                 {/* Step 2: Select Sessions */}
                 {step === 2 && (
                     <div className="space-y-6">
-                        <h2 className="text-lg font-semibold flex items-center"><Calendar className="w-5 h-5 mr-2" /> Selección de Sesiones</h2>
-                        <p className="text-sm text-gray-500">Selecciona las sesiones que la IA debe analizar para generar el borrador.</p>
+                        <h2 className="text-lg font-semibold flex items-center"><Calendar className="w-5 h-5 mr-2" /> Selecció de Sessions</h2>
+                        <div className="bg-blue-50 text-blue-800 p-3 rounded-md text-sm border border-blue-100 mb-4">
+                            Selecciona les sessions que la IA utilitzarà com a base per a l'esborrany. Recorda que la IA només té accés al contingut transcrit o anotat.
+                        </div>
 
                         {/* Session List */}
                         <div className="border rounded-md divide-y max-h-60 overflow-y-auto">
@@ -317,14 +405,14 @@ export default function NewReportPage() {
                         </div>
 
                         <div className="flex justify-between pt-4">
-                            <button onClick={prevStep} className="px-4 py-2 border rounded-lg">Atrás</button>
-                            <button
+                            <Button variant="outline" onClick={prevStep}>Enrere</Button>
+                            <Button
                                 onClick={handleGenerateDraft}
                                 disabled={isLoading || selectedSessionIds.length === 0}
-                                className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+                                className="bg-purple-600 hover:bg-purple-700 text-white"
                             >
-                                {isLoading ? 'Generando...' : <><Sparkles className="w-4 h-4 mr-2" /> Generar Borrador con IA</>}
-                            </button>
+                                {isLoading ? 'Generant...' : <><Sparkles className="w-4 h-4 mr-2" /> Generar Esborrany amb IA</>}
+                            </Button>
                         </div>
                     </div>
                 )}
@@ -332,11 +420,23 @@ export default function NewReportPage() {
                 {/* Step 3: Edit Draft */}
                 {step === 3 && (
                     <div className="space-y-6">
-                        <h2 className="text-lg font-semibold flex items-center"><FileText className="w-5 h-5 mr-2" /> Revisión del Borrador</h2>
+                        <div className="flex justify-between items-center border-b pb-4">
+                            <h2 className="text-lg font-semibold flex items-center"><FileText className="w-5 h-5 mr-2" /> Revisió i Edició</h2>
+                            <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
+                                Esborrany generat amb IA – pendent de revisió
+                            </Badge>
+                        </div>
+
+                        {reportType === ReportType.LEGAL && (
+                            <div className="bg-red-50 to-red-100 border-l-4 border-red-500 p-3 flex items-center gap-3">
+                                <Scale className="w-5 h-5 text-red-700" />
+                                <span className="font-bold text-red-800 text-sm">MODE LEGAL-FORENSE ACTIU: El contingut ha de ser revisat amb especial atenció a la neutralitat i objectivitat.</span>
+                            </div>
+                        )}
 
                         <div className="space-y-4">
                             <div>
-                                <label className="text-sm font-medium text-gray-700">Título del Informe</label>
+                                <Label>Títol de l'Informe</Label>
                                 <input
                                     className="w-full p-2 border rounded-md mt-1"
                                     value={reportTitle}
@@ -344,7 +444,7 @@ export default function NewReportPage() {
                                 />
                             </div>
                             <div>
-                                <label className="text-sm font-medium text-gray-700">Contenido del Informe</label>
+                                <Label>Contingut (Totalment Editable)</Label>
                                 <RichTextEditor
                                     value={draftContent}
                                     onChange={setDraftContent}
@@ -353,60 +453,24 @@ export default function NewReportPage() {
                             </div>
                         </div>
 
-                        {/* LEGAL / FORENSIC MANDATORY CHECKBOX */}
-                        {reportType === ReportType.LEGAL && (
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-4 my-4">
-                                <div className="flex items-start">
-                                    <div className="flex-shrink-0">
-                                        <AlertCircle className="h-5 w-5 text-red-600" aria-hidden="true" />
-                                    </div>
-                                    <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-red-800">Revisió Obligatòria (Mode Safe Forensic)</h3>
-                                        <div className="mt-2 text-sm text-red-700">
-                                            <p className="mb-2">
-                                                Estàs redactant un informe <strong>LEGAL/FORENSE</strong>. Per normativa, aquest tipus d'informe requereix una validació humana estricta.
-                                            </p>
-                                            <ul className="list-disc pl-5 space-y-1 mb-3">
-                                                <li>Verifica que no hi hagi afirmacions causals ("Això demostra que...").</li>
-                                                <li>Diferencia clarament entre fets observats i manifestacions del pacient.</li>
-                                                <li>Assegura't que el llenguatge és objectiu i no judicialitzador.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mt-4 ml-8">
-                                    <label className="flex items-start cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            className="mt-1 h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
-                                            checked={humanReviewConfirmed}
-                                            onChange={(e) => setHumanReviewConfirmed(e.target.checked)}
-                                        />
-                                        <span className="ml-2 text-sm font-bold text-gray-900">
-                                            Confirmo que he revisat íntegrament l’informe, n’assumeixo la responsabilitat professional i certifico que compleix amb els criteris ètics i legals.
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-                        )}
-
                         <div className="flex justify-between pt-4">
-                            <button onClick={prevStep} className="px-4 py-2 border rounded-lg">Atrás</button>
+                            <Button variant="outline" onClick={prevStep}>Enrere</Button>
                             <div className="flex gap-2">
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={handleSaveDraft}
                                     disabled={isLoading || !reportTitle}
-                                    className="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 disabled:opacity-50"
                                 >
-                                    {isLoading ? 'Guardando...' : 'Guardar Borrador'}
-                                </button>
-                                <button
-                                    onClick={handleSaveReport}
-                                    disabled={isLoading || !reportTitle || (reportType === ReportType.LEGAL && !humanReviewConfirmed)}
-                                    className={`px-4 py-2 text-white rounded-lg disabled:opacity-50 ${reportType === ReportType.LEGAL && !humanReviewConfirmed ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+                                    Guardar Esborrany
+                                </Button>
+                                <Button
+                                    onClick={onFinalizeClick}
+                                    disabled={isLoading || !reportTitle}
+                                    className={reportType === ReportType.LEGAL ? "bg-amber-600 hover:bg-amber-700" : "bg-green-600 hover:bg-green-700"}
                                 >
-                                    {isLoading ? 'Guardando...' : 'Finalizar y Guardar'}
-                                </button>
+                                    <Check className="w-4 h-4 mr-2" />
+                                    Finalitzar i Validar
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -419,20 +483,25 @@ export default function NewReportPage() {
                             <Check className="w-8 h-8 text-green-600" />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900">
-                            {savedReportStatus === ReportStatus.COMPLETED ? '¡Informe Guardado y Finalizado!' : '¡Borrador Guardado!'}
+                            {savedReportStatus === ReportStatus.COMPLETED ? 'Informe Validat i Finalitzat' : 'Esborrany Guardat'}
                         </h2>
-                        <p className="text-gray-500">
+                        {savedReportStatus === ReportStatus.COMPLETED && (
+                            <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-medium mt-2">
+                                <User className="w-4 h-4 mr-1" /> Validat per professional
+                            </div>
+                        )}
+                        <p className="text-gray-500 mt-4">
                             {savedReportStatus === ReportStatus.COMPLETED
-                                ? 'El informe se ha guardado correctamente y está listo para descargar.'
-                                : 'El borrador se ha guardado correctamente. Puedes editarlo más tarde desde la lista de informes.'}
+                                ? "L'informe ha estat bloquejat i guardat correctament."
+                                : "L'esborrany s'ha guardat per continuar més tard."}
                         </p>
 
                         <div className="flex justify-center gap-4 pt-8">
-                            <button onClick={() => router.push('/dashboard/reports')} className="px-4 py-2 border rounded-lg">
-                                Volver a la lista
-                            </button>
+                            <Button variant="outline" onClick={() => router.push('/dashboard/reports')}>
+                                Tornar a la llista
+                            </Button>
                             {savedReportStatus === ReportStatus.COMPLETED && (
-                                <button
+                                <Button
                                     onClick={async () => {
                                         if (savedReportId) {
                                             try {
@@ -449,15 +518,79 @@ export default function NewReportPage() {
                                             }
                                         }
                                     }}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                    className="bg-blue-600 hover:bg-blue-700"
                                 >
-                                    Descargar PDF
-                                </button>
+                                    Descarregar PDF Oficial
+                                </Button>
                             )}
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* VALIDATION MODAL */}
+            <Dialog open={showFinalizeModal} onOpenChange={setShowFinalizeModal}>
+                <DialogContent className="sm:max-w-2xl">
+                    <DialogHeader>
+                        <div className="flex items-center gap-2 mb-2">
+                            {reportType === ReportType.LEGAL ? <Scale className="w-6 h-6 text-amber-600" /> : <ShieldAlert className="w-6 h-6 text-blue-600" />}
+                            <DialogTitle className="text-xl">Validació Professional Obligatòria</DialogTitle>
+                        </div>
+                        <DialogDescription>
+                            Per finalitzar aquest informe, és necessari que el professional assumeixi la responsabilitat del seu contingut.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="py-6 space-y-6">
+                        {/* Common Disclaimer */}
+                        <div className="bg-gray-50 p-4 rounded-md text-sm text-gray-700 border">
+                            Recorda: La IA és una eina de suport. La decisió clínica i la responsabilitat legal recauen exclusivament en el professional signant.
+                        </div>
+
+                        {/* Checkbox 1: Content Review (ALL TYPES) */}
+                        <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                            <input
+                                type="checkbox"
+                                id="check1"
+                                className="mt-1 w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                checked={checkContentReviewed}
+                                onChange={(e) => setCheckContentReviewed(e.target.checked)}
+                            />
+                            <label htmlFor="check1" className="text-sm font-medium text-gray-900 cursor-pointer">
+                                He revisat íntegrament el contingut de l’informe i n’assumeixo la responsabilitat professional.
+                            </label>
+                        </div>
+
+                        {/* Checkbox 2: Legal Responsibility (FORENSIC ONLY) */}
+                        {reportType === ReportType.LEGAL && (
+                            <div className="flex items-start space-x-3 p-4 border border-amber-200 bg-amber-50 rounded-lg">
+                                <input
+                                    type="checkbox"
+                                    id="check2"
+                                    className="mt-1 w-5 h-5 text-amber-600 rounded border-amber-300 focus:ring-amber-500"
+                                    checked={checkLegalResponsibility}
+                                    onChange={(e) => setCheckLegalResponsibility(e.target.checked)}
+                                />
+                                <label htmlFor="check2" className="text-sm font-bold text-amber-900 cursor-pointer">
+                                    Confirmo que aquest informe pot tenir ús judicial o administratiu i n’assumeixo totes les implicacions legals.
+                                </label>
+                            </div>
+                        )}
+                    </div>
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowFinalizeModal(false)}>Cancel·lar</Button>
+                        <Button
+                            onClick={confirmFinalize}
+                            disabled={!checkContentReviewed || (reportType === ReportType.LEGAL && !checkLegalResponsibility)}
+                            className={reportType === ReportType.LEGAL ? "bg-amber-600 hover:bg-amber-700" : "bg-blue-600 hover:bg-blue-700"}
+                        >
+                            <Check className="w-4 h-4 mr-2" />
+                            Signar i Finalitzar
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

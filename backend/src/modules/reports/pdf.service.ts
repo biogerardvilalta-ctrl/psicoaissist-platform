@@ -50,7 +50,7 @@ export class PdfService {
             doc.font('Helvetica').text(reportData.clientName || 'N/A', 70, startY + 30);
 
             doc.font('Helvetica-Bold').text('FECHA DE EMISIÓN:', 70, startY + 50);
-            doc.font('Helvetica').text(new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }), 70, startY + 65);
+            doc.font('Helvetica').text(new Date().toLocaleString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }), 70, startY + 65);
 
             // Right Column
             doc.font('Helvetica-Bold').text('TIPO DE INFORME:', 300, startY + 15);
@@ -82,7 +82,7 @@ export class PdfService {
             doc.rect(50, doc.y, 495, 45).fill('#F8FAFC');
             doc.fillColor('#64748B').fontSize(9);
             doc.text(
-                'Aquest informe ha estat elaborat per un/a psicòleg/a col·legiat/da. La redacció ha comptat amb el suport d’una eina d’intel·ligència artificial, i ha estat íntegrament revisada, validada i assumida pel/la professional signant.',
+                'Aquest informe ha estat redactat amb el suport d’una eina d’intel·ligència artificial i revisat, validat i assumit per un/a professional col·legiat/da.',
                 60,
                 doc.y - 35,
                 { width: 475, align: 'center' }

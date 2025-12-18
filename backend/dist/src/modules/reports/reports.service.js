@@ -28,6 +28,7 @@ let ReportsService = class ReportsService {
         this.auditService = auditService;
     }
     async create(userId, createReportDto) {
+        console.log(`[ReportsService] Creating report for User: ${userId}`, createReportDto);
         const initialContent = createReportDto.content || '';
         const { keyId, encryptedData, iv, tag } = await this.encryption.encryptData({ content: initialContent }, userId);
         const packedData = Buffer.concat([
@@ -48,6 +49,7 @@ let ReportsService = class ReportsService {
                 humanReviewConfirmed: createReportDto.humanReviewConfirmed || false,
             }
         });
+        console.log(`[ReportsService] Report created successfully: ${report.id}`);
         await this.auditService.log({
             userId,
             action: client_2.AuditAction.CREATE,
@@ -58,7 +60,8 @@ let ReportsService = class ReportsService {
         return report;
     }
     async findAll(userId) {
-        return this.prisma.report.findMany({
+        console.log(`[ReportsService] Finding all reports for User: ${userId}`);
+        const reports = await this.prisma.report.findMany({
             where: {
                 userId,
                 status: { not: 'DELETED' }
@@ -72,6 +75,8 @@ let ReportsService = class ReportsService {
             },
             orderBy: { createdAt: 'desc' }
         });
+        console.log(`[ReportsService] Found ${reports.length} reports`);
+        return reports;
     }
     async findOne(id, userId) {
         const report = await this.prisma.report.findFirst({
@@ -193,6 +198,7 @@ let ReportsService = class ReportsService {
         return result;
     }
     async generateDraft(userId, data) {
+        console.log(`[ReportsService] Generating Draft for User: ${userId}, Client: ${data.clientId}, Sessions:`, data.sessionIds);
         const sessions = await this.prisma.session.findMany({
             where: {
                 id: { in: data.sessionIds },
@@ -206,11 +212,13 @@ let ReportsService = class ReportsService {
             },
             orderBy: { startTime: 'asc' }
         });
+        console.log(`[ReportsService] Found ${sessions.length} sessions`);
         if (!sessions.length) {
             throw new common_1.NotFoundException('No se encontraron sesiones para generar el informe.');
         }
         let notesSummary = "";
         let firstSessionNote = "";
+        let totalCharCount = 0;
         for (let i = 0; i < sessions.length; i++) {
             const session = sessions[i];
             let sessionContent = "";
@@ -228,9 +236,9 @@ let ReportsService = class ReportsService {
                     if (result.success && result.data && result.data.notes) {
                         const noteText = result.data.notes;
                         sessionContent += `[Notas Clínicas]: ${noteText}\n`;
-                        if (i === 0) {
+                        totalCharCount += noteText.length;
+                        if (i === 0)
                             firstSessionNote = noteText;
-                        }
                     }
                 }
                 catch (e) {
@@ -249,7 +257,9 @@ let ReportsService = class ReportsService {
                         keyId: session.encryptionKeyId
                     });
                     if (result.success && result.data && result.data.transcription) {
-                        sessionContent += `[Transcripción]: ${result.data.transcription}\n`;
+                        const trText = result.data.transcription;
+                        sessionContent += `[Transcripción]: ${trText}\n`;
+                        totalCharCount += trText.length;
                     }
                 }
                 catch (e) {
@@ -260,6 +270,7 @@ let ReportsService = class ReportsService {
                 notesSummary += `\n--- Sesión del ${session.startTime.toLocaleDateString()} ---\n${sessionContent}`;
             }
         }
+        console.log(`[ReportsService] Notes Summary Length: ${notesSummary.length} chars (Total extracted: ${totalCharCount})`);
         const client = await this.prisma.client.findUnique({ where: { id: data.clientId } });
         let clientName = 'Paciente';
         if (client && client.encryptedPersonalData) {
@@ -282,10 +293,20 @@ let ReportsService = class ReportsService {
             }
         }
         const period = `${sessions[0].startTime.toLocaleDateString()} - ${sessions[sessions.length - 1].startTime.toLocaleDateString()}`;
+        if (totalCharCount < 200) {
+            console.warn(`[ReportsService] Low content detected (${totalCharCount} chars). Injecting warning to AI.`);
+            const lowContentWarning = " \n\n[SYSTEM WARNING]: The provided session data is extremely sparse (only a few sentences). DO NOT Hallucinate details. Instead, explicitly state in the report that the available information is insufficient to generate a complete clinical analysis, and provide a generic template structure with placeholders.";
+            data.additionalInstructions = (data.additionalInstructions || '') + lowContentWarning;
+        }
         const config = psychological_reports_config_1.PSYCHOLOGICAL_REPORTS[data.reportType];
         if (!config) {
             throw new common_1.BadRequestException('Tipo de informe no válido');
         }
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true }
+        });
+        console.log(`[ReportsService] Calling AI Service... Report Type: ${data.reportType}, Language: ${user?.preferredLanguage}`);
         const draftContent = await this.aiService.generateReportDraft({
             clientName,
             reportType: data.reportType,
@@ -296,8 +317,10 @@ let ReportsService = class ReportsService {
             period,
             notesSummary,
             firstSessionNote: config.useFirstSession ? firstSessionNote : undefined,
-            additionalInstructions: data.additionalInstructions
+            additionalInstructions: data.additionalInstructions,
+            language: user?.preferredLanguage || 'es'
         });
+        console.log(`[ReportsService] Draft generated. Length: ${draftContent.length}`);
         await this.auditService.log({
             userId,
             action: client_2.AuditAction.CREATE,

@@ -707,7 +707,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
             discurs_pacient,
             temes_emergents_sessio,
             diagnostic_final,
-            disclaimer: "La IA no assigna, no prescriu ni interpreta proves psicològiques. La decisió clínica correspon exclusivament al professional.",
+            disclaimer: "La IA no assigna, no prescriu ni interpreta proves psicològiques. La decisió clínica correspon exclusivament al professional. Aquest document ha estat generat mitjançant un sistema d’anàlisi automatitzada del llenguatge, sense accés a informació externa ni contextual.",
             audit_session,
             clinical_report_text,
             audit_minors
@@ -785,7 +785,8 @@ Genera suggeriments en temps real format JSON.
         notesSummary: string;
         firstSessionNote?: string;
         additionalInstructions?: string;
-        languageProfile?: string; // Added language profile
+        languageProfile?: string;
+        language?: string; // Restoring language param
     }): Promise<string> {
 
         // --- 1. PROMPT SELECTION LOGIC ---
