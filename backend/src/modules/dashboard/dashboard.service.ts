@@ -79,21 +79,22 @@ export class DashboardService {
         const previousActiveClients = Math.max(0, activeClientsCount - newClientsThisMonth);
 
         // Calculate Hours
-        // Calculate Hours with fallback to timestamps
-        const totalMinutes = completedSessions.reduce((acc, s) => {
+        // duration is now stored in SECONDS
+        const totalSeconds = completedSessions.reduce((acc, s) => {
             if (s.duration && s.duration > 0) {
                 return acc + s.duration;
             }
             // Fallback: Calculate from start/end times if duration is missing
             if (s.startTime && s.endTime) {
                 const diffMs = new Date(s.endTime).getTime() - new Date(s.startTime).getTime();
-                const diffMins = Math.round(diffMs / 60000);
-                return acc + (diffMins > 0 ? diffMins : 0);
+                const diffSeconds = Math.round(diffMs / 1000);
+                return acc + (diffSeconds > 0 ? diffSeconds : 0);
             }
             return acc;
         }, 0);
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
+
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
         const formattedHours = `${hours}h ${minutes}m`;
 
         // Calculate Session Types

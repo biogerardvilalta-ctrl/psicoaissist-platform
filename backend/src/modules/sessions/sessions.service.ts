@@ -261,8 +261,8 @@ export class SessionsService {
         let duration = session.duration;
         if (newStartTime && newEndTime) {
             const diffMs = newEndTime.getTime() - newStartTime.getTime();
-            const diffMins = Math.round(diffMs / 60000);
-            duration = diffMins > 0 ? diffMins : 0;
+            const diffSeconds = Math.round(diffMs / 1000);
+            duration = diffSeconds > 0 ? diffSeconds : 0;
         }
 
         const updatedSession = await this.prisma.session.update({
@@ -428,6 +428,7 @@ ${transcriptionToReturn || ''}
             notes: decryptedNotes,
             transcription: decryptedTranscription,
             methodology: session.aiMetadata?.manual_methodology,
+            duration: session.duration,
             clientName: clientName,
             client: session.client,
             aiMetadata: session.aiMetadata,

@@ -14,6 +14,7 @@ export declare class SessionsController {
         notes: string;
         transcription: string;
         methodology: any;
+        duration: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -31,6 +32,7 @@ export declare class SessionsController {
         notes: string;
         transcription: string;
         methodology: any;
+        duration: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -48,6 +50,7 @@ export declare class SessionsController {
         notes: string;
         transcription: string;
         methodology: any;
+        duration: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -65,6 +68,7 @@ export declare class SessionsController {
         notes: string;
         transcription: string;
         methodology: any;
+        duration: any;
         clientName: string;
         client: any;
         aiMetadata: any;
@@ -82,6 +86,7 @@ export declare class SessionsController {
         notes: string;
         transcription: string;
         methodology: any;
+        duration: any;
         clientName: string;
         client: any;
         aiMetadata: any;

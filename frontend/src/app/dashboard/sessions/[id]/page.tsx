@@ -321,12 +321,6 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         </Button>
                     )}
 
-                    {session.status === SessionStatus.COMPLETED && session.duration && (
-                        <div className="mr-4 font-mono text-sm font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-md border border-slate-200 flex items-center gap-2">
-                            <Clock className="h-3 w-3" />
-                            {Math.floor(session.duration / 60)}h {session.duration % 60}m
-                        </div>
-                    )}
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -367,7 +361,21 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                             {client.firstName[0]}{client.lastName[0]}
                                         </div>
                                         <div>
-                                            <p className="font-medium">{client.firstName} {client.lastName}</p>
+                                            <p className="font-medium flex items-center gap-2">
+                                                {client.firstName} {client.lastName}
+                                                {session.status === SessionStatus.COMPLETED && session.duration !== undefined && (
+                                                    <Badge variant="secondary" className="text-[10px] font-normal h-5 px-1.5 bg-green-50 text-green-700 hover:bg-green-100 border-green-100">
+                                                        <Clock className="w-3 h-3 mr-1" />
+                                                        <span className="mr-1">Duración de la sesión:</span>
+                                                        {(() => {
+                                                            const h = Math.floor(session.duration! / 3600);
+                                                            const m = Math.floor((session.duration! % 3600) / 60);
+                                                            const s = session.duration! % 60;
+                                                            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                                                        })()}
+                                                    </Badge>
+                                                )}
+                                            </p>
                                             <p className="text-xs text-muted-foreground">Paciente Activo</p>
                                         </div>
                                     </div>
