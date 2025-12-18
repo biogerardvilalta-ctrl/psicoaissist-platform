@@ -79,6 +79,12 @@ export default function NewSessionPage() {
         },
     });
 
+    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+    const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+
+    // Watch for date changes to fetch availability
+    const selectedDate = form.watch('date');
+
     useEffect(() => {
         const fetchClients = async () => {
             try {
@@ -106,6 +112,26 @@ export default function NewSessionPage() {
 
         fetchClients();
     }, [toast, preselectedClientId, form]);
+
+    useEffect(() => {
+        const fetchAvailability = async () => {
+            if (!selectedDate) return;
+
+            setIsLoadingSlots(true);
+            try {
+                // Ensure correct formatted date YYYY-MM-DD
+                const data = await SessionsAPI.getAvailability(selectedDate);
+                setAvailableSlots(data.slots);
+            } catch (error) {
+                console.error("Failed to fetch slots", error);
+                // Optionally toast
+            } finally {
+                setIsLoadingSlots(false);
+            }
+        };
+
+        fetchAvailability();
+    }, [selectedDate]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
@@ -213,13 +239,31 @@ export default function NewSessionPage() {
                                     name="time"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Hora</FormLabel>
-                                            <FormControl>
-                                                <div className="relative">
-                                                    <Clock className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                                                    <Input type="time" className="pl-9" {...field} />
-                                                </div>
-                                            </FormControl>
+                                            <FormLabel>Hora Disponible</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                                disabled={isLoadingSlots}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder={isLoadingSlots ? "Cargando horarios..." : "Seleccionar hora"} />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {availableSlots.length > 0 ? (
+                                                        availableSlots.map((slot) => (
+                                                            <SelectItem key={slot} value={slot}>
+                                                                {slot}
+                                                            </SelectItem>
+                                                        ))
+                                                    ) : (
+                                                        <div className="p-2 text-sm text-muted-foreground text-center">
+                                                            No hay horarios disponibles
+                                                        </div>
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}

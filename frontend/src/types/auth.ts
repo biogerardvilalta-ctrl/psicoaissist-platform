@@ -11,6 +11,11 @@ export interface User {
     currentPeriodEnd?: string;
   };
   enableReminders: boolean;
+  defaultDuration?: number;
+  bufferTime?: number;
+  workStartHour?: string;
+  workEndHour?: string;
+  preferredLanguage?: string;
 }
 
 export interface AuthTokens {

@@ -432,8 +432,115 @@ ${transcriptionToReturn || ''}
             clientName: clientName,
             client: session.client,
             aiMetadata: session.aiMetadata,
-            aiSuggestions: session.aiSuggestions,
-            isMinor: session.isMinor
         };
+    }
+
+    async getAvailability(userId: string, dateStr: string) {
+        // 1. Get User Config
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                workStartHour: true,
+                workEndHour: true,
+                defaultDuration: true,
+                bufferTime: true
+            }
+        });
+
+        if (!user) throw new Error('User not found');
+
+        const { workStartHour, workEndHour, defaultDuration, bufferTime } = user;
+        const totalSlotDuration = defaultDuration + bufferTime;
+
+        // 2. Parse Date & Working Hours
+        const targetDate = new Date(dateStr);
+        targetDate.setHours(0, 0, 0, 0);
+
+        const [startH, startM] = workStartHour.split(':').map(Number);
+        const [endH, endM] = workEndHour.split(':').map(Number);
+
+        const workStart = new Date(targetDate);
+        workStart.setHours(startH, startM, 0, 0);
+
+        const workEnd = new Date(targetDate);
+        workEnd.setHours(endH, endM, 0, 0);
+
+        // 3. Get Existing Sessions for that day
+        const dayStart = new Date(targetDate);
+        const dayEnd = new Date(targetDate);
+        dayEnd.setHours(23, 59, 59, 999);
+
+        const sessions = await this.prisma.session.findMany({
+            where: {
+                userId,
+                startTime: { gte: dayStart, lte: dayEnd },
+                status: { notIn: ['CANCELLED'] } // Ignore cancelled
+            },
+            select: { startTime: true, endTime: true, duration: true }
+        });
+
+        // 4. Generate Slots
+        const slots: string[] = [];
+        let currentSlot = new Date(workStart);
+
+        while (currentSlot.getTime() + (defaultDuration * 60000) <= workEnd.getTime()) {
+            const slotEnd = new Date(currentSlot.getTime() + (defaultDuration * 60000));
+            // Actual session interval we want to book
+
+            // Check Collision
+            const hasCollision = sessions.some(s => {
+                const sStart = new Date(s.startTime);
+                // Calculate sEnd if missing (though our fix ensures it's there for completed, others might rely on default)
+                // Use stored duration if available, else default 60
+                const sDuration = (s.duration && s.duration > 0) ? (s.duration / 60) : 60; // stored in seconds? No, we migrated 60 to 60s? 
+                // Wait, in previous step we migrated duration to SECONDS. 
+                // BUT "defaultDuration" in User is likely MINUTES (60).
+                // Let's check schema: @default(60).
+                // "duration" in Session is Session.duration (Seconds).
+
+                let sEndTime = s.endTime ? new Date(s.endTime) : new Date(sStart.getTime() + 60 * 60000);
+
+                // If we have accurate duration, use it
+                if (s.duration) {
+                    sEndTime = new Date(sStart.getTime() + s.duration * 1000);
+                }
+
+                // Add buffer to the EXISTING session? Or is buffer time added to the NEW slot?
+                // "Tiempo entre sesiones". Usually means: Session A End + Buffer < Session B Start.
+                // Or Session A Start > Session B End + Buffer.
+                // Let's enforce the buffer *around* the new slot we are proposing?
+                // Or assume existing sessions *includes* their buffer? 
+                // Safer: Check if (NewSlotStart < ExistingEnd + Buffer) AND (NewSlotEnd + Buffer > ExistingStart)
+
+                // Let's assume buffer is required AFTER every session.
+                // So if I book 9:00-10:00. I am busy until 10:10.
+
+                // So collision check:
+                // Is there any overlap between [CurrentSlotStart, CurrentSlotEnd + Buffer] AND [ExistingStart, ExistingEnd + Buffer]?
+
+                const sEndWithBuffer = new Date(sEndTime.getTime() + (bufferTime * 60000));
+
+                // We define our proposed slot interval with buffer
+                // Proposed: [currentSlot, slotEnd + buffer]
+                const proposedEndWithBuffer = new Date(slotEnd.getTime() + (bufferTime * 60000));
+
+                return (currentSlot < sEndWithBuffer && proposedEndWithBuffer > sStart);
+            });
+
+            if (!hasCollision) {
+                // Format HH:MM
+                const timeStr = currentSlot.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+                slots.push(timeStr);
+            }
+
+            // Move to next potential slot
+            // option A: Fixed slots (9:00, 10:10, 11:20...)
+            // option B: Every 30 mins? 
+            // The prompt says "tener en cuenta la durada de la sesion y el tiempo entre sesiones"
+            // Usually this implies Fixed Slots derived from start time + duration + buffer.
+            currentSlot = new Date(currentSlot.getTime() + (totalSlotDuration * 60000));
+        }
+
+        return { date: dateStr, slots };
     }
 }

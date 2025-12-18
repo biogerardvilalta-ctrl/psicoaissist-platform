@@ -356,9 +356,63 @@ ${transcriptionToReturn || ''}
             clientName: clientName,
             client: session.client,
             aiMetadata: session.aiMetadata,
-            aiSuggestions: session.aiSuggestions,
-            isMinor: session.isMinor
         };
+    }
+    async getAvailability(userId, dateStr) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                workStartHour: true,
+                workEndHour: true,
+                defaultDuration: true,
+                bufferTime: true
+            }
+        });
+        if (!user)
+            throw new Error('User not found');
+        const { workStartHour, workEndHour, defaultDuration, bufferTime } = user;
+        const totalSlotDuration = defaultDuration + bufferTime;
+        const targetDate = new Date(dateStr);
+        targetDate.setHours(0, 0, 0, 0);
+        const [startH, startM] = workStartHour.split(':').map(Number);
+        const [endH, endM] = workEndHour.split(':').map(Number);
+        const workStart = new Date(targetDate);
+        workStart.setHours(startH, startM, 0, 0);
+        const workEnd = new Date(targetDate);
+        workEnd.setHours(endH, endM, 0, 0);
+        const dayStart = new Date(targetDate);
+        const dayEnd = new Date(targetDate);
+        dayEnd.setHours(23, 59, 59, 999);
+        const sessions = await this.prisma.session.findMany({
+            where: {
+                userId,
+                startTime: { gte: dayStart, lte: dayEnd },
+                status: { notIn: ['CANCELLED'] }
+            },
+            select: { startTime: true, endTime: true, duration: true }
+        });
+        const slots = [];
+        let currentSlot = new Date(workStart);
+        while (currentSlot.getTime() + (defaultDuration * 60000) <= workEnd.getTime()) {
+            const slotEnd = new Date(currentSlot.getTime() + (defaultDuration * 60000));
+            const hasCollision = sessions.some(s => {
+                const sStart = new Date(s.startTime);
+                const sDuration = (s.duration && s.duration > 0) ? (s.duration / 60) : 60;
+                let sEndTime = s.endTime ? new Date(s.endTime) : new Date(sStart.getTime() + 60 * 60000);
+                if (s.duration) {
+                    sEndTime = new Date(sStart.getTime() + s.duration * 1000);
+                }
+                const sEndWithBuffer = new Date(sEndTime.getTime() + (bufferTime * 60000));
+                const proposedEndWithBuffer = new Date(slotEnd.getTime() + (bufferTime * 60000));
+                return (currentSlot < sEndWithBuffer && proposedEndWithBuffer > sStart);
+            });
+            if (!hasCollision) {
+                const timeStr = currentSlot.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+                slots.push(timeStr);
+            }
+            currentSlot = new Date(currentSlot.getTime() + (totalSlotDuration * 60000));
+        }
+        return { date: dateStr, slots };
     }
 };
 exports.SessionsService = SessionsService;

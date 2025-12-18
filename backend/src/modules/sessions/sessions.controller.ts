@@ -27,6 +27,11 @@ export class SessionsController {
         return this.sessionsService.findByDateRange(req.user.id, start, end);
     }
 
+    @Get('availability')
+    getAvailability(@Request() req, @Query('date') date: string) {
+        return this.sessionsService.getAvailability(req.user.id, date);
+    }
+
     @Get(':id')
     findOne(@Request() req, @Param('id') id: string) {
         return this.sessionsService.findOne(id, req.user.id);

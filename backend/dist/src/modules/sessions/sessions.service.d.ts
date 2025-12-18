@@ -26,8 +26,6 @@ export declare class SessionsService {
         clientName: string;
         client: any;
         aiMetadata: any;
-        aiSuggestions: any;
-        isMinor: any;
     }>;
     findAll(userId: string): Promise<{
         id: any;
@@ -44,8 +42,6 @@ export declare class SessionsService {
         clientName: string;
         client: any;
         aiMetadata: any;
-        aiSuggestions: any;
-        isMinor: any;
     }[]>;
     findByDateRange(userId: string, start: string, end: string): Promise<{
         id: any;
@@ -62,8 +58,6 @@ export declare class SessionsService {
         clientName: string;
         client: any;
         aiMetadata: any;
-        aiSuggestions: any;
-        isMinor: any;
     }[]>;
     findOne(id: string, userId: string): Promise<{
         id: any;
@@ -80,8 +74,6 @@ export declare class SessionsService {
         clientName: string;
         client: any;
         aiMetadata: any;
-        aiSuggestions: any;
-        isMinor: any;
     }>;
     update(id: string, userId: string, updateSessionDto: UpdateSessionDto): Promise<{
         id: any;
@@ -98,12 +90,14 @@ export declare class SessionsService {
         clientName: string;
         client: any;
         aiMetadata: any;
-        aiSuggestions: any;
-        isMinor: any;
     }>;
     remove(id: string, userId: string): Promise<{
         success: boolean;
     }>;
     private unpackClientData;
     private mapToDto;
+    getAvailability(userId: string, dateStr: string): Promise<{
+        date: string;
+        slots: string[];
+    }>;
 }

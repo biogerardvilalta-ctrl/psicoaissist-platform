@@ -31,8 +31,28 @@ interface CalendarViewProps {
     onViewChange: (view: View) => void;
 }
 
+import { useAuth } from '@/contexts/auth-context';
+
 export function CalendarView({ sessions, onNavigate, currentDate, view, onViewChange }: CalendarViewProps) {
     const router = useRouter();
+    const { user } = useAuth();
+
+    // Calculate min/max times from user config or defaults
+    const minTime = new Date();
+    minTime.setHours(9, 0, 0); // Default 09:00
+
+    const maxTime = new Date();
+    maxTime.setHours(18, 0, 0); // Default 18:00
+
+    if (user && user.workStartHour) {
+        const [h, m] = user.workStartHour.split(':').map(Number);
+        minTime.setHours(h, m, 0);
+    }
+
+    if (user && user.workEndHour) {
+        const [h, m] = user.workEndHour.split(':').map(Number);
+        maxTime.setHours(h, m, 0);
+    }
 
     const events = sessions.map(session => ({
         id: session.id,
@@ -116,6 +136,8 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
                     eventPropGetter={eventStyleGetter}
                     onSelectEvent={handleSelectEvent}
                     onSelectSlot={handleSelectSlot}
+                    min={minTime}
+                    max={maxTime}
                     selectable
                     messages={{
                         next: "Siguiente",

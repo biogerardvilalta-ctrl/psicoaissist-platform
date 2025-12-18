@@ -30,6 +30,9 @@ let SessionsController = class SessionsController {
     findByDateRange(req, start, end) {
         return this.sessionsService.findByDateRange(req.user.id, start, end);
     }
+    getAvailability(req, date) {
+        return this.sessionsService.getAvailability(req.user.id, date);
+    }
     findOne(req, id) {
         return this.sessionsService.findOne(id, req.user.id);
     }
@@ -65,6 +68,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", void 0)
 ], SessionsController.prototype, "findByDateRange", null);
+__decorate([
+    (0, common_1.Get)('availability'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Query)('date')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], SessionsController.prototype, "getAvailability", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Request)()),

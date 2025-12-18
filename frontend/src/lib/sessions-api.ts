@@ -91,4 +91,8 @@ export class SessionsAPI {
     static async delete(id: string): Promise<void> {
         return httpClient.delete<void>(`${this.BASE_PATH}/${id}`);
     }
+
+    static async getAvailability(date: string): Promise<{ date: string; slots: string[] }> {
+        return httpClient.get<{ date: string; slots: string[] }>(`${this.BASE_PATH}/availability?date=${date}`);
+    }
 }
