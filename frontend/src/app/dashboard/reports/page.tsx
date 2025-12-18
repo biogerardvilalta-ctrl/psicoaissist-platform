@@ -53,13 +53,16 @@ export default function ReportsPage() {
         return matchesSearch && matchesStatus && matchesType;
     });
 
-    const handleDownload = async (id: string, title: string) => {
+    const handleDownload = async (id: string, title: string, clientName?: string) => {
         try {
             const blob = await ReportsAPI.download(id);
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
+            const safeTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const safeClient = clientName ? clientName.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'report';
+            const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            link.download = `${safeClient}_${safeTitle}_${dateStr}.pdf`;
             link.click();
             window.URL.revokeObjectURL(url);
         } catch (e) {
@@ -197,7 +200,7 @@ export default function ReportsPage() {
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         {report.status === 'COMPLETED' ? (
                                             <button
-                                                onClick={() => handleDownload(report.id, report.title)}
+                                                onClick={() => handleDownload(report.id, report.title, clientMap[report.clientId])}
                                                 className="text-blue-600 hover:text-blue-900 mr-4"
                                                 title="Descargar PDF"
                                             >

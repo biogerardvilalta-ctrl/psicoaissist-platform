@@ -660,140 +660,36 @@ Genera suggeriments en temps real format JSON.
             customSections: data.sections.join('\n') || (data.additionalInstructions ? data.additionalInstructions : 'Estructura lliure'),
             languageProfile: languageBlock
         });
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        const now = new Date().toLocaleDateString('es-ES');
-        const getSimulatedResponse = (type) => {
-            const commonHeader = `
-            <div class="report-container" style="font-family: 'Segoe UI', serif; color: #333; line-height: 1.6; max-width: 800px; margin: 0 auto;">
-                <div style="text-align: center; margin-bottom: 3rem; border-bottom: 2px solid #333; padding-bottom: 1rem;">
-                    <h1 style="margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">INFORME PROFESSIONAL PSICOLÒGIC</h1>
-                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666; text-transform: uppercase;">Document Confidencial</p>
-                </div>
-                <div style="margin-bottom: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 4px;">
-                    <h3 style="margin-top:0; margin-bottom: 1rem; border-bottom: 1px solid #ddd; font-size: 14px; text-transform: uppercase; color: #666;">Dades de Identificació</h3>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                        <tr><td style="width: 35%; padding: 4px 0;"><strong>Tipus d’informe:</strong></td><td>${type}</td></tr>
-                        <tr><td style="padding: 4px 0;"><strong>Pacient:</strong></td><td>${data.clientName}</td></tr>
-                        <tr><td style="padding: 4px 0;"><strong>Data d'emissió:</strong></td><td>${now}</td></tr>
-                        <tr><td style="padding: 4px 0;"><strong>Període avaluat:</strong></td><td>${data.period}</td></tr>
-                         <tr><td style="padding: 4px 0;"><strong>Perfil Lingüístic:</strong></td><td>${data.languageProfile || 'ADULT'}</td></tr>
-                    </table>
-                </div>`;
-            const commonFooter = `
-                <div style="margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 10px; color: #999; text-align: center;">
-                    <p>Aquest informe ha estat redactat amb el suport d’una eina d’intel·ligència artificial i revisat per un/a professional col·legiat/da.</p>
-                    <p style="margin-top: 5px;">PsychoAI Platform - Versió amb seguretat avançada</p>
-                </div>
-            </div>`;
-            let bodyContent = '';
-            switch (type) {
-                case 'INITIAL_EVALUATION':
-                    bodyContent = `
-                    <h3>1. Motiu de consulta</h3>
-                    <p>El pacient ${data.clientName} assisteix a consulta descrivint un malestar generalitzat relacionat amb... [Text generat per IA basat en: ${data.firstSessionNote || 'Notes inicials'}]</p>
-                    
-                    <h3>2. Antecedents rellevants</h3>
-                    <p>No consten antecedents psiquiàtrics previs destacables, segons la informació recollida en les ${data.sessionCount} sessions realitzades.</p>
-                    
-                    <h3>3. Observacions clíniques inicials</h3>
-                    <p>Durant les primeres entrevistes, s'observa uan actitud col·laboradora però amb indicadors d'ansietat...</p>
-                    
-                    <h3>4. Hipòtesis orientatives</h3>
-                    <p>La simptomatologia suggeriria una reacció adaptativa a estressors recents, sense que es pugui establir un diagnòstic tancat en aquest moment.</p>
-                    
-                    <h3>5. Proposta d’intervenció</h3>
-                    <p>S’aconsella iniciar un procés de psicoteràpia cognitiu-conductual focalitzat en...</p>
-                    `;
-                    break;
-                case 'PROGRESS':
-                    bodyContent = `
-                    <h3>1. Context del procés terapèutic</h3>
-                    <p>S'han realitzat un total de ${data.sessionCount} sessions durant el període ${data.period}.</p>
-                    
-                    <h3>2. Evolució clínica</h3>
-                    <p>S'observa una progressiva disminució de la simptomatologia ansiosa reportada inicialment.</p>
-                    
-                    <h3>3. Canvis observats</h3>
-                    <p>El pacient ha començat a implementar estratègies d'afrontament més funcionals...</p>
-                    
-                    <h3>4. Orientacions actuals</h3>
-                    <p>Es recomana mantenir la periodicitat de les sessions per consolidar els canvis.</p>
-                    `;
-                    break;
-                case 'DISCHARGE':
-                    bodyContent = `
-                    <h3>1. Motiu d’alta</h3>
-                    <p>El pacient ha assolit els objectius terapèutics establerts a l'inici del tractament.</p>
-                    
-                    <h3>2. Resum del procés</h3>
-                    <p>Des de l'inici (${data.firstSessionNote}), s'ha treballat en la regulació emocional...</p>
-                    
-                    <h3>3. Objectius assolits</h3>
-                    <p>- Millora de la gestió de l'estrès.<br>- Reducció de la simptomatologia física.</p>
-                    
-                    <h3>4. Recomanacions finals</h3>
-                    <p>Es suggereix mantenir hàbits saludables i sol·licitar visita de seguiment en 6 mesos si fos necessari.</p>
-                    `;
-                    break;
-                case 'REFERRAL':
-                    bodyContent = `
-                    <h3>1. Motiu de derivació</h3>
-                    <p>Es sol·licita valoració per part de servei especialitzat en psiquiatria.</p>
-                    
-                    <h3>2. Estat actual</h3>
-                    <p>Persistència de simptomatologia tot i l'abordatge psicoterapèutic durant ${data.sessionCount} sessions.</p>
-                    
-                    <h3>3. Objectiu</h3>
-                    <p>Valoració de necessitat de suport farmacològic complementari.</p>
-                    `;
-                    break;
-                case 'LEGAL':
-                    bodyContent = `
-                    <div style="border: 1px solid #d63384; padding: 10px; margin-bottom: 20px; color: #d63384; font-size: 12px; font-weight: bold;">
-                        MODE SAFE FORENSIC ACTIU: Llenguatge restrictiu aplicat.
-                    </div>
-
-                    <h3>1. Objecte de l’informe</h3>
-                    <p>Valoració de l'estat psicològic actual a petició de part.</p>
-                    
-                    <h3>2. Metodologia</h3>
-                    <p>Entrevistes clíniques i observació conductual durant ${data.sessionCount} sessions.</p>
-                    
-                    <h3>3. Fets observats</h3>
-                    <p>Es constata una presentació personal adequada i un discurs coherent.</p>
-                    
-                    <h3>4. Manifestacions del/la pacient</h3>
-                    <p>El pacient manifesta: "Em sento incapaç de tornar a la feina des dels fets".</p>
-                    
-                    <h3>5. Consideracions tècniques</h3>
-                    <p>La simptomatologia observada és compatible amb quadres reactius, sense que es pugui determinar causalitat directa única amb la informació disponible.</p>
-                    
-                    <h3>6. Conclusions</h3>
-                    <p>A data d'avui, el pacient presenta indicadors de malestar clínicament significatiu. No es detecten indicadors de simulació en l'exploració actual.</p>
-                    `;
-                    break;
-                case 'INSURANCE':
-                    bodyContent = `
-                    <h3>1. Motiu de la intervenció</h3>
-                    <p>Tractament psicològic per ansietat.</p>
-                    
-                    <h3>2. Dades del tractament</h3>
-                    <p>Iniciat el ${data.period}. Nombre de sessions: ${data.sessionCount}.</p>
-                    
-                    <h3>3. Evolució</h3>
-                    <p>Favorable. Es preveu la necessitat de 10 sessions addicionals.</p>
-                    `;
-                    break;
-                default:
-                    bodyContent = data.sections.map((sec, i) => `
-                        <h3>${i + 1}. ${sec}</h3>
-                        <p>[Contingut personalitzat per a la secció "${sec}"]</p>
-                    `).join('');
-            }
-            return commonHeader + bodyContent + commonFooter;
-        };
-        const content = getSimulatedResponse(data.reportType);
-        return content;
+        try {
+            const model = this.genAI.getGenerativeModel({
+                model: "gemini-2.0-flash",
+                generationConfig: {
+                    temperature: 0.3,
+                    maxOutputTokens: 8192,
+                    responseMimeType: "text/plain",
+                },
+                systemInstruction: OFFICIAL_REPORT_SYSTEM_PROMPT + `
+                
+                FORMAT DE SORTIDA OBLIGATORI:
+                - Retorna EXCLUSIVAMENT codi HTML net dins d'un <div> principal.
+                - Fes servir <h3> per als títols de secció (ex: 3. Fonts d'informació).
+                - Fes servir <p> per als paràgrafs.
+                - Fes servir <ul> i <li> per a llistes.
+                - SI fas servir taules, fes servir <table>, <tr>, <td> amb estil simple (border="1" style="border-collapse: collapse; width: 100%;").
+                - NO facis servir Markdown (no facis servir **, ##, ni taules amb |).
+                - Assegura't de tancar totes les etiquetes.
+                `
+            });
+            const result = await model.generateContent(prompt);
+            const response = result.response;
+            let text = response.text();
+            text = text.replace(/^```html/, '').replace(/```$/, '').trim();
+            return text;
+        }
+        catch (error) {
+            console.error("Error generating report with AI:", error);
+            throw new Error("Error en la generación del informe con IA. Por favor, inténtelo de nuevo.");
+        }
     }
 };
 exports.AiService = AiService;

@@ -509,7 +509,10 @@ export default function NewReportPage() {
                                                 const url = window.URL.createObjectURL(blob);
                                                 const link = document.createElement('a');
                                                 link.href = url;
-                                                link.download = `informe-${savedReportId}.pdf`;
+                                                const client = clients.find(c => c.id === selectedClientId);
+                                                const clientName = client ? `${client.firstName}_${client.lastName}` : 'paciente';
+                                                const dateStr = new Date().toISOString().split('T')[0];
+                                                link.download = `${clientName.replace(/\s+/g, '_').toLowerCase()}_informe_${dateStr}.pdf`;
                                                 link.click();
                                                 window.URL.revokeObjectURL(url);
                                             } catch (e) {

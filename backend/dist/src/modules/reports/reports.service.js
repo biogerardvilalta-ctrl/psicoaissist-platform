@@ -295,7 +295,7 @@ let ReportsService = class ReportsService {
         const period = `${sessions[0].startTime.toLocaleDateString()} - ${sessions[sessions.length - 1].startTime.toLocaleDateString()}`;
         if (totalCharCount < 200) {
             console.warn(`[ReportsService] Low content detected (${totalCharCount} chars). Injecting warning to AI.`);
-            const lowContentWarning = " \n\n[SYSTEM WARNING]: The provided session data is extremely sparse (only a few sentences). DO NOT Hallucinate details. Instead, explicitly state in the report that the available information is insufficient to generate a complete clinical analysis, and provide a generic template structure with placeholders.";
+            const lowContentWarning = " \n\n[SYSTEM WARNING]: The provided session data is extremely sparse (only a few sentences). DO NOT Hallucinate details. INSTEAD, structure the report saying that 'due to insufficient information, a complete analysis cannot be performed yet', and list only the very few objective facts available. Do not generate a full template if you don't have data.";
             data.additionalInstructions = (data.additionalInstructions || '') + lowContentWarning;
         }
         const config = psychological_reports_config_1.PSYCHOLOGICAL_REPORTS[data.reportType];

@@ -69,24 +69,33 @@ export class PdfService {
             this.parseHtmlContent(doc, reportData.content || '(Sin contenido)', PRIMARY_COLOR);
 
             // --- Signature Block ---
-            doc.moveDown(4);
-            const signatureY = doc.y;
+            // --- Signature Block ---
+            // Calculate required space for signature (~150pt)
+            const requiredSpace = 150;
+            // Check usage against margin-adjusted bottom
+            const bottomMargin = 50;
+            const spaceRemaining = doc.page.height - doc.y - bottomMargin;
 
-            // Check if we need a new page for signature
-            if (signatureY > doc.page.height - 200) {
+            // Only add page if we really don't have space
+            if (spaceRemaining < requiredSpace) {
                 doc.addPage();
             }
 
+            doc.moveDown(2);
+
             // --- Mandatory Legal Disclaimer (3.2) ---
             doc.moveDown(2);
-            doc.rect(50, doc.y, 495, 45).fill('#F8FAFC');
+            const disclaimerY = doc.y;
+            doc.rect(50, disclaimerY, 495, 45).fill('#F8FAFC');
             doc.fillColor('#64748B').fontSize(9);
             doc.text(
                 'Aquest informe ha estat redactat amb el suport d’una eina d’intel·ligència artificial i revisat, validat i assumit per un/a professional col·legiat/da.',
                 60,
-                doc.y - 35,
+                disclaimerY + 12, // Manual padding inside box
                 { width: 475, align: 'center' }
             );
+            // Reset Y after text with absolute positioning inside box
+            doc.y = disclaimerY + 45;
 
             doc.moveDown(2);
 
@@ -101,9 +110,6 @@ export class PdfService {
             doc.text(`Núm. Col·legiat/da: ${reportData.professionalNumber || '[Núm]'}`, { align: 'left' });
 
             // --- Footer & Pagination ---
-            // We'll apply this to all pages at the end ideally, but for now simple footer on current is fine.
-            // For proper "all pages", we iterate buffered pages.
-
             const pages = doc.bufferedPageRange();
             for (let i = 0; i < pages.count; i++) {
                 doc.switchToPage(i);
@@ -120,39 +126,43 @@ export class PdfService {
     }
 
     private drawHeader(doc: PDFKit.PDFDocument, primary: string, secondary: string) {
-        // Logo Placeholder (Heart icon representation)
-        // Draw a circle background
+        // Logo Placeholder
         doc.circle(70, 60, 20).fill(primary);
-        // White heart-ish shape (simplified as text for now or vector path)
         doc.font('Helvetica-Bold').fontSize(20).fillColor('white').text('P', 63, 53);
 
-        // Text Logo
         doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text('PsychoAI', 100, 45);
         doc.font('Helvetica').fontSize(10).fillColor('#64748B').text('Asistente Clínico Inteligente', 100, 68);
 
-        // Top right decorative line
         doc.moveTo(350, 60).lineTo(545, 60).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
     }
 
     private addFooter(doc: PDFKit.PDFDocument, pageNum: number, totalPages: number, psychologistName?: string, professionalNumber?: string) {
-        const bottom = doc.page.height - 50;
+        // Temporarily disable bottom margin to allow writing in the footer area without triggering auto-addPage
+        const oldBottomMargin = doc.page.margins.bottom;
+        doc.page.margins.bottom = 0;
 
-        doc.moveTo(50, bottom - 25).lineTo(545, bottom - 25).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
+        const bottom = doc.page.height - 40; // Write inside the margin area (margin was 50)
+
+        doc.moveTo(50, bottom - 15).lineTo(545, bottom - 15).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
 
         // Professional Info
         if (psychologistName) {
             doc.font('Helvetica-Bold').fontSize(9).fillColor('#475569');
-            doc.text(`${psychologistName}`, 50, bottom - 10, { width: 300 });
+            doc.text(`${psychologistName}`, 50, bottom - 10, { width: 300, lineBreak: false });
             doc.font('Helvetica').fontSize(8).fillColor('#64748B');
             if (professionalNumber) {
-                doc.text(`Col. Nº ${professionalNumber}`, 50, bottom + 2);
+                // Ensure text calls do not trigger flow weirdness
+                doc.text(`Col. Nº ${professionalNumber}`, 50, bottom + 2, { lineBreak: false });
             }
         }
 
         doc.font('Helvetica').fontSize(8).fillColor('#94A3B8');
-        doc.text('Este documento contiene información clínica confidencial. El uso está restringido al profesional autorizado.', 200, bottom, { width: 220, align: 'center' });
+        doc.text('Este documento contiene información clínica confidencial. El uso está restringido al profesional autorizado.', 200, bottom, { width: 220, align: 'center', lineBreak: false });
 
-        doc.text(`Página ${pageNum} de ${totalPages}`, 450, bottom, { align: 'right', width: 100 });
+        doc.text(`Página ${pageNum} de ${totalPages}`, 450, bottom, { align: 'right', width: 100, lineBreak: false });
+
+        // Restore margin
+        doc.page.margins.bottom = oldBottomMargin;
     }
 
     private parseHtmlContent(doc: PDFKit.PDFDocument, html: string, headerColor: string) {

@@ -48,15 +48,19 @@ let PdfService = class PdfService {
             doc.fillColor(TEXT_COLOR);
             doc.y = startY + 110;
             this.parseHtmlContent(doc, reportData.content || '(Sin contenido)', PRIMARY_COLOR);
-            doc.moveDown(4);
-            const signatureY = doc.y;
-            if (signatureY > doc.page.height - 200) {
+            const requiredSpace = 150;
+            const bottomMargin = 50;
+            const spaceRemaining = doc.page.height - doc.y - bottomMargin;
+            if (spaceRemaining < requiredSpace) {
                 doc.addPage();
             }
             doc.moveDown(2);
-            doc.rect(50, doc.y, 495, 45).fill('#F8FAFC');
+            doc.moveDown(2);
+            const disclaimerY = doc.y;
+            doc.rect(50, disclaimerY, 495, 45).fill('#F8FAFC');
             doc.fillColor('#64748B').fontSize(9);
-            doc.text('Aquest informe ha estat redactat amb el suport d’una eina d’intel·ligència artificial i revisat, validat i assumit per un/a professional col·legiat/da.', 60, doc.y - 35, { width: 475, align: 'center' });
+            doc.text('Aquest informe ha estat redactat amb el suport d’una eina d’intel·ligència artificial i revisat, validat i assumit per un/a professional col·legiat/da.', 60, disclaimerY + 12, { width: 475, align: 'center' });
+            doc.y = disclaimerY + 45;
             doc.moveDown(2);
             doc.font('Helvetica-Bold').fontSize(11).fillColor(TEXT_COLOR);
             doc.text('Signat: El/La Psicòleg/òloga', 50, doc.y, { align: 'left' });
@@ -82,19 +86,22 @@ let PdfService = class PdfService {
         doc.moveTo(350, 60).lineTo(545, 60).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
     }
     addFooter(doc, pageNum, totalPages, psychologistName, professionalNumber) {
-        const bottom = doc.page.height - 50;
-        doc.moveTo(50, bottom - 25).lineTo(545, bottom - 25).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
+        const oldBottomMargin = doc.page.margins.bottom;
+        doc.page.margins.bottom = 0;
+        const bottom = doc.page.height - 40;
+        doc.moveTo(50, bottom - 15).lineTo(545, bottom - 15).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
         if (psychologistName) {
             doc.font('Helvetica-Bold').fontSize(9).fillColor('#475569');
-            doc.text(`${psychologistName}`, 50, bottom - 10, { width: 300 });
+            doc.text(`${psychologistName}`, 50, bottom - 10, { width: 300, lineBreak: false });
             doc.font('Helvetica').fontSize(8).fillColor('#64748B');
             if (professionalNumber) {
-                doc.text(`Col. Nº ${professionalNumber}`, 50, bottom + 2);
+                doc.text(`Col. Nº ${professionalNumber}`, 50, bottom + 2, { lineBreak: false });
             }
         }
         doc.font('Helvetica').fontSize(8).fillColor('#94A3B8');
-        doc.text('Este documento contiene información clínica confidencial. El uso está restringido al profesional autorizado.', 200, bottom, { width: 220, align: 'center' });
-        doc.text(`Página ${pageNum} de ${totalPages}`, 450, bottom, { align: 'right', width: 100 });
+        doc.text('Este documento contiene información clínica confidencial. El uso está restringido al profesional autorizado.', 200, bottom, { width: 220, align: 'center', lineBreak: false });
+        doc.text(`Página ${pageNum} de ${totalPages}`, 450, bottom, { align: 'right', width: 100, lineBreak: false });
+        doc.page.margins.bottom = oldBottomMargin;
     }
     parseHtmlContent(doc, html, headerColor) {
         let processedHtml = html
