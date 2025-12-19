@@ -13,7 +13,8 @@ export class AiController {
 
     @Post('session/:id/analyze')
     async analyzeSession(@Param('id') sessionId: string, @Body('notes') notes: string) {
-        return this.aiService.generateSessionAnalysis(sessionId, notes);
+        // Controller dummy call - passing notes as blank string for transcription if checking manually
+        return this.aiService.generateSessionAnalysis(sessionId, notes, "");
     }
 
     @Post('suggestions')

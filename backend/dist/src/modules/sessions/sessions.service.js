@@ -253,14 +253,9 @@ let SessionsService = class SessionsService {
         if (updateSessionDto.status === sessions_dto_1.SessionStatus.COMPLETED && (notesToReturn || transcriptionToReturn)) {
             try {
                 const isMinor = updatedSession.isMinor;
-                const fullText = `
-[NOTES]:
-${notesToReturn || ''}
-
-[TRANSCRIPTION]:
-${transcriptionToReturn || ''}
-`;
-                const analysis = await this.aiService.generateSessionAnalysis(id, fullText, isMinor);
+                const notesText = notesToReturn || '';
+                const transText = transcriptionToReturn || '';
+                const analysis = await this.aiService.generateSessionAnalysis(id, notesText, transText, isMinor);
                 const finalSession = await this.prisma.session.update({
                     where: { id },
                     data: {

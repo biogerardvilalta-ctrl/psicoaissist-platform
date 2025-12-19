@@ -305,15 +305,10 @@ export class SessionsService {
                 // However, user might want to analyze the transcription. 
                 // Let's pass 'notesToReturn' + 'transcriptionToReturn' combined?
                 // Current AI Service expects string.
-                const fullText = `
-[NOTES]:
-${notesToReturn || ''}
+                const notesText = notesToReturn || '';
+                const transText = transcriptionToReturn || '';
 
-[TRANSCRIPTION]:
-${transcriptionToReturn || ''}
-`;
-
-                const analysis = await this.aiService.generateSessionAnalysis(id, fullText, isMinor);
+                const analysis = await this.aiService.generateSessionAnalysis(id, notesText, transText, isMinor);
                 const finalSession = await this.prisma.session.update({
                     where: { id },
                     data: {

@@ -2,7 +2,7 @@ export declare class AiService {
     private genAI;
     constructor();
     private filterContent;
-    generateSessionAnalysis(sessionId: string, notes: string, isMinor?: boolean): Promise<{
+    generateSessionAnalysis(sessionId: string, notes: string, transcription: string, isMinor?: boolean): Promise<{
         summary: string;
         emotionalElements: string[];
         narrativeIndicators: string[];

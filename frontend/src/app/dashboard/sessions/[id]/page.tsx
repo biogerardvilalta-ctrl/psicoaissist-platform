@@ -26,14 +26,15 @@ import { useToast } from '@/hooks/use-toast';
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuSeparator,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { AiAssistantPanel } from '@/components/dashboard/sessions/ai-assistant-panel';
 import { ConsentModal } from '@/components/dashboard/sessions/consent-modal';
 import { Checkbox } from '@/components/ui/checkbox';
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 
 // ... (previous imports)
 import { useSocket } from '@/hooks/use-socket';
@@ -482,104 +483,119 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                     {
                         session.status === SessionStatus.COMPLETED && session.aiMetadata && (
                             <Card className="border-purple-100 bg-purple-50/20">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-purple-700">
-                                        <Brain className="h-5 w-5" />
-                                        Anàlisi de suport (IA)
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-6">
-                                    <div>
-                                        <h4 className="text-sm font-semibold text-blue-900 mb-1">Resum</h4>
-                                        <p className="text-sm text-slate-600 leading-relaxed mb-2">{session.aiMetadata.summary}</p>
+                                <CardHeader className="pb-2">
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle className="flex items-center gap-2 text-purple-700">
+                                            <Brain className="h-5 w-5" />
+                                            Informe de la IA
+                                        </CardTitle>
                                     </div>
-                                    {/* Emotional Elements */}
-                                    {session.aiMetadata.emotionalElements && session.aiMetadata.emotionalElements.length > 0 && (
-                                        <div>
-                                            <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Elements emocionals inferits a partir del discurs</h4>
-                                            <div className="flex flex-wrap gap-2">
-                                                {session.aiMetadata.emotionalElements.map((el: string, i: number) => (
-                                                    <Badge key={i} variant="secondary" className="bg-amber-50 text-amber-800 hover:bg-amber-100">
-                                                        {el}
-                                                    </Badge>
-                                                ))}
+                                </CardHeader>
+                                <CardContent>
+                                    <Tabs defaultValue="summary" className="w-full">
+                                        <TabsList className="grid w-full grid-cols-2 mb-4">
+                                            <TabsTrigger value="summary">Resum de Sessió</TabsTrigger>
+                                            <TabsTrigger value="analysis">Anàlisi Clínic</TabsTrigger>
+                                        </TabsList>
+
+                                        <TabsContent value="summary" className="space-y-4">
+                                            <div className="bg-white p-4 rounded-md border text-sm leading-relaxed text-slate-700 shadow-sm">
+                                                <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Resum Fàctic (Transcripció)</h4>
+                                                <p className="whitespace-pre-wrap">{session.aiMetadata.summary}</p>
                                             </div>
-                                        </div>
-                                    )}
+                                        </TabsContent>
 
-                                    {/* Narrative Indicators */}
-                                    {session.aiMetadata.narrativeIndicators && session.aiMetadata.narrativeIndicators.length > 0 && (
-                                        <div>
-                                            <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Indicadors Narratius</h4>
-                                            <ul className="list-disc pl-4 space-y-1">
-                                                {session.aiMetadata.narrativeIndicators.map((ind: string, i: number) => (
-                                                    <li key={i} className="text-sm text-slate-700">{ind}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-
-                                    {/* Clinical Follow-Up Support */}
-                                    {session.aiMetadata.clinicalFollowUpSupport && (
-                                        <>
-                                            {/* Suggestions */}
-                                            {session.aiMetadata.clinicalFollowUpSupport.suggestions && session.aiMetadata.clinicalFollowUpSupport.suggestions.length > 0 && (
+                                        <TabsContent value="analysis" className="space-y-6">
+                                            {/* Emotional Elements */}
+                                            {session.aiMetadata.emotionalElements && session.aiMetadata.emotionalElements.length > 0 && (
                                                 <div>
-                                                    <h4 className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Suggeriments Orientatius</h4>
-                                                    <p className="text-[10px] text-slate-500 italic mb-2">A tall de possibles línies de reflexió, sense caràcter prescriptiu:</p>
-                                                    <ul className="space-y-2">
-                                                        {session.aiMetadata.clinicalFollowUpSupport.suggestions.map((sug: string, i: number) => (
-                                                            <li key={i} className="text-sm text-slate-700 bg-blue-50/50 p-2 rounded border border-blue-100 flex gap-2">
-                                                                <span className="text-blue-500">•</span>
-                                                                {sug}
-                                                            </li>
+                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Elements emocionals inferits</h4>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {session.aiMetadata.emotionalElements.map((el: string, i: number) => (
+                                                            <Badge key={i} variant="secondary" className="bg-amber-50 text-amber-800 hover:bg-amber-100">
+                                                                {el}
+                                                            </Badge>
                                                         ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-
-                                            {/* Possible Lines of Work */}
-                                            {session.aiMetadata.clinicalFollowUpSupport.possibleLines && session.aiMetadata.clinicalFollowUpSupport.possibleLines.length > 0 && (
-                                                <div>
-                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Línies de Treball Possibles</h4>
-                                                    <ul className="list-disc pl-4 space-y-1">
-                                                        {session.aiMetadata.clinicalFollowUpSupport.possibleLines.map((line: string, i: number) => (
-                                                            <li key={i} className="text-sm text-slate-700">{line}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-
-                                    {/* Suggested Tests */}
-                                    {(session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.length || 0) > 0 && (
-                                        <div>
-                                            <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Instruments d'Avaluació Suggerits</h4>
-                                            <div className="space-y-3">
-                                                {session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.map((block: any, i: number) => (
-                                                    <div key={i} className="bg-slate-50 rounded-md p-3 border">
-                                                        <p className="font-medium text-sm text-slate-800 mb-2">{block.tema} <span className="text-xs font-normal text-slate-500">({block.categoria})</span></p>
-                                                        <ul className="space-y-2">
-                                                            {block.tests.map((test: any, j: number) => (
-                                                                <li key={j} className="text-sm bg-white p-2 rounded border shadow-sm">
-                                                                    <div className="flex justify-between items-start">
-                                                                        <span className="font-semibold text-indigo-700">{test.codi}</span>
-                                                                        <Badge variant="outline" className="text-[10px]">{test.nom}</Badge>
-                                                                    </div>
-                                                                    <p className="text-xs text-slate-600 mt-1">{test.objectiu_general}</p>
-                                                                    <p className="text-[10px] text-slate-400 mt-1 italic border-t pt-1">
-                                                                        Motiu suggeriment: {test.why_this_test_was_suggested?.descripcio_orientativa}
-                                                                    </p>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
                                                     </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                    <div className="pt-4 border-t border-purple-200">
+                                                </div>
+                                            )}
+
+                                            {/* Narrative Indicators */}
+                                            {session.aiMetadata.narrativeIndicators && session.aiMetadata.narrativeIndicators.length > 0 && (
+                                                <div>
+                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Indicadors Narratius</h4>
+                                                    <ul className="list-disc pl-4 space-y-1">
+                                                        {session.aiMetadata.narrativeIndicators.map((ind: string, i: number) => (
+                                                            <li key={i} className="text-sm text-slate-700">{ind}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {/* Clinical Follow-Up Support */}
+                                            {session.aiMetadata.clinicalFollowUpSupport && (
+                                                <>
+                                                    {/* Suggestions */}
+                                                    {session.aiMetadata.clinicalFollowUpSupport.suggestions && session.aiMetadata.clinicalFollowUpSupport.suggestions.length > 0 && (
+                                                        <div>
+                                                            <h4 className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Suggeriments Orientatius</h4>
+                                                            <p className="text-[10px] text-slate-500 italic mb-2">A tall de possibles línies de reflexió, sense caràcter prescriptiu:</p>
+                                                            <ul className="space-y-2">
+                                                                {session.aiMetadata.clinicalFollowUpSupport.suggestions.map((sug: string, i: number) => (
+                                                                    <li key={i} className="text-sm text-slate-700 bg-blue-50/50 p-2 rounded border border-blue-100 flex gap-2">
+                                                                        <span className="text-blue-500">•</span>
+                                                                        {sug}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Possible Lines of Work */}
+                                                    {session.aiMetadata.clinicalFollowUpSupport.possibleLines && session.aiMetadata.clinicalFollowUpSupport.possibleLines.length > 0 && (
+                                                        <div>
+                                                            <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Línies de Treball Possibles</h4>
+                                                            <ul className="list-disc pl-4 space-y-1">
+                                                                {session.aiMetadata.clinicalFollowUpSupport.possibleLines.map((line: string, i: number) => (
+                                                                    <li key={i} className="text-sm text-slate-700">{line}</li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+
+                                            {/* Suggested Tests */}
+                                            {(session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.length || 0) > 0 && (
+                                                <div>
+                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Instruments d'Avaluació Suggerits</h4>
+                                                    <div className="space-y-3">
+                                                        {session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.map((block: any, i: number) => (
+                                                            <div key={i} className="bg-slate-50 rounded-md p-3 border">
+                                                                <p className="font-medium text-sm text-slate-800 mb-2">{block.tema} <span className="text-xs font-normal text-slate-500">({block.categoria})</span></p>
+                                                                <ul className="space-y-2">
+                                                                    {block.tests.map((test: any, j: number) => (
+                                                                        <li key={j} className="text-sm bg-white p-2 rounded border shadow-sm">
+                                                                            <div className="flex justify-between items-start">
+                                                                                <span className="font-semibold text-indigo-700">{test.codi}</span>
+                                                                                <Badge variant="outline" className="text-[10px]">{test.nom}</Badge>
+                                                                            </div>
+                                                                            <p className="text-xs text-slate-600 mt-1">{test.objectiu_general}</p>
+                                                                            <p className="text-[10px] text-slate-400 mt-1 italic border-t pt-1">
+                                                                                Motiu suggeriment: {test.why_this_test_was_suggested?.descripcio_orientativa}
+                                                                            </p>
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </TabsContent>
+                                    </Tabs>
+
+                                    <div className="pt-4 border-t border-purple-200 mt-4">
                                         <p className="text-[10px] text-center text-slate-500 font-medium whitespace-pre-line">
                                             {session.aiMetadata.disclaimer || "Aquesta anàlisi no constitueix una valoració clínica, diagnòstica ni una avaluació de risc."}
                                         </p>

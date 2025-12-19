@@ -181,6 +181,16 @@ const RISK_DETECTION_PROMPT = `
 - Formular com a: "Expressions que requereixen atenció prioritària".
 `;
 
+const FACTUAL_SUMMARY_PROMPT = `
+Genera un resum EXCLUSIVAMENT FÀCTIC i DESCRIPTIU del contingut proporcionat.
+REGLES ERICTES:
+1. Només inclou informació explícita en el text (transcripció/notes).
+2. NO infereixis, NO interpretis, NO psicologitzis.
+3. NO facis diagnòstics ni usis etiquetes clíniques.
+4. Si el text és buit o molt breu, indica-ho ("Contingut insuficient per a resum").
+5. Estil: Tercera persona, objectiu, concís.
+`;
+
 const TEST_MAPPING = {
     "ansietat": {
         "categoria": "Ansietat, depressió i estrès",
@@ -309,7 +319,7 @@ export class AiService {
     /**
      * Generates a descriptive, non-diagnostic session analysis.
      */
-    async generateSessionAnalysis(sessionId: string, notes: string, isMinor: boolean = false): Promise<{
+    async generateSessionAnalysis(sessionId: string, notes: string, transcription: string, isMinor: boolean = false): Promise<{
         summary: string;
         emotionalElements: string[];
         narrativeIndicators: string[];
@@ -379,9 +389,45 @@ export class AiService {
         };
     }> {
         // Simulating the AI processing time
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        // await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        const lowerNotes = notes.toLowerCase();
+        // Combine for heuristics (legacy logic used 'notes' which contained fullText)
+        // Now 'notes' is just notes, 'transcription' is just transcription.
+        // We concatenate them for the heuristic checks to maintain broad coverage.
+        const lowerNotes = (notes + '\n' + transcription).toLowerCase();
+
+        // --- REAL SUMMARY GENERATION (RESTRICTED TO TRANSCRIPTION) ---
+        let generatedSummary = `Resum no disponible (Error en generació)`;
+        try {
+            // Only use TRANSCRIPTION for summary as requested
+            // But if transcription is empty, we can't summarize it. 
+            // Let's rely on transcription.
+
+            if (!transcription || transcription.trim().length < 5) {
+                generatedSummary = "No hi ha transcripció disponible per a generar el resum.";
+            } else {
+                console.log(`[AiService] Generating summary for transcription length: ${transcription.length}`);
+
+                try {
+                    // Using Gemini 2.0 Flash as it is available and fast
+                    const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+                    const result = await model.generateContent([
+                        FACTUAL_SUMMARY_PROMPT,
+                        `TRANSCRIPCIÓ A RESUMIR:\n${transcription}`
+                    ]);
+
+                    const response = await result.response;
+                    generatedSummary = response.text();
+                    console.log(`[AiService] Summary generated successfully.`);
+                } catch (innerError) {
+                    console.error("[AiService] Error generating summary:", innerError);
+                    generatedSummary = `Error generant resum: ${(innerError as any).message || 'Error desconegut'}`;
+                }
+            }
+        } catch (error) {
+            console.error("Error generating summary:", error);
+            generatedSummary = `No s'ha pogut generar el resum automàticament.`;
+        }
 
         // 1. Elements Emocionals Expressats (Descriptive)
         const emotionalElements: string[] = [];
@@ -695,7 +741,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
         this.validateAuditFlags(diagnostic_final);
 
         return {
-            summary: `Resum descriptiu de la sessió ${sessionId}. S'han identificat temes relacionats amb l'experiència emocional expressada i els motius de consulta, segons el contingut verbalitzat durant la sessió. ${footerTitle} ${footerBody}`,
+            summary: generatedSummary,
             emotionalElements,
             narrativeIndicators,
             orientativeObservations,

@@ -23,7 +23,7 @@ let AiController = class AiController {
         this.transcriptionService = transcriptionService;
     }
     async analyzeSession(sessionId, notes) {
-        return this.aiService.generateSessionAnalysis(sessionId, notes);
+        return this.aiService.generateSessionAnalysis(sessionId, notes, "");
     }
     async getSuggestions(context) {
         return this.aiService.getLiveSuggestions(context);

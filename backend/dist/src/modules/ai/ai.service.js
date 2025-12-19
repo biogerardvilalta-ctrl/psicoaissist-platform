@@ -184,6 +184,15 @@ const RISK_DETECTION_PROMPT = `
 - NO concloure risc diagnòstic.
 - Formular com a: "Expressions que requereixen atenció prioritària".
 `;
+const FACTUAL_SUMMARY_PROMPT = `
+Genera un resum EXCLUSIVAMENT FÀCTIC i DESCRIPTIU del contingut proporcionat.
+REGLES ERICTES:
+1. Només inclou informació explícita en el text (transcripció/notes).
+2. NO infereixis, NO interpretis, NO psicologitzis.
+3. NO facis diagnòstics ni usis etiquetes clíniques.
+4. Si el text és buit o molt breu, indica-ho ("Contingut insuficient per a resum").
+5. Estil: Tercera persona, objectiu, concís.
+`;
 const TEST_MAPPING = {
     "ansietat": {
         "categoria": "Ansietat, depressió i estrès",
@@ -301,9 +310,35 @@ let AiService = class AiService {
         }
         return text;
     }
-    async generateSessionAnalysis(sessionId, notes, isMinor = false) {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        const lowerNotes = notes.toLowerCase();
+    async generateSessionAnalysis(sessionId, notes, transcription, isMinor = false) {
+        const lowerNotes = (notes + '\n' + transcription).toLowerCase();
+        let generatedSummary = `Resum no disponible (Error en generació)`;
+        try {
+            if (!transcription || transcription.trim().length < 5) {
+                generatedSummary = "No hi ha transcripció disponible per a generar el resum.";
+            }
+            else {
+                console.log(`[AiService] Generating summary for transcription length: ${transcription.length}`);
+                try {
+                    const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+                    const result = await model.generateContent([
+                        FACTUAL_SUMMARY_PROMPT,
+                        `TRANSCRIPCIÓ A RESUMIR:\n${transcription}`
+                    ]);
+                    const response = await result.response;
+                    generatedSummary = response.text();
+                    console.log(`[AiService] Summary generated successfully.`);
+                }
+                catch (innerError) {
+                    console.error("[AiService] Error generating summary:", innerError);
+                    generatedSummary = `Error generant resum: ${innerError.message || 'Error desconegut'}`;
+                }
+            }
+        }
+        catch (error) {
+            console.error("Error generating summary:", error);
+            generatedSummary = `No s'ha pogut generar el resum automàticament.`;
+        }
         const emotionalElements = [];
         if (lowerNotes.includes('triste') || lowerNotes.includes('llora') || lowerNotes.includes('buit') || lowerNotes.includes('pena') || lowerNotes.includes('dolor')) {
             emotionalElements.push('intensitat emocional');
@@ -569,7 +604,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
         } : undefined;
         this.validateAuditFlags(diagnostic_final);
         return {
-            summary: `Resum descriptiu de la sessió ${sessionId}. S'han identificat temes relacionats amb l'experiència emocional expressada i els motius de consulta, segons el contingut verbalitzat durant la sessió. ${footerTitle} ${footerBody}`,
+            summary: generatedSummary,
             emotionalElements,
             narrativeIndicators,
             orientativeObservations,
