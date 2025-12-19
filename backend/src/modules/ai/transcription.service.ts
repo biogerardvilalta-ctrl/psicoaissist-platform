@@ -1,54 +1,113 @@
 import { Injectable } from '@nestjs/common';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as fs from 'fs';
 import * as path from 'path';
 
 @Injectable()
 export class TranscriptionService {
-    private openai: OpenAI;
+    private genAI: GoogleGenerativeAI;
 
     constructor() {
-        // Initialize OpenAI if key is available
-        if (process.env.OPENAI_API_KEY) {
-            this.openai = new OpenAI({
-                apiKey: process.env.OPENAI_API_KEY,
-            });
+        if (process.env.GEMINI_API_KEY) {
+            this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        } else {
+            console.error("GEMINI_API_KEY is not set");
         }
     }
 
     async transcribeAudio(file: Express.Multer.File): Promise<string> {
-        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes)`);
+        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes, mimetype: ${file.mimetype})`);
 
-        // If we have a real key, try to use it (optional for MVP if user provided it)
-        if (this.openai && process.env.ENABLE_REAL_AI === 'true') {
-            try {
-                // OpenAI requires a file object or stream. 
-                // Since we have the buffer, we might need to write to tmp or use a stream.
-                // For this MVP, let's stick to the mock for reliability unless explicitly requested.
-            } catch (error) {
-                console.error('OpenAI Transcription failed', error);
-            }
+        if (!this.genAI) {
+            console.warn('GEMINI_API_KEY missing, returning mock transcription.');
+            return "Error: Clave de API de Gemini no configurada.";
         }
 
-        // --- MOCK IMPLEMENTATION ---
-        // Simulate processing time
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            // Write buffer to temporary file for upload
+            const tempFilePath = path.join("/tmp", `audio_${Date.now()}_${file.originalname}`);
+            fs.writeFileSync(tempFilePath, file.buffer);
+            console.log(`Saved temp file: ${tempFilePath}`);
 
-        // Return simulated text based on some randomness or heuristics (not possible with just audio blob)
-        // We act as if the user is talking about their feelings.
-        const mockTranscriptions = [
-            "Me siento un poco abrumado por el trabajo últimamente. No sé cómo manejar la presión.",
-            "He estado durmiendo mal y me siento muy cansado todo el día. Creo que es ansiedad.",
-            "Las cosas van mejor con mi pareja, hemos podido hablar tranquilamente.",
-            "Tengo miedo de fallar en mis objetivos, siento que no soy suficiente.",
-            "Hoy ha sido un buen día, me siento con más energía y optimismo.",
-            "La verdad es que me siento muy triste, a veces llora sin motivo aparente.",
-            "No le veo sentido a nada, a veces pienso que no quiero vivir así."
-        ];
+            // Use GoogleAIFileManager to upload
+            const { GoogleAIFileManager } = await import("@google/generative-ai/server");
+            const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
 
-        const randomTranscription = mockTranscriptions[Math.floor(Math.random() * mockTranscriptions.length)];
-        console.log('📝 Simulated Transcription:', randomTranscription);
+            // Determine correct MIME type
+            let mimeType = file.mimetype;
+            console.log(`[TranscriptionService] Received file: ${file.originalname}, size: ${file.size}, mime: ${file.mimetype}`);
 
-        return randomTranscription;
+            // Fallback for generic or missing mimetype
+            if (!mimeType || mimeType === 'application/octet-stream') {
+                console.warn(`[TranscriptionService] Invalid/generic mimeType '${mimeType}'. Detecting from extension...`);
+                const ext = file.originalname.split('.').pop()?.toLowerCase();
+                const mimeMap: { [key: string]: string } = {
+                    'mp3': 'audio/mp3',
+                    'wav': 'audio/wav',
+                    'ogg': 'audio/ogg',
+                    'm4a': 'audio/mp4',
+                    'webm': 'audio/webm',
+                    'aac': 'audio/aac',
+                    'flac': 'audio/flac'
+                };
+                mimeType = mimeMap[ext || ''] || 'audio/mp3'; // Default to mp3 if unknown
+                console.log(`[TranscriptionService] Resolved mimeType to: ${mimeType}`);
+            } else {
+                // Strip parameters (e.g. ";codecs=opus")
+                mimeType = mimeType.split(';')[0];
+            }
+
+            const uploadResponse = await fileManager.uploadFile(tempFilePath, {
+                mimeType: mimeType,
+                displayName: "Session Audio",
+            });
+
+            console.log(`Uploaded file: ${uploadResponse.file.name} (${uploadResponse.file.uri})`);
+
+            // Wait for file to check state
+            let fileState = await fileManager.getFile(uploadResponse.file.name);
+            console.log(`Initial file state: ${fileState.state}`);
+
+            while (fileState.state === "PROCESSING") {
+                console.log(`Waiting for file ${fileState.name} to process...`);
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                fileState = await fileManager.getFile(uploadResponse.file.name);
+            }
+
+            if (fileState.state === "FAILED") {
+                throw new Error("File processing failed by Gemini.");
+            }
+
+            console.log(`File processing complete. State: ${fileState.state}`);
+
+            // Using gemini-2.0-flash
+            const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+            const result = await model.generateContent([
+                {
+                    fileData: {
+                        mimeType: uploadResponse.file.mimeType,
+                        fileUri: uploadResponse.file.uri
+                    }
+                },
+                { text: "Transcribe el audio verbatim." }
+            ]);
+
+            // Clean up temp file
+            fs.unlinkSync(tempFilePath);
+
+            // Delete file from Gemini (optional, good practice)
+            // await fileManager.deleteFile(uploadResponse.file.name); 
+
+            const response = await result.response;
+            const text = response.text();
+
+            console.log('📝 Transcription success, length:', text.length);
+            return text;
+
+        } catch (error) {
+            console.error('Gemini Transcription failed:', error);
+            return `Error en la transcripción: ${(error as any).message}`;
+        }
     }
 }

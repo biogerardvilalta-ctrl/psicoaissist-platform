@@ -18,6 +18,8 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const chunksRef = useRef<Blob[]>([]);
+    const chunkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const shouldRestartRef = useRef(true);
 
     useEffect(() => {
         return () => {
@@ -32,7 +34,6 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-            // Mimetype selection for broader compatibility
             let mimeType = 'audio/webm';
             if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
                 mimeType = 'audio/webm;codecs=opus';
@@ -43,11 +44,11 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false 
             const mediaRecorder = new MediaRecorder(stream, { mimeType });
             mediaRecorderRef.current = mediaRecorder;
             chunksRef.current = [];
+            shouldRestartRef.current = true; // Use ref
 
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     chunksRef.current.push(event.data);
-                    // Emit chunk if listener exists
                     if (onStreamData) {
                         onStreamData(event.data);
                     }
@@ -55,12 +56,20 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false 
             };
 
             mediaRecorder.onstop = () => {
-                const blob = new Blob(chunksRef.current, { type: mimeType });
-                onAudioData(blob);
-                stream.getTracks().forEach(track => track.stop()); // Stop mic access
+                if (shouldRestartRef.current) {
+                    // Periodic stop -> Restart
+                    if (mediaRecorder.state === 'inactive') {
+                        mediaRecorder.start();
+                    }
+                } else {
+                    // Final stop -> Save full blob
+                    const blob = new Blob(chunksRef.current, { type: mimeType });
+                    onAudioData(blob);
+                    stream.getTracks().forEach(track => track.stop()); // Stop mic access
+                }
             };
 
-            mediaRecorder.start(3000); // 3 seconds chunks for better real-time feel
+            mediaRecorder.start(); // No timeslice
             setIsRecording(true);
             setPermissionError(null);
 
@@ -74,17 +83,50 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false 
         }
     };
 
+
+
+    // Effect to manage the chunking interval when recording
+    useEffect(() => {
+        if (isRecording && mediaRecorderRef.current) {
+            chunkIntervalRef.current = setInterval(() => {
+                if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+                    mediaRecorderRef.current.stop(); // Triggers onstop, which restarts if shouldRestart=true
+                }
+            }, 5000); // 5 seconds interval
+        }
+
+        return () => {
+            if (chunkIntervalRef.current) {
+                clearInterval(chunkIntervalRef.current);
+            }
+        };
+    }, [isRecording]);
+
     const stopRecording = () => {
         if (mediaRecorderRef.current && isRecording) {
+            // Signal onstop that this is the final stop
+            // We need to access the 'shouldRestart' variable from closure? 
+            // Better to use a ref or modify handling. 
+            // Actually, we can't easily access the closure variable 'shouldRestart' from here.
+            // Let's rely on a ref.
+            shouldRestartRef.current = false;
+
             mediaRecorderRef.current.stop();
             setIsRecording(false);
+
             if (timerRef.current) {
                 clearInterval(timerRef.current);
                 timerRef.current = null;
             }
+            if (chunkIntervalRef.current) {
+                clearInterval(chunkIntervalRef.current);
+                chunkIntervalRef.current = null;
+            }
             setRecordingTime(0);
         }
     };
+
+
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);

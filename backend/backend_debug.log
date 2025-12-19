@@ -1,0 +1,1725 @@
+
+> psychoai-backend@0.1.0 start:dev
+> nest start --watch
+
+[2J[3J[H[[90m11:46:11[0m] Starting compilation in watch mode...
+
+[[90m11:46:13[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[StripeService] [39m[32mStripe initialized successfully[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEncryptionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMonitoringModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRemindersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "joinSession" message[39m[38;5;3m +26ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "updateNotes" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/v1/health}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/metrics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/register, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/change-password, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/public-key, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/v1/users}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id/role, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPaymentsController {/api/v1/payments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/plans, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/test, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session-demo, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-customer, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-portal-session, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription-status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/usage, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/advanced-analytics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/webhook, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/v1/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions/:id/cancel, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClientsController {/api/v1/clients}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/api/v1/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/dashboard/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSessionsController {/api/v1/sessions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/calendar, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/availability, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAiController {/api/v1/ai}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/session/:id/analyze, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/suggestions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/transcribe, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/v1/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/generate-draft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id/download, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditController {/api/v1/audit}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/audit, GET} route[39m[38;5;3m +0ms[39m
+prisma:info Starting a postgresql pool with 17 connections.
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:14 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +45ms[39m
+🚀 Server running on http://localhost:3001
+📚 API Documentation: http://localhost:3001/api/docs
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:18 [32m    LOG[39m [38;5;3m[SessionsGateway] [39m[32mClient connected: HDCtnY2v0NB13At2AAAB[39m
+[SessionsGateway] Client connected: HDCtnY2v0NB13At2AAAB
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:18 [32m    LOG[39m [38;5;3m[SessionsGateway] [39m[32mClient HDCtnY2v0NB13At2AAAB joined session_cmjcqdaq90003b3fjtj4tvgfe[39m
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+[SessionsGateway] Sent valid AI suggestions to client HDCtnY2v0NB13At2AAAB
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:27 [32m    LOG[39m [38;5;3m[SessionsGateway] [39m[32mClient disconnected: HDCtnY2v0NB13At2AAAB[39m
+[SessionsGateway] Client disconnected: HDCtnY2v0NB13At2AAAB
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/sessions/cmjcqdaq90003b3fjtj4tvgfe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:28.087Z",
+  "requestId": "no-id"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[SessionsGateway] [39m[32mClient connected: vpOffR-jYRe8MLIXAAAE[39m
+[SessionsGateway] Client connected: vpOffR-jYRe8MLIXAAAE
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id", "public"."sessions"."user_id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."status"::text, "public"."sessions"."is_minor", "public"."sessions"."reminder_sent", "public"."sessions"."encrypted_transcription", "public"."sessions"."encrypted_notes", "public"."sessions"."encrypted_audio_path", "public"."sessions"."ai_suggestions", "public"."sessions"."ai_metadata", "public"."sessions"."encryption_key_id", "public"."sessions"."audio_quality"::text, "public"."sessions"."recording_consent", "public"."sessions"."consent_signed", "public"."sessions"."consent_timestamp", "public"."sessions"."consent_version", "public"."sessions"."started_at", "public"."sessions"."created_at", "public"."sessions"."updated_at" FROM "public"."sessions" WHERE ("public"."sessions"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE "public"."clients"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/sessions/cmjcqdaq90003b3fjtj4tvgfe",
+  "statusCode": 200,
+  "duration": "10ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:28.097Z"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[SessionsGateway] [39m[32mClient vpOffR-jYRe8MLIXAAAE joined session_cmjcqdaq90003b3fjtj4tvgfe[39m
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/sessions/cmjcqdaq90003b3fjtj4tvgfe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:28.106Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id", "public"."sessions"."user_id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."status"::text, "public"."sessions"."is_minor", "public"."sessions"."reminder_sent", "public"."sessions"."encrypted_transcription", "public"."sessions"."encrypted_notes", "public"."sessions"."encrypted_audio_path", "public"."sessions"."ai_suggestions", "public"."sessions"."ai_metadata", "public"."sessions"."encryption_key_id", "public"."sessions"."audio_quality"::text, "public"."sessions"."recording_consent", "public"."sessions"."consent_signed", "public"."sessions"."consent_timestamp", "public"."sessions"."consent_version", "public"."sessions"."started_at", "public"."sessions"."created_at", "public"."sessions"."updated_at" FROM "public"."sessions" WHERE ("public"."sessions"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE "public"."clients"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/clients/cmjbw2eg80004ssg5kdpzrhx4",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:28.111Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/sessions/cmjcqdaq90003b3fjtj4tvgfe",
+  "statusCode": 200,
+  "duration": "7ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:28.113Z"
+}
+
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."id" = $1 AND "public"."clients"."user_id" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/clients/cmjbw2eg80004ssg5kdpzrhx4",
+  "statusCode": 200,
+  "duration": "5ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:28.116Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/clients/cmjbw2eg80004ssg5kdpzrhx4",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:28.121Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."id" = $1 AND "public"."clients"."user_id" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:28 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/clients/cmjbw2eg80004ssg5kdpzrhx4",
+  "statusCode": 200,
+  "duration": "3ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:28.124Z"
+}
+
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+[SessionsGateway] Sent valid AI suggestions to client vpOffR-jYRe8MLIXAAAE
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:35 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:46:35.088Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (43980 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141195099_chunk.webm
+Uploaded file: files/wkswh7evu0xf (https://generativelanguage.googleapis.com/v1beta/files/wkswh7evu0xf)
+📝 Transcription success, length: 20
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:37 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "2437ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:46:37.525Z"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:38 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:46:38.086Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (48316 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141198088_chunk.webm
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+Uploaded file: files/qsma75ze6lpb (https://generativelanguage.googleapis.com/v1beta/files/qsma75ze6lpb)
+Gemini Transcription failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:40 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "2064ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:46:40.150Z"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:41 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:46:41.147Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (49282 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141201148_chunk.webm
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+Uploaded file: files/7od82slnsys2 (https://generativelanguage.googleapis.com/v1beta/files/7od82slnsys2)
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:42 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:46:42.388Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (20301 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141202390_chunk.webm
+[SessionsGateway] Sent valid AI suggestions to client vpOffR-jYRe8MLIXAAAE
+Gemini Transcription failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:43 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "2277ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:46:43.424Z"
+}
+
+Uploaded file: files/8a1tjrup7z08 (https://generativelanguage.googleapis.com/v1beta/files/8a1tjrup7z08)
+Gemini Transcription failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:44 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "1858ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:46:44.246Z"
+}
+
+[SessionsGateway] Sent valid AI suggestions to client vpOffR-jYRe8MLIXAAAE
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+[SessionsGateway] Sent valid AI suggestions to client vpOffR-jYRe8MLIXAAAE
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5;3m[SessionsGateway] [39m[32mClient disconnected: vpOffR-jYRe8MLIXAAAE[39m
+[SessionsGateway] Client disconnected: vpOffR-jYRe8MLIXAAAE
+prisma:query SELECT 1
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:52.057Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2) ORDER BY "public"."clients"."created_at" DESC OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE "public"."encryption_keys"."id" IN ($1,$2,$3,$4,$5,$6) OFFSET $7
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yp000hnni7rdeqc6oi: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yn000fnni773g91wuj: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yl000dnni7p3t1ecws: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yj000bnni7os8kp7a9: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yg0009nni7ry4hngog: Encryption key not found or inactive[39m
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."clients"."id" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2 AND "public"."clients"."created_at" >= $3) OFFSET $4) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."ai_metadata", "public"."sessions"."encrypted_notes", "public"."sessions"."encryption_key_id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "statusCode": 200,
+  "duration": "41ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:52.097Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:52.103Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."clients"."id" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2 AND "public"."clients"."created_at" >= $3) OFFSET $4) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."ai_metadata", "public"."sessions"."encrypted_notes", "public"."sessions"."encryption_key_id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2) ORDER BY "public"."clients"."created_at" DESC OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE "public"."encryption_keys"."id" IN ($1,$2,$3,$4,$5,$6) OFFSET $7
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yp000hnni7rdeqc6oi: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yn000fnni773g91wuj: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yl000dnni7p3t1ecws: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yj000bnni7os8kp7a9: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:52 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yg0009nni7ry4hngog: Encryption key not found or inactive[39m
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "statusCode": 200,
+  "duration": "17ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:52.120Z"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:52.122Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."audit_logs"."id" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 OFFSET $2) AS "sub"
+prisma:query SELECT "public"."audit_logs"."id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."resource_type", "public"."audit_logs"."resource_id", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."method", "public"."audit_logs"."url", "public"."audit_logs"."old_values", "public"."audit_logs"."new_values", "public"."audit_logs"."metadata", "public"."audit_logs"."is_success", "public"."audit_logs"."error_message", "public"."audit_logs"."risk_score", "public"."audit_logs"."created_at" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 ORDER BY "public"."audit_logs"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id" FROM "public"."sessions" WHERE "public"."sessions"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."encrypted_personal_data", "public"."clients"."encryption_key_id" FROM "public"."clients" WHERE ("public"."clients"."id" IN ($1) AND "public"."clients"."is_active" = $2) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "statusCode": 200,
+  "duration": "11ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:52.133Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:52.138Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."audit_logs"."id" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 OFFSET $2) AS "sub"
+prisma:query SELECT "public"."audit_logs"."id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."resource_type", "public"."audit_logs"."resource_id", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."method", "public"."audit_logs"."url", "public"."audit_logs"."old_values", "public"."audit_logs"."new_values", "public"."audit_logs"."metadata", "public"."audit_logs"."is_success", "public"."audit_logs"."error_message", "public"."audit_logs"."risk_score", "public"."audit_logs"."created_at" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 ORDER BY "public"."audit_logs"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id" FROM "public"."sessions" WHERE "public"."sessions"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."encrypted_personal_data", "public"."clients"."encryption_key_id" FROM "public"."clients" WHERE ("public"."clients"."id" IN ($1) AND "public"."clients"."is_active" = $2) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:52 [32m    LOG[39m [38;5[2J[3J[H[[90m11:50:02[0m] File change detected. Starting incremental compilation...
+
+[[90m11:50:03[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +31ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[StripeService] [39m[32mStripe initialized successfully[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +4ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEncryptionModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMonitoringModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRemindersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "joinSession" message[39m[38;5;3m +43ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "updateNotes" message[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/v1/health}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/metrics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/status, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/register, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/change-password, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/public-key, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, PATCH} route[39m[38;5;3m +10ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/v1/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id/role, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPaymentsController {/api/v1/payments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/plans, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/test, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session-demo, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-customer, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-portal-session, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription-status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/usage, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/advanced-analytics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/webhook, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/v1/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions/:id/cancel, PATCH} route[39m[38;5;3m +7ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClientsController {/api/v1/clients}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, PUT} route[39m[38;5;3m +9ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/api/v1/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/dashboard/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSessionsController {/api/v1/sessions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/calendar, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/availability, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAiController {/api/v1/ai}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/session/:id/analyze, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/suggestions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/transcribe, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/v1/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/generate-draft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id/download, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditController {/api/v1/audit}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/audit, GET} route[39m[38;5;3m +0ms[39m
+prisma:info Starting a postgresql pool with 17 connections.
+[32m[Nest] 53676  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +64ms[39m
+[31m[Nest] 53676  - [39m19/12/2025, 11:50:04 [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +3ms[39m
+node:net:1908
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at Server.listen (node:net:2067:7)
+    at ExpressAdapter.listen (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/platform-express/adapters/express-adapter.js:95:32)
+    at /home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/core/nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/core/nest-application.js:173:16)
+    at async bootstrap (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/main.ts:90:3) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v20.19.6
+[39m19/12/2025, 11:46:56 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yl000dnni7p3t1ecws: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:56 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yj000bnni7os8kp7a9: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:56 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yg0009nni7ry4hngog: Encryption key not found or inactive[39m
+prisma:query SELECT "public"."audit_logs"."id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."resource_type", "public"."audit_logs"."resource_id", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."method", "public"."audit_logs"."url", "public"."audit_logs"."old_values", "public"."audit_logs"."new_values", "public"."audit_logs"."metadata", "public"."audit_logs"."is_success", "public"."audit_logs"."error_message", "public"."audit_logs"."risk_score", "public"."audit_logs"."created_at" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 ORDER BY "public"."audit_logs"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."audit_logs"."id" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 OFFSET $2) AS "sub"
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:56 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "statusCode": 200,
+  "duration": "17ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:56.230Z"
+}
+
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id" FROM "public"."sessions" WHERE "public"."sessions"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."encrypted_personal_data", "public"."clients"."encryption_key_id" FROM "public"."clients" WHERE ("public"."clients"."id" IN ($1) AND "public"."clients"."is_active" = $2) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:56 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "statusCode": 200,
+  "duration": "14ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:56.237Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:56 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:56.242Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."audit_logs"."id" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 OFFSET $2) AS "sub"
+prisma:query SELECT "public"."audit_logs"."id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."resource_type", "public"."audit_logs"."resource_id", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."method", "public"."audit_logs"."url", "public"."audit_logs"."old_values", "public"."audit_logs"."new_values", "public"."audit_logs"."metadata", "public"."audit_logs"."is_success", "public"."audit_logs"."error_message", "public"."audit_logs"."risk_score", "public"."audit_logs"."created_at" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 ORDER BY "public"."audit_logs"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id" FROM "public"."sessions" WHERE "public"."sessions"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."encrypted_personal_data", "public"."clients"."encryption_key_id" FROM "public"."clients" WHERE ("public"."clients"."id" IN ($1) AND "public"."clients"."is_active" = $2) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:56 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "statusCode": 200,
+  "duration": "9ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:56.251Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:59.644Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."clients"."id" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2 AND "public"."clients"."created_at" >= $3) OFFSET $4) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2) ORDER BY "public"."clients"."created_at" DESC OFFSET $3
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE "public"."encryption_keys"."id" IN ($1,$2,$3,$4,$5,$6) OFFSET $7
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yp000hnni7rdeqc6oi: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yn000fnni773g91wuj: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yl000dnni7p3t1ecws: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yj000bnni7os8kp7a9: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yg0009nni7ry4hngog: Encryption key not found or inactive[39m
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."ai_metadata", "public"."sessions"."encrypted_notes", "public"."sessions"."encryption_key_id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "statusCode": 200,
+  "duration": "9ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:59.653Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:59.658Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."clients"."id" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2 AND "public"."clients"."created_at" >= $3) OFFSET $4) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."ai_metadata", "public"."sessions"."encrypted_notes", "public"."sessions"."encryption_key_id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2) ORDER BY "public"."clients"."created_at" DESC OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE "public"."encryption_keys"."id" IN ($1,$2,$3,$4,$5,$6) OFFSET $7
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yp000hnni7rdeqc6oi: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yn000fnni773g91wuj: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yl000dnni7p3t1ecws: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yj000bnni7os8kp7a9: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:46:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yg0009nni7ry4hngog: Encryption key not found or inactive[39m
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "statusCode": 200,
+  "duration": "8ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:59.666Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:59.676Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."audit_logs"."id" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 OFFSET $2) AS "sub"
+prisma:query SELECT "public"."audit_logs"."id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."resource_type", "public"."audit_logs"."resource_id", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."method", "public"."audit_logs"."url", "public"."audit_logs"."old_values", "public"."audit_logs"."new_values", "public"."audit_logs"."metadata", "public"."audit_logs"."is_success", "public"."audit_logs"."error_message", "public"."audit_logs"."risk_score", "public"."audit_logs"."created_at" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 ORDER BY "public"."audit_logs"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id" FROM "public"."sessions" WHERE "public"."sessions"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."encrypted_personal_data", "public"."clients"."encryption_key_id" FROM "public"."clients" WHERE ("public"."clients"."id" IN ($1) AND "public"."clients"."is_active" = $2) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "statusCode": 200,
+  "duration": "6ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:59.682Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:59.687Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."audit_logs"."id" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 OFFSET $2) AS "sub"
+prisma:query SELECT "public"."audit_logs"."id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."resource_type", "public"."audit_logs"."resource_id", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."method", "public"."audit_logs"."url", "public"."audit_logs"."old_values", "public"."audit_logs"."new_values", "public"."audit_logs"."metadata", "public"."audit_logs"."is_success", "public"."audit_logs"."error_message", "public"."audit_logs"."risk_score", "public"."audit_logs"."created_at" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 ORDER BY "public"."audit_logs"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id" FROM "public"."sessions" WHERE "public"."sessions"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."encrypted_personal_data", "public"."clients"."encryption_key_id" FROM "public"."clients" WHERE ("public"."clients"."id" IN ($1) AND "public"."clients"."is_active" = $2) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:46:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "statusCode": 200,
+  "duration": "6ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:46:59.693Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:01 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/sessions?",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:47:01.078Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id", "public"."sessions"."user_id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."status"::text, "public"."sessions"."is_minor", "public"."sessions"."reminder_sent", "public"."sessions"."encrypted_transcription", "public"."sessions"."encrypted_notes", "public"."sessions"."encrypted_audio_path", "public"."sessions"."ai_suggestions", "public"."sessions"."ai_metadata", "public"."sessions"."encryption_key_id", "public"."sessions"."audio_quality"::text, "public"."sessions"."recording_consent", "public"."sessions"."consent_signed", "public"."sessions"."consent_timestamp", "public"."sessions"."consent_version", "public"."sessions"."started_at", "public"."sessions"."c[2J[3J[H[[90m11:50:02[0m] File change detected. Starting incremental compilation...
+
+[[90m11:50:03[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +18ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[StripeService] [39m[32mStripe initialized successfully[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEncryptionModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMonitoringModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRemindersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +5ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "joinSession" message[39m[38;5;3m +50ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "updateNotes" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/v1/health}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/metrics, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/register, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/change-password, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/public-key, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/v1/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id/role, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPaymentsController {/api/v1/payments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/plans, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/test, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session-demo, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-customer, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-portal-session, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription-status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/usage, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/advanced-analytics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/webhook, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/v1/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/dashboard, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions/:id/cancel, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClientsController {/api/v1/clients}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/api/v1/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/dashboard/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSessionsController {/api/v1/sessions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/calendar, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/availability, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAiController {/api/v1/ai}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/session/:id/analyze, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/suggestions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/transcribe, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/v1/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/generate-draft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id/download, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditController {/api/v1/audit}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/audit, GET} route[39m[38;5;3m +0ms[39m
+prisma:info Starting a postgresql pool with 17 connections.
+[32m[Nest] 53660  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +67ms[39m
+[31m[Nest] 53660  - [39m19/12/2025, 11:50:04 [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +1ms[39m
+node:net:1908
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at Server.listen (node:net:2067:7)
+    at ExpressAdapter.listen (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/platform-express/adapters/express-adapter.js:95:32)
+    at /home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/core/nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/core/nest-application.js:173:16)
+    at async bootstrap (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/main.ts:90:3) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v20.19.6
+rativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:11 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "1801ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:47:11.378Z"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:12 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:47:12.639Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (49282 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141232640_chunk.webm
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:13 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:47:13.385Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (12573 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141233388_chunk.webm
+Uploaded file: files/wmo596dpgwtj (https://generativelanguage.googleapis.com/v1beta/files/wmo596dpgwtj)
+[SessionsGateway] Sent valid AI suggestions to client iHlzcVa2JDLWThVwAAAH
+Uploaded file: files/udqy5xwyyxqp (https://generativelanguage.googleapis.com/v1beta/files/udqy5xwyyxqp)
+Gemini Transcription failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:14 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "1813ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:47:14.452Z"
+}
+
+Gemini Transcription failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:15 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "1887[2J[3J[H[[90m11:50:02[0m] File change detected. Starting incremental compilation...
+
+[[90m11:50:03[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +12ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[StripeService] [39m[32mStripe initialized successfully[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEncryptionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMonitoringModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRemindersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "joinSession" message[39m[38;5;3m +30ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "updateNotes" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/v1/health}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/metrics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/register, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/change-password, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/public-key, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/v1/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id/role, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPaymentsController {/api/v1/payments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/plans, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/test, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session-demo, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-customer, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-portal-session, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription-status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/usage, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/advanced-analytics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/webhook, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/v1/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id/status, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions/:id/cancel, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClientsController {/api/v1/clients}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/api/v1/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/dashboard/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSessionsController {/api/v1/sessions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/calendar, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/availability, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAiController {/api/v1/ai}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/session/:id/analyze, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/suggestions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/transcribe, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/v1/reports}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/generate-draft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id/download, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditController {/api/v1/audit}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/audit, GET} route[39m[38;5;3m +0ms[39m
+prisma:info Starting a postgresql pool with 17 connections.
+[32m[Nest] 53669  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +36ms[39m
+[31m[Nest] 53669  - [39m19/12/2025, 11:50:04 [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +1ms[39m
+node:net:1908
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at Server.listen (node:net:2067:7)
+    at ExpressAdapter.listen (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/platform-express/adapters/express-adapter.js:95:32)
+    at /home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/core/nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/core/nest-application.js:173:16)
+    at async bootstrap (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/main.ts:90:3) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v20.19.6
+."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2) ORDER BY "public"."clients"."created_at" DESC OFFSET $3
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."clients"."id" FROM "public"."clients" WHERE ("public"."clients"."user_id" = $1 AND "public"."clients"."is_active" = $2 AND "public"."clients"."created_at" >= $3) OFFSET $4) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."sessions"."id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus") AND "public"."sessions"."start_time" >= $3 AND "public"."sessions"."start_time" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."reports"."id" FROM "public"."reports" WHERE ("public"."reports"."user_id" = $1 AND "public"."reports"."status" <> CAST($2::text AS "public"."ReportStatus") AND "public"."reports"."created_at" >= $3 AND "public"."reports"."created_at" <= $4) OFFSET $5) AS "sub"
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."ai_metadata", "public"."sessions"."encrypted_notes", "public"."sessions"."encryption_key_id" FROM "public"."sessions" WHERE ("public"."sessions"."user_id" = $1 AND "public"."sessions"."status" = CAST($2::text AS "public"."SessionStatus")) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE "public"."encryption_keys"."id" IN ($1,$2,$3,$4,$5,$6) OFFSET $7
+[33m[Nest] 52243  - [39m19/12/2025, 11:47:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yp000hnni7rdeqc6oi: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:47:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yn000fnni773g91wuj: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:47:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yl000dnni7p3t1ecws: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:47:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yj000bnni7os8kp7a9: Encryption key not found or inactive[39m
+[33m[Nest] 52243  - [39m19/12/2025, 11:47:59 [33m   WARN[39m [38;5;3m[ClientsService] [39m[33mFailed to decrypt client cmjbvm5yg0009nni7ry4hngog: Encryption key not found or inactive[39m
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/dashboard/stats",
+  "statusCode": 200,
+  "duration": "12ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:47:59.616Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:47:59.630Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."audit_logs"."id" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 OFFSET $2) AS "sub"
+prisma:query SELECT "public"."audit_logs"."id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."resource_type", "public"."audit_logs"."resource_id", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."method", "public"."audit_logs"."url", "public"."audit_logs"."old_values", "public"."audit_logs"."new_values", "public"."audit_logs"."metadata", "public"."audit_logs"."is_success", "public"."audit_logs"."error_message", "public"."audit_logs"."risk_score", "public"."audit_logs"."created_at" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 ORDER BY "public"."audit_logs"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id" FROM "public"."sessions" WHERE "public"."sessions"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."clients"."id", "public"."clients"."encrypted_personal_data", "public"."clients"."encryption_key_id" FROM "public"."clients" WHERE ("public"."clients"."id" IN ($1) AND "public"."clients"."is_active" = $2) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "statusCode": 200,
+  "duration": "10ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:47:59.640Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:47:59.644Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."audit_logs"."id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."resource_type", "public"."audit_logs"."resource_id", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."method", "public"."audit_logs"."url", "public"."audit_logs"."old_values", "public"."audit_logs"."new_values", "public"."audit_logs"."metadata", "public"."audit_logs"."is_success", "public"."audit_logs"."error_message", "public"."audit_logs"."risk_score", "public"."audit_logs"."created_at" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 ORDER BY "public"."audit_logs"."created_at" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."audit_logs"."id" FROM "public"."audit_logs" WHERE "public"."audit_logs"."user_id" = $1 OFFSET $2) AS "sub"
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id" FROM "public"."sessions" WHERE "public"."sessions"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."clients"."id", "public"."clients"."encrypted_personal_data", "public"."clients"."encryption_key_id" FROM "public"."clients" WHERE ("public"."clients"."id" IN ($1) AND "public"."clients"."is_active" = $2) OFFSET $3
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:47:59 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/audit?limit=5&offset=0",
+  "statusCode": 200,
+  "duration": "6ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:47:59.650Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:01 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/sessions?",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:01.197Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id", "public"."sessions"."user_id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."status"::text, "public"."sessions"."is_minor", "public"."sessions"."reminder_sent", "public"."sessions"."encrypted_transcription", "public"."sessions"."encrypted_notes", "public"."sessions"."encrypted_audio_path", "public"."sessions"."ai_suggestions", "public"."sessions"."ai_metadata", "public"."sessions"."encryption_key_id", "public"."sessions"."audio_quality"::text, "public"."sessions"."recording_consent", "public"."sessions"."consent_signed", "public"."sessions"."consent_timestamp", "public"."sessions"."consent_version", "public"."sessions"."started_at", "public"."sessions"."created_at", "public"."sessions"."updated_at" FROM "public"."sessions" WHERE "public"."sessions"."user_id" = $1 ORDER BY "public"."sessions"."start_time" DESC OFFSET $2
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE "public"."clients"."id" IN ($1,$2,$3,$4) OFFSET $5
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE "public"."encryption_keys"."id" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20) OFFSET $21
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:01 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/sessions?",
+  "statusCode": 200,
+  "duration": "13ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:01.210Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:01 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/sessions?",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:01.219Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id", "public"."sessions"."user_id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."status"::text, "public"."sessions"."is_minor", "public"."sessions"."reminder_sent", "public"."sessions"."encrypted_transcription", "public"."sessions"."encrypted_notes", "public"."sessions"."encrypted_audio_path", "public"."sessions"."ai_suggestions", "public"."sessions"."ai_metadata", "public"."sessions"."encryption_key_id", "public"."sessions"."audio_quality"::text, "public"."sessions"."recording_consent", "public"."sessions"."consent_signed", "public"."sessions"."consent_timestamp", "public"."sessions"."consent_version", "public"."sessions"."started_at", "public"."sessions"."created_at", "public"."sessions"."updated_at" FROM "public"."sessions" WHERE "public"."sessions"."user_id" = $1 ORDER BY "public"."sessions"."start_time" DESC OFFSET $2
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE "public"."clients"."id" IN ($1,$2,$3,$4) OFFSET $5
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE "public"."encryption_keys"."id" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20) OFFSET $21
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:01 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/sessions?",
+  "statusCode": 200,
+  "duration": "12ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:01.231Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/sessions/cmjcqdaq90003b3fjtj4tvgfe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:02.116Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id", "public"."sessions"."user_id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."status"::text, "public"."sessions"."is_minor", "public"."sessions"."reminder_sent", "public"."sessions"."encrypted_transcription", "public"."sessions"."encrypted_notes", "public"."sessions"."encrypted_audio_path", "public"."sessions"."ai_suggestions", "public"."sessions"."ai_metadata", "public"."sessions"."encryption_key_id", "public"."sessions"."audio_quality"::text, "public"."sessions"."recording_consent", "public"."sessions"."consent_signed", "public"."sessions"."consent_timestamp", "public"."sessions"."consent_version", "public"."sessions"."started_at", "public"."sessions"."created_at", "public"."sessions"."updated_at" FROM "public"."sessions" WHERE ("public"."sessions"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE "public"."clients"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/sessions/cmjcqdaq90003b3fjtj4tvgfe",
+  "statusCode": 200,
+  "duration": "4ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:02.120Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/sessions/cmjcqdaq90003b3fjtj4tvgfe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:02.127Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."sessions"."id", "public"."sessions"."client_id", "public"."sessions"."user_id", "public"."sessions"."start_time", "public"."sessions"."end_time", "public"."sessions"."duration", "public"."sessions"."session_type"::text, "public"."sessions"."status"::text, "public"."sessions"."is_minor", "public"."sessions"."reminder_sent", "public"."sessions"."encrypted_transcription", "public"."sessions"."encrypted_notes", "public"."sessions"."encrypted_audio_path", "public"."sessions"."ai_suggestions", "public"."sessions"."ai_metadata", "public"."sessions"."encryption_key_id", "public"."sessions"."audio_quality"::text, "public"."sessions"."recording_consent", "public"."sessions"."consent_signed", "public"."sessions"."consent_timestamp", "public"."sessions"."consent_version", "public"."sessions"."started_at", "public"."sessions"."created_at", "public"."sessions"."updated_at" FROM "public"."sessions" WHERE ("public"."sessions"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE "public"."clients"."id" IN ($1) OFFSET $2
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[SessionsGateway] [39m[32mClient connected: Cg1SquD9peLdQzqvAAAN[39m
+[SessionsGateway] Client connected: Cg1SquD9peLdQzqvAAAN
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/clients/cmjbw2eg80004ssg5kdpzrhx4",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:02.131Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/sessions/cmjcqdaq90003b3fjtj4tvgfe",
+  "statusCode": 200,
+  "duration": "5ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:02.132Z"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[SessionsGateway] [39m[32mClient Cg1SquD9peLdQzqvAAAN joined session_cmjcqdaq90003b3fjtj4tvgfe[39m
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."id" = $1 AND "public"."clients"."user_id" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/clients/cmjbw2eg80004ssg5kdpzrhx4",
+  "statusCode": 200,
+  "duration": "4ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:02.135Z"
+}
+
+prisma:query SELECT "public"."users"."id", "public"."users"."email", "public"."users"."first_name", "public"."users"."last_name", "public"."users"."role"::text, "public"."users"."status"::text FROM "public"."users" WHERE ("public"."users"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "GET",
+  "url": "/api/v1/clients/cmjbw2eg80004ssg5kdpzrhx4",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:02.139Z",
+  "requestId": "no-id"
+}
+
+prisma:query SELECT "public"."clients"."id", "public"."clients"."user_id", "public"."clients"."encrypted_personal_data", "public"."clients"."encrypted_clinical_data", "public"."clients"."encrypted_sensitive_data", "public"."clients"."tags", "public"."clients"."risk_level"::text, "public"."clients"."is_active", "public"."clients"."encryption_key_id", "public"."clients"."data_version", "public"."clients"."send_email_reminders", "public"."clients"."send_whatsapp_reminders", "public"."clients"."first_session_at", "public"."clients"."last_session_at", "public"."clients"."created_at", "public"."clients"."updated_at", "public"."clients"."last_modified_by" FROM "public"."clients" WHERE ("public"."clients"."id" = $1 AND "public"."clients"."user_id" = $2) LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."encryption_keys"."id", "public"."encryption_keys"."user_id", "public"."encryption_keys"."key_value", "public"."encryption_keys"."algorithm", "public"."encryption_keys"."is_active", "public"."encryption_keys"."created_at", "public"."encryption_keys"."expires_at" FROM "public"."encryption_keys" WHERE ("public"."encryption_keys"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:02 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "GET",
+  "url": "/api/v1/clients/cmjbw2eg80004ssg5kdpzrhx4",
+  "statusCode": 200,
+  "duration": "3ms",
+  "userId": "cmjbvm5y40001nni7d936cblz",
+  "timestamp": "2025-12-19T10:48:02.142Z"
+}
+
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:06 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:48:06.783Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (43980 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141286784_chunk.webm
+[SessionsGateway] Sent valid AI suggestions to client Cg1SquD9peLdQzqvAAAN
+Uploaded file: files/e7zqw072nwli (https://generativelanguage.googleapis.com/v1beta/files/e7zqw072nwli)
+📝 Transcription success, length: 12
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:09 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "2759ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:48:09.543Z"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:09 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:48:09.790Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (48316 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141289793_chunk.webm
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+Uploaded file: files/9czeqwlo6wyu (https://generativelanguage.googleapis.com/v1beta/files/9czeqwlo6wyu)
+Gemini Transcription failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:12 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "2211ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:48:12.001Z"
+}
+
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:12 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:48:12.847Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (49282 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141292848_chunk.webm
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+Uploaded file: files/yw8iem98jka8 (https://generativelanguage.googleapis.com/v1beta/files/yw8iem98jka8)
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:14 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Incoming Request",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "ip": "::1",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:48:14.552Z",
+  "requestId": "no-id",
+  "body": {}
+}
+
+🎤 Processing audio file: chunk.webm (28029 bytes, mimetype: audio/webm)
+Saved temp file: /tmp/audio_1766141294554_chunk.webm
+Gemini Transcription failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:14 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "2020ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:48:14.867Z"
+}
+
+Uploaded file: files/62jgxoktbtxy (https://generativelanguage.googleapis.com/v1beta/files/62jgxoktbtxy)
+[SessionsGateway] Sent valid AI suggestions to client Cg1SquD9peLdQzqvAAAN
+Gemini Transcription failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Request contains an invalid argument.
+    at handleResponseNotOk (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async makeRequest (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:403:9)
+    at async generateContent (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@google/generative-ai/dist/index.js:867:22)
+    at async TranscriptionService.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/transcription.service.ts:46:28)
+    at async AiController.transcribeAudio (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/modules/ai/ai.controller.ts:29:19) {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: undefined
+}
+[32m[Nest] 52243  - [39m19/12/2025, 11:48:16 [32m    LOG[39m [38;5;3m[HTTP] [39m[32mObject:[39m
+{
+  "message": "Request Completed",
+  "method": "POST",
+  "url": "/api/v1/ai/transcribe",
+  "statusCode": 201,
+  "duration": "2158ms",
+  "userId": "anonymous",
+  "timestamp": "2025-12-19T10:48:16.710Z"
+}
+
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+[SessionsGateway] Sent valid AI suggestions to client Cg1SquD9peLdQzqvAAAN
+[SessionsGateway] Received notes update for session cmjcqdaq90003b3fjtj4tvgfe
+[SessionsGateway] Sent valid AI suggestions to client Cg1SquD9peLdQzqvAAAN
+[SessionsGateway] Sent valid AI suggestions to client Cg1SquD9peLdQzqvAAAN
+[2J[3J[H[[90m11:50:02[0m] File change detected. Starting incremental compilation...
+
+[[90m11:50:03[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +23ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[StripeService] [39m[32mStripe initialized successfully[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModule dependencies initialized[39m[38;5;3m +13ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEncryptionModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMonitoringModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRemindersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +4ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReportsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "joinSession" message[39m[38;5;3m +85ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mSessionsGateway subscribed to the "updateNotes" message[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/v1/health}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/metrics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/health/status, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/register, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/refresh, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/logout, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/change-password, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/public-key, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/me, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/v1/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/users/:id/role, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPaymentsController {/api/v1/payments}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/plans, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/test, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session-demo, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-checkout-session, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-customer, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/create-portal-session, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/subscription-status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/usage, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/advanced-analytics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/payments/webhook, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAdminController {/api/v1/admin}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/dashboard, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/users/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/admin/subscriptions/:id/cancel, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mClientsController {/api/v1/clients}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/clients/:id, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDashboardController {/api/v1/dashboard}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/dashboard/stats, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSessionsController {/api/v1/sessions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/calendar, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/availability, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, GET} route[39m[38;5;3m +4ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/sessions/:id, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAiController {/api/v1/ai}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/session/:id/analyze, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/suggestions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/ai/transcribe, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReportsController {/api/v1/reports}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/generate-draft, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id/download, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/reports/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditController {/api/v1/audit}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/audit, GET} route[39m[38;5;3m +0ms[39m
+prisma:info Starting a postgresql pool with 17 connections.
+[32m[Nest] 53686  - [39m19/12/2025, 11:50:04 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +62ms[39m
+[31m[Nest] 53686  - [39m19/12/2025, 11:50:04 [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +2ms[39m
+node:net:1908
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at Server.listen (node:net:2067:7)
+    at ExpressAdapter.listen (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/platform-express/adapters/express-adapter.js:95:32)
+    at /home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/core/nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/node_modules/@nestjs/core/nest-application.js:173:16)
+    at async bootstrap (/home/ustec/dockers/lamp/www/proyeto APP psiclogo/backend/src/main.ts:90:3) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v20.19.6

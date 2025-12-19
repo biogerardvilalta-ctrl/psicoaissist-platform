@@ -11,37 +11,86 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TranscriptionService = void 0;
 const common_1 = require("@nestjs/common");
-const openai_1 = require("openai");
+const generative_ai_1 = require("@google/generative-ai");
+const fs = require("fs");
+const path = require("path");
 let TranscriptionService = class TranscriptionService {
     constructor() {
-        if (process.env.OPENAI_API_KEY) {
-            this.openai = new openai_1.default({
-                apiKey: process.env.OPENAI_API_KEY,
-            });
+        if (process.env.GEMINI_API_KEY) {
+            this.genAI = new generative_ai_1.GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        }
+        else {
+            console.error("GEMINI_API_KEY is not set");
         }
     }
     async transcribeAudio(file) {
-        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes)`);
-        if (this.openai && process.env.ENABLE_REAL_AI === 'true') {
-            try {
-            }
-            catch (error) {
-                console.error('OpenAI Transcription failed', error);
-            }
+        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes, mimetype: ${file.mimetype})`);
+        if (!this.genAI) {
+            console.warn('GEMINI_API_KEY missing, returning mock transcription.');
+            return "Error: Clave de API de Gemini no configurada.";
         }
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const mockTranscriptions = [
-            "Me siento un poco abrumado por el trabajo últimamente. No sé cómo manejar la presión.",
-            "He estado durmiendo mal y me siento muy cansado todo el día. Creo que es ansiedad.",
-            "Las cosas van mejor con mi pareja, hemos podido hablar tranquilamente.",
-            "Tengo miedo de fallar en mis objetivos, siento que no soy suficiente.",
-            "Hoy ha sido un buen día, me siento con más energía y optimismo.",
-            "La verdad es que me siento muy triste, a veces llora sin motivo aparente.",
-            "No le veo sentido a nada, a veces pienso que no quiero vivir así."
-        ];
-        const randomTranscription = mockTranscriptions[Math.floor(Math.random() * mockTranscriptions.length)];
-        console.log('📝 Simulated Transcription:', randomTranscription);
-        return randomTranscription;
+        try {
+            const tempFilePath = path.join("/tmp", `audio_${Date.now()}_${file.originalname}`);
+            fs.writeFileSync(tempFilePath, file.buffer);
+            console.log(`Saved temp file: ${tempFilePath}`);
+            const { GoogleAIFileManager } = await Promise.resolve().then(() => require("@google/generative-ai/server"));
+            const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+            let mimeType = file.mimetype;
+            console.log(`[TranscriptionService] Received file: ${file.originalname}, size: ${file.size}, mime: ${file.mimetype}`);
+            if (!mimeType || mimeType === 'application/octet-stream') {
+                console.warn(`[TranscriptionService] Invalid/generic mimeType '${mimeType}'. Detecting from extension...`);
+                const ext = file.originalname.split('.').pop()?.toLowerCase();
+                const mimeMap = {
+                    'mp3': 'audio/mp3',
+                    'wav': 'audio/wav',
+                    'ogg': 'audio/ogg',
+                    'm4a': 'audio/mp4',
+                    'webm': 'audio/webm',
+                    'aac': 'audio/aac',
+                    'flac': 'audio/flac'
+                };
+                mimeType = mimeMap[ext || ''] || 'audio/mp3';
+                console.log(`[TranscriptionService] Resolved mimeType to: ${mimeType}`);
+            }
+            else {
+                mimeType = mimeType.split(';')[0];
+            }
+            const uploadResponse = await fileManager.uploadFile(tempFilePath, {
+                mimeType: mimeType,
+                displayName: "Session Audio",
+            });
+            console.log(`Uploaded file: ${uploadResponse.file.name} (${uploadResponse.file.uri})`);
+            let fileState = await fileManager.getFile(uploadResponse.file.name);
+            console.log(`Initial file state: ${fileState.state}`);
+            while (fileState.state === "PROCESSING") {
+                console.log(`Waiting for file ${fileState.name} to process...`);
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                fileState = await fileManager.getFile(uploadResponse.file.name);
+            }
+            if (fileState.state === "FAILED") {
+                throw new Error("File processing failed by Gemini.");
+            }
+            console.log(`File processing complete. State: ${fileState.state}`);
+            const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+            const result = await model.generateContent([
+                {
+                    fileData: {
+                        mimeType: uploadResponse.file.mimeType,
+                        fileUri: uploadResponse.file.uri
+                    }
+                },
+                { text: "Transcribe el audio verbatim." }
+            ]);
+            fs.unlinkSync(tempFilePath);
+            const response = await result.response;
+            const text = response.text();
+            console.log('📝 Transcription success, length:', text.length);
+            return text;
+        }
+        catch (error) {
+            console.error('Gemini Transcription failed:', error);
+            return `Error en la transcripción: ${error.message}`;
+        }
     }
 };
 exports.TranscriptionService = TranscriptionService;
