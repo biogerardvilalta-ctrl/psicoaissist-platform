@@ -53,6 +53,7 @@ export declare class AdminController {
             bufferTime: number;
             workStartHour: string;
             workEndHour: string;
+            scheduleConfig: import("@prisma/client/runtime/library").JsonValue | null;
             preferredLanguage: string;
             createdAt: Date;
             updatedAt: Date;
@@ -171,6 +172,7 @@ export declare class AdminController {
         bufferTime: number;
         workStartHour: string;
         workEndHour: string;
+        scheduleConfig: import("@prisma/client/runtime/library").JsonValue | null;
         preferredLanguage: string;
         createdAt: Date;
         updatedAt: Date;

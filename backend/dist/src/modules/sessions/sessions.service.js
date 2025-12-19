@@ -365,15 +365,25 @@ ${transcriptionToReturn || ''}
                 workStartHour: true,
                 workEndHour: true,
                 defaultDuration: true,
-                bufferTime: true
+                bufferTime: true,
+                scheduleConfig: true
             }
         });
         if (!user)
             throw new Error('User not found');
         const { workStartHour, workEndHour, defaultDuration, bufferTime } = user;
         const totalSlotDuration = defaultDuration + bufferTime;
-        const targetDate = new Date(dateStr);
-        targetDate.setHours(0, 0, 0, 0);
+        const dateOnly = dateStr.split('T')[0];
+        const targetDate = new Date(dateOnly + 'T00:00:00');
+        const scheduleConfig = user.scheduleConfig;
+        console.log(`[GetAvailability] Checking date: ${dateOnly} against config:`, JSON.stringify(scheduleConfig));
+        if (scheduleConfig && scheduleConfig.holidays && Array.isArray(scheduleConfig.holidays)) {
+            const isHoliday = scheduleConfig.holidays.some((h) => h === dateOnly);
+            if (isHoliday) {
+                console.log(`[GetAvailability] Date ${dateOnly} is a holiday.`);
+                return { date: dateStr, slots: [] };
+            }
+        }
         const [startH, startM] = workStartHour.split(':').map(Number);
         const [endH, endM] = workEndHour.split(':').map(Number);
         const workStart = new Date(targetDate);
@@ -391,6 +401,23 @@ ${transcriptionToReturn || ''}
             },
             select: { startTime: true, endTime: true, duration: true }
         });
+        if (scheduleConfig && scheduleConfig.blockedBlocks && Array.isArray(scheduleConfig.blockedBlocks)) {
+            scheduleConfig.blockedBlocks.forEach((block) => {
+                if (block.date === dateOnly && block.start && block.end) {
+                    const [sH, sM] = block.start.split(':').map(Number);
+                    const [eH, eM] = block.end.split(':').map(Number);
+                    const blockStart = new Date(targetDate);
+                    blockStart.setHours(sH, sM, 0, 0);
+                    const blockEnd = new Date(targetDate);
+                    blockEnd.setHours(eH, eM, 0, 0);
+                    sessions.push({
+                        startTime: blockStart,
+                        endTime: blockEnd,
+                        duration: (blockEnd.getTime() - blockStart.getTime()) / 1000
+                    });
+                }
+            });
+        }
         const slots = [];
         let currentSlot = new Date(workStart);
         while (currentSlot.getTime() + (defaultDuration * 60000) <= workEnd.getTime()) {

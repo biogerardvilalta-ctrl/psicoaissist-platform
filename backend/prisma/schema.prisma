@@ -35,6 +35,7 @@ model User {
   bufferTime      Int      @default(10) @map("buffer_time")
   workStartHour   String   @default("09:00") @map("work_start_hour")
   workEndHour     String   @default("18:00") @map("work_end_hour")
+  scheduleConfig  Json?    @map("schedule_config")
   
   // AI Settings
   preferredLanguage String @default("es") @map("preferred_language")

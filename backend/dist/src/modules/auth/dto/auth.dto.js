@@ -137,6 +137,10 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], UserResponseDto.prototype, "preferredLanguage", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Object)
+], UserResponseDto.prototype, "scheduleConfig", void 0);
 class AuthResponseDto {
 }
 exports.AuthResponseDto = AuthResponseDto;
@@ -227,4 +231,9 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateProfileDto.prototype, "preferredLanguage", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], UpdateProfileDto.prototype, "scheduleConfig", void 0);
 //# sourceMappingURL=auth.dto.js.map

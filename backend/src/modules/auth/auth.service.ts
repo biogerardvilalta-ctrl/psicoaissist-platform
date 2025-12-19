@@ -118,6 +118,7 @@ export class AuthService {
         workStartHour: user.workStartHour,
         workEndHour: user.workEndHour,
         preferredLanguage: user.preferredLanguage,
+        scheduleConfig: user.scheduleConfig as any,
       },
       tokens,
       encryptionKey: {
@@ -190,6 +191,7 @@ export class AuthService {
           workStartHour: user.workStartHour,
           workEndHour: user.workEndHour,
           preferredLanguage: user.preferredLanguage,
+          scheduleConfig: user.scheduleConfig as any,
         },
         tokens,
         encryptionKey: {
@@ -361,6 +363,7 @@ export class AuthService {
           bufferTime: data.bufferTime,
           workStartHour: data.workStartHour,
           workEndHour: data.workEndHour,
+          scheduleConfig: data.scheduleConfig,
           preferredLanguage: data.preferredLanguage,
           updatedAt: new Date(),
         },

@@ -30,6 +30,7 @@ export declare class UserResponseDto {
     workStartHour: string;
     workEndHour: string;
     preferredLanguage: string;
+    scheduleConfig?: any;
 }
 export declare class AuthResponseDto {
     user: UserResponseDto;
@@ -57,4 +58,5 @@ export declare class UpdateProfileDto {
     workStartHour?: string;
     workEndHour?: string;
     preferredLanguage?: string;
+    scheduleConfig?: any;
 }

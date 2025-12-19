@@ -443,7 +443,8 @@ ${transcriptionToReturn || ''}
                 workStartHour: true,
                 workEndHour: true,
                 defaultDuration: true,
-                bufferTime: true
+                bufferTime: true,
+                scheduleConfig: true
             }
         });
 
@@ -453,9 +454,25 @@ ${transcriptionToReturn || ''}
         const totalSlotDuration = defaultDuration + bufferTime;
 
         // 2. Parse Date & Working Hours
-        const targetDate = new Date(dateStr);
-        targetDate.setHours(0, 0, 0, 0);
+        const dateOnly = dateStr.split('T')[0];
+        const targetDate = new Date(dateOnly + 'T00:00:00'); // Ensure local midnight for calculation logic if needed, or consistent UTC. 
+        // Better: new Date(dateStr) depends on string format.
+        // If "2023-12-25", new Date("2023-12-25") is UTC midnight.
+        // If "2023-12-25T10:00...", it attempts that time.
 
+        // Let's rely on dateOnly comparison for holidays.
+
+        // 2.1 Check Holidays
+        const scheduleConfig = user.scheduleConfig as any;
+        console.log(`[GetAvailability] Checking date: ${dateOnly} against config:`, JSON.stringify(scheduleConfig));
+
+        if (scheduleConfig && scheduleConfig.holidays && Array.isArray(scheduleConfig.holidays)) {
+            const isHoliday = scheduleConfig.holidays.some((h: string) => h === dateOnly);
+            if (isHoliday) {
+                console.log(`[GetAvailability] Date ${dateOnly} is a holiday.`);
+                return { date: dateStr, slots: [] }; // No slots on holidays
+            }
+        }
         const [startH, startM] = workStartHour.split(':').map(Number);
         const [endH, endM] = workEndHour.split(':').map(Number);
 
@@ -478,6 +495,29 @@ ${transcriptionToReturn || ''}
             },
             select: { startTime: true, endTime: true, duration: true }
         });
+
+        // 3.1 Inject Blocked Blocks as Fake Sessions
+        if (scheduleConfig && scheduleConfig.blockedBlocks && Array.isArray(scheduleConfig.blockedBlocks)) {
+            scheduleConfig.blockedBlocks.forEach((block: any) => {
+                if (block.date === dateOnly && block.start && block.end) {
+                    const [sH, sM] = block.start.split(':').map(Number);
+                    const [eH, eM] = block.end.split(':').map(Number);
+
+                    const blockStart = new Date(targetDate);
+                    blockStart.setHours(sH, sM, 0, 0);
+
+                    const blockEnd = new Date(targetDate);
+                    blockEnd.setHours(eH, eM, 0, 0);
+
+                    // Add to sessions list so logic below collision checks against it
+                    (sessions as any[]).push({
+                        startTime: blockStart,
+                        endTime: blockEnd,
+                        duration: (blockEnd.getTime() - blockStart.getTime()) / 1000 // duration in seconds
+                    });
+                }
+            });
+        }
 
         // 4. Generate Slots
         const slots: string[] = [];

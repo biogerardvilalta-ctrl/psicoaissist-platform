@@ -15,6 +15,11 @@ export interface User {
   bufferTime?: number;
   workStartHour?: string;
   workEndHour?: string;
+  scheduleConfig?: {
+    weekly?: Record<number, { enabled: boolean; start: string; end: string }>;
+    holidays?: string[];
+    blockedBlocks?: Array<{ date: string; start: string; end: string; reason?: string }>;
+  };
   preferredLanguage?: string;
 }
 

@@ -96,6 +96,9 @@ export class UserResponseDto {
 
   @ApiProperty()
   preferredLanguage: string;
+
+  @ApiProperty({ required: false })
+  scheduleConfig?: any;
 }
 
 export class AuthResponseDto {
@@ -169,4 +172,8 @@ export class UpdateProfileDto {
   @ApiProperty({ required: false })
   @IsOptional()
   preferredLanguage?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  scheduleConfig?: any;
 }
