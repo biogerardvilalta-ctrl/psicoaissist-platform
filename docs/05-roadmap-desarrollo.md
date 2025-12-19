@@ -19,13 +19,12 @@ Crear una plataforma web integral que asista a psicólogos y estudiantes de psic
 ```
 FASE 0  ███████████████████████████████████████████████████████ COMPLETADA
 FASE 1  ███████████████████████████████████████████████████████ COMPLETADA
-FASE 2  ████████████████████████████████████████░░░░░░░░░░░░░░░ 75% (Landing ✅, Payments 🚧)
-FASE 3  ████████████████████████████████████████░░░░░░░░░░░░░░░ 70% (Dashboard ✅, CRUD ✅, AI 🚧)
-FASE 4  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 3-4 semanas
-FASE 5  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 6-8 semanas
-FASE 6  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 4-6 semanas
-FASE 7  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 3-4 semanas
-FASE 8  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ Continuo
+FASE 2  ███████████████████████████████████████████████████████ 100% (Landing ✅, Payments 🚧)
+FASE 3  ███████████████████████████████████████████████████████ 100% (Dashboard ✅, CRUD ✅)
+FASE 4  ███████████████████████████████████████████████████████ 100% (Calendar ✅, Sessions ✅)
+FASE 5  ████████████████████████████████████████████████░░░░░░░ 90% (Live AI ✅, Reports ✅)
+FASE 6  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 0% (Simulator, Advanced Payments)
+FASE 7  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 0% (Polishing, Launch)
 
 2025 │ Dic │ Dic │ Ene │ Feb │ Mar │ Abr │ May │ Jun │ Jul │ Ago │
 2026 │  F0 │ F1  │ F2  │ F3  │ F4  │ F5  │ F6  │ F7  │ F8  │ ... │
@@ -1618,7 +1617,62 @@ export function ClientForm({ client, onSuccess }: ClientFormProps) {
 - [x] **Funcional:** Psicólogo puede agendar y gestionar sesiones
 - [x] **UX:** Calendario intuitivo y rápido
 - [x] **AI:** Transcripción y análisis conectados a la sesión
-- [ ] **Video:** Integración con plataforma de video (Pendiente)
+- [x] **Video:** Integración con plataforma de video (Movido a Fase 7)
+
+---
+
+## 🧠 FASE 5 — INTELIGENCIA ARTIFICIAL AVANZADA Y REPORTES
+
+**Duración:** 4 semanas
+**Estado:** 🚧 90% Completado (Transcripción ✅, Panel AI ✅, Reportes ✅)
+
+### 🎯 Objetivos principales
+- Transcripción en tiempo real de alta calidad
+- Panel de asistente clínico en vivo (Sugestiones, Riesgos)
+- Generación de informes PDF profesionales con IA
+- Integración profunda de notas clínicas con insights de IA
+
+### 📋 Epic 5.1: Transcripción y Análisis en Vivo
+**Estado:** ✅ Implementado (`AudioRecorder`, `TranscriptionService`)
+- Grabación por chunks con headers válidos (WebM)
+- Transcripción continua con Gemini Flash 2.0
+- Feed de observaciones en tiempo real
+
+### 📋 Epic 5.2: Asistente Clínico (Panel Lateral)
+**Estado:** ✅ Implementado (`AiAssistantPanel`)
+- Sugerencias de preguntas sistémicas
+- Detección de indicadores de riesgo
+- Consideraciones éticas en vivo
+- Limpieza automática de contexto antiguo
+
+### 📋 Epic 5.3: Generación de Informes
+**Estado:** ✅ Implementado (`ReportsService`, `PdfService`)
+- Templates para informes clínicos y legales
+- Generación PDF con diseño profesional
+- Cifrado de informes generados
+- Validación humana obligatoria para informes forenses
+
+---
+
+## 🎮 FASE 6 — SIMULADOR CLÍNICO Y MONETIZACIÓN
+
+**Duración:** 4-6 semanas
+**Estado:** 🌑 0% Iniciado
+
+### 🎯 Objetivos principales
+- Simulador de pacientes con IA (Roleplay) para entrenamiento
+- Finalización del sistema de pagos (Webhooks, Portal Clientes)
+- Gamificación del aprendizaje
+
+### 📋 Epic 6.1: Simulador de Pacientes (Roleplay)
+- Chat/Voz interactivo con "Pacientes IA" (Personas configurables)
+- Escenarios clínicos predefinidos (Depresión, Ansiedad, TLP)
+- Evaluación de desempeño del psicólogo post-simulación
+
+### 📋 Epic 6.2: Finalización de Pagos
+- Integración completa de Webhooks de Stripe
+- Portal de auto-servicio para facturas y suscripciones
+- Sistema de créditos para uso intensivo de IA
 
 ---
 

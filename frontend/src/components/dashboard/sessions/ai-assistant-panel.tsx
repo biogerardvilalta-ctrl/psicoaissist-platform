@@ -32,46 +32,28 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
         const handleAiSuggestions = (data: any) => {
             setIsLoading(false); // Stop loading when data arrives
             if (data) {
-                // Update Questions
+                // Update Questions - REPLACE strategy
                 if (data.questions && data.questions.length > 0) {
-                    setQuestions(prev => {
-                        const incoming = data.questions;
-                        const newUnique = incoming.filter((item: string) => !prev.includes(item));
-                        if (newUnique.length > 0) {
-                            // Side effect must be delayed or handled outside, but for simplicity we can just not toast here 
-                            // OR use a useEffect to detect changes. 
-                            // Better pattern: calculated new state first.
-                            setTimeout(() => {
-                                toast({
-                                    description: "Noves suggerències disponibles",
-                                    className: "bg-blue-50 border-blue-200 text-blue-800",
-                                    duration: 2000,
-                                });
-                            }, 0);
-                            return [...newUnique, ...prev].slice(0, 5);
-                        }
-                        return prev;
-                    });
+                    setQuestions(data.questions.slice(0, 5));
+
+                    // Simple toast notification for new content
+                    setTimeout(() => {
+                        toast({
+                            description: "Noves suggerències disponibles",
+                            className: "bg-blue-50 border-blue-200 text-blue-800",
+                            duration: 2000,
+                        });
+                    }, 0);
                 }
 
-                // Update Considerations
+                // Update Considerations - REPLACE strategy
                 if (data.considerations && data.considerations.length > 0) {
-                    setConsiderations(prev => {
-                        const incoming = data.considerations;
-                        const newUnique = incoming.filter((item: string) => !prev.includes(item));
-                        if (newUnique.length === 0) return prev;
-                        return [...newUnique, ...prev].slice(0, 3);
-                    });
+                    setConsiderations(data.considerations.slice(0, 3));
                 }
 
-                // Update Indicators
+                // Update Indicators - REPLACE strategy
                 if (data.indicators && data.indicators.length > 0) {
-                    setIndicators(prev => {
-                        const incoming = data.indicators;
-                        const newUniqueInds = incoming.filter((n: any) => !prev.some(p => p.label === n.label));
-                        if (newUniqueInds.length === 0) return prev;
-                        return [...newUniqueInds, ...prev];
-                    });
+                    setIndicators(data.indicators);
                 }
             }
         };
