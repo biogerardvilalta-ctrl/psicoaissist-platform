@@ -2,26 +2,82 @@
 
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
-import { Heart, User, BarChart3, Clock, BookOpen } from 'lucide-react';
+import { Heart, User, BarChart3, Clock, BookOpen, Euro, Calendar, AlertCircle, XCircle, CheckCircle } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { StatsCard, RecentActivity, QuickActions, ProgressChart } from '@/components/dashboard';
+import { StatsCard, RecentActivity, TodaysSessions } from '@/components/dashboard';
 import { useEffect, useState } from 'react';
 import { DashboardAPI, DashboardStats } from '@/lib/dashboard-api';
+import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
+import { ClientsAPI, Client } from '@/lib/clients-api';
+import { isSameMonth, parseISO, addDays, isAfter, isBefore } from 'date-fns';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [extraStats, setExtraStats] = useState({
+    sessionsNextWeek: 0,
+    pendingNotes: 0,
+    cancellationRate: 0,
+    attendanceRate: 0,
+    monthIncome: 0,
+    sessionsThisMonth: 0
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const data = await DashboardAPI.getStats();
-        setStats(data);
+        const [dashData, allSessions] = await Promise.all([
+          DashboardAPI.getStats(),
+          SessionsAPI.getAll()
+        ]);
+        setStats(dashData);
+
+        // --- Calculate New Metrics ---
+        const now = new Date();
+
+        // 1. Next 7 Days
+        const nextWeek = addDays(now, 7);
+        const sessionsNextWeek = allSessions.filter(s =>
+          s.status === 'SCHEDULED' &&
+          isAfter(parseISO(s.startTime), now) &&
+          isBefore(parseISO(s.startTime), nextWeek)
+        ).length;
+
+        // 2. Pending Notes (Completed with empty notes)
+        const pendingNotes = allSessions.filter(s =>
+          s.status === SessionStatus.COMPLETED &&
+          (!s.notes || s.notes.trim().length === 0)
+        ).length;
+
+        // 3. Month Income (Est. 60€/session)
+        const completedThisMonth = allSessions.filter(s =>
+          s.status === SessionStatus.COMPLETED &&
+          isSameMonth(parseISO(s.startTime), now)
+        ).length;
+        const monthIncome = completedThisMonth * 60;
+
+        // 4. Rates (Attendance & Cancellation)
+        const completed = allSessions.filter(s => s.status === SessionStatus.COMPLETED).length;
+        const cancelled = allSessions.filter(s => s.status === SessionStatus.CANCELLED || s.status === SessionStatus.NO_SHOW).length;
+        const totalForRate = completed + cancelled;
+
+        const cancellationRate = totalForRate > 0 ? Math.round((cancelled / totalForRate) * 100) : 0;
+        const attendanceRate = totalForRate > 0 ? Math.round((completed / totalForRate) * 100) : 100;
+
+        setExtraStats({
+          sessionsNextWeek,
+          pendingNotes,
+          monthIncome,
+          cancellationRate,
+          attendanceRate,
+          sessionsThisMonth: completedThisMonth
+        });
+
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
         toast({
@@ -66,77 +122,94 @@ export default function DashboardPage() {
           </div>
 
           {/* Enhanced stats with realistic demo data */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <StatsCard
-              title="Pacientes Activos"
-              value={stats?.activeClients.toString() || "0"}
-              icon={User}
-              iconBgColor="bg-blue-100"
-              iconColor="text-blue-600"
-              subtitle="Total registrados"
-              trend={stats?.clientTrend}
-            />
+          {/* Top Section: Agenda (Left) and Stats (Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Left Col: Today's Scheduler */}
+            <div className="h-full">
+              <TodaysSessions />
+            </div>
 
-            <StatsCard
-              title="Sesiones Realizadas"
-              value={stats?.totalSessions.toString() || "0"}
-              icon={BarChart3}
-              iconBgColor="bg-green-100"
-              iconColor="text-green-600"
-              subtitle="Total histórico"
-              trend={stats?.sessionTrend}
-            />
+            {/* Right Col: Key Business Metrics (2x2) */}
+            <div className="grid grid-cols-2 gap-4 h-fit">
+              <StatsCard
+                title="Sesiones"
+                value={extraStats.sessionsThisMonth.toString()}
+                icon={BarChart3}
+                iconBgColor="bg-blue-100"
+                iconColor="text-blue-600"
+                subtitle="Este Mes"
+                trend={{ value: "Realizadas", isPositive: true }}
+              />
 
-            <StatsCard
-              title="Horas de Consulta"
-              value={stats?.formattedHours || "0h 0m"}
-              icon={Clock}
-              iconBgColor="bg-purple-100"
-              iconColor="text-purple-600"
-              subtitle="Total acumulado"
-              trend={{ value: "", isPositive: true }} // Trend for hours not calculated yet, or hide it
-            />
+              <StatsCard
+                title="Pacientes"
+                value={stats?.activeClients.toString() || "0"}
+                icon={User}
+                iconBgColor="bg-blue-100"
+                iconColor="text-blue-600"
+                subtitle="Activos"
+                trend={stats?.clientTrend}
+              />
 
+              <StatsCard
+                title="Ingresos (Est)"
+                value={`${extraStats.monthIncome}€`}
+                icon={Euro}
+                iconBgColor="bg-emerald-100"
+                iconColor="text-emerald-600"
+                subtitle="Este Mes"
+                trend={{ value: "~60€/h", isPositive: true }}
+              />
+
+              <StatsCard
+                title="Agenda (7d)"
+                value={extraStats.sessionsNextWeek.toString()}
+                icon={Calendar}
+                iconBgColor="bg-indigo-100"
+                iconColor="text-indigo-600"
+                subtitle="Sesiones"
+                trend={{ value: "Vista", isPositive: true }}
+              />
+            </div>
+          </div>
+
+          {/* Secondary Metrics Row: Quality & Tasks */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <StatsCard
-              title="Informes Generados"
-              value={stats?.totalReports.toString() || "0"}
-              icon={BookOpen}
+              title="Notas"
+              value={extraStats.pendingNotes.toString()}
+              icon={AlertCircle}
               iconBgColor="bg-orange-100"
               iconColor="text-orange-600"
-              subtitle="Total histórico"
-              trend={stats?.reportTrend}
+              subtitle="Pendientes"
+              trend={extraStats.pendingNotes > 0 ? { value: "Revisar", isPositive: false } : { value: "Al día", isPositive: true }}
+            />
+
+            <StatsCard
+              title="Asistencia"
+              value={extraStats.attendanceRate > 0 ? `${extraStats.attendanceRate}%` : "-"}
+              icon={CheckCircle}
+              iconBgColor="bg-green-100"
+              iconColor="text-green-600"
+              subtitle="Tasa Global"
+              trend={{ value: "General", isPositive: true }}
+            />
+
+            <StatsCard
+              title="Cancelaciones"
+              value={`${extraStats.cancellationRate}%`}
+              icon={XCircle}
+              iconBgColor="bg-red-100"
+              iconColor="text-red-600"
+              subtitle="Tasa Global"
+              trend={extraStats.cancellationRate > 15 ? { value: "Alta", isPositive: false } : { value: "Baja", isPositive: true }}
             />
           </div>
 
-          {/* Charts and analytics section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <ProgressChart
-              title="Sesiones por Tipo"
-              totalValue={stats?.totalSessions || 0}
-              trend={stats?.sessionTrend}
-              data={stats?.sessionTypes || []}
-            />
 
-            <ProgressChart
-              title="Técnicas Terapéuticas"
-              totalValue={stats?.techniques.reduce((acc, t) => acc + t.value, 0) || 0}
-              trend={{ value: "detectadas", isPositive: true }}
-              data={stats?.techniques || []}
-            />
-
-            <ProgressChart
-              title="Pruebas Realizadas"
-              totalValue={stats?.tests.reduce((acc, t) => acc + t.value, 0) || 0}
-              trend={{ value: "IA sugeridas", isPositive: true }}
-              data={stats?.tests || []}
-            />
-          </div>
 
           {/* Main content grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Quick actions */}
-            <QuickActions />
-
+          <div className="mb-8">
             {/* Recent activity */}
             <RecentActivity />
           </div>
@@ -173,7 +246,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </main>
-      </div>
-    </ProtectedRoute>
+      </div >
+    </ProtectedRoute >
   );
 }

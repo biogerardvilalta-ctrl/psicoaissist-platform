@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { SessionsAPI } from '@/lib/sessions-api';
-import { ClientsAPI } from '@/lib/clients-api';
+import { ClientsAPI, Client } from '@/lib/clients-api';
+import { DashboardAPI } from '@/lib/dashboard-api';
 import { calculateDashboardStats, DashboardStats } from '@/lib/analytics-helper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ShieldCheck, BarChart3, TrendingUp, Users, Activity } from 'lucide-react';
+import { ShieldCheck, BarChart3, TrendingUp, Users, Activity, X } from 'lucide-react';
 import {
     BarChart,
     Bar,
@@ -22,11 +23,8 @@ import {
     Cell
 } from 'recharts';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
-
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 import {
     Select,
     SelectContent,
@@ -34,7 +32,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Client } from '@/lib/clients-api';
+import { ProgressChart } from '@/components/dashboard'; // Import from index
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function StatisticsPage() {
     const searchParams = useSearchParams();
@@ -42,6 +42,7 @@ export default function StatisticsPage() {
     const clientId = searchParams.get('clientId');
 
     const [stats, setStats] = useState<DashboardStats | null>(null);
+    const [dashboardStats, setDashboardStats] = useState<any | null>(null); // Backend stats
     const [loading, setLoading] = useState(true);
     const [clientName, setClientName] = useState<string | null>(null);
     const [allClients, setAllClients] = useState<Client[]>([]);
@@ -49,12 +50,15 @@ export default function StatisticsPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [sessions, clients] = await Promise.all([
+                // Fetch basic data AND backend stats
+                const [sessions, clients, backendStats] = await Promise.all([
                     SessionsAPI.getAll(),
-                    ClientsAPI.getAll()
+                    ClientsAPI.getAll(),
+                    DashboardAPI.getStats(clientId || undefined) // Pass clientId if present
                 ]);
 
                 setAllClients(clients);
+                setDashboardStats(backendStats);
 
                 let filteredSessions = sessions;
 
@@ -68,6 +72,7 @@ export default function StatisticsPage() {
                     setClientName(null);
                 }
 
+                // Internal calc for basic charts
                 const calculated = calculateDashboardStats(filteredSessions, clients);
                 setStats(calculated);
             } catch (error) {
@@ -238,6 +243,31 @@ export default function StatisticsPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* CHARTS ROW 3 - DETAILED STATS (Backend Data) */}
+            <h2 className="text-2xl font-bold tracking-tight text-slate-800 mt-8 mb-4">Detall Clínic Avançat</h2>
+            <div className="grid gap-6 md:grid-cols-3">
+                <ProgressChart
+                    title="Sesiones por Tipo"
+                    totalValue={dashboardStats?.totalSessions || 0}
+                    trend={dashboardStats?.sessionTrend}
+                    data={dashboardStats?.sessionTypes || []}
+                />
+
+                <ProgressChart
+                    title="Técnicas Terapéuticas"
+                    totalValue={dashboardStats?.techniques?.reduce((acc: number, t: any) => acc + t.value, 0) || 0}
+                    trend={{ value: "detectadas", isPositive: true }}
+                    data={dashboardStats?.techniques || []}
+                />
+
+                <ProgressChart
+                    title="Pruebas Realizadas"
+                    totalValue={dashboardStats?.tests?.reduce((acc: number, t: any) => acc + t.value, 0) || 0}
+                    trend={{ value: "IA sugeridas", isPositive: true }}
+                    data={dashboardStats?.tests || []}
+                />
+            </div>
         </div>
     );
 }

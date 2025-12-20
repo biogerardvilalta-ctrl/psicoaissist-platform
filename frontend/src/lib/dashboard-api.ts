@@ -16,7 +16,8 @@ export interface DashboardStats {
 export class DashboardAPI {
     private static readonly BASE_URL = '/api/v1/dashboard';
 
-    static async getStats() {
-        return httpClient.get<DashboardStats>(`${this.BASE_URL}/stats`);
+    static async getStats(clientId?: string) {
+        const url = clientId ? `${this.BASE_URL}/stats?clientId=${clientId}` : `${this.BASE_URL}/stats`;
+        return httpClient.get<DashboardStats>(url);
     }
 }
