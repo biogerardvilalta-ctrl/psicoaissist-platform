@@ -370,6 +370,16 @@ let AiService = class AiService {
             emotionalElements.push('To general del discurs aparentment estable.');
             emotionalElements.push('Narrativa centrada en aspectes funcionals o descriptius sense marcadors emocionals d’alta intensitat.');
         }
+        let sentimentScore = 5;
+        if (lowerNotes.includes('alegr') || lowerNotes.includes('feliz') || lowerNotes.includes('content') || lowerNotes.includes('millor'))
+            sentimentScore += 2;
+        if (lowerNotes.includes('trist') || lowerNotes.includes('pena') || lowerNotes.includes('llor'))
+            sentimentScore -= 2;
+        if (lowerNotes.includes('ansie') || lowerNotes.includes('mied') || lowerNotes.includes('angust'))
+            sentimentScore -= 1;
+        if (lowerNotes.includes('bien') || lowerNotes.includes('buen') || lowerNotes.includes('avanz'))
+            sentimentScore += 1;
+        sentimentScore = Math.max(1, Math.min(10, sentimentScore));
         const narrativeIndicators = [];
         if (lowerNotes.includes('siempre') || lowerNotes.includes('nunca') || lowerNotes.includes('todo') || lowerNotes.includes('nada') || lowerNotes.includes('jamás')) {
             narrativeIndicators.push('Presència de patrons narratius amb formulacions generals o absolutes');
@@ -615,6 +625,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
         this.validateAuditFlags(diagnostic_final);
         return {
             summary: generatedSummary,
+            sentimentScore,
             emotionalElements,
             narrativeIndicators,
             orientativeObservations,

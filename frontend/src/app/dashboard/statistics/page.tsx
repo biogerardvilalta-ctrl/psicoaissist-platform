@@ -49,11 +49,14 @@ export default function StatisticsPage() {
     const clientId = searchParams.get('clientId');
 
     const [activeTab, setActiveTab] = useState('overview');
-    const [selectedMetric, setSelectedMetric] = useState('sessions'); // State for interactive chart
+    const [selectedMetric, setSelectedMetric] = useState('sessions');
+
+    // New State for Time Range
+    const [timeRange, setTimeRange] = useState<'1m' | '3m' | '6m' | '1y'>('6m');
 
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [advancedStats, setAdvancedStats] = useState<AdvancedStats | null>(null);
-    const [dashboardStats, setDashboardStats] = useState<any | null>(null); // Backend stats
+    const [dashboardStats, setDashboardStats] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [clientName, setClientName] = useState<string | null>(null);
     const [allClients, setAllClients] = useState<Client[]>([]);
@@ -94,8 +97,8 @@ export default function StatisticsPage() {
                     setClientName(null);
                 }
 
-                // Internal calc for basic charts
-                const calculated = calculateDashboardStats(filteredSessions, clients);
+                // Internal calc for basic charts - NOW WITH TIME RANGE
+                const calculated = calculateDashboardStats(filteredSessions, clients, 60, timeRange);
                 setStats(calculated);
 
                 // Advanced calc (defaulting to 60€/h here, or we could fetch config)
@@ -109,7 +112,7 @@ export default function StatisticsPage() {
             }
         };
         fetchData();
-    }, [clientId]);
+    }, [clientId, timeRange]); // Re-run when timeRange changes
 
     const handleClientChange = (value: string) => {
         if (value === 'global') {
@@ -172,19 +175,38 @@ export default function StatisticsPage() {
 
         return (
             <Card>
-                <CardHeader>
-                    <CardTitle>{title}</CardTitle>
-                    <CardDescription>{description}</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>{title}</CardTitle>
+                        <CardDescription>{description}</CardDescription>
+                    </div>
+                    {/* Time Range Selector Moved Here */}
+                    <div className="flex items-center gap-2">
+                        <Select
+                            value={timeRange}
+                            onValueChange={(v: '1m' | '3m' | '6m' | '1y') => setTimeRange(v)}
+                        >
+                            <SelectTrigger className="w-[180px] h-9 text-sm">
+                                <SelectValue placeholder="Periodo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="1m">Último Mes (Diario)</SelectItem>
+                                <SelectItem value="3m">Últimos 3 Meses (Semanal)</SelectItem>
+                                <SelectItem value="6m">Últimos 6 Meses (Mensual)</SelectItem>
+                                <SelectItem value="1y">Último Año (Mensual)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </CardHeader>
                 <CardContent className="h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data}>
+                        <LineChart data={data}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
+                            <XAxis dataKey="name" padding={{ left: 10, right: 10 }} />
                             <YAxis unit={yUnit} />
                             <Tooltip />
-                            <Bar dataKey="value" fill={color} radius={[4, 4, 0, 0]} />
-                        </BarChart>
+                            <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} activeDot={{ r: 8 }} />
+                        </LineChart>
                     </ResponsiveContainer>
                 </CardContent>
             </Card>
@@ -421,15 +443,33 @@ export default function StatisticsPage() {
                                 {selectedMetric === 'cancellation' ? (
                                     /* Cancellation Trend Chart */
                                     <Card>
-                                        <CardHeader>
-                                            <CardTitle>Evolución Tasa de Cancelación</CardTitle>
-                                            <CardDescription>Porcentaje de sesiones canceladas</CardDescription>
+                                        <CardHeader className="flex flex-row items-center justify-between">
+                                            <div>
+                                                <CardTitle>Evolución Tasa de Cancelación</CardTitle>
+                                                <CardDescription>Porcentaje de sesiones canceladas</CardDescription>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Select
+                                                    value={timeRange}
+                                                    onValueChange={(v: '1m' | '3m' | '6m' | '1y') => setTimeRange(v)}
+                                                >
+                                                    <SelectTrigger className="w-[180px] h-9 text-sm">
+                                                        <SelectValue placeholder="Periodo" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="1m">Último Mes (Diario)</SelectItem>
+                                                        <SelectItem value="3m">Últimos 3 Meses (Semanal)</SelectItem>
+                                                        <SelectItem value="6m">Últimos 6 Meses (Mensual)</SelectItem>
+                                                        <SelectItem value="1y">Último Año (Mensual)</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </CardHeader>
                                         <CardContent className="h-[300px]">
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart data={stats.cancellationByMonth || []}>
                                                     <CartesianGrid strokeDasharray="3 3" />
-                                                    <XAxis dataKey="name" />
+                                                    <XAxis dataKey="name" padding={{ left: 10, right: 10 }} />
                                                     <YAxis domain={[0, 100]} unit="%" />
                                                     <Tooltip />
                                                     <Line type="monotone" dataKey="value" stroke="#ef4444" strokeWidth={2} activeDot={{ r: 8 }} />
@@ -440,15 +480,33 @@ export default function StatisticsPage() {
                                 ) : (
                                     /* Adherence Trend Chart (Default) */
                                     <Card>
-                                        <CardHeader>
-                                            <CardTitle>Evolución de Asistencia</CardTitle>
-                                            <CardDescription>Porcentaje de sesiones completadas</CardDescription>
+                                        <CardHeader className="flex flex-row items-center justify-between">
+                                            <div>
+                                                <CardTitle>Evolución de Asistencia</CardTitle>
+                                                <CardDescription>Porcentaje de sesiones completadas</CardDescription>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Select
+                                                    value={timeRange}
+                                                    onValueChange={(v: '1m' | '3m' | '6m' | '1y') => setTimeRange(v)}
+                                                >
+                                                    <SelectTrigger className="w-[180px] h-9 text-sm">
+                                                        <SelectValue placeholder="Periodo" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="1m">Último Mes (Diario)</SelectItem>
+                                                        <SelectItem value="3m">Últimos 3 Meses (Semanal)</SelectItem>
+                                                        <SelectItem value="6m">Últimos 6 Meses (Mensual)</SelectItem>
+                                                        <SelectItem value="1y">Último Año (Mensual)</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </CardHeader>
                                         <CardContent className="h-[300px]">
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart data={stats.attendanceByMonth || []}>
                                                     <CartesianGrid strokeDasharray="3 3" />
-                                                    <XAxis dataKey="name" />
+                                                    <XAxis dataKey="name" padding={{ left: 10, right: 10 }} />
                                                     <YAxis domain={[0, 100]} unit="%" />
                                                     <Tooltip />
                                                     <Line type="monotone" dataKey="value" stroke="#22c55e" strokeWidth={2} activeDot={{ r: 8 }} />

@@ -6,6 +6,7 @@ export declare class AiController {
     constructor(aiService: AiService, transcriptionService: TranscriptionService);
     analyzeSession(sessionId: string, notes: string): Promise<{
         summary: string;
+        sentimentScore?: number;
         emotionalElements: string[];
         narrativeIndicators: string[];
         orientativeObservations: string[];

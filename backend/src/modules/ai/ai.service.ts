@@ -331,6 +331,7 @@ export class AiService {
      */
     async generateSessionAnalysis(sessionId: string, notes: string, transcription: string, isMinor: boolean = false, language: string = 'ca'): Promise<{
         summary: string;
+        sentimentScore?: number;
         emotionalElements: string[];
         narrativeIndicators: string[];
         orientativeObservations: string[];
@@ -458,11 +459,22 @@ export class AiService {
             emotionalElements.push('connexió amb experiències gratificants');
         }
 
-        // Failsafe if empty
         if (emotionalElements.length === 0) {
             emotionalElements.push('To general del discurs aparentment estable.');
             emotionalElements.push('Narrativa centrada en aspectes funcionals o descriptius sense marcadors emocionals d’alta intensitat.');
         }
+
+        // --- SENTIMENT SCORE CALCULATION (HEURISTIC PLACEHOLDER) ---
+        // As a temporary measure until the JSON prompt returns a real score, 
+        // we calculate a rough score based on positive vs negative keywords found.
+        let sentimentScore = 5; // Start neutral
+        if (lowerNotes.includes('alegr') || lowerNotes.includes('feliz') || lowerNotes.includes('content') || lowerNotes.includes('millor')) sentimentScore += 2;
+        if (lowerNotes.includes('trist') || lowerNotes.includes('pena') || lowerNotes.includes('llor')) sentimentScore -= 2;
+        if (lowerNotes.includes('ansie') || lowerNotes.includes('mied') || lowerNotes.includes('angust')) sentimentScore -= 1;
+        if (lowerNotes.includes('bien') || lowerNotes.includes('buen') || lowerNotes.includes('avanz')) sentimentScore += 1;
+
+        // Clamp between 1 and 10
+        sentimentScore = Math.max(1, Math.min(10, sentimentScore));
 
         // 2. Indicadors Narratius Observats (Patterns)
         const narrativeIndicators: string[] = [];
@@ -752,6 +764,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
 
         return {
             summary: generatedSummary,
+            sentimentScore, // Returning the calculated score
             emotionalElements,
             narrativeIndicators,
             orientativeObservations,

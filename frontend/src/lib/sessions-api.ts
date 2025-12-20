@@ -32,6 +32,7 @@ export interface Session {
     methodology?: string;
     isMinor?: boolean;
     aiMetadata?: {
+        sentimentScore?: number;
         summary?: string;
         emotionalElements?: string[];
         narrativeIndicators?: string[];

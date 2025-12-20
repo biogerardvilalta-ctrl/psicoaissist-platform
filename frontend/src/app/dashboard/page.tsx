@@ -2,7 +2,8 @@
 
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
-import { Heart, User, BarChart3, Clock, BookOpen, Euro, Calendar, AlertCircle, XCircle, CheckCircle, Settings } from 'lucide-react';
+import { Heart, User, BarChart3, Clock, BookOpen, Euro, Calendar, AlertCircle, XCircle, CheckCircle, Settings, TrendingUp, CalendarDays } from 'lucide-react';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -301,7 +302,7 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Left Col: Today's Scheduler */}
-          <div className="h-full">
+          <div className="h-full flex flex-col gap-6">
             <TodaysSessions />
           </div>
 
@@ -323,6 +324,106 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Full Width / Half Split Charts Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+
+          {/* Session Evolution Chart */}
+          <div className="bg-white rounded-xl border p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-800">Evolución de Sesiones</h3>
+                <p className="text-sm text-slate-500">Últimos 30 días</p>
+              </div>
+              <TrendingUp className="h-4 w-4 text-slate-400" />
+            </div>
+            <div className="h-[200px] w-full">
+              {advancedStats?.sessionsLast30Days ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={advancedStats.sessionsLast30Days}>
+                    <defs>
+                      <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 12 }}
+                      tickLine={false}
+                      axisLine={false}
+                      minTickGap={30}
+                    />
+                    <YAxis
+                      hide
+                      domain={[0, 'auto']}
+                    />
+                    <Tooltip
+                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#3b82f6"
+                      fillOpacity={1}
+                      fill="url(#colorCount)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-slate-400 text-sm">
+                  Cargando datos...
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Weekly Load Chart */}
+          <div className="bg-white rounded-xl border p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-800">Carga Semanal</h3>
+                <p className="text-sm text-slate-500">Sesiones Lun-Dom</p>
+              </div>
+              <CalendarDays className="h-4 w-4 text-slate-400" />
+            </div>
+            <div className="h-[200px] w-full">
+              {advancedStats?.weeklyLoad ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={advancedStats.weeklyLoad}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      dataKey="day"
+                      tick={{ fontSize: 12 }}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      hide
+                      domain={[0, 'auto']}
+                    />
+                    <Tooltip
+                      cursor={{ fill: 'transparent' }}
+                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Bar
+                      dataKey="count"
+                      fill="#8b5cf6"
+                      radius={[4, 4, 0, 0]}
+                      barSize={30}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-slate-400 text-sm">
+                  Cargando datos...
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
 
         {/* Main content grid */}

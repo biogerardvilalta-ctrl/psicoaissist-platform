@@ -4,6 +4,7 @@ export declare class AiService {
     private filterContent;
     generateSessionAnalysis(sessionId: string, notes: string, transcription: string, isMinor?: boolean, language?: string): Promise<{
         summary: string;
+        sentimentScore?: number;
         emotionalElements: string[];
         narrativeIndicators: string[];
         orientativeObservations: string[];
