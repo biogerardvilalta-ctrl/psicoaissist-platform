@@ -165,11 +165,12 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
         setIsConsentModalOpen(true);
     };
 
-    const handleConsentConfirmed = async () => {
+    const handleConsentConfirmed = async (isMinor: boolean = false) => {
         setIsConsentModalOpen(false);
         await handleStatusChange(SessionStatus.IN_PROGRESS, {
             consentSigned: true,
-            consentVersion: '1.0'
+            consentVersion: '1.0',
+            isMinor: isMinor // Pass the minor flag from the modal
         });
     };
 

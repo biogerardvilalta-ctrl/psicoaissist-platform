@@ -17,16 +17,17 @@ import { ShieldCheck, Info, FileText } from 'lucide-react';
 interface ConsentModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
+    onConfirm: (isMinor?: boolean) => void;
     clientName: string;
 }
 
 export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: ConsentModalProps) {
     const [isChecked, setIsChecked] = useState(false);
+    const [isMinorChecked, setIsMinorChecked] = useState(false);
 
     const handleConfirm = () => {
         if (isChecked) {
-            onConfirm();
+            onConfirm(isMinorChecked);
         }
     };
 
@@ -53,31 +54,44 @@ export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: Consent
                         </AlertDescription>
                     </Alert>
 
-                    <div className="flex items-top space-x-2 border p-3 rounded-md bg-slate-50">
-                        <Checkbox
-                            id="consent"
-                            checked={isChecked}
-                            onCheckedChange={(c) => setIsChecked(c as boolean)}
-                        />
-                        <div className="grid gap-1.5 leading-none">
-                            <label
-                                htmlFor="consent"
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                            >
-                                Confirmo que he informat al pacient sobre l'ús d'aquesta eina de suport i el processament de dades conforme a GDPR.
-                            </label>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                Les dades d'àudio s'eliminaran automàticament després del processament.
-                            </p>
-                            <a
-                                href="/documents/consentiment-informat.html"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-1"
-                            >
-                                <FileText className="h-3 w-3" />
-                                Descarregar document d'informació sobre el tractament de dades
-                            </a>
+                    <div className="space-y-2">
+                        <div className="flex items-top space-x-2 border p-3 rounded-md bg-slate-50">
+                            <Checkbox
+                                id="consent"
+                                checked={isChecked}
+                                onCheckedChange={(c) => setIsChecked(c as boolean)}
+                            />
+                            <div className="grid gap-1.5 leading-none">
+                                <label
+                                    htmlFor="consent"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                >
+                                    Confirmo que he informat al pacient sobre l'ús d'aquesta eina de suport i el processament de dades conforme a GDPR.
+                                </label>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    Les dades d'àudio s'eliminaran automàticament després del processament.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Minor Checkbox */}
+                        <div className="flex items-top space-x-2 border p-3 rounded-md bg-amber-50 border-amber-200">
+                            <Checkbox
+                                id="minor-consent"
+                                checked={isMinorChecked}
+                                onCheckedChange={(c) => setIsMinorChecked(c as boolean)}
+                            />
+                            <div className="grid gap-1.5 leading-none">
+                                <label
+                                    htmlFor="minor-consent"
+                                    className="text-sm font-bold text-amber-900 leading-none cursor-pointer"
+                                >
+                                    El pacient és MENOR d'edat.
+                                </label>
+                                <p className="text-xs text-amber-800 mt-1">
+                                    En marcar aquesta opció, l'IA adaptarà l'anàlisi a un context infanto-juvenil i aplicarà filtres de seguretat addicionals.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
