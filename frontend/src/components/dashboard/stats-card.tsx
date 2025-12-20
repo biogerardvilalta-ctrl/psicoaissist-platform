@@ -14,6 +14,8 @@ interface StatsCardProps {
     value: string;
     isPositive: boolean;
   };
+  onClick?: () => void;
+  isSelected?: boolean;
 }
 
 export default function StatsCard({
@@ -23,10 +25,16 @@ export default function StatsCard({
   iconBgColor,
   iconColor,
   subtitle,
-  trend
+  trend,
+  onClick,
+  isSelected
 }: StatsCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 border hover:shadow-md transition-shadow">
+    <div
+      onClick={onClick}
+      className={`bg-white rounded-lg shadow-sm p-6 border transition-all ${onClick ? 'cursor-pointer hover:shadow-md' : ''
+        } ${isSelected ? 'ring-2 ring-blue-500 border-blue-500 bg-blue-50/10' : ''}`}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <div className={`w-10 h-10 ${iconBgColor} rounded-lg flex items-center justify-center`}>
