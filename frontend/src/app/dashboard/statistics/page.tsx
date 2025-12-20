@@ -120,7 +120,7 @@ export default function StatisticsPage() {
     };
 
     if (loading) {
-        return <div className="p-8 text-center">Carregant dades analítiques...</div>;
+        return <div className="p-8 text-center">Cargando datos analíticos...</div>;
     }
 
     if (!stats || !advancedStats) return null;
@@ -208,7 +208,7 @@ export default function StatisticsPage() {
                             <SelectValue placeholder="Seleccionar vista..." />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="global">Vista Global (Tots els pacients)</SelectItem>
+                            <SelectItem value="global">Vista Global (Todos los pacientes)</SelectItem>
                             {allClients.map((client) => (
                                 <SelectItem key={client.id} value={client.id}>
                                     {client.firstName} {client.lastName}
@@ -246,93 +246,118 @@ export default function StatisticsPage() {
                     <Alert className={clientName ? "bg-amber-50 border-amber-200" : "bg-blue-50 border-blue-200"}>
                         <ShieldCheck className={`h-4 w-4 ${clientName ? "text-amber-600" : "text-blue-600"}`} />
                         <AlertTitle className={`${clientName ? "text-amber-800" : "text-blue-800"} font-semibold`}>
-                            {clientName ? "Expedient Clínic Confidencial" : "Privacitat i Ús Clínic"}
+                            {clientName ? "Expediente Clínico Confidencial" : "Privacidad y Uso Clínico"}
                         </AlertTitle>
                         <AlertDescription className={`${clientName ? "text-amber-700" : "text-blue-700"} text-sm`}>
                             {clientName
-                                ? "Aquestes dades formen part de la història clínica del pacient i estan protegides per secret professional. Ús exclusiu per al diagnòstic i seguiment terapèutic."
-                                : "Dades agregades i anonimitzades. Aquesta eina ofereix suport estadístic per a la gestió de la consulta. No conté dades personals identificables en aquesta vista."
+                                ? "Estos datos forman parte de la historia clínica del paciente y están protegidos por secreto profesional. Uso exclusivo para el diagnóstico y seguimiento terapéutico."
+                                : "Datos agregados y anonimizados. Esta herramienta ofrece soporte estadístico para la gestión de la consulta. No contiene datos personales identificables en esta vista."
                             }
                         </AlertDescription>
                     </Alert>
 
                     {/* TAB: OVERVIEW */}
                     {activeTab === 'overview' && (
-                        <div className="space-y-6">
-                            <p className="text-sm text-muted-foreground italic">Haz clic en una tarjeta para ver su evolución.</p>
-                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                <StatsCard
-                                    title="Sesiones (Mes)"
-                                    value={advancedStats.sessionsThisMonth.toString()}
-                                    icon={BarChart3}
-                                    iconBgColor="bg-blue-100"
-                                    iconColor="text-blue-600"
-                                    subtitle="Total Realizadas"
-                                    trend={{ value: "Total", isPositive: true }}
-                                    onClick={() => setSelectedMetric('sessions')}
-                                    isSelected={selectedMetric === 'sessions'}
-                                />
-                                <StatsCard
-                                    title="Ingresos (Est)"
-                                    value={`${advancedStats.monthIncome}€`}
-                                    icon={Euro}
-                                    iconBgColor="bg-emerald-100"
-                                    iconColor="text-emerald-600"
-                                    subtitle="Este Mes"
-                                    trend={{ value: "Estimado", isPositive: true }}
-                                    onClick={() => setSelectedMetric('income')}
-                                    isSelected={selectedMetric === 'income'}
-                                />
-                                <StatsCard
-                                    title="Pacientes Activos"
-                                    value={stats.activePatients.toString()}
-                                    icon={Users}
-                                    iconBgColor="bg-indigo-100"
-                                    iconColor="text-indigo-600"
-                                    subtitle="Total"
-                                    trend={stats.clientTrend}
-                                    onClick={() => setSelectedMetric('patients')}
-                                    isSelected={selectedMetric === 'patients'}
-                                />
-                                <StatsCard
-                                    title="Agenda (7d)"
-                                    value={advancedStats.sessionsNextWeek.toString()}
-                                    icon={Calendar}
-                                    iconBgColor="bg-purple-100"
-                                    iconColor="text-purple-600"
-                                    subtitle="Próxima Semana"
-                                    trend={{ value: "Vista", isPositive: true }}
-                                    // Clicking agenda could technically just show sessions, or stay neutral
-                                    onClick={() => setSelectedMetric('sessions')}
-                                // Not highlighted specifically to avoid confusion, or map to sessions
-                                />
+                        <div className="space-y-8">
 
-                                <StatsCard
-                                    title="Tasa de Asistencia"
-                                    value={advancedStats.attendanceRate > 0 ? `${advancedStats.attendanceRate}%` : "-"}
-                                    icon={CheckCircle}
-                                    iconBgColor="bg-green-100"
-                                    iconColor="text-green-600"
-                                    subtitle="Global"
-                                    trend={{ value: "Calidad", isPositive: true }}
-                                    onClick={() => setSelectedMetric('attendance')}
-                                    isSelected={selectedMetric === 'attendance'}
-                                />
-                                <StatsCard
-                                    title="Tasa de Cancelación"
-                                    value={`${advancedStats.cancellationRate}%`}
-                                    icon={XCircle}
-                                    iconBgColor="bg-red-100"
-                                    iconColor="text-red-600"
-                                    subtitle="Global"
-                                    trend={{ value: "Riesgo", isPositive: advancedStats.cancellationRate < 10 }}
-                                    onClick={() => setSelectedMetric('cancellation')}
-                                    isSelected={selectedMetric === 'cancellation'}
-                                />
+                            {/* BLOCK 1: ANALYTICS (Generates Chart) */}
+                            <div className="space-y-4">
+                                <div>
+                                    <h3 className="text-lg font-medium text-slate-800">Evolución y Métricas</h3>
+                                    <p className="text-sm text-muted-foreground">Haz clic para ver el gráfico detallado.</p>
+                                </div>
+                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                    <StatsCard
+                                        title="Sesiones (Mes)"
+                                        value={advancedStats.sessionsThisMonth.toString()}
+                                        icon={BarChart3}
+                                        iconBgColor="bg-blue-100"
+                                        iconColor="text-blue-600"
+                                        subtitle="Total Realizadas"
+                                        trend={{ value: "Total", isPositive: true }}
+                                        onClick={() => setSelectedMetric('sessions')}
+                                        isSelected={selectedMetric === 'sessions'}
+                                    />
+                                    <StatsCard
+                                        title="Ingresos (Est)"
+                                        value={`${advancedStats.monthIncome}€`}
+                                        icon={Euro}
+                                        iconBgColor="bg-emerald-100"
+                                        iconColor="text-emerald-600"
+                                        subtitle="Este Mes"
+                                        trend={{ value: "Estimado", isPositive: true }}
+                                        onClick={() => setSelectedMetric('income')}
+                                        isSelected={selectedMetric === 'income'}
+                                    />
+                                    <StatsCard
+                                        title="Pacientes Activos"
+                                        value={stats.activePatients.toString()}
+                                        icon={Users}
+                                        iconBgColor="bg-indigo-100"
+                                        iconColor="text-indigo-600"
+                                        subtitle="Total"
+                                        trend={stats.clientTrend}
+                                        onClick={() => setSelectedMetric('patients')}
+                                        isSelected={selectedMetric === 'patients'}
+                                    />
+                                    <StatsCard
+                                        title="Tasa de Asistencia"
+                                        value={advancedStats.attendanceRate > 0 ? `${advancedStats.attendanceRate}%` : "-"}
+                                        icon={CheckCircle}
+                                        iconBgColor="bg-green-100"
+                                        iconColor="text-green-600"
+                                        subtitle="Global"
+                                        trend={{ value: "Calidad", isPositive: true }}
+                                        onClick={() => setSelectedMetric('attendance')}
+                                        isSelected={selectedMetric === 'attendance'}
+                                    />
+                                    <StatsCard
+                                        title="Tasa de Cancelación"
+                                        value={`${advancedStats.cancellationRate}%`}
+                                        icon={XCircle}
+                                        iconBgColor="bg-red-100"
+                                        iconColor="text-red-600"
+                                        subtitle="Global"
+                                        trend={{ value: "Riesgo", isPositive: advancedStats.cancellationRate < 10 }}
+                                        onClick={() => setSelectedMetric('cancellation')}
+                                        isSelected={selectedMetric === 'cancellation'}
+                                    />
+                                </div>
+                                {/* DYNAMIC MAIN CHART (Belongs to Block 1) */}
+                                <div className="mt-6">
+                                    {renderMainChart()}
+                                </div>
                             </div>
 
-                            {/* DYNAMIC MAIN CHART */}
-                            {renderMainChart()}
+                            {/* BLOCK 2: MANAGEMENT (Static/Operational) */}
+                            <div className="space-y-4 pt-4 border-t">
+                                <div>
+                                    <h3 className="text-lg font-medium text-slate-800">Agenda y Gestión</h3>
+                                    <p className="text-sm text-muted-foreground">Acciones rápidas y estado administrativo.</p>
+                                </div>
+                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                    <StatsCard
+                                        title="Agenda (7d)"
+                                        value={advancedStats.sessionsNextWeek.toString()}
+                                        icon={Calendar}
+                                        iconBgColor="bg-purple-100"
+                                        iconColor="text-purple-600"
+                                        subtitle="Próxima Semana"
+                                        trend={{ value: "Vista", isPositive: true }}
+                                    // No click action for chart
+                                    />
+                                    <StatsCard
+                                        title="Notas Pendientes"
+                                        value={advancedStats.pendingNotes.toString()}
+                                        icon={AlertCircle}
+                                        iconBgColor="bg-orange-100"
+                                        iconColor="text-orange-600"
+                                        subtitle="Admin"
+                                        trend={{ value: "Tareas", isPositive: false }}
+                                    // No click action for chart
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
 
@@ -376,6 +401,8 @@ export default function StatisticsPage() {
                                     iconColor="text-green-600"
                                     subtitle="Completadas vs Programadas"
                                     trend={{ value: "Calidad", isPositive: true }}
+                                    onClick={() => setSelectedMetric('attendance')}
+                                    isSelected={selectedMetric !== 'cancellation'} // Default selection
                                 />
                                 <StatsCard
                                     title="Tasa de Cancelación"
@@ -385,47 +412,51 @@ export default function StatisticsPage() {
                                     iconColor="text-red-600"
                                     subtitle="Canceladas + No Show"
                                     trend={{ value: "Riesgo", isPositive: advancedStats.cancellationRate < 10 }}
+                                    onClick={() => setSelectedMetric('cancellation')}
+                                    isSelected={selectedMetric === 'cancellation'}
                                 />
                             </div>
 
-                            <div className="grid gap-6 md:grid-cols-2">
-                                {/* Adherence Trend Chart */}
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Evolución de Asistencia</CardTitle>
-                                        <CardDescription>Porcentaje de sesiones completadas</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="h-[300px]">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={stats.attendanceByMonth || []}>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="name" />
-                                                <YAxis domain={[0, 100]} unit="%" />
-                                                <Tooltip />
-                                                <Line type="monotone" dataKey="value" stroke="#22c55e" strokeWidth={2} activeDot={{ r: 8 }} />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </CardContent>
-                                </Card>
-
-                                {/* Cancellation Trend Chart */}
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Evolución Tasa de Cancelación</CardTitle>
-                                        <CardDescription>Porcentaje de sesiones canceladas</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="h-[300px]">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={stats.cancellationByMonth || []}>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="name" />
-                                                <YAxis domain={[0, 100]} unit="%" />
-                                                <Tooltip />
-                                                <Line type="monotone" dataKey="value" stroke="#ef4444" strokeWidth={2} activeDot={{ r: 8 }} />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </CardContent>
-                                </Card>
+                            <div className="grid gap-6 grid-cols-1">
+                                {selectedMetric === 'cancellation' ? (
+                                    /* Cancellation Trend Chart */
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle>Evolución Tasa de Cancelación</CardTitle>
+                                            <CardDescription>Porcentaje de sesiones canceladas</CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="h-[300px]">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart data={stats.cancellationByMonth || []}>
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="name" />
+                                                    <YAxis domain={[0, 100]} unit="%" />
+                                                    <Tooltip />
+                                                    <Line type="monotone" dataKey="value" stroke="#ef4444" strokeWidth={2} activeDot={{ r: 8 }} />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </CardContent>
+                                    </Card>
+                                ) : (
+                                    /* Adherence Trend Chart (Default) */
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle>Evolución de Asistencia</CardTitle>
+                                            <CardDescription>Porcentaje de sesiones completadas</CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="h-[300px]">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart data={stats.attendanceByMonth || []}>
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="name" />
+                                                    <YAxis domain={[0, 100]} unit="%" />
+                                                    <Tooltip />
+                                                    <Line type="monotone" dataKey="value" stroke="#22c55e" strokeWidth={2} activeDot={{ r: 8 }} />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </CardContent>
+                                    </Card>
+                                )}
                             </div>
                         </div>
                     )}
@@ -433,13 +464,16 @@ export default function StatisticsPage() {
                     {/* TAB: THEMES */}
                     {activeTab === 'themes' && (
                         <div className="space-y-6">
-                            <div className="grid gap-6 md:grid-cols-2">
+                            <div className="grid gap-6 grid-cols-1">
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Temas Prevalents</CardTitle>
-                                        <CardDescription>Motius de consulta freqüents (IA)</CardDescription>
+                                        <CardTitle>Temas Prevalentes</CardTitle>
+                                        <CardDescription>
+                                            Análisis de los motivos de consulta más frecuentes detectados por ia Inteligencia Artificial.
+                                            Este gráfico ayuda a visualizar rápidamente los problemas recurrentes en las sesiones.
+                                        </CardDescription>
                                     </CardHeader>
-                                    <CardContent className="h-[300px]">
+                                    <CardContent className="h-[400px]">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <PieChart>
                                                 <Pie
@@ -448,7 +482,7 @@ export default function StatisticsPage() {
                                                     cy="50%"
                                                     labelLine={false}
                                                     label={({ name, percent }: any) => `${name || ''} ${((percent || 0) * 100).toFixed(0)}%`}
-                                                    outerRadius={80}
+                                                    outerRadius={120}
                                                     fill="#8884d8"
                                                     dataKey="value"
                                                 >
@@ -464,17 +498,20 @@ export default function StatisticsPage() {
 
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Tendència de Benestar</CardTitle>
-                                        <CardDescription>Sentiment positiu (IA)</CardDescription>
+                                        <CardTitle>Tendencia de Bienestar</CardTitle>
+                                        <CardDescription>
+                                            Evolución del sentimiento positivo a lo largo del tiempo.
+                                            Esta línea muestra cómo cambia el tono emocional de las sesiones, permitiendo detectar mejoras o recaídas.
+                                        </CardDescription>
                                     </CardHeader>
                                     <CardContent className="h-[300px]">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <LineChart data={stats.sentimentTrend}>
                                                 <CartesianGrid strokeDasharray="3 3" />
                                                 <XAxis dataKey="sessionDate" />
-                                                <YAxis domain={[0, 10]} />
+                                                <YAxis domain={[0, 1]} />
                                                 <Tooltip />
-                                                <Line type="monotone" dataKey="sentiment" stroke="#10b981" strokeWidth={2} />
+                                                <Line type="monotone" dataKey="sentimentScore" stroke="#8b5cf6" strokeWidth={2} />
                                             </LineChart>
                                         </ResponsiveContainer>
                                     </CardContent>

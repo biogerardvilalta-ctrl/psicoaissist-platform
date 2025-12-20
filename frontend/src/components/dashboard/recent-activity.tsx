@@ -47,8 +47,14 @@ export default function RecentActivity() {
   useEffect(() => {
     async function fetchActivity() {
       try {
-        const response = await AuditAPI.getAll(5, 0); // Fetch top 5 recent actions
-        const items = response.items.map(log => mapLogToActivity(log));
+        // Fetch more items to ensure we have enough after filtering
+        const response = await AuditAPI.getAll(20, 0);
+
+        const sessionLogs = response.items
+          .filter(log => log.resourceType === 'SESSION')
+          .slice(0, 5); // Take top 5 sessions
+
+        const items = sessionLogs.map(log => mapLogToActivity(log));
         setActivities(items);
       } catch (error) {
         console.error("Failed to fetch recent activity", error);
@@ -77,7 +83,7 @@ export default function RecentActivity() {
     if (log.action === 'LOGIN') title = 'Inicio de sesión';
 
     // Override title based on details if available or just use details as subtitle
-    const subtitle = log.metadata?.details || log.details || `${log.action} on ${log.resourceType}`;
+    const subtitle = log.metadata?.details || `${log.action} on ${log.resourceType}`;
 
     // Better title logic based on resource
     if (type === 'session') {
