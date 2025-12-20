@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiService = void 0;
 const common_1 = require("@nestjs/common");
 const prompt_selector_1 = require("./prompt.selector");
-const FORBIDDEN_WORDS_REGEX = /(ansietat|depressió|trastorn|diagnòstic|dsm|criteris|patologia|paciente sufre|debe|obligatorio|compleix criteris|hauries de|és recomanable que)/i;
+const FORBIDDEN_WORDS_REGEX = /(ansietat|ansiedad|anxiety|depressió|depresión|depression|trastorn|trastorno|disorder|diagnòstic|diagnóstico|diagnosis|dsm|criteris|criterios|criteria|patologia|patología|pathology|paciente sufre|patient suffers|debe|must|obligatorio|mandatory|compleix criteris|cumple criterios|meets criteria|hauries de|deberías|should|és recomanable que|se recomienda que|it is recommended)/i;
 const SYSTEM_PROMPT = `
 Ets una eina d’assistència clínica per a psicòlegs col·legiats.
 Funció: suport cognitiu descriptiu durant la sessió psicològica.
@@ -38,6 +38,11 @@ Llenguatge:
 const LIVE_SESSION_SYSTEM_PROMPT = `
 Ets un assistent en temps real per a psicòlegs durant una sessió.
 La teva tasca és analitzar el text entrant (transcripció o notes) i generar suggeriments breus i útils.
+
+IDIOMA DE RESPOSTA:
+- Detecta l'idioma principal del text d'entrada (Castellà, Català, Anglès, etc.).
+- Genera TOTS els suggeriments (preguntes, consideracions) en el MATEIX IDIOMA que el text d'entrada.
+- Si el text és molt breu o ambigu, utilitza l'idioma predominant de la sessió o Català per defecte.
 
 ESTRICTAMENT PROHIBIT:
 - Diagnosticar o etiquetar clínicament.
@@ -153,9 +158,11 @@ artificial a partir de la informació proporcionada, i ha de ser interpretat,
 revisat i validat per un professional qualificat. No substitueix una avaluació
 professional completa ni constitueix una decisió automatitzada.”
 `;
-const SESSION_ANALYSIS_PROMPT = `
+const SESSION_ANALYSIS_PROMPT = (language) => `
 Analitza el text exclusivament de manera descriptiva.
 NO utilitzis: categories diagnòstiques, noms de trastorns, termes DSM.
+
+IDIOMA DE RESPOSTA: ${language} (Genera tot l'anàlisi en aquest idioma).
 
 Objectius:
 - Identificar expressions emocionals literals (ex: "em sento buit").
@@ -184,8 +191,11 @@ const RISK_DETECTION_PROMPT = `
 - NO concloure risc diagnòstic.
 - Formular com a: "Expressions que requereixen atenció prioritària".
 `;
-const FACTUAL_SUMMARY_PROMPT = `
+const FACTUAL_SUMMARY_PROMPT = (language) => `
 Genera un resum EXCLUSIVAMENT FÀCTIC i DESCRIPTIU del contingut proporcionat.
+
+IDIOMA DE RESPOSTA: ${language} (Genera tot el resum en aquest idioma).
+
 REGLES ERICTES:
 1. Només inclou informació explícita en el text (transcripció/notes).
 2. NO infereixis, NO interpretis, NO psicologitzis.
@@ -310,7 +320,7 @@ let AiService = class AiService {
         }
         return text;
     }
-    async generateSessionAnalysis(sessionId, notes, transcription, isMinor = false) {
+    async generateSessionAnalysis(sessionId, notes, transcription, isMinor = false, language = 'ca') {
         const lowerNotes = (notes + '\n' + transcription).toLowerCase();
         let generatedSummary = `Resum no disponible (Error en generació)`;
         try {
@@ -322,7 +332,7 @@ let AiService = class AiService {
                 try {
                     const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
                     const result = await model.generateContent([
-                        FACTUAL_SUMMARY_PROMPT,
+                        FACTUAL_SUMMARY_PROMPT(language),
                         `TRANSCRIPCIÓ A RESUMIR:\n${transcription}`
                     ]);
                     const response = await result.response;
@@ -687,14 +697,16 @@ Genera suggeriments en temps real format JSON.
             }
         };
         const languageBlock = getLanguageBlock(data.languageProfile || 'ADULT');
-        const prompt = promptTemplate({
+        const promptInput = {
             sessionCount: data.sessionCount,
             period: data.period,
             notesSummary: data.notesSummary,
             firstSessionNote: data.firstSessionNote || 'No disponible',
             customSections: data.sections.join('\n') || (data.additionalInstructions ? data.additionalInstructions : 'Estructura lliure'),
-            languageProfile: languageBlock
-        });
+            languageProfile: languageBlock,
+            language: data.language || 'Català'
+        };
+        const prompt = promptTemplate(promptInput);
         try {
             const model = this.genAI.getGenerativeModel({
                 model: "gemini-2.0-flash",
@@ -705,6 +717,8 @@ Genera suggeriments en temps real format JSON.
                 },
                 systemInstruction: OFFICIAL_REPORT_SYSTEM_PROMPT + `
                 
+                IDIOMA DE RESPOSTA OBLIGATORI: ${data.language || 'Català'} (Tot el contingut ha de ser generat en aquest idioma).
+
                 FORMAT DE SORTIDA OBLIGATORI:
                 - Retorna EXCLUSIVAMENT codi HTML net dins d'un <div> principal.
                 - Fes servir <h3> per als títols de secció (ex: 3. Fonts d'informació).
@@ -718,7 +732,7 @@ Genera suggeriments en temps real format JSON.
             const result = await model.generateContent(prompt);
             const response = result.response;
             let text = response.text();
-            text = text.replace(/^```html/, '').replace(/```$/, '').trim();
+            text = text.replace(/^```html /, '').replace(/```$/, '').trim();
             return text;
         }
         catch (error) {

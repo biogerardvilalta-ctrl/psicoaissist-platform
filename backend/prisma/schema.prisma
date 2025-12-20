@@ -38,7 +38,7 @@ model User {
   scheduleConfig  Json?    @map("schedule_config")
   
   // AI Settings
-  preferredLanguage String @default("es") @map("preferred_language")
+  preferredLanguage String @default("ca") @map("preferred_language")
   
   // Stripe integration
   stripeCustomerId String? @unique @map("stripe_customer_id")

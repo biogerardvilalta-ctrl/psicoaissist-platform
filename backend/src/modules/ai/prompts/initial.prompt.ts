@@ -5,9 +5,12 @@ export const initialPrompt = (data: {
     firstSessionNote: string;
     languageProfile?: string;
     customSections?: string;
+    language?: string;
 }) => `
 Ets un/a psicòleg/a col·legiat/da.
 Has de redactar un INFORME D’AVALUACIÓ PSICOLÒGICA INICIAL.
+
+IDIOMA DE REDACCIÓ: ${data.language || 'Català'} (Redacta tot l'informe en aquest idioma).
 
 Perfil Lingüístic:
 ${data.languageProfile || 'Llenguatge clínic estàndard per adults'}

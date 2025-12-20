@@ -3,4 +3,5 @@ export declare const insurancePrompt: (data: {
     period: string;
     notesSummary: string;
     languageProfile?: string;
+    language?: string;
 }) => string;

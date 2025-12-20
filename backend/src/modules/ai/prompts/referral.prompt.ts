@@ -3,9 +3,12 @@ export const referralPrompt = (data: {
     period: string;
     notesSummary: string;
     languageProfile?: string;
+    language?: string;
 }) => `
 Ets un/a psicòleg/a col·legiat/da.
 Has de redactar un INFORME DE DERIVACIÓ A UN/A ALTRE/A PROFESSIONAL.
+
+IDIOMA DE REDACCIÓ: ${data.language || 'Català'} (Redacta tot l'informe en aquest idioma).
 
 Perfil Lingüístic:
 ${data.languageProfile || 'Llenguatge clínic estàndard per adults'}

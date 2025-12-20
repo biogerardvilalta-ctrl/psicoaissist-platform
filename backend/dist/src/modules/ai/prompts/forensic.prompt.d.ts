@@ -3,4 +3,5 @@ export declare const forensicPrompt: (data: {
     period: string;
     notesSummary: string;
     languageProfile?: string;
+    language?: string;
 }) => string;

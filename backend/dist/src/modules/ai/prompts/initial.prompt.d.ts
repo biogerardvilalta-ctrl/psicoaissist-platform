@@ -5,4 +5,5 @@ export declare const initialPrompt: (data: {
     firstSessionNote: string;
     languageProfile?: string;
     customSections?: string;
+    language?: string;
 }) => string;

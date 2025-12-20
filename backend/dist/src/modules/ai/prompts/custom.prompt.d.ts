@@ -4,4 +4,5 @@ export declare const customPrompt: (data: {
     notesSummary: string;
     customSections?: string;
     languageProfile?: string;
+    language?: string;
 }) => string;

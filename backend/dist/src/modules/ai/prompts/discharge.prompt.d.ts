@@ -4,4 +4,5 @@ export declare const dischargePrompt: (data: {
     notesSummary: string;
     firstSessionNote: string;
     languageProfile?: string;
+    language?: string;
 }) => string;

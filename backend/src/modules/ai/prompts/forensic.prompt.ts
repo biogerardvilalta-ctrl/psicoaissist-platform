@@ -3,8 +3,11 @@ export const forensicPrompt = (data: {
     period: string;
     notesSummary: string;
     languageProfile?: string;
+    language?: string;
 }) => `
 Ets un/a psicòleg/a col·legiat/da actuant com a perit/da.
+
+IDIOMA DE REDACCIÓ: ${data.language || 'Català'} (Redacta tot l'informe en aquest idioma).
 
 Perfil Lingüístic:
 ${data.languageProfile || 'Llenguatge tècnic i forense'}

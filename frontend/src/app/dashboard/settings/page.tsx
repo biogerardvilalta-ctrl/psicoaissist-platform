@@ -32,7 +32,7 @@ export default function SettingsPage() {
   const [bufferTime, setBufferTime] = useState<string>("10");
   const [workStartHour, setWorkStartHour] = useState<string>("09:00");
   const [workEndHour, setWorkEndHour] = useState<string>("18:00");
-  const [preferredLanguage, setPreferredLanguage] = useState<string>("es");
+  const [preferredLanguage, setPreferredLanguage] = useState<string>("ca");
   const [loading, setLoading] = useState(false);
 
   // Initial Load
@@ -43,7 +43,7 @@ export default function SettingsPage() {
       setBufferTime(user.bufferTime?.toString() || "10");
       setWorkStartHour(user.workStartHour || "09:00");
       setWorkEndHour(user.workEndHour || "18:00");
-      setPreferredLanguage(user.preferredLanguage || "es");
+      setPreferredLanguage(user.preferredLanguage || "ca");
     }
   }, [user]);
 
@@ -338,7 +338,7 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label>Idioma preferido para informes</Label>
+                <Label>Idioma para Informes y Análisis</Label>
                 <Select
                   value={preferredLanguage}
                   onValueChange={(val) => {
@@ -357,7 +357,9 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Este idioma se utilizará por defecto al generar los borradores de informes clínicos y análisis de sesiones.
+                  Este idioma definirá la redacción de los <strong>informes clínicos y el análisis post-sesión</strong>.
+                  <br />
+                  Nota: El <strong>Asistente en Vivo</strong> detectará automáticamente el idioma que hables.
                 </p>
               </div>
             </CardContent>

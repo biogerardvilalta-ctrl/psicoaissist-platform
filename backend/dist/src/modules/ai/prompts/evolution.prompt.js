@@ -5,6 +5,8 @@ const evolutionPrompt = (data) => `
 Ets un/a psicòleg/a col·legiat/da.
 Has de redactar un INFORME D’EVOLUCIÓ PSICOLÒGICA.
 
+IDIOMA DE REDACCIÓ: ${data.language || 'Català'} (Redacta tot l'informe en aquest idioma).
+
 Perfil Lingüístic:
 ${data.languageProfile || 'Llenguatge clínic estàndard per adults'}
 

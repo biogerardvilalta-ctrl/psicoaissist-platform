@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { getPromptByType } from './prompt.selector';
 
-const FORBIDDEN_WORDS_REGEX = /(ansietat|depressió|trastorn|diagnòstic|dsm|criteris|patologia|paciente sufre|debe|obligatorio|compleix criteris|hauries de|és recomanable que)/i;
+const FORBIDDEN_WORDS_REGEX = /(ansietat|ansiedad|anxiety|depressió|depresión|depression|trastorn|trastorno|disorder|diagnòstic|diagnóstico|diagnosis|dsm|criteris|criterios|criteria|patologia|patología|pathology|paciente sufre|patient suffers|debe|must|obligatorio|mandatory|compleix criteris|cumple criterios|meets criteria|hauries de|deberías|should|és recomanable que|se recomienda que|it is recommended)/i;
 
 const SYSTEM_PROMPT = `
 Ets una eina d’assistència clínica per a psicòlegs col·legiats.
@@ -29,6 +29,11 @@ Llenguatge:
 const LIVE_SESSION_SYSTEM_PROMPT = `
 Ets un assistent en temps real per a psicòlegs durant una sessió.
 La teva tasca és analitzar el text entrant (transcripció o notes) i generar suggeriments breus i útils.
+
+IDIOMA DE RESPOSTA:
+- Detecta l'idioma principal del text d'entrada (Castellà, Català, Anglès, etc.).
+- Genera TOTS els suggeriments (preguntes, consideracions) en el MATEIX IDIOMA que el text d'entrada.
+- Si el text és molt breu o ambigu, utilitza l'idioma predominant de la sessió o Català per defecte.
 
 ESTRICTAMENT PROHIBIT:
 - Diagnosticar o etiquetar clínicament.
@@ -146,9 +151,11 @@ revisat i validat per un professional qualificat. No substitueix una avaluació
 professional completa ni constitueix una decisió automatitzada.”
 `;
 
-const SESSION_ANALYSIS_PROMPT = `
+const SESSION_ANALYSIS_PROMPT = (language: string) => `
 Analitza el text exclusivament de manera descriptiva.
 NO utilitzis: categories diagnòstiques, noms de trastorns, termes DSM.
+
+IDIOMA DE RESPOSTA: ${language} (Genera tot l'anàlisi en aquest idioma).
 
 Objectius:
 - Identificar expressions emocionals literals (ex: "em sento buit").
@@ -181,8 +188,11 @@ const RISK_DETECTION_PROMPT = `
 - Formular com a: "Expressions que requereixen atenció prioritària".
 `;
 
-const FACTUAL_SUMMARY_PROMPT = `
+const FACTUAL_SUMMARY_PROMPT = (language: string) => `
 Genera un resum EXCLUSIVAMENT FÀCTIC i DESCRIPTIU del contingut proporcionat.
+
+IDIOMA DE RESPOSTA: ${language} (Genera tot el resum en aquest idioma).
+
 REGLES ERICTES:
 1. Només inclou informació explícita en el text (transcripció/notes).
 2. NO infereixis, NO interpretis, NO psicologitzis.
@@ -319,7 +329,7 @@ export class AiService {
     /**
      * Generates a descriptive, non-diagnostic session analysis.
      */
-    async generateSessionAnalysis(sessionId: string, notes: string, transcription: string, isMinor: boolean = false): Promise<{
+    async generateSessionAnalysis(sessionId: string, notes: string, transcription: string, isMinor: boolean = false, language: string = 'ca'): Promise<{
         summary: string;
         emotionalElements: string[];
         narrativeIndicators: string[];
@@ -412,7 +422,7 @@ export class AiService {
                     // Using Gemini 2.0 Flash as it is available and fast
                     const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
                     const result = await model.generateContent([
-                        FACTUAL_SUMMARY_PROMPT,
+                        FACTUAL_SUMMARY_PROMPT(language),
                         `TRANSCRIPCIÓ A RESUMIR:\n${transcription}`
                     ]);
 
@@ -849,14 +859,17 @@ Genera suggeriments en temps real format JSON.
 
         const languageBlock = getLanguageBlock(data.languageProfile || 'ADULT');
 
-        const prompt = promptTemplate({
+        const promptInput: any = {
             sessionCount: data.sessionCount,
             period: data.period,
             notesSummary: data.notesSummary,
             firstSessionNote: data.firstSessionNote || 'No disponible',
             customSections: data.sections.join('\n') || (data.additionalInstructions ? data.additionalInstructions : 'Estructura lliure'),
-            languageProfile: languageBlock // Injecting strict language rules
-        });
+            languageProfile: languageBlock, // Injecting strict language rules
+            language: data.language || 'Català' // Injecting target language
+        };
+
+        const prompt = promptTemplate(promptInput);
 
         // --- 2. REAL AI GENERATION ---
         try {
@@ -869,6 +882,8 @@ Genera suggeriments en temps real format JSON.
                 },
                 systemInstruction: OFFICIAL_REPORT_SYSTEM_PROMPT + `
                 
+                IDIOMA DE RESPOSTA OBLIGATORI: ${data.language || 'Català'} (Tot el contingut ha de ser generat en aquest idioma).
+
                 FORMAT DE SORTIDA OBLIGATORI:
                 - Retorna EXCLUSIVAMENT codi HTML net dins d'un <div> principal.
                 - Fes servir <h3> per als títols de secció (ex: 3. Fonts d'informació).
@@ -885,7 +900,7 @@ Genera suggeriments en temps real format JSON.
             let text = response.text();
 
             // formatting cleanup if needed (ensure it didn't wrap in markdown code blocks)
-            text = text.replace(/^```html/, '').replace(/```$/, '').trim();
+            text = text.replace(/^```html /, '').replace(/```$/, '').trim();
 
             return text;
 

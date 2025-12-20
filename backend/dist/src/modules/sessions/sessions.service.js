@@ -255,7 +255,9 @@ let SessionsService = class SessionsService {
                 const isMinor = updatedSession.isMinor;
                 const notesText = notesToReturn || '';
                 const transText = transcriptionToReturn || '';
-                const analysis = await this.aiService.generateSessionAnalysis(id, notesText, transText, isMinor);
+                const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { preferredLanguage: true } });
+                const userLang = user?.preferredLanguage || 'ca';
+                const analysis = await this.aiService.generateSessionAnalysis(id, notesText, transText, isMinor, userLang);
                 const finalSession = await this.prisma.session.update({
                     where: { id },
                     data: {

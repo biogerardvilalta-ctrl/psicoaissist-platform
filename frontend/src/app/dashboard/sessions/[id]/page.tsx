@@ -618,7 +618,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     if (text) {
                                         // Update TRANSCRIPTION instead of notes
                                         setTranscription(prev => {
-                                            const newTrans = prev + (prev ? ' ' : '') + `${text}`;
+                                            // Use newline to separate chunks, respecting the "Speaker" format
+                                            const newTrans = prev + (prev ? '\n' : '') + `${text}`;
                                             return newTrans;
                                         });
                                     }

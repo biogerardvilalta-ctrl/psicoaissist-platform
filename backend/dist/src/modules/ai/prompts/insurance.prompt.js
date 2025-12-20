@@ -5,6 +5,8 @@ const insurancePrompt = (data) => `
 Ets un/a psicòleg/a col·legiat/da.
 Has de redactar un INFORME PER A ASSEGURADORES.
 
+IDIOMA DE REDACCIÓ: ${data.language || 'Català'} (Redacta tot l'informe en aquest idioma).
+
 Perfil Lingüístic:
 ${data.languageProfile || 'Llenguatge clínic estàndard per adults'}
 

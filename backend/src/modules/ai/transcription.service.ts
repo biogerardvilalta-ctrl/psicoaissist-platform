@@ -90,7 +90,7 @@ export class TranscriptionService {
                         fileUri: uploadResponse.file.uri
                     }
                 },
-                { text: "Transcribe el audio verbatim." }
+                { text: "Transcribe el audio verbatim. FORMATO OBLIGATORIO: Identifica por contexto quién es el profesional y quién es el paciente. Usa las etiquetas 'Psicólogo/a:' y 'Paciente:' (o 'Paciente 1:', 'Paciente 2:' si hay varios). Si no estás seguro, usa 'Hablante 1:'. Separa intervenciones con saltos de línea." }
             ]);
 
             // Clean up temp file
