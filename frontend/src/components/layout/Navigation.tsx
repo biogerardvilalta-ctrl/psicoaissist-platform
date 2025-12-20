@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRole } from '@/hooks/useRole';
-import { Heart, Home, Users, Settings, Shield, BarChart3, CreditCard, FileText } from 'lucide-react';
+import { Heart, Home, Users, Settings, Shield, BarChart3, CreditCard, FileText, PieChart } from 'lucide-react';
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -33,6 +33,12 @@ export default function Navigation() {
       name: 'Informes',
       href: '/dashboard/reports',
       icon: FileText,
+      show: isPsychologist()
+    },
+    {
+      name: 'Estadísticas',
+      href: '/dashboard/statistics',
+      icon: PieChart,
       show: isPsychologist()
     },
 

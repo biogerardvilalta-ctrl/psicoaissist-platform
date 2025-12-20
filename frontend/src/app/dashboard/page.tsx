@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { Heart, User, BarChart3, Clock, BookOpen } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { StatsCard, RecentActivity, QuickActions, ProgressChart } from '@/components/dashboard';
 import { useEffect, useState } from 'react';
@@ -56,6 +57,12 @@ export default function DashboardPage() {
             <p className="text-gray-600">
               Tu asistente de inteligencia artificial para psicología está listo para ayudarte.
             </p>
+          </div>
+
+          <div className="flex justify-end mb-4">
+            <Link href="/dashboard/statistics" className="text-sm font-medium text-blue-600 hover:text-blue-500 flex items-center">
+              Ver estadísticas detalladas <BarChart3 className="ml-1 h-4 w-4" />
+            </Link>
           </div>
 
           {/* Enhanced stats with realistic demo data */}
