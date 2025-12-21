@@ -61,6 +61,8 @@ export default function DashboardPage() {
   const [config, setConfig] = useState<DashboardConfig>(DEFAULT_CONFIG);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
 
+  const [isConfigLoaded, setIsConfigLoaded] = useState(false);
+
   // Load Config on Mount
   useEffect(() => {
     const saved = localStorage.getItem('dashboardConfig');
@@ -72,12 +74,15 @@ export default function DashboardPage() {
         console.error("Error parsing dashboard config", e);
       }
     }
+    setIsConfigLoaded(true);
   }, []);
 
-  // Save Config on Change
+  // Save Config on Change (only after load)
   useEffect(() => {
-    localStorage.setItem('dashboardConfig', JSON.stringify(config));
-  }, [config]);
+    if (isConfigLoaded) {
+      localStorage.setItem('dashboardConfig', JSON.stringify(config));
+    }
+  }, [config, isConfigLoaded]);
 
   // Fetch Data
   useEffect(() => {

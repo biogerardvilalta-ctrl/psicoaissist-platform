@@ -307,7 +307,7 @@ export default function StatisticsPage() {
                                         iconBgColor="bg-emerald-100"
                                         iconColor="text-emerald-600"
                                         subtitle="Este Mes"
-                                        trend={{ value: "Estimado", isPositive: true }}
+                                        trend={{ value: "60€/h", isPositive: true }}
                                         onClick={() => setSelectedMetric('income')}
                                         isSelected={selectedMetric === 'income'}
                                     />
