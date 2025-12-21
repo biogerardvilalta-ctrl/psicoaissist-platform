@@ -16,5 +16,8 @@ export declare class UsersController {
     remove(id: string): Promise<{
         message: string;
     }>;
+    updateDashboardLayout(id: string, body: {
+        layout: any;
+    }): Promise<UserResponseDto>;
     changeRole(id: string, changeRoleDto: ChangeRoleDto): Promise<UserResponseDto>;
 }

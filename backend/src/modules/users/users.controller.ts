@@ -26,7 +26,7 @@ import { UserRole } from '@prisma/client';
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
 
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @ApiOperation({ summary: 'Crear nuevo usuario (solo administradores)' })
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente', type: UserResponseDto })
@@ -105,6 +105,19 @@ export class UsersController {
       return result;
     } catch (error) {
       this.logger.error(`Error deleting user: ${error.message}`);
+      throw error;
+    }
+  }
+
+  @ApiOperation({ summary: 'Actualizar layout del dashboard' })
+  @ApiResponse({ status: 200, description: 'Layout actualizado', type: UserResponseDto })
+  @Roles(UserRole.ADMIN, UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @Patch(':id/dashboard-layout')
+  async updateDashboardLayout(@Param('id') id: string, @Body() body: { layout: any }) {
+    try {
+      return await this.usersService.updateDashboardLayout(id, body.layout);
+    } catch (error) {
+      this.logger.error(`Error updating dashboard layout: ${error.message}`);
       throw error;
     }
   }

@@ -39,6 +39,7 @@ model User {
   
   // AI Settings
   preferredLanguage String @default("ca") @map("preferred_language")
+  dashboardLayout   Json?    @map("dashboard_layout")
   
   // Stripe integration
   stripeCustomerId String? @unique @map("stripe_customer_id")

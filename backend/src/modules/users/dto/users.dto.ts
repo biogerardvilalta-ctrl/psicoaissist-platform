@@ -148,6 +148,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   preferredLanguage?: string;
+
+  @ApiProperty({ required: false })
+  dashboardLayout?: any;
 }
 
 export class ChangeRoleDto {

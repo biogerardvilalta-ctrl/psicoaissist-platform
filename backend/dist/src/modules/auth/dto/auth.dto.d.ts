@@ -31,6 +31,7 @@ export declare class UserResponseDto {
     workEndHour: string;
     preferredLanguage: string;
     scheduleConfig?: any;
+    dashboardLayout?: string[];
 }
 export declare class AuthResponseDto {
     user: UserResponseDto;

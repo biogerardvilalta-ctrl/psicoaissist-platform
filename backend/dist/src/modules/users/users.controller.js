@@ -78,6 +78,15 @@ let UsersController = UsersController_1 = class UsersController {
             throw error;
         }
     }
+    async updateDashboardLayout(id, body) {
+        try {
+            return await this.usersService.updateDashboardLayout(id, body.layout);
+        }
+        catch (error) {
+            this.logger.error(`Error updating dashboard layout: ${error.message}`);
+            throw error;
+        }
+    }
     async changeRole(id, changeRoleDto) {
         try {
             const result = await this.usersService.changeRole(id, changeRoleDto.role);
@@ -150,6 +159,17 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "remove", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Actualizar layout del dashboard' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Layout actualizado', type: users_dto_1.UserResponseDto }),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.ADMIN, client_1.UserRole.PSYCHOLOGIST, client_1.UserRole.PSYCHOLOGIST_BASIC, client_1.UserRole.PSYCHOLOGIST_PRO, client_1.UserRole.PSYCHOLOGIST_PREMIUM),
+    (0, common_1.Patch)(':id/dashboard-layout'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateDashboardLayout", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Cambiar rol de usuario' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Rol cambiado exitosamente', type: users_dto_1.UserResponseDto }),

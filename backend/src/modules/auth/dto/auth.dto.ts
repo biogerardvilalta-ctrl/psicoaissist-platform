@@ -99,6 +99,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   scheduleConfig?: any;
+
+  @ApiProperty({ required: false })
+  dashboardLayout?: string[];
 }
 
 export class AuthResponseDto {

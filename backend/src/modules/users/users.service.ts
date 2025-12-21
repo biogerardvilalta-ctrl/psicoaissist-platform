@@ -111,6 +111,7 @@ export class UsersService {
           status: true,
           createdAt: true,
           lastLogin: true,
+          dashboardLayout: true,
         },
       });
 
@@ -247,6 +248,43 @@ export class UsersService {
   }
 
   /**
+   * Actualizar configuración del dashboard
+   */
+  async updateDashboardLayout(id: string, layout: any): Promise<UserResponseDto> {
+    try {
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: {
+          dashboardLayout: layout,
+          updatedAt: new Date(),
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          role: true,
+          status: true,
+          createdAt: true,
+          lastLogin: true,
+          dashboardLayout: true,
+          enableReminders: true,
+          defaultDuration: true,
+          bufferTime: true,
+          workStartHour: true,
+          workEndHour: true,
+          preferredLanguage: true,
+          scheduleConfig: true,
+        },
+      });
+      return this.mapToResponseDto(updatedUser);
+    } catch (error) {
+      this.logger.error(`Error updating dashboard layout: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Cambiar el rol de un usuario
    */
   async changeRole(id: string, newRole: UserRole): Promise<UserResponseDto> {
@@ -306,6 +344,7 @@ export class UsersService {
       workEndHour: user.workEndHour,
       scheduleConfig: user.scheduleConfig,
       preferredLanguage: user.preferredLanguage,
+      dashboardLayout: user.dashboardLayout,
     };
   }
 }

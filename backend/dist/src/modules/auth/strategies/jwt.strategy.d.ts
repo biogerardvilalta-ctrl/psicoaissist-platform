@@ -13,6 +13,7 @@ export declare class JwtStrategy extends JwtStrategy_base {
         status: import(".prisma/client").$Enums.UserStatus;
         firstName: string;
         lastName: string;
+        dashboardLayout: import("@prisma/client/runtime/library").JsonValue;
     }>;
 }
 export {};

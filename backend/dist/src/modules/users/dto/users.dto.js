@@ -197,6 +197,10 @@ __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", String)
 ], UserResponseDto.prototype, "preferredLanguage", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Object)
+], UserResponseDto.prototype, "dashboardLayout", void 0);
 class ChangeRoleDto {
 }
 exports.ChangeRoleDto = ChangeRoleDto;

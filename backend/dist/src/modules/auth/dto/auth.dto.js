@@ -141,6 +141,10 @@ __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", Object)
 ], UserResponseDto.prototype, "scheduleConfig", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Array)
+], UserResponseDto.prototype, "dashboardLayout", void 0);
 class AuthResponseDto {
 }
 exports.AuthResponseDto = AuthResponseDto;

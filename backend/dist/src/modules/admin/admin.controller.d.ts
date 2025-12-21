@@ -50,6 +50,7 @@ export declare class AdminController {
             id: string;
             createdAt: Date;
             lastLogin: Date | null;
+            dashboardLayout: import("@prisma/client/runtime/library").JsonValue | null;
             stripeCustomerId: string | null;
             verified: boolean;
             verificationToken: string | null;
@@ -169,6 +170,7 @@ export declare class AdminController {
         id: string;
         createdAt: Date;
         lastLogin: Date | null;
+        dashboardLayout: import("@prisma/client/runtime/library").JsonValue | null;
         stripeCustomerId: string | null;
         verified: boolean;
         verificationToken: string | null;

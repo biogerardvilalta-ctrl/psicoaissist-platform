@@ -117,9 +117,7 @@ let AuthController = AuthController_1 = class AuthController {
         }
     }
     async getProfile(req) {
-        return {
-            user: req.user,
-        };
+        return req.user;
     }
     async changePassword(req, changePasswordDto) {
         try {

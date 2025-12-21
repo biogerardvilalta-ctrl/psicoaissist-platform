@@ -39,6 +39,7 @@ export declare class UserResponseDto {
     workEndHour?: string;
     scheduleConfig?: any;
     preferredLanguage?: string;
+    dashboardLayout?: any;
 }
 export declare class ChangeRoleDto {
     role: UserRole;

@@ -26,9 +26,7 @@ export declare class AuthController {
     }>;
     getProfile(req: Request & {
         user: any;
-    }): Promise<{
-        user: any;
-    }>;
+    }): Promise<any>;
     changePassword(req: Request & {
         user: any;
     }, changePasswordDto: ChangePasswordDto): Promise<{

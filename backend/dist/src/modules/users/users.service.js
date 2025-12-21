@@ -100,6 +100,7 @@ let UsersService = UsersService_1 = class UsersService {
                     status: true,
                     createdAt: true,
                     lastLogin: true,
+                    dashboardLayout: true,
                 },
             });
             if (!user) {
@@ -206,6 +207,40 @@ let UsersService = UsersService_1 = class UsersService {
             throw error;
         }
     }
+    async updateDashboardLayout(id, layout) {
+        try {
+            const updatedUser = await this.prisma.user.update({
+                where: { id },
+                data: {
+                    dashboardLayout: layout,
+                    updatedAt: new Date(),
+                },
+                select: {
+                    id: true,
+                    email: true,
+                    firstName: true,
+                    lastName: true,
+                    role: true,
+                    status: true,
+                    createdAt: true,
+                    lastLogin: true,
+                    dashboardLayout: true,
+                    enableReminders: true,
+                    defaultDuration: true,
+                    bufferTime: true,
+                    workStartHour: true,
+                    workEndHour: true,
+                    preferredLanguage: true,
+                    scheduleConfig: true,
+                },
+            });
+            return this.mapToResponseDto(updatedUser);
+        }
+        catch (error) {
+            this.logger.error(`Error updating dashboard layout: ${error.message}`);
+            throw error;
+        }
+    }
     async changeRole(id, newRole) {
         try {
             const user = await this.prisma.user.findUnique({
@@ -256,6 +291,7 @@ let UsersService = UsersService_1 = class UsersService {
             workEndHour: user.workEndHour,
             scheduleConfig: user.scheduleConfig,
             preferredLanguage: user.preferredLanguage,
+            dashboardLayout: user.dashboardLayout,
         };
     }
 };

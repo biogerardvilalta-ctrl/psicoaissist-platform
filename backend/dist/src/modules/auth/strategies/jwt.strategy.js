@@ -41,6 +41,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
                 lastName: true,
                 role: true,
                 status: true,
+                dashboardLayout: true,
             },
         });
         if (!user) {

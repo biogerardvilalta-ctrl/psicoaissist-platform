@@ -2,122 +2,157 @@
 
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
-import { Heart, User, BarChart3, Clock, BookOpen, Euro, Calendar, AlertCircle, XCircle, CheckCircle, Settings, TrendingUp, CalendarDays } from 'lucide-react';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  User,
+  BarChart3,
+  Euro,
+  Calendar,
+  AlertCircle,
+  XCircle,
+  CheckCircle,
+  TrendingUp,
+  CalendarDays,
+  PlusCircle,
+  Trash2
+} from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { StatsCard, RecentActivity, TodaysSessions } from '@/components/dashboard';
+import { RecentActivity, TodaysSessions } from '@/components/dashboard';
 import { useEffect, useState } from 'react';
 import { DashboardAPI, DashboardStats } from '@/lib/dashboard-api';
-import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
-import { ClientsAPI, Client } from '@/lib/clients-api';
+import { SessionsAPI } from '@/lib/sessions-api';
 import { calculateAdvancedStats, AdvancedStats } from '@/lib/analytics-helper';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter
-} from "@/components/ui/dialog";
+import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
+import { StatsWidget } from '@/components/dashboard/widgets/StatsWidget';
+import { SessionsChartWidget } from '@/components/dashboard/widgets/SessionsChartWidget';
+import { WeeklyChartWidget } from '@/components/dashboard/widgets/WeeklyChartWidget';
+import { UserAPI } from '@/lib/user-api';
+
+// New Imports
+import { ThemesWidget } from '@/components/dashboard/widgets/ThemesWidget';
+import { SentimentWidget } from '@/components/dashboard/widgets/SentimentWidget';
+import { DistributionWidget } from '@/components/dashboard/widgets/DistributionWidget';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
-// Configuration Interface
-interface DashboardConfig {
-  hourlyRate: number;
-  visibleMetrics: string[];
-}
+const ALL_WIDGETS = [
+  { id: 'todaysSessions', label: 'Agenda de Hoy', category: 'Operational' },
+  { id: 'sessionsThisMonth', label: 'Sesiones (Mes)', category: 'Analytics' },
+  { id: 'activePatients', label: 'Pacientes Activos', category: 'Analytics' },
+  { id: 'monthIncome', label: 'Ingresos Estimados', category: 'Analytics' },
+  { id: 'sessionsNextWeek', label: 'Agenda (7 días)', category: 'Operational' },
+  { id: 'attendanceRate', label: 'Tasa Asistencia', category: 'Analytics' },
+  { id: 'cancellationRate', label: 'Tasa Cancelación', category: 'Analytics' },
+  { id: 'pendingNotes', label: 'Notas Pendientes', category: 'Operational' },
+  { id: 'sessionsChart', label: 'Gráfico Evolución', category: 'Charts' },
+  { id: 'weeklyChart', label: 'Gráfico Carga Semanal', category: 'Charts' },
+  // New Widgets
+  { id: 'themesWidget', label: 'Temas Recurrentes', category: 'Charts' },
+  { id: 'sentimentWidget', label: 'Tendencia Bienestar', category: 'Charts' },
+  { id: 'sessionTypesWidget', label: 'Tipos de Sesión', category: 'Charts' },
+];
 
-const DEFAULT_CONFIG: DashboardConfig = {
-  hourlyRate: 60,
-  visibleMetrics: ['activePatients', 'sessionsThisMonth', 'attendanceRate']
-};
-
-const METRIC_DEFINITIONS = [
-  { id: 'sessionsThisMonth', label: 'Sesiones (Este Mes)', icon: BarChart3 },
-  { id: 'activePatients', label: 'Pacientes Activos', icon: User },
-  { id: 'monthIncome', label: 'Ingresos Estimados', icon: Euro },
-  { id: 'sessionsNextWeek', label: 'Agenda (7 días)', icon: Calendar },
-  { id: 'attendanceRate', label: 'Tasa de Asistencia', icon: CheckCircle },
-  { id: 'cancellationRate', label: 'Tasa de Cancelación', icon: XCircle },
-  { id: 'pendingNotes', label: 'Notas Pendientes', icon: AlertCircle },
+const DEFAULT_LAYOUT = [
+  'todaysSessions',
+  'sessionsThisMonth',
+  'activePatients',
+  'monthIncome',
+  'sessionsNextWeek',
+  'attendanceRate',
+  'cancellationRate',
+  'pendingNotes',
+  'sessionsChart',
+  'weeklyChart'
 ];
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, updateUser } = useAuth();
   const { toast } = useToast();
 
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [advancedStats, setAdvancedStats] = useState<AdvancedStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [dashboardStats, setDashboardStats] = useState<any | null>(null);
+  const [layout, setLayout] = useState<string[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
-  // Config State
-  const [config, setConfig] = useState<DashboardConfig>(DEFAULT_CONFIG);
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
-
-  const [isConfigLoaded, setIsConfigLoaded] = useState(false);
-
-  // Load Config on Mount
+  // Initialize layout
   useEffect(() => {
-    const saved = localStorage.getItem('dashboardConfig');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setConfig({ ...DEFAULT_CONFIG, ...parsed });
-      } catch (e) {
-        console.error("Error parsing dashboard config", e);
+    if (user) {
+      if (user.dashboardLayout && Array.isArray(user.dashboardLayout) && user.dashboardLayout.length > 0) {
+        setLayout(user.dashboardLayout);
+      } else {
+        setLayout(DEFAULT_LAYOUT);
       }
+      setIsLoaded(true);
     }
-    setIsConfigLoaded(true);
-  }, []);
-
-  // Save Config on Change (only after load)
-  useEffect(() => {
-    if (isConfigLoaded) {
-      localStorage.setItem('dashboardConfig', JSON.stringify(config));
-    }
-  }, [config, isConfigLoaded]);
+  }, [user]);
 
   // Fetch Data
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [dashData, allSessions] = await Promise.all([
+        const [dashData, allSessions, backendStats] = await Promise.all([
           DashboardAPI.getStats(),
-          SessionsAPI.getAll()
+          SessionsAPI.getAll(),
+          DashboardAPI.getStats() // Fetching backend stats just in case
         ]);
         setStats(dashData);
-        // Calculate with current rate
-        const adv = calculateAdvancedStats(allSessions, config.hourlyRate);
+        setDashboardStats(backendStats);
+        const adv = calculateAdvancedStats(allSessions, 60);
         setAdvancedStats(adv);
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
         toast({
           title: "Error al cargar datos",
-          description: "No se pudieron obtener las estadísticas del dashboard.",
+          description: "No se pudieron obtener las estadísticas.",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
       }
     };
-
     fetchStats();
-  }, [config.hourlyRate]); // Re-calc if rate changes
+  }, []);
 
-  const handleToggleMetric = (id: string, checked: boolean) => {
-    setConfig(prev => {
-      const newMetrics = checked
-        ? [...prev.visibleMetrics, id]
-        : prev.visibleMetrics.filter(m => m !== id);
-      return { ...prev, visibleMetrics: newMetrics };
-    });
+  const handleSaveLayout = async (newLayout: string[]) => {
+    if (!user) return;
+    try {
+      setLayout(newLayout);
+      // Persist to backend
+      const updatedUser = await UserAPI.updateDashboardLayout(user.id, newLayout);
+
+      // Update local context - CRITICAL FIX
+      updateUser(updatedUser);
+
+      toast({
+        title: "Diseño guardado",
+        description: "Tu configuración de dashboard se ha actualizado correclamente.",
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error al guardar",
+        description: "No se pudo guardar la configuración.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAddWidget = (widgetId: string) => {
+    if (!layout.includes(widgetId)) {
+      const newLayout = [...layout, widgetId];
+      handleSaveLayout(newLayout);
+    } else {
+      const newLayout = layout.filter(id => id !== widgetId);
+      handleSaveLayout(newLayout);
+    }
   };
 
   const handleCardClick = (id: string) => {
@@ -134,305 +169,102 @@ export default function DashboardPage() {
     router.push(url);
   };
 
-  const renderMetricCard = (metricId: string) => {
-    if (!stats || !advancedStats) return null;
+  const renderItem = (id: string) => {
+    if (!stats || !advancedStats) return <div className="h-full bg-slate-50 animate-pulse rounded-xl"></div>;
 
-    switch (metricId) {
-      case 'sessionsThisMonth':
-        return (
-          <StatsCard
-            key={metricId}
-            title="Sesiones"
-            value={advancedStats.sessionsThisMonth.toString()}
-            icon={BarChart3}
-            iconBgColor="bg-blue-100"
-            iconColor="text-blue-600"
-            subtitle="Este Mes"
-            trend={{ value: "Realizadas", isPositive: true }}
-            onClick={() => handleCardClick(metricId)}
-          />
-        );
-      case 'activePatients':
-        return (
-          <StatsCard
-            key={metricId}
-            title="Pacientes"
-            value={stats.activeClients.toString()}
-            icon={User}
-            iconBgColor="bg-blue-100"
-            iconColor="text-blue-600"
-            subtitle="Activos"
-            trend={stats.clientTrend}
-            onClick={() => handleCardClick(metricId)}
-          />
-        );
-      case 'monthIncome':
-        return (
-          <StatsCard
-            key={metricId}
-            title="Ingresos (Est)"
-            value={`${advancedStats.monthIncome}€`}
-            icon={Euro}
-            iconBgColor="bg-emerald-100"
-            iconColor="text-emerald-600"
-            subtitle="Este Mes"
-            trend={{ value: `${config.hourlyRate}€/h`, isPositive: true }}
-            onClick={() => handleCardClick(metricId)}
-          />
-        );
-      case 'sessionsNextWeek':
-        return (
-          <StatsCard
-            key={metricId}
-            title="Agenda (7d)"
-            value={advancedStats.sessionsNextWeek.toString()}
-            icon={Calendar}
-            iconBgColor="bg-indigo-100"
-            iconColor="text-indigo-600"
-            subtitle="Sesiones"
-            trend={{ value: "Vista", isPositive: true }}
-            onClick={() => handleCardClick(metricId)}
-          />
-        );
-      case 'attendanceRate':
-        return (
-          <StatsCard
-            key={metricId}
-            title="Asistencia"
-            value={advancedStats.attendanceRate > 0 ? `${advancedStats.attendanceRate}%` : "-"}
-            icon={CheckCircle}
-            iconBgColor="bg-green-100"
-            iconColor="text-green-600"
-            subtitle="Tasa Global"
-            trend={{ value: "General", isPositive: true }}
-            onClick={() => handleCardClick(metricId)}
-          />
-        );
-      case 'cancellationRate':
-        return (
-          <StatsCard
-            key={metricId}
-            title="Cancelaciones"
-            value={`${advancedStats.cancellationRate}%`}
-            icon={XCircle}
-            iconBgColor="bg-red-100"
-            iconColor="text-red-600"
-            subtitle="Tasa Global"
-            trend={advancedStats.cancellationRate > 15 ? { value: "Alta", isPositive: false } : { value: "Baja", isPositive: true }}
-            onClick={() => handleCardClick(metricId)}
-          />
-        );
-      case 'pendingNotes':
-        return (
-          <StatsCard
-            key={metricId}
-            title="Notas"
-            value={advancedStats.pendingNotes.toString()}
-            icon={AlertCircle}
-            iconBgColor="bg-orange-100"
-            iconColor="text-orange-600"
-            subtitle="Pendientes"
-            trend={advancedStats.pendingNotes > 0 ? { value: "Revisar", isPositive: false } : { value: "Al día", isPositive: true }}
-            onClick={() => handleCardClick(metricId)}
-          />
-        );
-      default:
-        return null;
+    switch (id) {
+      case 'todaysSessions': return <TodaysSessions />;
+      case 'sessionsChart': return <SessionsChartWidget data={advancedStats.sessionsLast30Days} />;
+      case 'weeklyChart': return <WeeklyChartWidget data={advancedStats.weeklyLoad} />;
+
+      // New Widgets
+      case 'themesWidget': return <ThemesWidget data={stats.topThemes} />;
+      case 'sentimentWidget': return <SentimentWidget data={stats.sentimentTrend} />;
+      case 'sessionTypesWidget':
+        return <DistributionWidget
+          title="Sesiones por Tipo"
+          subtitle="Distribución"
+          totalValue={dashboardStats?.totalSessions || 0}
+          trend={dashboardStats?.sessionTrend || { value: 'N/A', isPositive: true }}
+          data={dashboardStats?.sessionTypes || []}
+        />;
+
+      case 'sessionsThisMonth': return <StatsWidget id={id} data={{ title: "Sesiones", value: advancedStats.sessionsThisMonth.toString(), icon: BarChart3, iconBgColor: "bg-blue-100", iconColor: "text-blue-600", subtitle: "Este Mes", trend: { value: "Realizadas", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'activePatients': return <StatsWidget id={id} data={{ title: "Pacientes", value: stats.activeClients.toString(), icon: User, iconBgColor: "bg-blue-100", iconColor: "text-blue-600", subtitle: "Activos", trend: stats.clientTrend, onClick: () => handleCardClick(id) }} />;
+      case 'monthIncome': return <StatsWidget id={id} data={{ title: "Ingresos (Est)", value: `${advancedStats.monthIncome}€`, icon: Euro, iconBgColor: "bg-emerald-100", iconColor: "text-emerald-600", subtitle: "Este Mes", trend: { value: `Estimado`, isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'sessionsNextWeek': return <StatsWidget id={id} data={{ title: "Agenda (7d)", value: advancedStats.sessionsNextWeek.toString(), icon: Calendar, iconBgColor: "bg-indigo-100", iconColor: "text-indigo-600", subtitle: "Sesiones", trend: { value: "Vista", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'attendanceRate': return <StatsWidget id={id} data={{ title: "Asistencia", value: advancedStats.attendanceRate > 0 ? `${advancedStats.attendanceRate}%` : "-", icon: CheckCircle, iconBgColor: "bg-green-100", iconColor: "text-green-600", subtitle: "Tasa Global", trend: { value: "General", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'cancellationRate': return <StatsWidget id={id} data={{ title: "Cancelaciones", value: `${advancedStats.cancellationRate}%`, icon: XCircle, iconBgColor: "bg-red-100", iconColor: "text-red-600", subtitle: "Tasa Global", trend: advancedStats.cancellationRate > 15 ? { value: "Alta", isPositive: false } : { value: "Baja", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'pendingNotes': return <StatsWidget id={id} data={{ title: "Notas", value: advancedStats.pendingNotes.toString(), icon: AlertCircle, iconBgColor: "bg-orange-100", iconColor: "text-orange-600", subtitle: "Pendientes", trend: advancedStats.pendingNotes > 0 ? { value: "Revisar", isPositive: false } : { value: "Al día", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      default: return <div>Widget desconocido: {id}</div>;
     }
   };
 
   return (
     <ProtectedRoute>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-slate-800 tracking-tight">
               Hola, {user?.firstName || 'Doctor/a'}
             </h1>
             <p className="text-slate-500 mt-2">
-              Bienvenido a tu asistente clínico inteligente. Aquí tienes el resumen de hoy.
+              Bienvenido a tu asistente clínico inteligente.
             </p>
           </div>
 
-          <Dialog open={isConfigOpen} onOpenChange={setIsConfigOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 bg-white">
-                <Settings className="h-4 w-4" />
-                Seleccionar métricas
+          <Sheet open={isLibraryOpen} onOpenChange={setIsLibraryOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <PlusCircle className="h-4 w-4" />
+                Librería de Widgets
               </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-white">
-              <DialogHeader>
-                <DialogTitle>Personalizar Dashboard</DialogTitle>
-                <DialogDescription>
-                  Ajusta los parámetros y métricas que deseas ver.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="rate" className="text-right">
-                    Tarifa/Hora
-                  </Label>
-                  <Input
-                    id="rate"
-                    type="number"
-                    value={config.hourlyRate}
-                    onChange={(e) => setConfig({ ...config, hourlyRate: Number(e.target.value) })}
-                    className="col-span-3"
-                  />
-                </div>
-
-                <div className="space-y-3 mt-2">
-                  <Label>Métricas Visibles</Label>
-                  {METRIC_DEFINITIONS.map((metric) => (
-                    <div key={metric.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={metric.id}
-                        checked={config.visibleMetrics.includes(metric.id)}
-                        onCheckedChange={(checked) => handleToggleMetric(metric.id, checked as boolean)}
-                      />
-                      <Label htmlFor={metric.id} className="cursor-pointer flex items-center gap-2">
-                        <metric.icon className="h-4 w-4 text-muted-foreground" />
-                        {metric.label}
-                      </Label>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Librería de Widgets</SheetTitle>
+                <SheetDescription>
+                  Activa o desactiva los widgets que quieres ver en tu dashboard.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="mt-6 space-y-4">
+                {ALL_WIDGETS.map(widget => {
+                  const isActive = layout.includes(widget.id);
+                  return (
+                    <div key={widget.id} className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                      <div>
+                        <h4 className="font-medium text-sm">{widget.label}</h4>
+                        <span className="text-xs text-muted-foreground">{widget.category}</span>
+                      </div>
+                      <Button
+                        variant={isActive ? "secondary" : "default"}
+                        size="sm"
+                        onClick={() => handleAddWidget(widget.id)}
+                      >
+                        {isActive ? 'Ocultar' : 'Añadir'}
+                      </Button>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Left Col: Today's Scheduler */}
-          <div className="h-full flex flex-col gap-6">
-            <TodaysSessions />
+        {isLoaded ? (
+          <DashboardGrid
+            items={layout}
+            renderItem={renderItem}
+            onSave={handleSaveLayout}
+            defaultItems={DEFAULT_LAYOUT}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           </div>
+        )}
 
-          {/* Right Col: Dynamic Stats Grid */}
-          <div className="space-y-6">
-
-            {/* Config Button Row */}
-
-
-            <div className="grid grid-cols-2 gap-4 h-fit">
-              {config.visibleMetrics.map(id => renderMetricCard(id))}
-            </div>
-
-            {/* Fallback/Empty State */}
-            {config.visibleMetrics.length === 0 && (
-              <div className="p-8 border-2 border-dashed rounded-lg text-center text-muted-foreground">
-                No has seleccionado ninguna métrica. <br />
-                Usa el botón "Configurar" para añadir tarjetas.
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Full Width / Half Split Charts Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-
-          {/* Session Evolution Chart */}
-          <div className="bg-white rounded-xl border p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800">Evolución de Sesiones</h3>
-                <p className="text-sm text-slate-500">Últimos 30 días</p>
-              </div>
-              <TrendingUp className="h-4 w-4 text-slate-400" />
-            </div>
-            <div className="h-[200px] w-full">
-              {advancedStats?.sessionsLast30Days ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={advancedStats.sessionsLast30Days}>
-                    <defs>
-                      <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fontSize: 12 }}
-                      tickLine={false}
-                      axisLine={false}
-                      minTickGap={30}
-                    />
-                    <YAxis
-                      hide
-                      domain={[0, 'auto']}
-                    />
-                    <Tooltip
-                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="count"
-                      stroke="#3b82f6"
-                      fillOpacity={1}
-                      fill="url(#colorCount)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-full flex items-center justify-center text-slate-400 text-sm">
-                  Cargando datos...
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Weekly Load Chart */}
-          <div className="bg-white rounded-xl border p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800">Carga Semanal</h3>
-                <p className="text-sm text-slate-500">Sesiones Lun-Dom</p>
-              </div>
-              <CalendarDays className="h-4 w-4 text-slate-400" />
-            </div>
-            <div className="h-[200px] w-full">
-              {advancedStats?.weeklyLoad ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={advancedStats.weeklyLoad}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis
-                      dataKey="day"
-                      tick={{ fontSize: 12 }}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis
-                      hide
-                      domain={[0, 'auto']}
-                    />
-                    <Tooltip
-                      cursor={{ fill: 'transparent' }}
-                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    />
-                    <Bar
-                      dataKey="count"
-                      fill="#8b5cf6"
-                      radius={[4, 4, 0, 0]}
-                      barSize={30}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-full flex items-center justify-center text-slate-400 text-sm">
-                  Cargando datos...
-                </div>
-              )}
-            </div>
-          </div>
-
-        </div>
-
-        {/* Main content grid */}
-        <div className="mb-8">
+        <div className="mt-8">
           <RecentActivity />
         </div>
       </div>

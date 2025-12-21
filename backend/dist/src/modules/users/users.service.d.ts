@@ -20,6 +20,7 @@ export declare class UsersService {
     remove(id: string): Promise<{
         message: string;
     }>;
+    updateDashboardLayout(id: string, layout: any): Promise<UserResponseDto>;
     changeRole(id: string, newRole: UserRole): Promise<UserResponseDto>;
     private mapToResponseDto;
 }

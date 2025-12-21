@@ -6,6 +6,7 @@ export interface User {
   verified: boolean
   createdAt: string
   updatedAt: string
+  dashboardLayout?: string[]
 }
 
 export enum UserRole {

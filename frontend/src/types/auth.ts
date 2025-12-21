@@ -21,6 +21,7 @@ export interface User {
     blockedBlocks?: Array<{ date: string; start: string; end: string; reason?: string }>;
   };
   preferredLanguage?: string;
+  dashboardLayout?: string[];
 }
 
 export interface AuthTokens {
