@@ -1,5 +1,5 @@
 import { httpClient } from './http-client';
-import { User } from '@/contexts/auth-context';
+import { User } from '@/types/auth';
 
 export class UserAPI {
     private static BASE_URL = '/api/v1/users';

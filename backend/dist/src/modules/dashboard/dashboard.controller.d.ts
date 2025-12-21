@@ -37,5 +37,13 @@ export declare class DashboardController {
             value: number;
             color: string;
         }[];
+        topThemes: {
+            name: string;
+            value: number;
+        }[];
+        sentimentTrend: {
+            date: string;
+            value: number;
+        }[];
     }>;
 }

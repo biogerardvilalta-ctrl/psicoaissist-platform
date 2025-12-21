@@ -50,11 +50,10 @@ export default function RecentActivity() {
         // Fetch more items to ensure we have enough after filtering
         const response = await AuditAPI.getAll(20, 0);
 
-        const sessionLogs = response.items
-          .filter(log => log.resourceType === 'SESSION')
-          .slice(0, 5); // Take top 5 sessions
+        // Show ANY activity, not just sessions
+        const recentLogs = response.items.slice(0, 5);
 
-        const items = sessionLogs.map(log => mapLogToActivity(log));
+        const items = recentLogs.map(log => mapLogToActivity(log));
         setActivities(items);
       } catch (error) {
         console.error("Failed to fetch recent activity", error);

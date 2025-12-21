@@ -39,6 +39,14 @@ export declare class DashboardService {
             value: number;
             color: string;
         }[];
+        topThemes: {
+            name: string;
+            value: number;
+        }[];
+        sentimentTrend: {
+            date: string;
+            value: number;
+        }[];
     }>;
     private getColorForType;
     private getColorForTechnique;

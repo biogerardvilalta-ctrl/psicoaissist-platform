@@ -11,6 +11,8 @@ export interface DashboardStats {
     sessionTypes: { label: string; value: number; color: string }[];
     techniques: { label: string; value: number; color: string }[];
     tests: { label: string; value: number; color: string }[];
+    topThemes: { name: string; value: number }[];
+    sentimentTrend: { date: string; value: number }[];
 }
 
 export class DashboardAPI {

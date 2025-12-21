@@ -57,6 +57,8 @@ const ALL_WIDGETS = [
   { id: 'themesWidget', label: 'Temas Recurrentes', category: 'Charts' },
   { id: 'sentimentWidget', label: 'Tendencia Bienestar', category: 'Charts' },
   { id: 'sessionTypesWidget', label: 'Tipos de Sesión', category: 'Charts' },
+  { id: 'testsWidget', label: 'Pruebas Realizadas', category: 'Analítica Clínica' },
+  { id: 'techniquesWidget', label: 'Técnicas Terapéuticas', category: 'Analítica Clínica' },
 ];
 
 const DEFAULT_LAYOUT = [
@@ -64,12 +66,24 @@ const DEFAULT_LAYOUT = [
   'sessionsThisMonth',
   'activePatients',
   'monthIncome',
+
+  // Operational Block
   'sessionsNextWeek',
+  'pendingNotes',
+  'weeklyChart', // Moved here as requested
+
+  // Analytics
   'attendanceRate',
   'cancellationRate',
-  'pendingNotes',
   'sessionsChart',
-  'weeklyChart'
+
+  // Clinical
+  'themesWidget',
+  'sentimentWidget',
+  // 'testsWidget', // By default maybe? User said "falta añadir", implying availability or presence. I'll add them to default.
+  'testsWidget',
+  'techniquesWidget',
+  'sessionTypesWidget'
 ];
 
 export default function DashboardPage() {
@@ -188,6 +202,22 @@ export default function DashboardPage() {
           trend={dashboardStats?.sessionTrend || { value: 'N/A', isPositive: true }}
           data={dashboardStats?.sessionTypes || []}
         />;
+      case 'testsWidget':
+        return <DistributionWidget
+          title="Pruebas Realizadas"
+          subtitle="IA sugeridas"
+          totalValue={dashboardStats?.tests?.reduce((acc: number, t: any) => acc + t.value, 0) || 0}
+          trend={{ value: "Total", isPositive: true }}
+          data={dashboardStats?.tests || []}
+        />;
+      case 'techniquesWidget':
+        return <DistributionWidget
+          title="Técnicas Terapéuticas"
+          subtitle="Detectadas"
+          totalValue={dashboardStats?.techniques?.reduce((acc: number, t: any) => acc + t.value, 0) || 0}
+          trend={{ value: "Total", isPositive: true }}
+          data={dashboardStats?.techniques || []}
+        />;
 
       case 'sessionsThisMonth': return <StatsWidget id={id} data={{ title: "Sesiones", value: advancedStats.sessionsThisMonth.toString(), icon: BarChart3, iconBgColor: "bg-blue-100", iconColor: "text-blue-600", subtitle: "Este Mes", trend: { value: "Realizadas", isPositive: true }, onClick: () => handleCardClick(id) }} />;
       case 'activePatients': return <StatsWidget id={id} data={{ title: "Pacientes", value: stats.activeClients.toString(), icon: User, iconBgColor: "bg-blue-100", iconColor: "text-blue-600", subtitle: "Activos", trend: stats.clientTrend, onClick: () => handleCardClick(id) }} />;
@@ -227,7 +257,7 @@ export default function DashboardPage() {
                   Activa o desactiva los widgets que quieres ver en tu dashboard.
                 </SheetDescription>
               </SheetHeader>
-              <div className="mt-6 space-y-4">
+              <div className="mt-6 space-y-4 h-[calc(100vh-140px)] overflow-y-auto pr-2 pb-4">
                 {ALL_WIDGETS.map(widget => {
                   const isActive = layout.includes(widget.id);
                   return (

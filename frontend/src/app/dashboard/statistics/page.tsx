@@ -322,28 +322,7 @@ export default function StatisticsPage() {
                                         onClick={() => setSelectedMetric('patients')}
                                         isSelected={selectedMetric === 'patients'}
                                     />
-                                    <StatsCard
-                                        title="Tasa de Asistencia"
-                                        value={advancedStats.attendanceRate > 0 ? `${advancedStats.attendanceRate}%` : "-"}
-                                        icon={CheckCircle}
-                                        iconBgColor="bg-green-100"
-                                        iconColor="text-green-600"
-                                        subtitle="Global"
-                                        trend={{ value: "Calidad", isPositive: true }}
-                                        onClick={() => setSelectedMetric('attendance')}
-                                        isSelected={selectedMetric === 'attendance'}
-                                    />
-                                    <StatsCard
-                                        title="Tasa de Cancelación"
-                                        value={`${advancedStats.cancellationRate}%`}
-                                        icon={XCircle}
-                                        iconBgColor="bg-red-100"
-                                        iconColor="text-red-600"
-                                        subtitle="Global"
-                                        trend={{ value: "Riesgo", isPositive: advancedStats.cancellationRate < 10 }}
-                                        onClick={() => setSelectedMetric('cancellation')}
-                                        isSelected={selectedMetric === 'cancellation'}
-                                    />
+                                    {/* Stats Cards for Attendance and Cancellation removed as per request */}
                                 </div>
                                 {/* DYNAMIC MAIN CHART (Belongs to Block 1) */}
                                 <div className="mt-6">
@@ -378,6 +357,35 @@ export default function StatisticsPage() {
                                         trend={{ value: "Tareas", isPositive: false }}
                                     // No click action for chart
                                     />
+                                </div>
+
+                                {/* NEW: Weekly Load Chart - Full Width and Larger */}
+                                <div className="mt-4">
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-lg font-medium text-slate-800">Carga Semanal</CardTitle>
+                                            <CardDescription>Distribución de sesiones en los próximos 7 días</CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="h-[300px] w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={advancedStats.weeklyLoad}>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                    <XAxis dataKey="day" axisLine={false} tickLine={false} />
+                                                    <YAxis hide domain={[0, 'auto']} />
+                                                    <Tooltip
+                                                        cursor={{ fill: 'transparent' }}
+                                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                    />
+                                                    <Bar
+                                                        dataKey="count"
+                                                        fill="#8b5cf6"
+                                                        radius={[4, 4, 0, 0]}
+                                                        barSize={40}
+                                                    />
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </CardContent>
+                                    </Card>
                                 </div>
                             </div>
                         </div>
@@ -525,7 +533,7 @@ export default function StatisticsPage() {
                             <div className="grid gap-6 grid-cols-1">
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Temas Prevalentes</CardTitle>
+                                        <CardTitle>Temas Recurrentes</CardTitle>
                                         <CardDescription>
                                             Análisis de los motivos de consulta más frecuentes detectados por ia Inteligencia Artificial.
                                             Este gráfico ayuda a visualizar rápidamente los problemas recurrentes en las sesiones.

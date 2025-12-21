@@ -1,11 +1,17 @@
 import { PieChart as PieChartIcon } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { useRouter } from 'next/navigation';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export function ThemesWidget({ data }: { data: any[] }) {
+    const router = useRouter();
+
     return (
-        <div className="bg-white rounded-xl border p-6 h-full flex flex-col">
+        <div
+            onClick={() => router.push('/dashboard/statistics?tab=themes')}
+            className="bg-white rounded-xl border p-6 h-full flex flex-col cursor-pointer hover:shadow-md transition-shadow"
+        >
             <div className="flex items-center justify-between mb-4">
                 <div>
                     <h3 className="text-lg font-semibold text-slate-800">Temas Recurrentes</h3>
@@ -32,6 +38,7 @@ export function ThemesWidget({ data }: { data: any[] }) {
                             </Pie>
                             <Tooltip
                                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                wrapperStyle={{ zIndex: 1000, outline: 'none' }}
                             />
                         </PieChart>
                     </ResponsiveContainer>

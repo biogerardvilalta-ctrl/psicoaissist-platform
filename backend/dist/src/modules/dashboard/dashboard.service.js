@@ -134,8 +134,28 @@ let DashboardService = class DashboardService {
         ];
         const techniqueCounts = new Map();
         const testCounts = new Map();
+        const themeCounts = new Map();
+        const themeKeywords = [
+            'Ansiedad', 'Depresión', 'Estrés', 'Autoestima', 'Familia',
+            'Pareja', 'Trabajo', 'Duelo', 'Trauma', 'Habilidades Sociales',
+            'Insomnio', 'Alimentación', 'Adicciones', 'Fobias', 'Obsesiones'
+        ];
+        completedSessions.forEach(s => {
+            const aiData = s.aiMetadata;
+            if (aiData?.themes && Array.isArray(aiData.themes)) {
+                aiData.themes.forEach((t) => {
+                    themeCounts.set(t, (themeCounts.get(t) || 0) + 1);
+                });
+            }
+            else {
+                themeKeywords.forEach(theme => {
+                });
+            }
+        });
+        const sentimentPoints = [];
         await Promise.all(completedSessions.map(async (s) => {
             let noteContent = "";
+            let aiSentiment = 0;
             if (s.encryptedNotes && s.encryptionKeyId) {
                 try {
                     const unpacked = this.unpackEncryptedData(s.encryptedNotes, s.encryptionKeyId);
@@ -145,11 +165,44 @@ let DashboardService = class DashboardService {
                     }
                 }
                 catch (e) {
-                    console.error(`Failed to decrypt notes for session stats ${s.id}`, e);
                 }
             }
             const combinedText = noteContent.toLowerCase();
             const aiData = s.aiMetadata;
+            const elements = [
+                ...(aiData?.emotionalElements || [])
+            ];
+            if (elements.length > 0) {
+                elements.forEach((t) => {
+                    if (typeof t === 'string') {
+                        const normalized = t.trim();
+                        if (normalized) {
+                            themeCounts.set(normalized, (themeCounts.get(normalized) || 0) + 1);
+                        }
+                    }
+                });
+            }
+            else {
+                themeKeywords.forEach(theme => {
+                    if (combinedText.includes(theme.toLowerCase())) {
+                        themeCounts.set(theme, (themeCounts.get(theme) || 0) + 1);
+                    }
+                });
+            }
+            if (typeof aiData?.sentiment === 'number') {
+                aiSentiment = aiData.sentiment;
+            }
+            else {
+                if (combinedText.includes('mejor') || combinedText.includes('avance') || combinedText.includes('positivo'))
+                    aiSentiment += 0.5;
+                if (combinedText.includes('peor') || combinedText.includes('retroceso') || combinedText.includes('crisis'))
+                    aiSentiment -= 0.5;
+                aiSentiment = Math.max(-1, Math.min(1, aiSentiment));
+            }
+            sentimentPoints.push({
+                date: s.startTime.toISOString().split('T')[0],
+                value: (aiSentiment + 1) * 50
+            });
             const manualMethodology = aiData?.manual_methodology;
             if (manualMethodology && manualMethodology.trim().length > 0) {
                 const methods = manualMethodology.split(/[,;\n]+/).map(m => m.trim()).filter(m => m.length > 0);
@@ -191,6 +244,18 @@ let DashboardService = class DashboardService {
                 }
             });
         }));
+        const topThemes = Array.from(themeCounts.entries())
+            .map(([name, value]) => ({ name, value }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 5);
+        const sentimentMap = new Map();
+        sentimentPoints.forEach(p => {
+            const current = sentimentMap.get(p.date) || { total: 0, count: 0 };
+            sentimentMap.set(p.date, { total: current.total + p.value, count: current.count + 1 });
+        });
+        const sentimentTrend = Array.from(sentimentMap.entries())
+            .map(([date, data]) => ({ date, value: Math.round(data.total / data.count) }))
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         const techniques = Array.from(techniqueCounts.entries()).map(([label, value]) => ({
             label,
             value,
@@ -211,7 +276,9 @@ let DashboardService = class DashboardService {
             reportTrend: this.calculateTrend(currentMonthReports, previousMonthReports),
             sessionTypes,
             techniques,
-            tests
+            tests,
+            topThemes,
+            sentimentTrend
         };
     }
     getColorForType(type) {

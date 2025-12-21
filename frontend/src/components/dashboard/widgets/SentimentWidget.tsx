@@ -1,9 +1,15 @@
 import { Activity } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
+import { useRouter } from 'next/navigation';
 
 export function SentimentWidget({ data }: { data: any[] }) {
+    const router = useRouter();
+
     return (
-        <div className="bg-white rounded-xl border p-6 h-full flex flex-col">
+        <div
+            onClick={() => router.push('/dashboard/statistics?tab=themes')}
+            className="bg-white rounded-xl border p-6 h-full flex flex-col cursor-pointer hover:shadow-md transition-shadow"
+        >
             <div className="flex items-center justify-between mb-4">
                 <div>
                     <h3 className="text-lg font-semibold text-slate-800">Bienestar</h3>

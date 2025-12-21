@@ -176,9 +176,47 @@ export class DashboardService {
         const techniqueCounts = new Map<string, number>();
         const testCounts = new Map<string, number>();
 
-        // We process sequentially or parallel? Parallel is fine for decryption.
+        // Calculate Top Themes
+        const themeCounts = new Map<string, number>();
+        const themeKeywords = [
+            'Ansiedad', 'Depresión', 'Estrés', 'Autoestima', 'Familia',
+            'Pareja', 'Trabajo', 'Duelo', 'Trauma', 'Habilidades Sociales',
+            'Insomnio', 'Alimentación', 'Adicciones', 'Fobias', 'Obsesiones'
+        ];
+
+        completedSessions.forEach(s => {
+            const aiData = s.aiMetadata as any;
+
+            // 1. Try AI Metadata first
+            if (aiData?.themes && Array.isArray(aiData.themes)) {
+                aiData.themes.forEach((t: string) => {
+                    themeCounts.set(t, (themeCounts.get(t) || 0) + 1);
+                });
+            }
+            // 2. Fallback: Scan notes/methodology
+            else {
+                // We re-use logic similar to techniques but for broader themes
+                // This is a simplified fallback
+                themeKeywords.forEach(theme => {
+                    // Check if manual methodology or some other field hints at it
+                    // Or check session type as a proxy for now?
+                    // Actually, let's just use the keywords against the text we already decrypted?
+                    // Verify performance: we already decrypted inside the map.
+                    // But we didn't save the text outside the map scope.
+                    // We need to move the decryption logic out or collect it.
+                });
+            }
+        });
+
+        // RE-ITERATE implementation: The previous map was inside a Promise.all which returned nothing.
+        // We should gather the texts first. 
+        // Let's refactor the decryption loop to populate these maps directly.
+
+        const sentimentPoints: { date: string; value: number }[] = [];
+
         await Promise.all(completedSessions.map(async (s) => {
             let noteContent = "";
+            let aiSentiment = 0; // Default neutral
 
             // Decrypt notes if available
             if (s.encryptedNotes && s.encryptionKeyId) {
@@ -186,37 +224,69 @@ export class DashboardService {
                     const unpacked = this.unpackEncryptedData(s.encryptedNotes, s.encryptionKeyId);
                     const result = await this.encryption.decryptData<{ notes: string }>(unpacked);
                     if (result.success && result.data && result.data.notes) {
-                        noteContent = result.data.notes; // Keep case for regex, but usually we prefer case insensitive matching
+                        noteContent = result.data.notes;
                     }
                 } catch (e) {
-                    console.error(`Failed to decrypt notes for session stats ${s.id}`, e);
+                    // Silent fail
                 }
             }
 
-            // Combine text
-            // User Request: Only scan manual notes for detection to avoid counting AI Detected suggestions or fluff
-            // const aiData = JSON.stringify(s.aiMetadata || ""); 
-            // const combinedText = (noteContent + " " + aiData).toLowerCase();
-
             const combinedText = noteContent.toLowerCase();
-
-            // Scan Techniques
-            // Scan Techniques from Methodology Field (Priority)
             const aiData = s.aiMetadata as any;
+
+            // --- THEMES ---
+            // Use 'emotionalElements' ONLY (matching frontend analytics-helper exactly)
+            const elements = [
+                 ...(aiData?.emotionalElements || [])
+            ];
+
+            if (elements.length > 0) {
+                elements.forEach((t: string) => {
+                    if (typeof t === 'string') {
+                        // Normalize: "Estrés Laboral" -> "Estrés Laboral"
+                        const normalized = t.trim();
+                        if (normalized) {
+                            themeCounts.set(normalized, (themeCounts.get(normalized) || 0) + 1);
+                        }
+                    }
+                });
+            } else {
+                // Fallback scan only if NO AI data found
+                themeKeywords.forEach(theme => {
+                    if (combinedText.includes(theme.toLowerCase())) {
+                        themeCounts.set(theme, (themeCounts.get(theme) || 0) + 1);
+                    }
+                });
+            }
+
+            // --- SENTIMENT ---
+            if (typeof aiData?.sentiment === 'number') {
+                aiSentiment = aiData.sentiment;
+            } else {
+                // Simple keyword proxy
+                if (combinedText.includes('mejor') || combinedText.includes('avance') || combinedText.includes('positivo')) aiSentiment += 0.5;
+                if (combinedText.includes('peor') || combinedText.includes('retroceso') || combinedText.includes('crisis')) aiSentiment -= 0.5;
+                // Clamp
+                aiSentiment = Math.max(-1, Math.min(1, aiSentiment));
+            }
+
+            // Add to sentiment points
+            sentimentPoints.push({
+                date: s.startTime.toISOString().split('T')[0],
+                value: (aiSentiment + 1) * 50 // Convert -1..1 to 0..100
+            });
+
+
+            // --- TECHNIQUES (Existing logic) ---
             const manualMethodology = aiData?.manual_methodology as string;
 
             if (manualMethodology && manualMethodology.trim().length > 0) {
-                // Split by common separators (comma, semicolon, newline)
                 const methods = manualMethodology.split(/[,;\n]+/).map(m => m.trim()).filter(m => m.length > 0);
-
                 methods.forEach(method => {
-                    // Capitalize first letter of each word or just sentence case
-                    // Let's normalize to Title Case for consistency
                     const normalized = method.replace(/\b\w/g, c => c.toUpperCase());
                     techniqueCounts.set(normalized, (techniqueCounts.get(normalized) || 0) + 1);
                 });
             } else {
-                // Fallback: Scan notes if no manual methodology set
                 techniqueKeywords.forEach(tech => {
                     const safeTech = tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').toLowerCase();
                     const isAcronym = /^[a-zA-Z0-9]{1,5}$/.test(tech);
@@ -234,10 +304,10 @@ export class DashboardService {
                 });
             }
 
-            // Scan Tests using same logic
+            // --- TESTS (Existing logic) ---
             testKeywords.forEach(test => {
                 const safeTest = test.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').toLowerCase();
-                const isAcronym = /^[a-zA-Z0-9-]{1,6}$/.test(test); // Allow hyphen for BDI-II
+                const isAcronym = /^[a-zA-Z0-9-]{1,6}$/.test(test);
 
                 if (isAcronym) {
                     const regex = new RegExp(`\\b${safeTest}\\b`, 'i');
@@ -251,6 +321,24 @@ export class DashboardService {
                 }
             });
         }));
+
+        const topThemes = Array.from(themeCounts.entries())
+            .map(([name, value]) => ({ name, value }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 5); // Start with top 5
+
+        // Group sentiments by date (average if multiple sessions same day)
+        const sentimentMap = new Map<string, { total: number; count: number }>();
+        sentimentPoints.forEach(p => {
+            const current = sentimentMap.get(p.date) || { total: 0, count: 0 };
+            sentimentMap.set(p.date, { total: current.total + p.value, count: current.count + 1 });
+        });
+
+        // Fill gaps? Optional. For now just return points sorted by date.
+        const sentimentTrend = Array.from(sentimentMap.entries())
+            .map(([date, data]) => ({ date, value: Math.round(data.total / data.count) }))
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
 
         const techniques = Array.from(techniqueCounts.entries()).map(([label, value]) => ({
             label,
@@ -276,7 +364,9 @@ export class DashboardService {
 
             sessionTypes,
             techniques,
-            tests
+            tests,
+            topThemes,    // NEW
+            sentimentTrend // NEW
         };
     }
 

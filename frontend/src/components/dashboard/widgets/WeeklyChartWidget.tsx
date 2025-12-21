@@ -1,9 +1,15 @@
 import { CalendarDays } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useRouter } from 'next/navigation';
 
 export function WeeklyChartWidget({ data }: { data: any[] }) {
+    const router = useRouter();
+
     return (
-        <div className="bg-white rounded-xl border p-6 h-full flex flex-col">
+        <div
+            onClick={() => router.push('/dashboard/statistics?tab=overview')}
+            className="bg-white rounded-xl border p-6 h-full flex flex-col cursor-pointer hover:shadow-md transition-shadow"
+        >
             <div className="flex items-center justify-between mb-4">
                 <div>
                     <h3 className="text-lg font-semibold text-slate-800">Carga Semanal</h3>
