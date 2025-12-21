@@ -227,7 +227,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           // We don't return here, we fall through to the "no valid session" case
         }
       } else {
-        console.log('❌ No valid session found in localStorage');
+        console.log('ℹ️ No existing session found in localStorage');
       }
     } catch (error) {
       console.error('Error restoring session:', error);
