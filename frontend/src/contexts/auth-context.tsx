@@ -186,7 +186,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   // Restore session from localStorage
-  const restoreSession = useCallback(() => {
+  const restoreSession = useCallback(async () => {
     try {
       const accessToken = storage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
       const refreshToken = storage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
@@ -194,26 +194,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const encryptionKeyStr = storage.getItem(STORAGE_KEYS.ENCRYPTION_KEY);
 
       console.log('🔄 Checking localStorage for session...');
-      console.log('- Access Token:', accessToken ? 'Found' : 'Not found');
-      console.log('- Refresh Token:', refreshToken ? 'Found' : 'Not found');
-      console.log('- User Data:', userStr ? 'Found' : 'Not found');
 
       if (accessToken && refreshToken && userStr) {
-        const user = JSON.parse(userStr);
-        const tokens = { accessToken, refreshToken };
-        let encryptionKey: EncryptionKey | undefined;
+        // Tentative user data
+        const storedUser = JSON.parse(userStr);
+        console.log('🔄 Found stored tokens for:', storedUser.email);
 
-        if (encryptionKeyStr) {
-          try {
-            encryptionKey = JSON.parse(encryptionKeyStr);
-          } catch (e) {
-            console.error('Error parsing encryption key', e);
+        // VERIFY TOKEN WITH BACKEND BEFORE TRUSTING IT
+        try {
+          console.log('🔍 Verifying session validity with backend...');
+          // access token is automatically attached by http-client
+          const verifiedUser = await AuthAPI.getCurrentUser();
+
+          console.log('✅ Session verified for:', verifiedUser.email);
+
+          const tokens = { accessToken, refreshToken };
+          let encryptionKey: EncryptionKey | undefined;
+
+          if (encryptionKeyStr) {
+            try {
+              encryptionKey = JSON.parse(encryptionKeyStr);
+            } catch (e) {
+              console.error('Error parsing encryption key', e);
+            }
           }
-        }
 
-        console.log('🔄 Restoring session for user:', user.email);
-        dispatch({ type: 'RESTORE_SESSION', payload: { user, tokens, encryptionKey } });
-        return true;
+          dispatch({ type: 'RESTORE_SESSION', payload: { user: verifiedUser, tokens, encryptionKey } });
+          return true;
+        } catch (verifyError) {
+          console.warn('⚠️ Stored session is invalid or expired:', verifyError);
+          clearSession();
+          // We don't return here, we fall through to the "no valid session" case
+        }
       } else {
         console.log('❌ No valid session found in localStorage');
       }
