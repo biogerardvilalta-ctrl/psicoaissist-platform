@@ -1802,3 +1802,61 @@ feature/client-crud ───────────── Development
 *Estado: ✅ Completado*
 
 **Próximo paso:** Iniciar Fase 1 - Infraestructura inicial y seguridad
+---
+
+## 🚀 NUEVAS FUNCIONALIDADES SOLICITADAS (POST-MVP)
+
+### 📋 Epic Future.1: Dashboard de Administración Avanzado
+**Objetivo:** Proporcionar control total y observabilidad del sistema para administradores.
+
+#### Funcionalidades clave
+- **Acceso a Logs:** Visualizador UI para logs de auditoría (audit_logs) y sistema.
+- **Métricas Globales:** KPIs de negocio (MRR, Churn) y técnicos (Latencia, Errores) en tiempo real.
+- **Gestión de Usuarios:** CRUD avanzado de usuarios, gestión manual de suscripciones y bloqueos.
+- **Herramientas de Soporte:** Capacidad de "impersonate" (ver como usuario) para soporte técnico (con estricto logging).
+
+### 📋 Epic Future.2: Rol de Gestor de Agenda
+**Objetivo:** Permitir a los psicólogos delegar la gestión administrativa sin comprometer la privacidad clínica.
+
+#### Funcionalidades clave
+- **Nuevo Rol:** `AGENDA_MANAGER` o funcionalidad de "Delegado".
+- **Asignación:** El psicólogo invita o asigna un gestor a su cuenta.
+- **Permisos Granulares:**
+    - ✅ Crear/Editar Pacientes (Datos básicos de contacto).
+    - ✅ Gestionar Agenda (Crear, mover, cancelar citas).
+    - ❌ **SIN ACCESO** a Notas Clínicas, Transcripciones o Informes Confidenciales.
+- **Vista Dedicada:** Dashboard simplificado enfocado únicamente en calendario y lista de pacientes (vista administrativa).
+
+### 📋 Epic Future.3: Accesibilidad Móvil y Sincronización
+**Objetivo:** Permitir al profesional consultar su agenda en tiempo real desde cualquier dispositivo.
+
+#### Estrategia Mixta Recomendada
+1.  **Sincronización con Calendarios (Google/Outlook/iCal) - ⭐ RECOMENDADA**
+    *   Integra la agenda de la plataforma directamente en la App de calendario nativa del móvil.
+    *   **Por qué es la mejor opción:**
+        *   Permite ver la agenda sin entrar en la plataforma ("at a glance").
+        *   Usa los widgets del móvil.
+        *   Gestiona conflictos con eventos personales automáticamente.
+
+2.  **Notificaciones Diarias (Email)**
+    *   Envío automatizado de un correo resumen a primera hora (ej. 8:00 AM).
+    *   *Uso:* Útil para revisar la carga de trabajo del día, pero no refleja cambios de última hora (cancelaciones/urgencias).
+
+3.  **Progressive Web App (PWA)**
+    *   Acceso directo desde el icono en el móvil conservando la sesión iniciada.
+
+### 📋 Epic Future.4: Dashboard Modular y Personalizable
+**Objetivo:** Permitir que cada profesional adapte su espacio de trabajo principal a sus necesidades específicas.
+
+#### Funcionalidades clave
+- **Sistema de Widgets:** Transformar los elementos actuales (Resumen del día, Actividad reciente, Gráficas) en "gadgets" independientes.
+- **Layout Drag & Drop:** Implementación de un sistema de rejilla (Grid System) que permita mover, redimensionar y ordenar los widgets visualmente.
+- **Catálogo de Widgets:**
+    *   *Operativos:* Calendario mini, Tareas pendientes, Próximo paciente.
+    *   *Analíticos:* Gráficas de ingresos, Evolución de pacientes, Distribución de diagnósticos.
+    *   *Informativos:* Noticias del sector, Recordatorios.
+- **Persistencia:** Guardado automático de la configuración y posición de los widgets en el perfil del usuario.
+- **Plantillas Predefinidas:**
+    *   *Default:* La vista estándar actual.
+    *   *Analítica:* Foco en gráficas y métricas.
+    *   *Gestión Focus:* Foco en agenda y lista de pacientes.
