@@ -16,39 +16,30 @@ export declare class AdminController {
     getUsers(page?: string, limit?: string, search?: string, plan?: string, status?: string): Promise<{
         users: {
             passwordHash: any;
+            subscription: {
+                status: string;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                userId: string;
+                stripeSubscriptionId: string;
+                planType: string;
+                currentPeriodStart: Date;
+                currentPeriodEnd: Date;
+                canceledAt: Date | null;
+            };
             _count: {
                 clients: number;
                 sessions: number;
                 reports: number;
             };
-            subscription: {
-                id: string;
-                userId: string;
-                stripeSubscriptionId: string;
-                status: string;
-                planType: string;
-                currentPeriodStart: Date;
-                currentPeriodEnd: Date;
-                canceledAt: Date | null;
-                createdAt: Date;
-                updatedAt: Date;
-            };
-            id: string;
-            status: import(".prisma/client").$Enums.UserStatus;
-            createdAt: Date;
-            updatedAt: Date;
             email: string;
-            role: import(".prisma/client").$Enums.UserRole;
-            verified: boolean;
-            verificationToken: string | null;
-            resetPasswordToken: string | null;
-            resetPasswordExpires: Date | null;
             firstName: string | null;
             lastName: string | null;
-            phone: string | null;
-            country: string | null;
+            role: import(".prisma/client").$Enums.UserRole;
             professionalNumber: string | null;
-            speciality: string | null;
+            country: string | null;
+            status: import(".prisma/client").$Enums.UserStatus;
             enableReminders: boolean;
             defaultDuration: number;
             bufferTime: number;
@@ -56,8 +47,17 @@ export declare class AdminController {
             workEndHour: string;
             scheduleConfig: import("@prisma/client/runtime/library").JsonValue | null;
             preferredLanguage: string;
-            stripeCustomerId: string | null;
+            id: string;
+            createdAt: Date;
             lastLogin: Date | null;
+            stripeCustomerId: string | null;
+            verified: boolean;
+            verificationToken: string | null;
+            resetPasswordToken: string | null;
+            resetPasswordExpires: Date | null;
+            phone: string | null;
+            speciality: string | null;
+            updatedAt: Date;
         }[];
         pagination: {
             page: number;
@@ -68,22 +68,17 @@ export declare class AdminController {
     }>;
     getUserDetails(id: string): Promise<{
         passwordHash: any;
-        _count: {
-            clients: number;
-            sessions: number;
-            reports: number;
-        };
         clients: {
             id: string;
-            userId: string;
             createdAt: Date;
+            tags: string[];
             updatedAt: Date;
+            userId: string;
+            isActive: boolean;
             encryptedPersonalData: Buffer;
             encryptedClinicalData: Buffer | null;
             encryptedSensitiveData: Buffer | null;
-            tags: string[];
             riskLevel: import(".prisma/client").$Enums.RiskLevel;
-            isActive: boolean;
             encryptionKeyId: string;
             dataVersion: number;
             sendEmailReminders: boolean;
@@ -93,11 +88,11 @@ export declare class AdminController {
             lastModifiedBy: string;
         }[];
         sessions: {
-            id: string;
-            userId: string;
             status: import(".prisma/client").$Enums.SessionStatus;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             encryptionKeyId: string | null;
             clientId: string;
             startTime: Date;
@@ -119,15 +114,15 @@ export declare class AdminController {
             startedAt: Date | null;
         }[];
         reports: {
-            id: string;
-            userId: string;
+            title: string;
             status: import(".prisma/client").$Enums.ReportStatus;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
             encryptionKeyId: string;
             clientId: string;
             sessionId: string | null;
-            title: string;
             reportType: import(".prisma/client").$Enums.ReportType;
             version: number;
             encryptedContent: Buffer;
@@ -141,33 +136,29 @@ export declare class AdminController {
             completedAt: Date | null;
         }[];
         subscription: {
+            status: string;
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             userId: string;
             stripeSubscriptionId: string;
-            status: string;
             planType: string;
             currentPeriodStart: Date;
             currentPeriodEnd: Date;
             canceledAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
         };
-        id: string;
-        status: import(".prisma/client").$Enums.UserStatus;
-        createdAt: Date;
-        updatedAt: Date;
+        _count: {
+            clients: number;
+            sessions: number;
+            reports: number;
+        };
         email: string;
-        role: import(".prisma/client").$Enums.UserRole;
-        verified: boolean;
-        verificationToken: string | null;
-        resetPasswordToken: string | null;
-        resetPasswordExpires: Date | null;
         firstName: string | null;
         lastName: string | null;
-        phone: string | null;
-        country: string | null;
+        role: import(".prisma/client").$Enums.UserRole;
         professionalNumber: string | null;
-        speciality: string | null;
+        country: string | null;
+        status: import(".prisma/client").$Enums.UserStatus;
         enableReminders: boolean;
         defaultDuration: number;
         bufferTime: number;
@@ -175,8 +166,17 @@ export declare class AdminController {
         workEndHour: string;
         scheduleConfig: import("@prisma/client/runtime/library").JsonValue | null;
         preferredLanguage: string;
-        stripeCustomerId: string | null;
+        id: string;
+        createdAt: Date;
         lastLogin: Date | null;
+        stripeCustomerId: string | null;
+        verified: boolean;
+        verificationToken: string | null;
+        resetPasswordToken: string | null;
+        resetPasswordExpires: Date | null;
+        phone: string | null;
+        speciality: string | null;
+        updatedAt: Date;
     }>;
     updateUserStatus(id: string, body: {
         status: string;
@@ -190,22 +190,22 @@ export declare class AdminController {
     getSubscriptions(page?: string, limit?: string, status?: string, plan?: string): Promise<{
         subscriptions: ({
             user: {
-                id: string;
                 email: string;
                 firstName: string;
                 lastName: string;
+                id: string;
             };
         } & {
+            status: string;
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             userId: string;
             stripeSubscriptionId: string;
-            status: string;
             planType: string;
             currentPeriodStart: Date;
             currentPeriodEnd: Date;
             canceledAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
         })[];
         pagination: {
             page: number;
