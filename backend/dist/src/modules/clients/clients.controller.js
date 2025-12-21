@@ -25,14 +25,16 @@ let ClientsController = class ClientsController {
     create(req, createClientDto) {
         return this.clientsService.create(req.user.id, createClientDto);
     }
-    findAll(req) {
-        return this.clientsService.findAll(req.user.id);
+    findAll(req, active) {
+        const isActive = active === undefined ? true : active === 'true';
+        return this.clientsService.findAll(req.user.id, isActive);
     }
     findOne(req, id) {
         return this.clientsService.findOne(req.user.id, id);
     }
-    remove(req, id) {
-        return this.clientsService.remove(req.user.id, id);
+    async remove(req, id) {
+        await this.clientsService.remove(req.user.id, id);
+        return { message: 'Cliente archivado correctamente' };
     }
     update(req, id, updateClientDto) {
         return this.clientsService.update(req.user.id, id, updateClientDto);
@@ -54,8 +56,9 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Listar todos los clientes activos del usuario' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [clients_dto_1.ClientResponseDto] }),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('active')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], ClientsController.prototype, "findAll", null);
 __decorate([
@@ -76,7 +79,7 @@ __decorate([
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ClientsController.prototype, "remove", null);
 __decorate([
     (0, common_1.Put)(':id'),

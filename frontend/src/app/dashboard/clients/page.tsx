@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, MoreHorizontal, FileText, Calendar, Trash2, Pencil, PieChart } from 'lucide-react';
+import { Plus, Search, MoreHorizontal, FileText, Calendar, Trash2, Pencil, PieChart, RefreshCcw } from 'lucide-react';
 import { ClientsAPI, Client } from '@/lib/clients-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
     Table,
@@ -33,11 +34,12 @@ export default function ClientsPage() {
     const [clients, setClients] = useState<Client[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [activeTab, setActiveTab] = useState('active');
 
-    const fetchClients = async () => {
+    const fetchClients = async (isActive: boolean = true) => {
         try {
             setIsLoading(true);
-            const data = await ClientsAPI.getAll();
+            const data = await ClientsAPI.getAll(isActive);
             setClients(data);
         } catch (error) {
             console.error('Error fetching clients:', error);
@@ -52,25 +54,42 @@ export default function ClientsPage() {
     };
 
     useEffect(() => {
-        fetchClients();
-    }, []);
+        fetchClients(activeTab === 'active');
+    }, [activeTab]);
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('¿Estás seguro de que deseas eliminar este paciente? Esta acción no se puede deshacer.')) {
+    const handleArchive = async (id: string) => {
+        if (!confirm('¿Estás seguro de que deseas archivar este paciente?')) {
             return;
         }
 
         try {
             await ClientsAPI.delete(id);
             toast({
-                title: 'Paciente eliminado',
-                description: 'El paciente ha sido eliminado correctamente.',
+                title: 'Paciente archivado',
+                description: 'El paciente ha sido archivado correctamente.',
             });
-            fetchClients();
+            fetchClients(activeTab === 'active');
         } catch (error) {
             toast({
                 title: 'Error',
-                description: 'No se pudo eliminar el paciente',
+                description: 'No se pudo archivar el paciente',
+                variant: 'destructive',
+            });
+        }
+    };
+
+    const handleRestore = async (id: string) => {
+        try {
+            await ClientsAPI.restore(id);
+            toast({
+                title: 'Paciente restaurado',
+                description: 'El paciente ha sido restaurado y movido a la lista de activos.',
+            });
+            fetchClients(activeTab === 'active'); // Refresh current list (item should disappear)
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: 'No se pudo restaurar el paciente',
                 variant: 'destructive',
             });
         }
@@ -109,135 +128,160 @@ export default function ClientsPage() {
                 </Button>
             </div>
 
-            <Card>
-                <CardHeader className="pb-3">
-                    <CardTitle>Listado de Pacientes</CardTitle>
-                    <CardDescription>
-                        Tienes un total de {clients.length} pacientes activos.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center py-4">
-                        <div className="relative w-full max-w-sm">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder="Buscar por nombre o email..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-8"
-                            />
-                        </div>
-                    </div>
+            <Tabs defaultValue="active" value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList>
+                    <TabsTrigger value="active">Activos</TabsTrigger>
+                    <TabsTrigger value="archived">Archivados</TabsTrigger>
+                </TabsList>
 
-                    <div className="rounded-md border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[250px]">Paciente</TableHead>
-                                    <TableHead>Estado / Riesgo</TableHead>
-                                    <TableHead>Contacto</TableHead>
-                                    <TableHead>Última Sesión</TableHead>
-                                    <TableHead className="text-right">Acciones</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {isLoading ? (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center">
-                                            Cargando pacientes...
-                                        </TableCell>
-                                    </TableRow>
-                                ) : filteredClients.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center">
-                                            No se encontraron pacientes.
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    filteredClients.map((client) => (
-                                        <TableRow key={client.id}>
-                                            <TableCell>
-                                                <div className="flex items-center gap-3">
-                                                    <Avatar>
-                                                        <AvatarFallback>
-                                                            {client.firstName[0]}{client.lastName[0]}
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="flex flex-col">
-                                                        <span className="font-medium">
-                                                            {client.firstName} {client.lastName}
-                                                        </span>
-                                                        <span className="text-xs text-muted-foreground">
-                                                            {client.diagnosis || 'Sin diagnóstico'}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-col gap-1">
-                                                    <Badge variant="secondary" className={getRiskBadgeColor(client.riskLevel)}>
-                                                        {client.riskLevel}
-                                                    </Badge>
-                                                    {client.isActive ? (
-                                                        <span className="text-xs text-green-600 flex items-center">
-                                                            ● Activo
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-xs text-gray-400">Inactivo</span>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-col text-sm">
-                                                    <span>{client.email || '-'}</span>
-                                                    <span className="text-muted-foreground">{client.phone || '-'}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="text-sm">
-                                                    {client.lastSessionAt ? new Date(client.lastSessionAt).toLocaleDateString() : 'Nunca'}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" className="h-8 w-8 p-0">
-                                                            <span className="sr-only">Abrir menú</span>
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/clients/${client.id}`)}>
-                                                            <FileText className="mr-2 h-4 w-4" /> Ver expediente
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/sessions/new?clientId=${client.id}`)}>
-                                                            <Calendar className="mr-2 h-4 w-4" /> Agendar sesión
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/statistics?clientId=${client.id}`)}>
-                                                            <PieChart className="mr-2 h-4 w-4" /> Estadísticas
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/clients/${client.id}/edit`)}>
-                                                            <Pencil className="mr-2 h-4 w-4" /> Editar
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem
-                                                            className="text-red-600 focus:text-red-600"
-                                                            onClick={() => handleDelete(client.id)}
-                                                        >
-                                                            <Trash2 className="mr-2 h-4 w-4" /> Eliminar
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
+                <TabsContent value={activeTab} className="mt-4">
+                    <Card>
+                        <CardHeader className="pb-3">
+                            <CardTitle>{activeTab === 'active' ? 'Listado de Pacientes Activos' : 'Pacientes Archivados'}</CardTitle>
+                            <CardDescription>
+                                {activeTab === 'active'
+                                    ? `Tienes un total de ${clients.length} pacientes activos.`
+                                    : `Tienes un total de ${clients.length} pacientes archivados.`}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center py-4">
+                                <div className="relative w-full max-w-sm">
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Buscar por nombre o email..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="pl-8"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="rounded-md border">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[250px]">Paciente</TableHead>
+                                            <TableHead>Estado / Riesgo</TableHead>
+                                            <TableHead>Contacto</TableHead>
+                                            <TableHead>Última Sesión</TableHead>
+                                            <TableHead className="text-right">Acciones</TableHead>
                                         </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {isLoading ? (
+                                            <TableRow>
+                                                <TableCell colSpan={5} className="h-24 text-center">
+                                                    Cargando pacientes...
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : filteredClients.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={5} className="h-24 text-center">
+                                                    {activeTab === 'active'
+                                                        ? 'No se encontraron pacientes activos.'
+                                                        : 'No se encontraron pacientes archivados.'}
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            filteredClients.map((client) => (
+                                                <TableRow key={client.id}>
+                                                    <TableCell>
+                                                        <div className="flex items-center gap-3">
+                                                            <Avatar>
+                                                                <AvatarFallback>
+                                                                    {client.firstName[0]}{client.lastName[0]}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                            <div className="flex flex-col">
+                                                                <span className="font-medium">
+                                                                    {client.firstName} {client.lastName}
+                                                                </span>
+                                                                <span className="text-xs text-muted-foreground">
+                                                                    {client.diagnosis || 'Sin diagnóstico'}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="flex flex-col gap-1">
+                                                            <Badge variant="secondary" className={getRiskBadgeColor(client.riskLevel)}>
+                                                                {client.riskLevel}
+                                                            </Badge>
+                                                            {client.isActive ? (
+                                                                <span className="text-xs text-green-600 flex items-center">
+                                                                    ● Activo
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-xs text-gray-400">Archivado</span>
+                                                            )}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="flex flex-col text-sm">
+                                                            <span>{client.email || '-'}</span>
+                                                            <span className="text-muted-foreground">{client.phone || '-'}</span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="text-sm">
+                                                            {client.lastSessionAt ? new Date(client.lastSessionAt).toLocaleDateString() : 'Nunca'}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="text-right">
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                                    <span className="sr-only">Abrir menú</span>
+                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end">
+                                                                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                                                                <DropdownMenuItem onClick={() => router.push(`/dashboard/clients/${client.id}`)}>
+                                                                    <FileText className="mr-2 h-4 w-4" /> Ver expediente
+                                                                </DropdownMenuItem>
+                                                                {client.isActive && (
+                                                                    <>
+                                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/sessions/new?clientId=${client.id}`)}>
+                                                                            <Calendar className="mr-2 h-4 w-4" /> Agendar sesión
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/statistics?clientId=${client.id}`)}>
+                                                                            <PieChart className="mr-2 h-4 w-4" /> Estadísticas
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem onClick={() => router.push(`/dashboard/clients/${client.id}/edit`)}>
+                                                                            <Pencil className="mr-2 h-4 w-4" /> Editar
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuSeparator />
+                                                                        <DropdownMenuItem
+                                                                            className="text-red-600 focus:text-red-600"
+                                                                            onClick={() => handleArchive(client.id)}
+                                                                        >
+                                                                            <Trash2 className="mr-2 h-4 w-4" /> Archivar
+                                                                        </DropdownMenuItem>
+                                                                    </>
+                                                                )}
+                                                                {!client.isActive && (
+                                                                    <DropdownMenuItem
+                                                                        className="text-green-600 focus:text-green-600"
+                                                                        onClick={() => handleRestore(client.id)}
+                                                                    >
+                                                                        <RefreshCcw className="mr-2 h-4 w-4" /> Restaurar
+                                                                    </DropdownMenuItem>
+                                                                )}
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

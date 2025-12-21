@@ -21,7 +21,8 @@ export declare class CreateClientEncryptedDto {
     sendEmailReminders?: boolean;
     sendWhatsappReminders?: boolean;
 }
-export declare class UpdateClientDto extends CreateClientDto {
+declare const UpdateClientDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateClientDto>>;
+export declare class UpdateClientDto extends UpdateClientDto_base {
     isActive?: boolean;
 }
 export declare class ClientResponseDto {
@@ -39,3 +40,4 @@ export declare class ClientResponseDto {
     sendEmailReminders: boolean;
     sendWhatsappReminders: boolean;
 }
+export {};

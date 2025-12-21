@@ -138,10 +138,10 @@ export class ClientsService {
         }
     }
 
-    async findAll(userId: string): Promise<ClientResponseDto[]> {
+    async findAll(userId: string, active: boolean = true): Promise<ClientResponseDto[]> {
         try {
             const clients = await this.prisma.client.findMany({
-                where: { userId, isActive: true },
+                where: { userId, ...(active !== undefined ? { isActive: active } : {}) },
                 orderBy: { createdAt: 'desc' },
             });
 

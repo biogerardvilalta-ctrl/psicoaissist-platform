@@ -41,8 +41,8 @@ export type UpdateClientData = Partial<CreateClientData> & {
 export class ClientsAPI {
     private static readonly BASE_URL = '/api/v1/clients';
 
-    static async getAll() {
-        return httpClient.get<Client[]>(this.BASE_URL);
+    static async getAll(active: boolean = true) {
+        return httpClient.get<Client[]>(`${this.BASE_URL}?active=${active}`);
     }
 
     static async getById(id: string) {
@@ -85,5 +85,9 @@ export class ClientsAPI {
 
     static async delete(id: string) {
         return httpClient.delete<{ message: string }>(`${this.BASE_URL}/${id}`);
+    }
+
+    static async restore(id: string) {
+        return httpClient.put<Client>(`${this.BASE_URL}/${id}`, { isActive: true });
     }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Put, Query } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto } from './dto/clients.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -22,8 +22,10 @@ export class ClientsController {
     @Get()
     @ApiOperation({ summary: 'Listar todos los clientes activos del usuario' })
     @ApiResponse({ status: 200, type: [ClientResponseDto] })
-    findAll(@Req() req: Request & { user: any }) {
-        return this.clientsService.findAll(req.user.id);
+    findAll(@Req() req: Request & { user: any }, @Query('active') active?: string) {
+        // active defaults to true if not provided. string 'false' becomes boolean false.
+        const isActive = active === undefined ? true : active === 'true';
+        return this.clientsService.findAll(req.user.id, isActive);
     }
 
     @Get(':id')
@@ -36,8 +38,9 @@ export class ClientsController {
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar (desactivar) cliente' })
     @ApiResponse({ status: 200 })
-    remove(@Req() req: Request & { user: any }, @Param('id') id: string) {
-        return this.clientsService.remove(req.user.id, id);
+    async remove(@Req() req: Request & { user: any }, @Param('id') id: string) {
+        await this.clientsService.remove(req.user.id, id);
+        return { message: 'Cliente archivado correctamente' };
     }
 
     @Put(':id')

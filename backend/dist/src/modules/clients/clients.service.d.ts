@@ -11,7 +11,7 @@ export declare class ClientsService {
     private packEncryptedData;
     private unpackEncryptedData;
     create(userId: string, createClientDto: CreateClientDto | CreateClientEncryptedDto): Promise<ClientResponseDto>;
-    findAll(userId: string): Promise<ClientResponseDto[]>;
+    findAll(userId: string, active?: boolean): Promise<ClientResponseDto[]>;
     findOne(userId: string, clientId: string): Promise<ClientResponseDto>;
     update(userId: string, clientId: string, updateClientDto: UpdateClientDto): Promise<ClientResponseDto>;
     remove(userId: string, clientId: string): Promise<void>;

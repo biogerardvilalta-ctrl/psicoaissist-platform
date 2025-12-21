@@ -9,13 +9,15 @@ export declare class ClientsController {
     }, createClientDto: CreateClientDto | CreateClientEncryptedDto): Promise<ClientResponseDto>;
     findAll(req: Request & {
         user: any;
-    }): Promise<ClientResponseDto[]>;
+    }, active?: string): Promise<ClientResponseDto[]>;
     findOne(req: Request & {
         user: any;
     }, id: string): Promise<ClientResponseDto>;
     remove(req: Request & {
         user: any;
-    }, id: string): Promise<void>;
+    }, id: string): Promise<{
+        message: string;
+    }>;
     update(req: Request & {
         user: any;
     }, id: string, updateClientDto: UpdateClientDto): Promise<ClientResponseDto>;

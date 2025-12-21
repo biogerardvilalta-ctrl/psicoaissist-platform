@@ -102,7 +102,9 @@ export class CreateClientEncryptedDto {
     sendWhatsappReminders?: boolean;
 }
 
-export class UpdateClientDto extends CreateClientDto {
+import { PartialType } from '@nestjs/mapped-types';
+
+export class UpdateClientDto extends PartialType(CreateClientDto) {
     @ApiPropertyOptional()
     @IsBoolean()
     @IsOptional()

@@ -107,10 +107,10 @@ let ClientsService = ClientsService_1 = class ClientsService {
             throw error;
         }
     }
-    async findAll(userId) {
+    async findAll(userId, active = true) {
         try {
             const clients = await this.prisma.client.findMany({
-                where: { userId, isActive: true },
+                where: { userId, ...(active !== undefined ? { isActive: active } : {}) },
                 orderBy: { createdAt: 'desc' },
             });
             const decryptedClients = await Promise.all(clients.map(async (client) => {

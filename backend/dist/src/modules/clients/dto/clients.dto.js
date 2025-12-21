@@ -133,7 +133,8 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], CreateClientEncryptedDto.prototype, "sendWhatsappReminders", void 0);
-class UpdateClientDto extends CreateClientDto {
+const mapped_types_1 = require("@nestjs/mapped-types");
+class UpdateClientDto extends (0, mapped_types_1.PartialType)(CreateClientDto) {
 }
 exports.UpdateClientDto = UpdateClientDto;
 __decorate([
