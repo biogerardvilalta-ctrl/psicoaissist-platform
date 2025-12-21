@@ -15,6 +15,13 @@ export declare class UpdateUserDto {
     lastName?: string;
     role?: UserRole;
     status?: UserStatus;
+    enableReminders?: boolean;
+    defaultDuration?: number;
+    bufferTime?: number;
+    workStartHour?: string;
+    workEndHour?: string;
+    scheduleConfig?: any;
+    preferredLanguage?: string;
 }
 export declare class UserResponseDto {
     id: string;
@@ -25,6 +32,13 @@ export declare class UserResponseDto {
     status: UserStatus;
     createdAt: Date;
     lastLogin?: Date;
+    enableReminders?: boolean;
+    defaultDuration?: number;
+    bufferTime?: number;
+    workStartHour?: string;
+    workEndHour?: string;
+    scheduleConfig?: any;
+    preferredLanguage?: string;
 }
 export declare class ChangeRoleDto {
     role: UserRole;

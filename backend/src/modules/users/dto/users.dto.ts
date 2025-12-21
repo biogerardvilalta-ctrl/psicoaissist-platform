@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional, IsEnum, IsBoolean, IsInt } from 'class-validator';
 import { UserRole, UserStatus } from '@prisma/client';
 
 export class CreateUserDto {
@@ -65,6 +65,41 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(UserStatus)
   status?: UserStatus;
+
+  // New Settings Fields
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  enableReminders?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  defaultDuration?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  bufferTime?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  workStartHour?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  workEndHour?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  scheduleConfig?: any;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  preferredLanguage?: string;
 }
 
 export class UserResponseDto {
@@ -91,6 +126,28 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   lastLogin?: Date;
+
+  // Settings Fields
+  @ApiProperty({ required: false })
+  enableReminders?: boolean;
+
+  @ApiProperty({ required: false })
+  defaultDuration?: number;
+
+  @ApiProperty({ required: false })
+  bufferTime?: number;
+
+  @ApiProperty({ required: false })
+  workStartHour?: string;
+
+  @ApiProperty({ required: false })
+  workEndHour?: string;
+
+  @ApiProperty({ required: false })
+  scheduleConfig?: any;
+
+  @ApiProperty({ required: false })
+  preferredLanguage?: string;
 }
 
 export class ChangeRoleDto {

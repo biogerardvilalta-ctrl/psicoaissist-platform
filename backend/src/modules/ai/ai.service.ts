@@ -809,7 +809,7 @@ Genera suggeriments en temps real format JSON.
 `;
 
             const model = this.genAI.getGenerativeModel({
-                model: "gemini-flash-latest", // Use latest available flash model
+                model: "gemini-2.0-flash", // Use latest available flash model
                 generationConfig: {
                     responseMimeType: "application/json",
                     temperature: 0.7,
@@ -913,7 +913,8 @@ Genera suggeriments en temps real format JSON.
             let text = response.text();
 
             // formatting cleanup if needed (ensure it didn't wrap in markdown code blocks)
-            text = text.replace(/^```html /, '').replace(/```$/, '').trim();
+            // formatting cleanup: robustly remove markdown code blocks
+            text = text.replace(/^```(?:html)?\s*/i, '').replace(/\s*```$/, '').trim();
 
             return text;
 

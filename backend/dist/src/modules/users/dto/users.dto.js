@@ -93,6 +93,47 @@ __decorate([
     (0, class_validator_1.IsEnum)(client_1.UserStatus),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "status", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdateUserDto.prototype, "enableReminders", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], UpdateUserDto.prototype, "defaultDuration", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], UpdateUserDto.prototype, "bufferTime", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "workStartHour", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "workEndHour", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], UpdateUserDto.prototype, "scheduleConfig", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "preferredLanguage", void 0);
 class UserResponseDto {
 }
 exports.UserResponseDto = UserResponseDto;
@@ -128,6 +169,34 @@ __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", Date)
 ], UserResponseDto.prototype, "lastLogin", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Boolean)
+], UserResponseDto.prototype, "enableReminders", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Number)
+], UserResponseDto.prototype, "defaultDuration", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Number)
+], UserResponseDto.prototype, "bufferTime", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", String)
+], UserResponseDto.prototype, "workStartHour", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", String)
+], UserResponseDto.prototype, "workEndHour", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Object)
+], UserResponseDto.prototype, "scheduleConfig", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", String)
+], UserResponseDto.prototype, "preferredLanguage", void 0);
 class ChangeRoleDto {
 }
 exports.ChangeRoleDto = ChangeRoleDto;

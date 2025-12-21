@@ -299,6 +299,13 @@ export class UsersService {
       status: user.status,
       createdAt: user.createdAt,
       lastLogin: user.lastLogin,
+      enableReminders: user.enableReminders,
+      defaultDuration: user.defaultDuration,
+      bufferTime: user.bufferTime,
+      workStartHour: user.workStartHour,
+      workEndHour: user.workEndHour,
+      scheduleConfig: user.scheduleConfig,
+      preferredLanguage: user.preferredLanguage,
     };
   }
 }

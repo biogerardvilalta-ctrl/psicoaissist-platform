@@ -665,7 +665,7 @@ CONTEXT ACTUAL (Text viu de la sessió):
 Genera suggeriments en temps real format JSON.
 `;
             const model = this.genAI.getGenerativeModel({
-                model: "gemini-flash-latest",
+                model: "gemini-2.0-flash",
                 generationConfig: {
                     responseMimeType: "application/json",
                     temperature: 0.7,
@@ -743,7 +743,7 @@ Genera suggeriments en temps real format JSON.
             const result = await model.generateContent(prompt);
             const response = result.response;
             let text = response.text();
-            text = text.replace(/^```html /, '').replace(/```$/, '').trim();
+            text = text.replace(/^```(?:html)?\s*/i, '').replace(/\s*```$/, '').trim();
             return text;
         }
         catch (error) {
