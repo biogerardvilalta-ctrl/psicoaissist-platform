@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, Video, ArrowRight, User } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, User } from 'lucide-react';
 import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
 import { ClientsAPI, Client } from '@/lib/clients-api';
 import { Badge } from '@/components/ui/badge';
@@ -108,7 +108,7 @@ export function TodaysSessions() {
                                             )}
                                         </h4>
                                         <div className="flex items-center text-xs text-gray-500 gap-3">
-                                            <span className="flex items-center gap-1"><Video className="h-3 w-3" /> Videollamada</span>
+
                                             <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 50 min</span>
                                         </div>
                                     </div>
