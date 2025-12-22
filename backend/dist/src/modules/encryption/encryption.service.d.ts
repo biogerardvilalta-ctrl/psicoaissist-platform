@@ -24,9 +24,9 @@ export declare class EncryptionService {
         id: string;
         createdAt: Date;
         userId: string;
-        isActive: boolean;
         keyValue: string;
         algorithm: string;
+        isActive: boolean;
         expiresAt: Date | null;
     }>;
     private getEncryptionKey;

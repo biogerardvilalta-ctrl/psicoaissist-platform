@@ -17,14 +17,14 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
-import { CalendarIcon, BrainCircuit, Bell, Settings, Clock } from 'lucide-react';
+import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro } from 'lucide-react';
 
 export default function SettingsPage() {
   const { user, updateUser } = useAuth();
   const { toast } = useToast();
 
   // Navigation State
-  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications'>('agenda');
+  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'billing'>('agenda');
 
   // Form State
   const [enableReminders, setEnableReminders] = useState<boolean>(false);
@@ -76,6 +76,7 @@ export default function SettingsPage() {
 
   const menuItems = [
     { id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon },
+    { id: 'billing', label: 'Facturación y Tarifas', icon: Euro },
     { id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
   ];
@@ -142,6 +143,7 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
+
 
               <div className="space-y-4 pt-4 border-t">
                 <h3 className="text-lg font-medium">Horario Semanal</h3>
@@ -329,6 +331,33 @@ export default function SettingsPage() {
           </Card>
         )}
 
+        {/* BILLING SECTION */}
+        {activeSection === 'billing' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Facturación y Tarifas</CardTitle>
+              <CardDescription>Gestiona tus tarifas y configuración de facturación.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Precio Sesión/Hora (€)</Label>
+                  <Input
+                    type="number"
+                    defaultValue={user?.hourlyRate || 60}
+                    onBlur={(e) => handleUpdateProfile({ hourlyRate: parseInt(e.target.value) })}
+                    disabled={loading}
+                    className="max-w-xs"
+                  />
+                  <p className="text-sm text-gray-500">
+                    Este valor se utilizará para calcular los ingresos estimados en el dashboard y las estadísticas.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* AI SECTION */}
         {activeSection === 'ai' && (
           <Card>
@@ -394,6 +423,6 @@ export default function SettingsPage() {
           </Card>
         )}
       </main>
-    </div>
+    </div >
   );
 }

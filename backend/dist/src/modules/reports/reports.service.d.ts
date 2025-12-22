@@ -12,6 +12,7 @@ export declare class ReportsService {
     private readonly auditService;
     constructor(prisma: PrismaService, encryption: EncryptionService, aiService: AiService, pdfService: PdfService, auditService: AuditService);
     create(userId: string, createReportDto: CreateReportDto): Promise<{
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -19,7 +20,6 @@ export declare class ReportsService {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;
@@ -38,6 +38,7 @@ export declare class ReportsService {
             id: string;
         };
     } & {
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -45,7 +46,6 @@ export declare class ReportsService {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;
@@ -61,6 +61,7 @@ export declare class ReportsService {
     })[]>;
     findOne(id: string, userId: string): Promise<{
         content: string;
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -68,7 +69,6 @@ export declare class ReportsService {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;
@@ -83,6 +83,7 @@ export declare class ReportsService {
         completedAt: Date | null;
     }>;
     update(id: string, userId: string, updateReportDto: UpdateReportDto): Promise<{
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -90,7 +91,6 @@ export declare class ReportsService {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;
@@ -105,6 +105,7 @@ export declare class ReportsService {
         completedAt: Date | null;
     }>;
     remove(id: string, userId: string): Promise<{
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -112,7 +113,6 @@ export declare class ReportsService {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;

@@ -5,6 +5,7 @@ export declare class ReportsController {
     private readonly reportsService;
     constructor(reportsService: ReportsService);
     create(req: any, createReportDto: CreateReportDto): Promise<{
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -12,7 +13,6 @@ export declare class ReportsController {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;
@@ -31,6 +31,7 @@ export declare class ReportsController {
             id: string;
         };
     } & {
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -38,7 +39,6 @@ export declare class ReportsController {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;
@@ -54,6 +54,7 @@ export declare class ReportsController {
     })[]>;
     findOne(req: any, id: string): Promise<{
         content: string;
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -61,7 +62,6 @@ export declare class ReportsController {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;
@@ -76,6 +76,7 @@ export declare class ReportsController {
         completedAt: Date | null;
     }>;
     update(req: any, id: string, updateReportDto: UpdateReportDto): Promise<{
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -83,7 +84,6 @@ export declare class ReportsController {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;
@@ -102,6 +102,7 @@ export declare class ReportsController {
     }>;
     download(req: any, id: string, res: Response): Promise<void>;
     remove(req: any, id: string): Promise<{
+        title: string;
         id: string;
         status: import(".prisma/client").$Enums.ReportStatus;
         createdAt: Date;
@@ -109,7 +110,6 @@ export declare class ReportsController {
         userId: string;
         encryptionKeyId: string;
         clientId: string;
-        title: string;
         sessionId: string | null;
         reportType: import(".prisma/client").$Enums.ReportType;
         version: number;

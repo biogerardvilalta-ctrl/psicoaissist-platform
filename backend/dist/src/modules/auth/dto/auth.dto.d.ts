@@ -31,6 +31,7 @@ export declare class UserResponseDto {
     workEndHour: string;
     preferredLanguage: string;
     scheduleConfig?: any;
+    hourlyRate: number;
     dashboardLayout?: string[];
 }
 export declare class AuthResponseDto {
@@ -60,4 +61,5 @@ export declare class UpdateProfileDto {
     workEndHour?: string;
     preferredLanguage?: string;
     scheduleConfig?: any;
+    hourlyRate?: number;
 }

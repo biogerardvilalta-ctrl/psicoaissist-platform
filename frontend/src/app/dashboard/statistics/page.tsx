@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/auth-context';
 import { SessionsAPI } from '@/lib/sessions-api';
 import { ClientsAPI, Client } from '@/lib/clients-api';
 import { DashboardAPI } from '@/lib/dashboard-api';
@@ -47,6 +48,7 @@ export default function StatisticsPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const clientId = searchParams.get('clientId');
+    const { user } = useAuth();
 
     const [activeTab, setActiveTab] = useState('overview');
     const [selectedMetric, setSelectedMetric] = useState('sessions');
@@ -98,11 +100,11 @@ export default function StatisticsPage() {
                 }
 
                 // Internal calc for basic charts - NOW WITH TIME RANGE
-                const calculated = calculateDashboardStats(filteredSessions, clients, 60, timeRange);
+                const calculated = calculateDashboardStats(filteredSessions, clients, user?.hourlyRate || 60, timeRange);
                 setStats(calculated);
 
                 // Advanced calc (defaulting to 60€/h here, or we could fetch config)
-                const adv = calculateAdvancedStats(filteredSessions, 60);
+                const adv = calculateAdvancedStats(filteredSessions, user?.hourlyRate || 60);
                 setAdvancedStats(adv);
 
             } catch (error) {

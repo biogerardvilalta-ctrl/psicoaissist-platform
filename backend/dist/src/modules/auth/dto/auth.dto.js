@@ -142,6 +142,10 @@ __decorate([
     __metadata("design:type", Object)
 ], UserResponseDto.prototype, "scheduleConfig", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Number)
+], UserResponseDto.prototype, "hourlyRate", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", Array)
 ], UserResponseDto.prototype, "dashboardLayout", void 0);
@@ -240,4 +244,9 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], UpdateProfileDto.prototype, "scheduleConfig", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateProfileDto.prototype, "hourlyRate", void 0);
 //# sourceMappingURL=auth.dto.js.map

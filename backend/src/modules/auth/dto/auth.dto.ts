@@ -100,6 +100,9 @@ export class UserResponseDto {
   @ApiProperty({ required: false })
   scheduleConfig?: any;
 
+  @ApiProperty()
+  hourlyRate: number;
+
   @ApiProperty({ required: false })
   dashboardLayout?: string[];
 }
@@ -179,4 +182,8 @@ export class UpdateProfileDto {
   @ApiProperty({ required: false })
   @IsOptional()
   scheduleConfig?: any;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  hourlyRate?: number;
 }
