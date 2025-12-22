@@ -8,3 +8,7 @@ frontend/out/
 # TypeScript build
 backend/dist/
 *.tsbuildinfo
+dist/
+.env
+.env.*
+npm-debug.log*
