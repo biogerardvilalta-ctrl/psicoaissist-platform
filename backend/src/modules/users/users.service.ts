@@ -275,6 +275,7 @@ export class UsersService {
           workEndHour: true,
           preferredLanguage: true,
           scheduleConfig: true,
+          hourlyRate: true,
         },
       });
       return this.mapToResponseDto(updatedUser);
@@ -345,6 +346,7 @@ export class UsersService {
       scheduleConfig: user.scheduleConfig,
       preferredLanguage: user.preferredLanguage,
       dashboardLayout: user.dashboardLayout,
+      hourlyRate: user.hourlyRate,
     };
   }
 }

@@ -226,8 +226,9 @@ export function useAdminUsers(filters?: UserFilters) {
       } catch (apiError) {
         console.warn('API admin/users no disponible, usando datos demo:', apiError);
         // Usar datos demo si la API falla
-        const limit = (newFilters || filters)?.limit || 10;
-        const search = (newFilters || filters)?.search?.toLowerCase() || '';
+        const currentFilters = newFilters || filters; // Capture current filters
+        const limit = currentFilters?.limit || 10;
+        const search = currentFilters?.search?.toLowerCase() || '';
 
         // Filtrar usuarios demo por búsqueda si existe
         let filteredUsers = demoUsers;
@@ -261,11 +262,12 @@ export function useAdminUsers(filters?: UserFilters) {
     } finally {
       setTimeout(() => setLoading(false), 400);
     }
-  }, []); // Remover filters de las dependencias
+  }, [filters]); // Removed 'filters' comment, added it as dependency since it IS used inside via closure or if we want to reset it
 
   useEffect(() => {
     fetchUsers(filters);
-  }, [JSON.stringify(filters), fetchUsers]); // Usar JSON.stringify para comparar filters
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(filters)]);
 
   const getUserById = useCallback(async (id: string): Promise<AdminUser | null> => {
     try {

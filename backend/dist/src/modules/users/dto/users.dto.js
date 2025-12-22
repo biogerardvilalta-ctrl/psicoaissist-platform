@@ -134,6 +134,12 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "preferredLanguage", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], UpdateUserDto.prototype, "hourlyRate", void 0);
 class UserResponseDto {
 }
 exports.UserResponseDto = UserResponseDto;
@@ -201,6 +207,10 @@ __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", Object)
 ], UserResponseDto.prototype, "dashboardLayout", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Number)
+], UserResponseDto.prototype, "hourlyRate", void 0);
 class ChangeRoleDto {
 }
 exports.ChangeRoleDto = ChangeRoleDto;

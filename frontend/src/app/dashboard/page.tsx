@@ -133,7 +133,7 @@ export default function DashboardPage() {
       }
     };
     fetchStats();
-  }, []);
+  }, [toast, user?.hourlyRate]);
 
   const handleSaveLayout = async (newLayout: string[]) => {
     if (!user) return;
@@ -219,13 +219,13 @@ export default function DashboardPage() {
           data={dashboardStats?.techniques || []}
         />;
 
-      case 'sessionsThisMonth': return <StatsWidget id={id} data={{ title: "Sesiones", value: advancedStats.sessionsThisMonth.toString(), icon: BarChart3, iconBgColor: "bg-blue-100", iconColor: "text-blue-600", subtitle: "Este Mes", trend: { value: "Realizadas", isPositive: true }, onClick: () => handleCardClick(id) }} />;
-      case 'activePatients': return <StatsWidget id={id} data={{ title: "Pacientes", value: stats.activeClients.toString(), icon: User, iconBgColor: "bg-blue-100", iconColor: "text-blue-600", subtitle: "Activos", trend: stats.clientTrend, onClick: () => handleCardClick(id) }} />;
-      case 'monthIncome': return <StatsWidget id={id} data={{ title: "Ingresos (Est)", value: `${advancedStats.monthIncome}€`, icon: Euro, iconBgColor: "bg-emerald-100", iconColor: "text-emerald-600", subtitle: "Este Mes", trend: { value: "60€/h", isPositive: true }, onClick: () => handleCardClick(id) }} />;
-      case 'sessionsNextWeek': return <StatsWidget id={id} data={{ title: "Agenda (7d)", value: advancedStats.sessionsNextWeek.toString(), icon: Calendar, iconBgColor: "bg-indigo-100", iconColor: "text-indigo-600", subtitle: "Sesiones", trend: { value: "Vista", isPositive: true }, onClick: () => handleCardClick(id) }} />;
-      case 'attendanceRate': return <StatsWidget id={id} data={{ title: "Asistencia", value: advancedStats.attendanceRate > 0 ? `${advancedStats.attendanceRate}%` : "-", icon: CheckCircle, iconBgColor: "bg-green-100", iconColor: "text-green-600", subtitle: "Tasa Global", trend: { value: "General", isPositive: true }, onClick: () => handleCardClick(id) }} />;
-      case 'cancellationRate': return <StatsWidget id={id} data={{ title: "Cancelaciones", value: `${advancedStats.cancellationRate}%`, icon: XCircle, iconBgColor: "bg-red-100", iconColor: "text-red-600", subtitle: "Tasa Global", trend: advancedStats.cancellationRate > 15 ? { value: "Alta", isPositive: false } : { value: "Baja", isPositive: true }, onClick: () => handleCardClick(id) }} />;
-      case 'pendingNotes': return <StatsWidget id={id} data={{ title: "Notas", value: advancedStats.pendingNotes.toString(), icon: AlertCircle, iconBgColor: "bg-orange-100", iconColor: "text-orange-600", subtitle: "Pendientes", trend: advancedStats.pendingNotes > 0 ? { value: "Revisar", isPositive: false } : { value: "Al día", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'sessionsThisMonth': return <StatsWidget id={id} data={{ title: "Sesiones", value: advancedStats.sessionsThisMonth.toString(), icon: BarChart3, iconBgColor: "bg-primary/10", iconColor: "text-primary", subtitle: "Este Mes", trend: { value: "Realizadas", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'activePatients': return <StatsWidget id={id} data={{ title: "Pacientes", value: stats.activeClients.toString(), icon: User, iconBgColor: "bg-primary/10", iconColor: "text-primary", subtitle: "Activos", trend: stats.clientTrend, onClick: () => handleCardClick(id) }} />;
+      case 'monthIncome': return <StatsWidget id={id} data={{ title: "Ingresos (Est)", value: `${advancedStats.monthIncome}€`, icon: Euro, iconBgColor: "bg-emerald-100", iconColor: "text-emerald-700", subtitle: "Este Mes", trend: { value: "60€/h", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'sessionsNextWeek': return <StatsWidget id={id} data={{ title: "Agenda (7d)", value: advancedStats.sessionsNextWeek.toString(), icon: Calendar, iconBgColor: "bg-violet-100", iconColor: "text-violet-700", subtitle: "Sesiones", trend: { value: "Vista", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'attendanceRate': return <StatsWidget id={id} data={{ title: "Asistencia", value: advancedStats.attendanceRate > 0 ? `${advancedStats.attendanceRate}%` : "-", icon: CheckCircle, iconBgColor: "bg-emerald-100", iconColor: "text-emerald-700", subtitle: "Tasa Global", trend: { value: "General", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'cancellationRate': return <StatsWidget id={id} data={{ title: "Cancelaciones", value: `${advancedStats.cancellationRate}%`, icon: XCircle, iconBgColor: "bg-rose-100", iconColor: "text-rose-700", subtitle: "Tasa Global", trend: advancedStats.cancellationRate > 15 ? { value: "Alta", isPositive: false } : { value: "Baja", isPositive: true }, onClick: () => handleCardClick(id) }} />;
+      case 'pendingNotes': return <StatsWidget id={id} data={{ title: "Notas", value: advancedStats.pendingNotes.toString(), icon: AlertCircle, iconBgColor: "bg-amber-100", iconColor: "text-amber-700", subtitle: "Pendientes", trend: advancedStats.pendingNotes > 0 ? { value: "Revisar", isPositive: false } : { value: "Al día", isPositive: true }, onClick: () => handleCardClick(id) }} />;
       default: return <div>Widget desconocido: {id}</div>;
     }
   };

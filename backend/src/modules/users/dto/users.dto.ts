@@ -100,6 +100,11 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   preferredLanguage?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  hourlyRate?: number;
 }
 
 export class UserResponseDto {
@@ -151,6 +156,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   dashboardLayout?: any;
+
+  @ApiProperty({ required: false })
+  hourlyRate?: number;
 }
 
 export class ChangeRoleDto {

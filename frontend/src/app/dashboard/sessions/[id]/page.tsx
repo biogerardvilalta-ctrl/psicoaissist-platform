@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     ArrowLeft,
@@ -92,7 +92,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     }, [session?.status]);
 
 
-    const fetchSession = async () => {
+    const fetchSession = useCallback(async () => {
         try {
             setIsLoading(true);
             const data = await SessionsAPI.getById(params.id);
@@ -100,9 +100,6 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             setNotes(data.notes || '');
             setTranscription(data.transcription || '');
             setMethodology(data.methodology || '');
-
-            // Default tab: 'notes' if session completed, 'transcription' if in progress?
-            // Let's default to 'transcription' as it is the "Action" view.
 
             if (data.clientId) {
                 try {
@@ -124,11 +121,11 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [params.id, router, toast]);
 
     useEffect(() => {
         fetchSession();
-    }, [params.id]);
+    }, [fetchSession]);
 
     const formatTime = (seconds: number) => {
         const h = Math.floor(seconds / 3600);

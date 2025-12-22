@@ -114,7 +114,7 @@ export default function StatisticsPage() {
             }
         };
         fetchData();
-    }, [clientId, timeRange]); // Re-run when timeRange changes
+    }, [clientId, timeRange, user?.hourlyRate]); // Re-run when timeRange or user rate changes
 
     const handleClientChange = (value: string) => {
         if (value === 'global') {

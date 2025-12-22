@@ -108,6 +108,7 @@ let AuthService = AuthService_1 = class AuthService {
                 preferredLanguage: user.preferredLanguage,
                 scheduleConfig: user.scheduleConfig,
                 dashboardLayout: user.dashboardLayout,
+                hourlyRate: user.hourlyRate,
             },
             tokens,
             encryptionKey: {
@@ -164,6 +165,7 @@ let AuthService = AuthService_1 = class AuthService {
                     preferredLanguage: user.preferredLanguage,
                     scheduleConfig: user.scheduleConfig,
                     dashboardLayout: user.dashboardLayout,
+                    hourlyRate: user.hourlyRate,
                 },
                 tokens,
                 encryptionKey: {
@@ -292,6 +294,7 @@ let AuthService = AuthService_1 = class AuthService {
                     workEndHour: data.workEndHour,
                     scheduleConfig: data.scheduleConfig,
                     preferredLanguage: data.preferredLanguage,
+                    hourlyRate: data.hourlyRate,
                     updatedAt: new Date(),
                 },
             });
