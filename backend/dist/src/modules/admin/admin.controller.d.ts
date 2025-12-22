@@ -58,6 +58,7 @@ export declare class AdminController {
             resetPasswordExpires: Date | null;
             phone: string | null;
             speciality: string | null;
+            hourlyRate: number;
             updatedAt: Date;
         }[];
         pagination: {
@@ -76,11 +77,11 @@ export declare class AdminController {
             updatedAt: Date;
             userId: string;
             isActive: boolean;
+            encryptionKeyId: string;
             encryptedPersonalData: Buffer;
             encryptedClinicalData: Buffer | null;
             encryptedSensitiveData: Buffer | null;
             riskLevel: import(".prisma/client").$Enums.RiskLevel;
-            encryptionKeyId: string;
             dataVersion: number;
             sendEmailReminders: boolean;
             sendWhatsappReminders: boolean;
@@ -94,7 +95,6 @@ export declare class AdminController {
             createdAt: Date;
             updatedAt: Date;
             userId: string;
-            encryptionKeyId: string | null;
             clientId: string;
             startTime: Date;
             endTime: Date | null;
@@ -107,6 +107,7 @@ export declare class AdminController {
             encryptedAudioPath: string | null;
             aiSuggestions: import("@prisma/client/runtime/library").JsonValue | null;
             aiMetadata: import("@prisma/client/runtime/library").JsonValue | null;
+            encryptionKeyId: string | null;
             audioQuality: import(".prisma/client").$Enums.AudioQuality | null;
             recordingConsent: boolean;
             consentSigned: boolean;
@@ -121,8 +122,8 @@ export declare class AdminController {
             createdAt: Date;
             updatedAt: Date;
             userId: string;
-            encryptionKeyId: string;
             clientId: string;
+            encryptionKeyId: string;
             sessionId: string | null;
             reportType: import(".prisma/client").$Enums.ReportType;
             version: number;
@@ -178,6 +179,7 @@ export declare class AdminController {
         resetPasswordExpires: Date | null;
         phone: string | null;
         speciality: string | null;
+        hourlyRate: number;
         updatedAt: Date;
     }>;
     updateUserStatus(id: string, body: {
