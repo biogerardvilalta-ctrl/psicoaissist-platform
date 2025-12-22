@@ -325,22 +325,22 @@ npx prisma generate
 ## 🔄 Próximas Fases
 
 ### Fase 2: Funcionalidades Core
-- [ ] Gestión completa de clientes/pacientes
-- [ ] Sistema de sesiones terapéuticas
-- [ ] Grabación y transcripción de audio
-- [ ] Generación de reportes automáticos
+- [x] Gestión completa de clientes/pacientes
+- [x] Sistema de sesiones terapéuticas
+- [x] Grabación y transcripción de audio
+- [x] Generación de reportes automáticos
 
 ### Fase 3: Integración IA
-- [ ] Transcripción automática con Whisper
-- [ ] Análisis de sentimientos
-- [ ] Sugerencias terapéuticas con GPT-4
+- [x] Transcripción automática (Gemini 2.0)
+- [x] Análisis de sentimientos
+- [x] Sugerencias terapéuticas / Insights
 - [ ] Simulador de casos clínicos
 
 ### Fase 4: Funcionalidades Avanzadas
 - [ ] Sistema de pagos con Stripe
 - [ ] Notificaciones en tiempo real
 - [ ] Calendario y citas
-- [ ] Dashboard analítico
+- [x] Dashboard analítico
 
 ## 🤝 Contribuir
 

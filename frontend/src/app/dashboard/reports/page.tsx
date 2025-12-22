@@ -168,7 +168,7 @@ export default function ReportsPage() {
                                 <tr key={report.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
-                                            <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-blue-100 rounded-lg text-blue-600">
+                                            <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-primary/10 rounded-lg text-primary">
                                                 <FileText className="w-5 h-5" />
                                             </div>
                                             <div className="ml-4">
@@ -192,7 +192,7 @@ export default function ReportsPage() {
                                         })}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${report.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${report.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                                             }`}>
                                             {report.status === 'COMPLETED' ? 'Completado' : 'Borrador'}
                                         </span>
@@ -201,7 +201,7 @@ export default function ReportsPage() {
                                         {report.status === 'COMPLETED' ? (
                                             <button
                                                 onClick={() => handleDownload(report.id, report.title, clientMap[report.clientId])}
-                                                className="text-blue-600 hover:text-blue-900 mr-4"
+                                                className="text-primary hover:text-primary/80 mr-4"
                                                 title="Descargar PDF"
                                             >
                                                 <Download className="w-5 h-5" />
@@ -209,7 +209,7 @@ export default function ReportsPage() {
                                         ) : (
                                             <Link
                                                 href={`/dashboard/reports/new?edit=${report.id}`}
-                                                className="text-indigo-600 hover:text-indigo-900 mr-4 inline-block"
+                                                className="text-primary hover:text-primary/80 mr-4 inline-block"
                                                 title="Editar Borrador"
                                             >
                                                 <Pencil className="w-5 h-5" />
@@ -217,7 +217,7 @@ export default function ReportsPage() {
                                         )}
                                         <button
                                             onClick={() => handleDelete(report.id)}
-                                            className="text-red-400 hover:text-red-600"
+                                            className="text-rose-400 hover:text-rose-600"
                                             title="Eliminar"
                                         >
                                             <Trash2 className="w-5 h-5" />

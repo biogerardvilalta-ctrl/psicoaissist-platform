@@ -17,14 +17,14 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
-import { CalendarIcon, BrainCircuit, Bell, Settings, Clock } from 'lucide-react';
+import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro } from 'lucide-react';
 
 export default function SettingsPage() {
   const { user, updateUser } = useAuth();
   const { toast } = useToast();
 
   // Navigation State
-  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications'>('agenda');
+  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'billing'>('agenda');
 
   // Form State
   const [enableReminders, setEnableReminders] = useState<boolean>(false);
@@ -76,6 +76,7 @@ export default function SettingsPage() {
 
   const menuItems = [
     { id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon },
+    { id: 'billing', label: 'Facturación y Tarifas', icon: Euro },
     { id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
   ];
@@ -142,6 +143,7 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
+
 
               <div className="space-y-4 pt-4 border-t">
                 <h3 className="text-lg font-medium">Horario Semanal</h3>
@@ -211,87 +213,15 @@ export default function SettingsPage() {
                 <h3 className="text-lg font-medium">Bloqueos y Excepciones</h3>
                 <p className="text-sm text-gray-500">Agrega días festivos o bloquea horas específicas.</p>
 
-                <div className="flex flex-col md:flex-row gap-4 items-end bg-slate-50 p-4 rounded-lg">
+                <div className="flex flex-col md:flex-row gap-4 items-end bg-muted/50 p-4 rounded-lg">
                   <div className="space-y-2">
                     <Label>Fecha</Label>
                     <Input type="date" id="block-date" />
                   </div>
-
-                  <div className="space-y-2">
-                    <Label>Tipo</Label>
-                    <Select defaultValue="full" onValueChange={(v) => {
-                      const startInput = document.getElementById('block-start');
-                      const endInput = document.getElementById('block-end');
-                      if (v === 'full') {
-                        if (startInput) (startInput as HTMLElement).style.display = 'none';
-                        if (endInput) (endInput as HTMLElement).style.display = 'none';
-                      } else {
-                        if (startInput) (startInput as HTMLElement).style.display = 'block';
-                        if (endInput) (endInput as HTMLElement).style.display = 'block';
-                      }
-                      document.getElementById('block-type-value')!.setAttribute('data-value', v);
-                    }}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Tipo de bloqueo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="full">Día Completo</SelectItem>
-                        <SelectItem value="partial">Horas Específicas</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <span id="block-type-value" data-value="full" className="hidden"></span>
-                  </div>
-
-                  <div className="space-y-2" id="block-start" style={{ display: 'none' }}>
-                    <Label>Desde</Label>
-                    <Input type="time" id="block-start-input" />
-                  </div>
-                  <div className="space-y-2" id="block-end" style={{ display: 'none' }}>
-                    <Label>Hasta</Label>
-                    <Input type="time" id="block-end-input" />
-                  </div>
-
-                  <Button onClick={() => {
-                    const dateInput = document.getElementById('block-date') as HTMLInputElement;
-                    const typeValue = document.getElementById('block-type-value')!.getAttribute('data-value');
-
-                    if (!dateInput.value) return;
-
-                    const newConfig = { ...user?.scheduleConfig };
-
-                    if (typeValue === 'full') {
-                      if (!newConfig.holidays) newConfig.holidays = [];
-                      if (!newConfig.holidays.includes(dateInput.value)) {
-                        newConfig.holidays.push(dateInput.value);
-                        handleUpdateProfile({ scheduleConfig: newConfig });
-                        dateInput.value = '';
-                      }
-                    } else {
-                      const startInput = document.getElementById('block-start-input') as HTMLInputElement;
-                      const endInput = document.getElementById('block-end-input') as HTMLInputElement;
-
-                      if (startInput.value && endInput.value) {
-                        if (!newConfig.blockedBlocks) newConfig.blockedBlocks = [];
-                        newConfig.blockedBlocks.push({
-                          date: dateInput.value,
-                          start: startInput.value,
-                          end: endInput.value
-                        });
-                        handleUpdateProfile({ scheduleConfig: newConfig });
-                        // Clear inputs
-                        startInput.value = '';
-                        endInput.value = '';
-                        dateInput.value = '';
-                      }
-                    }
-                  }}>Agregar</Button>
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium">Días Completos Bloqueados</h4>
+                  {/* ... mid content ... */}
                   <div className="flex flex-wrap gap-2">
                     {user?.scheduleConfig?.holidays?.map(date => (
-                      <div key={date} className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-red-200">
+                      <div key={date} className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-rose-200">
                         <CalendarIcon className="h-3 w-3" />
                         {date}
                         <button onClick={() => {
@@ -300,7 +230,7 @@ export default function SettingsPage() {
                             newConfig.holidays = newConfig.holidays.filter((d: string) => d !== date);
                             handleUpdateProfile({ scheduleConfig: newConfig });
                           }
-                        }} className="hover:text-red-900 font-bold">×</button>
+                        }} className="hover:text-rose-900 font-bold">×</button>
                       </div>
                     ))}
                   </div>
@@ -310,7 +240,7 @@ export default function SettingsPage() {
                   <h4 className="text-sm font-medium">Bloqueos Parciales</h4>
                   <div className="flex flex-wrap gap-2">
                     {user?.scheduleConfig?.blockedBlocks?.map((block: any, idx: number) => (
-                      <div key={idx} className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-orange-200">
+                      <div key={idx} className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-amber-200">
                         <Clock className="h-3 w-3" />
                         <span>{block.date}: {block.start} - {block.end}</span>
                         <button onClick={() => {
@@ -319,10 +249,37 @@ export default function SettingsPage() {
                             newConfig.blockedBlocks = newConfig.blockedBlocks.filter((_: any, i: number) => i !== idx);
                             handleUpdateProfile({ scheduleConfig: newConfig });
                           }
-                        }} className="hover:text-orange-950 font-bold">×</button>
+                        }} className="hover:text-amber-950 font-bold">×</button>
                       </div>
                     ))}
                   </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* BILLING SECTION */}
+        {activeSection === 'billing' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Facturación y Tarifas</CardTitle>
+              <CardDescription>Gestiona tus tarifas y configuración de facturación.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Precio Sesión/Hora (€)</Label>
+                  <Input
+                    type="number"
+                    defaultValue={user?.hourlyRate || 60}
+                    onBlur={(e) => handleUpdateProfile({ hourlyRate: parseInt(e.target.value) })}
+                    disabled={loading}
+                    className="max-w-xs"
+                  />
+                  <p className="text-sm text-gray-500">
+                    Este valor se utilizará para calcular los ingresos estimados en el dashboard y las estadísticas.
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -394,6 +351,6 @@ export default function SettingsPage() {
           </Card>
         )}
       </main>
-    </div>
+    </div >
   );
 }

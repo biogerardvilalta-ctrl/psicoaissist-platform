@@ -120,6 +120,7 @@ export class AuthService {
         preferredLanguage: user.preferredLanguage,
         scheduleConfig: user.scheduleConfig as any,
         dashboardLayout: user.dashboardLayout as any,
+        hourlyRate: user.hourlyRate,
       },
       tokens,
       encryptionKey: {
@@ -194,6 +195,7 @@ export class AuthService {
           preferredLanguage: user.preferredLanguage,
           scheduleConfig: user.scheduleConfig as any,
           dashboardLayout: user.dashboardLayout as any,
+          hourlyRate: user.hourlyRate,
         },
         tokens,
         encryptionKey: {
@@ -367,6 +369,7 @@ export class AuthService {
           workEndHour: data.workEndHour,
           scheduleConfig: data.scheduleConfig,
           preferredLanguage: data.preferredLanguage,
+          hourlyRate: data.hourlyRate,
           updatedAt: new Date(),
         },
       });

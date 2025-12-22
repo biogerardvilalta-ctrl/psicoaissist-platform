@@ -36,6 +36,7 @@ model User {
   workStartHour   String   @default("09:00") @map("work_start_hour")
   workEndHour     String   @default("18:00") @map("work_end_hour")
   scheduleConfig  Json?    @map("schedule_config")
+  hourlyRate      Int      @default(60) @map("hourly_rate")
   
   // AI Settings
   preferredLanguage String @default("ca") @map("preferred_language")

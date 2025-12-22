@@ -36,13 +36,13 @@ export default function ActivityLogPage() {
         };
 
         fetchLogs();
-    }, []);
+    }, [toast]);
 
     const getActionColor = (action: string) => {
-        if (action.includes('DELETE')) return 'text-red-600 bg-red-50 border-red-200';
-        if (action.includes('CREATE')) return 'text-green-600 bg-green-50 border-green-200';
+        if (action.includes('DELETE')) return 'text-rose-600 bg-rose-50 border-rose-200';
+        if (action.includes('CREATE')) return 'text-emerald-600 bg-emerald-50 border-emerald-200';
         if (action.includes('UPDATE')) return 'text-amber-600 bg-amber-50 border-amber-200';
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return 'text-primary bg-primary/10 border-primary/20';
     };
 
     return (
@@ -81,7 +81,7 @@ export default function ActivityLogPage() {
                                 <div className="relative border-l border-slate-200 ml-3 space-y-6">
                                     {logs.map((log) => (
                                         <div key={log.id} className="ml-6 relative">
-                                            <span className={`absolute -left-[30px] top-1 h-3 w-3 rounded-full border-2 border-white ${log.isSuccess ? 'bg-blue-400' : 'bg-red-400'}`} />
+                                            <span className={`absolute -left-[30px] top-1 h-3 w-3 rounded-full border-2 border-white ${log.isSuccess ? 'bg-primary' : 'bg-rose-500'}`} />
 
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
                                                 <div className="flex-1">

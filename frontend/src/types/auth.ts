@@ -15,6 +15,7 @@ export interface User {
   bufferTime?: number;
   workStartHour?: string;
   workEndHour?: string;
+  hourlyRate?: number;
   scheduleConfig?: {
     weekly?: Record<number, { enabled: boolean; start: string; end: string }>;
     holidays?: string[];

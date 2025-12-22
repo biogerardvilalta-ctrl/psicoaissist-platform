@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
     Calendar,
@@ -51,7 +51,7 @@ export default function SessionsPage() {
     const [typeFilter, setTypeFilter] = useState('ALL');
     const [statusFilter, setStatusFilter] = useState('ALL');
 
-    const fetchSessions = async () => {
+    const fetchSessions = useCallback(async () => {
         try {
             setIsLoading(true);
             const data = await SessionsAPI.getAll();
@@ -66,11 +66,11 @@ export default function SessionsPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [toast]);
 
     useEffect(() => {
         fetchSessions();
-    }, []);
+    }, [fetchSessions]);
 
     const handleCancel = async (id: string) => {
         if (!confirm('¿Estás seguro de que deseas cancelar esta sesión?')) return;
@@ -140,11 +140,8 @@ export default function SessionsPage() {
 
     const getStatusBadgeVariant = (status: string) => {
         switch (status) {
-            case 'COMPLETED': return 'default'; // primary/black
-            case 'SCHEDULED': return 'outline';
-            case 'CANCELLED': return 'destructive';
-            case 'IN_PROGRESS': return 'secondary';
-            default: return 'secondary';
+            // We use custom classNames for colors, so we can use 'outline' or 'secondary' as base
+            default: return 'outline';
         }
     };
 
@@ -160,10 +157,14 @@ export default function SessionsPage() {
     };
 
     const getStatusClassName = (status: string) => {
-        if (status === 'SCHEDULED') {
-            return 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200';
+        switch (status) {
+            case 'COMPLETED': return 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-emerald-200';
+            case 'SCHEDULED': return 'bg-indigo-50 text-indigo-700 hover:bg-indigo-50 border-indigo-200';
+            case 'IN_PROGRESS': return 'bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200';
+            case 'CANCELLED': return 'bg-rose-100 text-rose-800 hover:bg-rose-100 border-rose-200';
+            case 'NO_SHOW': return 'bg-slate-100 text-slate-800 hover:bg-slate-100 border-slate-200';
+            default: return 'bg-slate-100 text-slate-800';
         }
-        return '';
     };
 
     const [currentDate, setCurrentDate] = useState(new Date());

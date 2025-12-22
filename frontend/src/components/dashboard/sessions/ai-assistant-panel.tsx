@@ -63,7 +63,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
         return () => {
             socket.off('aiSuggestions', handleAiSuggestions);
         };
-    }, [socket, isActive]);
+    }, [socket, isActive, toast]);
 
 
     // Emit updates when context changes (Throttled)

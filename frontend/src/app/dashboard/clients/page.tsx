@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Search, MoreHorizontal, FileText, Calendar, Trash2, Pencil, PieChart, RefreshCcw } from 'lucide-react';
 import { ClientsAPI, Client } from '@/lib/clients-api';
@@ -36,7 +36,7 @@ export default function ClientsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('active');
 
-    const fetchClients = async (isActive: boolean = true) => {
+    const fetchClients = useCallback(async (isActive: boolean) => {
         try {
             setIsLoading(true);
             const data = await ClientsAPI.getAll(isActive);
@@ -51,11 +51,11 @@ export default function ClientsPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [toast]);
 
     useEffect(() => {
         fetchClients(activeTab === 'active');
-    }, [activeTab]);
+    }, [activeTab, fetchClients]);
 
     const handleArchive = async (id: string) => {
         if (!confirm('¿Estás seguro de que deseas archivar este paciente?')) {
@@ -106,11 +106,11 @@ export default function ClientsPage() {
 
     const getRiskBadgeColor = (level: string) => {
         switch (level) {
-            case 'LOW': return 'bg-green-100 text-green-800 hover:bg-green-100';
-            case 'MEDIUM': return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
+            case 'LOW': return 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100';
+            case 'MEDIUM': return 'bg-amber-100 text-amber-800 hover:bg-amber-100';
             case 'HIGH': return 'bg-orange-100 text-orange-800 hover:bg-orange-100';
-            case 'CRITICAL': return 'bg-red-100 text-red-800 hover:bg-red-100';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'CRITICAL': return 'bg-rose-100 text-rose-800 hover:bg-rose-100';
+            default: return 'bg-slate-100 text-slate-800';
         }
     };
 
@@ -209,11 +209,11 @@ export default function ClientsPage() {
                                                                 {client.riskLevel}
                                                             </Badge>
                                                             {client.isActive ? (
-                                                                <span className="text-xs text-green-600 flex items-center">
+                                                                <span className="text-xs text-emerald-600 flex items-center">
                                                                     ● Activo
                                                                 </span>
                                                             ) : (
-                                                                <span className="text-xs text-gray-400">Archivado</span>
+                                                                <span className="text-xs text-muted-foreground">Archivado</span>
                                                             )}
                                                         </div>
                                                     </TableCell>
@@ -263,7 +263,7 @@ export default function ClientsPage() {
                                                                 )}
                                                                 {!client.isActive && (
                                                                     <DropdownMenuItem
-                                                                        className="text-green-600 focus:text-green-600"
+                                                                        className="text-emerald-600 focus:text-emerald-600"
                                                                         onClick={() => handleRestore(client.id)}
                                                                     >
                                                                         <RefreshCcw className="mr-2 h-4 w-4" /> Restaurar

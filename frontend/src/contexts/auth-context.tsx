@@ -316,7 +316,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Failed to refresh token:', error);
       logout();
     }
-  }, [state.user, state.tokens, saveSession, logout]);
+  }, [saveSession, logout]);
 
   // Update user function
   const updateUser = useCallback((user: User) => {
