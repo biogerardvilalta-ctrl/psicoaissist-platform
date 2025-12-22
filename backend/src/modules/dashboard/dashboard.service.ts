@@ -235,9 +235,11 @@ export class DashboardService {
             const aiData = s.aiMetadata as any;
 
             // --- THEMES ---
-            // Use 'emotionalElements' ONLY (matching frontend analytics-helper exactly)
+            // Support both old flat structure and new nested structure
             const elements = [
-                 ...(aiData?.emotionalElements || [])
+                ...(aiData?.emotionalElements || []),
+                ...(aiData?.emotional_analysis?.identified_emotions || []),
+                ...(aiData?.temes_emergents_sessio?.temes_seleccionats?.map((t: any) => t.tema) || [])
             ];
 
             if (elements.length > 0) {
@@ -262,6 +264,8 @@ export class DashboardService {
             // --- SENTIMENT ---
             if (typeof aiData?.sentiment === 'number') {
                 aiSentiment = aiData.sentiment;
+            } else if (typeof aiData?.emotional_analysis?.sentiment_score === 'number') {
+                aiSentiment = aiData.emotional_analysis.sentiment_score;
             } else {
                 // Simple keyword proxy
                 if (combinedText.includes('mejor') || combinedText.includes('avance') || combinedText.includes('positivo')) aiSentiment += 0.5;

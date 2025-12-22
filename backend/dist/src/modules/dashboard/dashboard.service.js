@@ -170,7 +170,9 @@ let DashboardService = class DashboardService {
             const combinedText = noteContent.toLowerCase();
             const aiData = s.aiMetadata;
             const elements = [
-                ...(aiData?.emotionalElements || [])
+                ...(aiData?.emotionalElements || []),
+                ...(aiData?.emotional_analysis?.identified_emotions || []),
+                ...(aiData?.temes_emergents_sessio?.temes_seleccionats?.map((t) => t.tema) || [])
             ];
             if (elements.length > 0) {
                 elements.forEach((t) => {
@@ -191,6 +193,9 @@ let DashboardService = class DashboardService {
             }
             if (typeof aiData?.sentiment === 'number') {
                 aiSentiment = aiData.sentiment;
+            }
+            else if (typeof aiData?.emotional_analysis?.sentiment_score === 'number') {
+                aiSentiment = aiData.emotional_analysis.sentiment_score;
             }
             else {
                 if (combinedText.includes('mejor') || combinedText.includes('avance') || combinedText.includes('positivo'))
