@@ -259,7 +259,7 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-500">Agrega días festivos o bloquea horas específicas.</p>
 
                 <div className="flex flex-col gap-4 bg-muted/50 p-4 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label>Fecha</Label>
                       <Input
@@ -284,20 +284,21 @@ export default function SettingsPage() {
                         onChange={(e) => setBlockEndTime(e.target.value)}
                       />
                     </div>
-                    <div className="flex flex-col gap-2">
-                      <Button onClick={handleAddHoliday} variant="secondary" className="w-full" disabled={!blockDate}>
-                        Bloquear Día
-                      </Button>
-                      <Button onClick={handleAddPartialBlock} className="w-full" disabled={!blockDate || !blockStartTime || !blockEndTime}>
-                        Bloquear Horario
-                      </Button>
-                    </div>
+                  </div>
+
+                  <div className="flex gap-4 pt-2">
+                    <Button onClick={handleAddHoliday} variant="secondary" className="flex-1" disabled={!blockDate}>
+                      Bloquear Día Completo
+                    </Button>
+                    <Button onClick={handleAddPartialBlock} className="flex-1" disabled={!blockDate || !blockStartTime || !blockEndTime}>
+                      Bloquear Horario
+                    </Button>
                   </div>
 
                   <div className="space-y-2 pt-2 border-t border-gray-200/50">
                     <h4 className="text-sm font-medium text-gray-700">Días Festivos (Día Completo)</h4>
                     <div className="flex flex-wrap gap-2">
-                      {user?.scheduleConfig?.holidays?.length > 0 ? (
+                      {(user?.scheduleConfig?.holidays?.length || 0) > 0 ? (
                         user?.scheduleConfig?.holidays?.map((date: string) => (
                           <div key={date} className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-rose-200">
                             <CalendarIcon className="h-3 w-3" />

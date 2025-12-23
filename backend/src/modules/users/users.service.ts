@@ -336,7 +336,13 @@ export class UsersService {
       });
 
       if (existingUser) {
-        throw new ConflictException('El email ya está registrado');
+        if (existingUser.role === UserRole.AGENDA_MANAGER) {
+          // Si ya existe como Agenda Manager, lo vinculamos al profesional actual
+          await this.linkProfessional(existingUser.id, professionalId);
+          this.logger.log(`Existing Agenda Manager linked: ${existingUser.email} to Professional ${professionalId}`);
+          return this.mapToResponseDto(existingUser);
+        }
+        throw new ConflictException('El email ya está registrado con otro rol');
       }
 
       // Hashear la contraseña

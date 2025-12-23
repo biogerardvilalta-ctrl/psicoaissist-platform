@@ -40,11 +40,15 @@ export function AgendaManagersSettings() {
         try {
             setIsCreating(true);
             await UserAPI.createAgendaManager(newManager);
+            // Si funciona, podría ser que se haya creado O vinculado. 
+            // Podríamos comprobar si ya existía en la lista 'managers' antes de recargar,
+            // pero lo más sencillo es mostrar un mensaje de éxito genérico.
+            alert('Gestor asignado correctamente.'); // Simple alert for now, strictly per component style
             setNewManager({ firstName: '', lastName: '', email: '', password: '' });
             await loadManagers();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to create manager', error);
-            // Add toast here if available
+            alert(error.message || 'Error al asignar gestor');
         } finally {
             setIsCreating(false);
         }

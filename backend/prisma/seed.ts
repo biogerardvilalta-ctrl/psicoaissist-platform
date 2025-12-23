@@ -68,6 +68,24 @@ async function main() {
     },
   });
 
+  const psychologist3 = await prisma.user.create({
+    data: {
+      email: 'laura.sanchez@ejemplo.com',
+      passwordHash: hashedPassword,
+      role: UserRole.PSYCHOLOGIST,
+      status: UserStatus.ACTIVE,
+      verified: true,
+      firstName: 'Laura',
+      lastName: 'Sánchez',
+      phone: '+34600999888',
+      country: 'España',
+      professionalNumber: 'M-99888',
+      speciality: 'Neuropsicología',
+      stripeCustomerId: 'cus_demo_laura_sanchez',
+      lastLogin: new Date(),
+    },
+  });
+
   const student1 = await prisma.user.create({
     data: {
       email: 'estudiante@ejemplo.com',
@@ -105,6 +123,17 @@ async function main() {
       planType: 'basic',
       currentPeriodStart: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
       currentPeriodEnd: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+    },
+  });
+
+  await prisma.subscription.create({
+    data: {
+      userId: psychologist3.id,
+      stripeSubscriptionId: 'sub_demo_laura_pro',
+      status: 'active',
+      planType: 'pro',
+      currentPeriodStart: new Date(),
+      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
     },
   });
 
