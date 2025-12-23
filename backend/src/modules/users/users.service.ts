@@ -452,6 +452,7 @@ export class UsersService {
         where: { id: managerId },
         include: {
           managedProfessionals: {
+            where: { status: { not: 'INACTIVE' } },
             include: { groupMembers: true }
           }
         }
@@ -543,7 +544,7 @@ export class UsersService {
     }
   }
 
-  async deleteProfessionalGroup(managerId: string, groupId: string): Promise<void> {
+  async deleteProfessionalGroup(managerId: string, groupId: string): Promise<{ success: boolean }> {
     try {
       const group = await this.prisma.user.findFirst({
         where: {
@@ -567,6 +568,7 @@ export class UsersService {
       });
 
       this.logger.log(`Group ${groupId} deleted by ${managerId}`);
+      return { success: true };
     } catch (error) {
       this.logger.error(`Error deleting group: ${error.message}`);
       throw error;

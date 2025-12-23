@@ -190,4 +190,11 @@ export class UsersController {
     return this.usersService.createProfessionalGroup(req.user.id, body.name, body.memberIds);
   }
 
+  @ApiOperation({ summary: 'Eliminar Grupo de Profesionales' })
+  @Roles(UserRole.AGENDA_MANAGER)
+  @Delete('professional-groups/:id')
+  async deleteProfessionalGroup(@Req() req: any, @Param('id') id: string) {
+    return this.usersService.deleteProfessionalGroup(req.user.id, id);
+  }
+
 }
