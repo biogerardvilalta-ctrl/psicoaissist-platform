@@ -183,4 +183,11 @@ export class UsersController {
     return this.usersService.linkProfessional(managerId, req.user.id);
   }
 
+  @ApiOperation({ summary: 'Crear Grupo de Profesionales' })
+  @Roles(UserRole.AGENDA_MANAGER)
+  @Post('professional-groups')
+  async createProfessionalGroup(@Req() req: any, @Body() body: { name: string, memberIds: string[] }) {
+    return this.usersService.createProfessionalGroup(req.user.id, body.name, body.memberIds);
+  }
+
 }

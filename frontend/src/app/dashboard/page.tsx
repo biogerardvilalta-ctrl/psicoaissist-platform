@@ -28,6 +28,7 @@ import { StatsWidget } from '@/components/dashboard/widgets/StatsWidget';
 import { SessionsChartWidget } from '@/components/dashboard/widgets/SessionsChartWidget';
 import { WeeklyChartWidget } from '@/components/dashboard/widgets/WeeklyChartWidget';
 import { UserAPI } from '@/lib/user-api';
+import { GroupsSection } from '@/components/dashboard/groups/GroupsSection';
 
 // New Imports
 import { ThemesWidget } from '@/components/dashboard/widgets/ThemesWidget';
@@ -327,10 +328,9 @@ export default function DashboardPage() {
         </div>
 
         {isAgendaManager() ? (
-          // Simplified view for Agenda Managers - Professional Cards Only
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-slate-800">Profesionales Asignados</h2>
-            {managedProfessionals.length === 0 ? (
+            {managedProfessionals.filter(p => p.role !== 'PROFESSIONAL_GROUP').length === 0 ? (
               <Card>
                 <CardContent className="p-12 text-center">
                   <UserIcon className="h-12 w-12 text-slate-300 mx-auto mb-4" />
@@ -339,32 +339,51 @@ export default function DashboardPage() {
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {managedProfessionals.map(pro => (
-                  <Card
-                    key={pro.id}
-                    className="cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-200 group"
-                    onClick={() => router.push(`/dashboard/sessions?professionalId=${pro.id}`)}
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-16 w-16 ring-2 ring-slate-100 group-hover:ring-blue-200 transition-all">
-                          <AvatarFallback className="text-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
-                            {pro.firstName?.[0]}{pro.lastName?.[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg text-slate-800 group-hover:text-blue-600 transition-colors">
-                            {pro.firstName} {pro.lastName}
-                          </h3>
-                          <p className="text-sm text-slate-500">{pro.email}</p>
+                {managedProfessionals
+                  .filter(pro => pro.role !== 'PROFESSIONAL_GROUP')
+                  .map(pro => (
+                    <Card
+                      key={pro.id}
+                      className="cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-200 group"
+                      onClick={() => router.push(`/dashboard/sessions?professionalId=${pro.id}`)}
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-16 w-16 ring-2 ring-slate-100 group-hover:ring-blue-200 transition-all">
+                            <AvatarFallback className="text-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
+                              {pro.firstName?.[0]}{pro.lastName?.[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg text-slate-800 group-hover:text-blue-600 transition-colors">
+                              {pro.firstName} {pro.lastName}
+                            </h3>
+                            <p className="text-sm text-slate-500">{pro.email}</p>
+                          </div>
+                          <ArrowRight className="h-5 w-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
                         </div>
-                        <ArrowRight className="h-5 w-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))}
               </div>
             )}
+
+            <GroupsSection
+              groups={managedProfessionals.filter(p => p.role === 'PROFESSIONAL_GROUP')}
+              professionals={managedProfessionals.filter(p => p.role !== 'PROFESSIONAL_GROUP')}
+              onGroupChange={() => {
+                // Refresh data
+                const checkAndLoad = async () => {
+                  if (user?.role === 'AGENDA_MANAGER') {
+                    try {
+                      const pros = await UserAPI.getManagedProfessionals();
+                      setManagedProfessionals(pros);
+                    } catch (e) { console.error(e); }
+                  }
+                };
+                checkAndLoad();
+              }}
+            />
           </div>
         ) : (
           // Full dashboard for Psychologists

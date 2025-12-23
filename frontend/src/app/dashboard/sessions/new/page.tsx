@@ -54,6 +54,7 @@ export default function NewSessionPage() {
     const [isLoadingClients, setIsLoadingClients] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [managedProfessionals, setManagedProfessionals] = useState<User[]>([]);
+    const [managedGroups, setManagedGroups] = useState<User[]>([]); // New state for groups
     const [isLoadingProfessionals, setIsLoadingProfessionals] = useState(false);
 
     // Get clientId and date from URL query param
@@ -93,10 +94,15 @@ export default function NewSessionPage() {
             setIsLoadingProfessionals(true);
             UserAPI.getManagedProfessionals()
                 .then(pros => {
-                    setManagedProfessionals(pros);
-                    // Auto-select if only one professional
-                    if (pros.length === 1) {
-                        form.setValue('professionalId', pros[0].id);
+                    const individuals = pros.filter(p => p.role !== 'PROFESSIONAL_GROUP');
+                    const groups = pros.filter(p => p.role === 'PROFESSIONAL_GROUP');
+
+                    setManagedProfessionals(individuals);
+                    setManagedGroups(groups);
+
+                    // Auto-select if only one professional AND no groups
+                    if (individuals.length === 1 && groups.length === 0) {
+                        form.setValue('professionalId', individuals[0].id);
                     }
                 })
                 .catch(err => console.error('Failed to load professionals', err))
@@ -110,14 +116,31 @@ export default function NewSessionPage() {
     // Watch for date changes to fetch availability
     const selectedDate = form.watch('date');
     const selectedProfessionalId = form.watch('professionalId');
+    const [selectedGroupId, setSelectedGroupId] = useState<string>('');
 
+    // Fetch Clients when Professional Changes
     useEffect(() => {
         const fetchClients = async () => {
+            // Only fetch if a professional is selected (or if user is not agenda manager, i.e. own clients)
+            // If isAgendaManager and no pro selected, clear clients?
+            // Actually, if pro selected, fetch THEIR clients.
+
             try {
-                const data = await ClientsAPI.getAll();
+                setIsLoadingClients(true);
+                // If I am agenda manager, I MUST pass professionalId to get THEIR clients.
+                // If I am psychologist, professionalID might be undefined or my own ID, backend handles "my clients".
+
+                const targetProId = isAgendaManager() ? selectedProfessionalId : undefined;
+
+                if (isAgendaManager() && !targetProId) {
+                    setClients([]);
+                    setIsLoadingClients(false);
+                    return;
+                }
+
+                const data = await ClientsAPI.getAll(true, targetProId);
                 setClients(data);
 
-                // If we have a preselected client ID that exists in the fetched list, set it
                 if (preselectedClientId) {
                     const clientExists = data.find(c => c.id === preselectedClientId);
                     if (clientExists) {
@@ -137,26 +160,32 @@ export default function NewSessionPage() {
         };
 
         fetchClients();
-    }, [toast, preselectedClientId, form]);
+    }, [toast, preselectedClientId, form, isAgendaManager, selectedProfessionalId]);
+
+    // Fetch Availability when Date, Pro, or Group changes
     useEffect(() => {
         const fetchAvailability = async () => {
             if (!selectedDate) return;
+            // If Agenda Manager, we need at least a professional selected.
+            if (isAgendaManager() && !selectedProfessionalId) return;
+
+            // Priority: Group ID > Professional ID
+            // If Group is selected, we fetch availability for the Group (which is united availability).
+            const targetId = selectedGroupId || selectedProfessionalId;
 
             setIsLoadingSlots(true);
             try {
-                // Ensure correct formatted date YYYY-MM-DD
-                const data = await SessionsAPI.getAvailability(selectedDate, selectedProfessionalId);
+                const data = await SessionsAPI.getAvailability(selectedDate, targetId);
                 setAvailableSlots(data.slots);
             } catch (error) {
                 console.error("Failed to fetch slots", error);
-                // Optionally toast
             } finally {
                 setIsLoadingSlots(false);
             }
         };
 
         fetchAvailability();
-    }, [selectedDate, selectedProfessionalId]);
+    }, [selectedDate, selectedProfessionalId, selectedGroupId, isAgendaManager]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Validate professional selection for Agenda Managers
@@ -220,34 +249,67 @@ export default function NewSessionPage() {
 
                             {/* Professional Selection (Agenda Managers only) */}
                             {isAgendaManager() && (
-                                <FormField
-                                    control={form.control}
-                                    name="professionalId"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Profesional *</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                value={field.value}
-                                                disabled={isLoadingProfessionals}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={isLoadingProfessionals ? "Cargando profesionales..." : "Seleccionar profesional"} />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {managedProfessionals.map((pro) => (
-                                                        <SelectItem key={pro.id} value={pro.id}>
-                                                            {pro.firstName} {pro.lastName}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="space-y-4 p-4 border rounded-lg bg-slate-50">
+                                    <h3 className="text-sm font-medium text-slate-900 mb-2">Selección de Agenda</h3>
+
+                                    <FormField
+                                        control={form.control}
+                                        name="professionalId"
+                                        render={({ field }) => (
+                                            <>
+                                                <FormItem>
+                                                    <FormLabel>Profesional Individual</FormLabel>
+                                                    <Select
+                                                        onValueChange={(val) => {
+                                                            field.onChange(val);
+                                                        }}
+                                                        value={managedProfessionals.find(p => p.id === field.value) ? field.value : ''}
+                                                        disabled={isLoadingProfessionals}
+                                                    >
+                                                        <FormControl>
+                                                            <SelectTrigger className="bg-white">
+                                                                <SelectValue placeholder={isLoadingProfessionals ? "Cargando..." : "Seleccionar profesional"} />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            {managedProfessionals.map((pro) => (
+                                                                <SelectItem key={pro.id} value={pro.id}>
+                                                                    {pro.firstName} {pro.lastName}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormItem>
+
+                                                <FormItem>
+                                                    <FormLabel>Agenda de Grupo (Opcional)</FormLabel>
+                                                    <Select
+                                                        onValueChange={(val) => {
+                                                            setSelectedGroupId(val === 'none' ? '' : val);
+                                                        }}
+                                                        value={selectedGroupId || 'none'}
+                                                        disabled={isLoadingProfessionals}
+                                                    >
+                                                        <FormControl>
+                                                            <SelectTrigger className="bg-white">
+                                                                <SelectValue placeholder={isLoadingProfessionals ? "Cargando..." : "Seleccionar grupo (Unión de agendas)"} />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectItem value="none">-- Sin Grupo (Agenda Individual) --</SelectItem>
+                                                            {managedGroups.map((group) => (
+                                                                <SelectItem key={group.id} value={group.id}>
+                                                                    {group.firstName}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            </>
+                                        )}
+                                    />
+                                </div>
                             )}
 
                             {/* Client Selection */}

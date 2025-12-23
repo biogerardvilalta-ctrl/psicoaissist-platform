@@ -65,6 +65,10 @@ model User {
   
   managedProfessionals User[]   @relation("AgendaManagement")
   agendaManagers       User[]   @relation("AgendaManagement")
+
+  // Professional Groups
+  memberOfGroups       User[]   @relation("GroupMembers")
+  groupMembers         User[]   @relation("GroupMembers")
   
   @@map("users")
 }
@@ -299,6 +303,7 @@ enum UserRole {
 
   SUPER_ADMIN
   AGENDA_MANAGER
+  PROFESSIONAL_GROUP
 }
 
 enum UserStatus {

@@ -451,7 +451,9 @@ export class UsersService {
       const user = await this.prisma.user.findUnique({
         where: { id: managerId },
         include: {
-          managedProfessionals: true
+          managedProfessionals: {
+            include: { groupMembers: true }
+          }
         }
       });
 
@@ -503,6 +505,75 @@ export class UsersService {
   }
 
   /**
+   * Create a Professional Group (Virtual User) managed by an Agenda Manager
+   */
+  async createProfessionalGroup(managerId: string, name: string, memberIds: string[]): Promise<UserResponseDto> {
+    try {
+      // Create a virtual email for the group to satisfy unique constraint
+      const email = `group-${Date.now()}@system.local`;
+
+      const group = await this.prisma.user.create({
+        data: {
+          email,
+          passwordHash: '', // No login
+          firstName: name,
+          lastName: '(Grupo)',
+          role: UserRole.PROFESSIONAL_GROUP, // Requires Schema Update to be applied
+          status: UserStatus.ACTIVE,
+          createdById: managerId,
+          agendaManagers: {
+            connect: { id: managerId }
+          },
+          groupMembers: {
+            connect: memberIds.map(id => ({ id }))
+          },
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        include: {
+          groupMembers: true
+        }
+      });
+
+      this.logger.log(`Professional Group created: ${name} by Manager ${managerId}`);
+      return this.mapToResponseDto(group);
+    } catch (error) {
+      this.logger.error(`Error creating professional group: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async deleteProfessionalGroup(managerId: string, groupId: string): Promise<void> {
+    try {
+      const group = await this.prisma.user.findFirst({
+        where: {
+          id: groupId,
+          role: UserRole.PROFESSIONAL_GROUP,
+          // Check ownership or management rights
+          // Simplify: if you are an agenda manager managing this group (connected via agendaManagers?)
+          // or createdById.
+          agendaManagers: { some: { id: managerId } }
+        }
+      });
+
+      if (!group) throw new NotFoundException('Grupo no encontrado o no tienes permisos.');
+
+      // Hard delete or Soft delete?
+      // Since it's a "virtual" user, hard delete might be easier to clean up if no sessions?
+      // But let's stick to consistent Soft Delete (Status INACTIVE)
+      await this.prisma.user.update({
+        where: { id: groupId },
+        data: { status: UserStatus.INACTIVE }
+      });
+
+      this.logger.log(`Group ${groupId} deleted by ${managerId}`);
+    } catch (error) {
+      this.logger.error(`Error deleting group: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Mapear usuario a DTO de respuesta
    */
   private mapToResponseDto(user: any): UserResponseDto {
@@ -524,6 +595,12 @@ export class UsersService {
       preferredLanguage: user.preferredLanguage,
       dashboardLayout: user.dashboardLayout,
       hourlyRate: user.hourlyRate,
+      // Include group members if available
+      groupMembers: user.groupMembers ? user.groupMembers.map(m => ({
+        id: m.id,
+        firstName: m.firstName,
+        lastName: m.lastName
+      })) : undefined
     };
   }
 }

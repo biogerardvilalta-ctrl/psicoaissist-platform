@@ -3,7 +3,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER';
+  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP';
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   subscription?: {
     planType: 'BASIC' | 'PRO' | 'PREMIUM';
@@ -23,6 +23,7 @@ export interface User {
   };
   preferredLanguage?: string;
   dashboardLayout?: string[];
+  groupMembers?: { id: string; firstName: string; lastName: string }[];
 }
 
 export interface AuthTokens {

@@ -29,4 +29,12 @@ export class UserAPI {
     static async linkProfessional(managerId: string): Promise<void> {
         return httpClient.post<void>(`${this.BASE_URL}/agenda-managers/${managerId}/link`, {});
     }
+
+    static async createProfessionalGroup(name: string, memberIds: string[]): Promise<User> {
+        return httpClient.post<User>(`${this.BASE_URL}/professional-groups`, { name, memberIds });
+    }
+
+    static async deleteProfessionalGroup(groupId: string): Promise<void> {
+        return httpClient.delete<void>(`${this.BASE_URL}/professional-groups/${groupId}`);
+    }
 }

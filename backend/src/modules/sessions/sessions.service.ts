@@ -525,8 +525,8 @@ export class SessionsService {
     async getAvailability(userId: string, dateStr: string, professionalId?: string) {
         let targetUserId = userId;
 
-        if (professionalId) {
-            // Verify if user is manager of this professional
+        if (professionalId && professionalId !== 'all') {
+            // Verify if user is manager of this professional (or group)
             const manager = await this.prisma.user.findUnique({
                 where: { id: userId },
                 include: { managedProfessionals: true }
@@ -534,12 +534,79 @@ export class SessionsService {
 
             const isManaged = manager?.managedProfessionals.some(p => p.id === professionalId);
 
-            // Only switch if managed, otherwise stick to userId (or throw? Stick to userId might be confusing, better throw or ignore)
             if (isManaged) {
                 targetUserId = professionalId;
             }
         }
 
+        // Check if target is a Group
+        const targetUser = await this.prisma.user.findUnique({
+            where: { id: targetUserId },
+            include: { groupMembers: true }
+        });
+
+        if (!targetUser) throw new NotFoundException('User not found');
+
+        // --- GROUP LOGIC ---
+        if (targetUser.role === 'PROFESSIONAL_GROUP' && targetUser.groupMembers.length > 0) {
+            // 1. Get availability for each member
+            const memberAvailabilities = await Promise.all(
+                targetUser.groupMembers.map(member =>
+                    this.getSingleUserAvailability(member.id, dateStr)
+                        .then(res => res.slots)
+                        .catch(() => [])
+                )
+            );
+
+            // 2. Intersection of slots (Available only if ALL members are available)
+            // Start with the first member's slots, and filter down
+            let finalSlots = memberAvailabilities[0] || [];
+
+            for (let i = 1; i < memberAvailabilities.length; i++) {
+                const currentMemberSlots = new Set(memberAvailabilities[i]);
+                finalSlots = finalSlots.filter(slot => currentMemberSlots.has(slot));
+            }
+
+            // Remove duplicates just in case (though intersection shouldn't introduce them if inputs are unique)
+            finalSlots = Array.from(new Set(finalSlots)).sort();
+
+            // 3. Filter out slots already booked by the Group itself
+            // (Note: Intersection ensures members are free. But we must also check valid Group bookings 
+            // if the system allows booking the 'Group User' directly, which we are doing now)
+
+            const groupSessions = await this.prisma.session.findMany({
+                where: {
+                    userId: targetUserId,
+                    startTime: {
+                        gte: new Date(dateStr + 'T00:00:00'),
+                        lte: new Date(dateStr + 'T23:59:59')
+                    },
+                    status: { not: SessionStatus.CANCELLED }
+                }
+            });
+
+            // Filter out slots that collide with Group Sessions
+            finalSlots = finalSlots.filter(slot => {
+                const [h, m] = slot.split(':').map(Number);
+                const slotTime = new Date(dateStr + 'T00:00:00');
+                slotTime.setHours(h, m, 0, 0);
+                const slotEnd = new Date(slotTime.getTime() + 60 * 60000);
+
+                return !groupSessions.some(gs => {
+                    const gsStart = new Date(gs.startTime);
+                    const gsEnd = gs.endTime ? new Date(gs.endTime) : new Date(gsStart.getTime() + 60 * 60000);
+                    return (slotTime < gsEnd && slotEnd > gsStart);
+                });
+            });
+
+            return { date: dateStr, slots: finalSlots };
+        }
+
+        // --- SINGLE USER LOGIC ---
+        return this.getSingleUserAvailability(targetUserId, dateStr);
+    }
+
+    private async getSingleUserAvailability(targetUserId: string, dateStr: string) {
         // 1. Get User Config
         const user = await this.prisma.user.findUnique({
             where: { id: targetUserId },
@@ -557,24 +624,16 @@ export class SessionsService {
         const { workStartHour, workEndHour, defaultDuration, bufferTime } = user;
         const totalSlotDuration = defaultDuration + bufferTime;
 
-        // 2. Parse Date & Working Hours
+        // 2. Parse Date
         const dateOnly = dateStr.split('T')[0];
-        const targetDate = new Date(dateOnly + 'T00:00:00'); // Ensure local midnight for calculation logic if needed, or consistent UTC. 
-        // Better: new Date(dateStr) depends on string format.
-        // If "2023-12-25", new Date("2023-12-25") is UTC midnight.
-        // If "2023-12-25T10:00...", it attempts that time.
-
-        // Let's rely on dateOnly comparison for holidays.
+        const targetDate = new Date(dateOnly + 'T00:00:00');
 
         // 2.1 Check Holidays
         const scheduleConfig = user.scheduleConfig as any;
-        console.log(`[GetAvailability] Checking date: ${dateOnly} against config:`, JSON.stringify(scheduleConfig));
-
         if (scheduleConfig && scheduleConfig.holidays && Array.isArray(scheduleConfig.holidays)) {
             const isHoliday = scheduleConfig.holidays.some((h: string) => h === dateOnly);
             if (isHoliday) {
-                console.log(`[GetAvailability] Date ${dateOnly} is a holiday.`);
-                return { date: dateStr, slots: [] }; // No slots on holidays
+                return { date: dateStr, slots: [] };
             }
         }
         const [startH, startM] = workStartHour.split(':').map(Number);
@@ -586,7 +645,7 @@ export class SessionsService {
         const workEnd = new Date(targetDate);
         workEnd.setHours(endH, endM, 0, 0);
 
-        // 3. Get Existing Sessions for that day
+        // 3. Get Existing Sessions
         const dayStart = new Date(targetDate);
         const dayEnd = new Date(targetDate);
         dayEnd.setHours(23, 59, 59, 999);
@@ -595,29 +654,25 @@ export class SessionsService {
             where: {
                 userId: targetUserId,
                 startTime: { gte: dayStart, lte: dayEnd },
-                status: { notIn: ['CANCELLED'] } // Ignore cancelled
+                status: { notIn: ['CANCELLED'] }
             },
             select: { startTime: true, endTime: true, duration: true }
         });
 
-        // 3.1 Inject Blocked Blocks as Fake Sessions
+        // 3.1 Inject Blocked Blocks
         if (scheduleConfig && scheduleConfig.blockedBlocks && Array.isArray(scheduleConfig.blockedBlocks)) {
             scheduleConfig.blockedBlocks.forEach((block: any) => {
                 if (block.date === dateOnly && block.start && block.end) {
                     const [sH, sM] = block.start.split(':').map(Number);
                     const [eH, eM] = block.end.split(':').map(Number);
-
                     const blockStart = new Date(targetDate);
                     blockStart.setHours(sH, sM, 0, 0);
-
                     const blockEnd = new Date(targetDate);
                     blockEnd.setHours(eH, eM, 0, 0);
-
-                    // Add to sessions list so logic below collision checks against it
                     (sessions as any[]).push({
                         startTime: blockStart,
                         endTime: blockEnd,
-                        duration: (blockEnd.getTime() - blockStart.getTime()) / 1000 // duration in seconds
+                        duration: (blockEnd.getTime() - blockStart.getTime()) / 1000
                     });
                 }
             });
@@ -629,59 +684,21 @@ export class SessionsService {
 
         while (currentSlot.getTime() + (defaultDuration * 60000) <= workEnd.getTime()) {
             const slotEnd = new Date(currentSlot.getTime() + (defaultDuration * 60000));
-            // Actual session interval we want to book
-
-            // Check Collision
             const hasCollision = sessions.some(s => {
                 const sStart = new Date(s.startTime);
-                // Calculate sEnd if missing (though our fix ensures it's there for completed, others might rely on default)
-                // Use stored duration if available, else default 60
-                const sDuration = (s.duration && s.duration > 0) ? (s.duration / 60) : 60; // stored in seconds? No, we migrated 60 to 60s? 
-                // Wait, in previous step we migrated duration to SECONDS. 
-                // BUT "defaultDuration" in User is likely MINUTES (60).
-                // Let's check schema: @default(60).
-                // "duration" in Session is Session.duration (Seconds).
-
                 let sEndTime = s.endTime ? new Date(s.endTime) : new Date(sStart.getTime() + 60 * 60000);
-
-                // If we have accurate duration, use it
-                if (s.duration) {
-                    sEndTime = new Date(sStart.getTime() + s.duration * 1000);
-                }
-
-                // Add buffer to the EXISTING session? Or is buffer time added to the NEW slot?
-                // "Tiempo entre sesiones". Usually means: Session A End + Buffer < Session B Start.
-                // Or Session A Start > Session B End + Buffer.
-                // Let's enforce the buffer *around* the new slot we are proposing?
-                // Or assume existing sessions *includes* their buffer? 
-                // Safer: Check if (NewSlotStart < ExistingEnd + Buffer) AND (NewSlotEnd + Buffer > ExistingStart)
-
-                // Let's assume buffer is required AFTER every session.
-                // So if I book 9:00-10:00. I am busy until 10:10.
-
-                // So collision check:
-                // Is there any overlap between [CurrentSlotStart, CurrentSlotEnd + Buffer] AND [ExistingStart, ExistingEnd + Buffer]?
+                if (s.duration) sEndTime = new Date(sStart.getTime() + s.duration * 1000);
 
                 const sEndWithBuffer = new Date(sEndTime.getTime() + (bufferTime * 60000));
-
-                // We define our proposed slot interval with buffer
-                // Proposed: [currentSlot, slotEnd + buffer]
                 const proposedEndWithBuffer = new Date(slotEnd.getTime() + (bufferTime * 60000));
 
                 return (currentSlot < sEndWithBuffer && proposedEndWithBuffer > sStart);
             });
 
             if (!hasCollision) {
-                // Format HH:MM
                 const timeStr = currentSlot.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
                 slots.push(timeStr);
             }
-
-            // Move to next potential slot
-            // option A: Fixed slots (9:00, 10:10, 11:20...)
-            // option B: Every 30 mins? 
-            // The prompt says "tener en cuenta la durada de la sesion y el tiempo entre sesiones"
-            // Usually this implies Fixed Slots derived from start time + duration + buffer.
             currentSlot = new Date(currentSlot.getTime() + (totalSlotDuration * 60000));
         }
 

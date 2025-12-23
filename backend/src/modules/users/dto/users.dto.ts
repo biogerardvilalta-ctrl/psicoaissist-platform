@@ -159,6 +159,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   hourlyRate?: number;
+
+  @ApiProperty({ required: false, type: 'object', isArray: true })
+  groupMembers?: { id: string; firstName: string; lastName: string }[];
 }
 
 // ... existing code ...
