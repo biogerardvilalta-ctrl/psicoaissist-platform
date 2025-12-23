@@ -24,6 +24,7 @@ export interface User {
   preferredLanguage?: string;
   dashboardLayout?: string[];
   groupMembers?: { id: string; firstName: string; lastName: string }[];
+  googleRefreshToken?: string;
 }
 
 export interface AuthTokens {

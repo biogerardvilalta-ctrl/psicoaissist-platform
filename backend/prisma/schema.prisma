@@ -41,6 +41,13 @@ model User {
   // AI Settings
   preferredLanguage String @default("ca") @map("preferred_language")
   dashboardLayout   Json?    @map("dashboard_layout")
+
+  // Google Integration
+  googleRefreshToken String?  @map("google_refresh_token")
+  googleCalendarId   String?  @map("google_calendar_id")
+  googleWatchId      String?  @map("google_watch_id")
+  googleWatchResourceId String? @map("google_watch_resource_id")
+  googleWatchExpiration BigInt? @map("google_watch_expiration")
   
   // Stripe integration
   stripeCustomerId String? @unique @map("stripe_customer_id")

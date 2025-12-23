@@ -22,6 +22,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { RemindersModule } from './modules/reminders/reminders.module';
+import { GoogleModule } from './modules/google/google.module';
 // import { HealthModule } from './modules/health/health.module';
 
 // Shared services
@@ -93,7 +94,9 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     ReportsModule,
     AiModule,
     AuditModule,
+    AuditModule,
     RemindersModule,
+    GoogleModule, // New Google integration
     // HealthModule,
   ],
   controllers: [],

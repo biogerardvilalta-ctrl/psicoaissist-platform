@@ -36,6 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         role: true,
         status: true,
         dashboardLayout: true,
+        googleRefreshToken: true,
       },
     });
 

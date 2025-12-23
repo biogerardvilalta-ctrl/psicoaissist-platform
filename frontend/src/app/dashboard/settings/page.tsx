@@ -19,6 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
 import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro, Users } from 'lucide-react';
 import { AgendaManagersSettings } from '@/components/dashboard/settings/agenda-managers-settings';
+import { GoogleCalendarConnect } from "@/components/settings/GoogleCalendarConnect";
 
 export default function SettingsPage() {
   const { user, updateUser } = useAuth();
@@ -166,6 +167,12 @@ export default function SettingsPage() {
               <CardDescription>Configura tus preferencias para nuevas sesiones y disponibilidad.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+
+              {/* Google Calendar Integration */}
+              <div className="mb-6">
+                <GoogleCalendarConnect />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label>Duración por defecto (minutos)</Label>
