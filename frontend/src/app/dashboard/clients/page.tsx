@@ -218,7 +218,7 @@ export default function ClientsPage() {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="all">Todos los profesionales</SelectItem>
-                                                {managedProfessionals.map(pro => (
+                                                {managedProfessionals.filter(p => p.role !== 'PROFESSIONAL_GROUP').map(pro => (
                                                     <SelectItem key={pro.id} value={pro.id}>
                                                         {pro.firstName} {pro.lastName}
                                                     </SelectItem>
