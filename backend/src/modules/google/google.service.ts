@@ -88,11 +88,15 @@ export class GoogleService {
     async listEvents(userId: string, timeMin: Date, timeMax: Date) {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
-            select: { googleRefreshToken: true }
+            select: { googleRefreshToken: true, googleImportCalendar: true }
         });
 
         if (!user || !user.googleRefreshToken) {
             throw new UnauthorizedException('User not connected to Google Calendar');
+        }
+
+        if (user.googleImportCalendar === false) {
+            return []; // Return empty if import is disabled
         }
 
         const auth = this.getClientForUser(user.googleRefreshToken);
@@ -115,31 +119,24 @@ export class GoogleService {
     }
 
     async insertEvent(userId: string, eventData: any) {
-        console.log(`[GoogleService] insertEvent called for user ${userId}`);
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
             select: { googleRefreshToken: true }
         });
 
-        if (!user || !user.googleRefreshToken) {
-            console.log(`[GoogleService] User ${userId} has no refresh token.`);
-            return null;
-        }
+        if (!user || !user.googleRefreshToken) return null;
 
-        console.log(`[GoogleService] User ${userId} has token. Creating client...`);
         const auth = this.getClientForUser(user.googleRefreshToken);
         const calendar = google.calendar({ version: 'v3', auth });
 
         try {
-            console.log(`[GoogleService] Sending insert request to Google...`);
             const response = await calendar.events.insert({
                 calendarId: 'primary',
                 requestBody: eventData,
             });
-            console.log(`[GoogleService] Insert success. ID: ${response.data.id}`);
             return response.data;
         } catch (error) {
-            console.error('[GoogleService] Failed to insert Google event', error);
+            console.error('Failed to insert Google event', error);
             return null;
         }
     }

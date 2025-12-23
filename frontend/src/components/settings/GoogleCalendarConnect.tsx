@@ -7,16 +7,20 @@ import { useToast } from "@/hooks/use-toast";
 import { httpClient } from "@/lib/http-client";
 import { useAuth } from "@/contexts/auth-context";
 import { AuthAPI } from "@/lib/auth-api";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export function GoogleCalendarConnect() {
     const { toast } = useToast();
     const { user, updateUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
+    const [importEnabled, setImportEnabled] = useState(true);
 
     useEffect(() => {
         if (user?.googleRefreshToken) {
             setIsConnected(true);
+            setImportEnabled(user.googleImportCalendar ?? true);
         }
     }, [user]);
 
@@ -72,6 +76,22 @@ export function GoogleCalendarConnect() {
         handleCallback();
     }, [updateUser, toast]);
 
+    const handleToggleImport = async (checked: boolean) => {
+        setImportEnabled(checked);
+        try {
+            const updated = await AuthAPI.updateProfile({ googleImportCalendar: checked });
+            updateUser(updated);
+            toast({
+                title: "Configuración actualizada",
+                description: checked ? "Se importarán eventos de Google." : "Se ha desactivado la importación.",
+            });
+        } catch (error) {
+            console.error(error);
+            setImportEnabled(!checked); // Revert
+            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar la configuración.' });
+        }
+    };
+
     const handleConnect = async () => {
         setLoading(true);
         try {
@@ -100,7 +120,7 @@ export function GoogleCalendarConnect() {
                     Conecta tu calendario para sincronizar eventos automáticamente.
                 </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div className="space-y-1">
                         <p className="text-sm font-medium">Estado</p>
@@ -112,6 +132,17 @@ export function GoogleCalendarConnect() {
                         {loading ? "Conectando..." : isConnected ? "Conectado" : "Conectar Google Calendar"}
                     </Button>
                 </div>
+
+                {isConnected && (
+                    <div className="flex items-center space-x-2 pt-4 border-t">
+                        <Checkbox
+                            id="import-google"
+                            checked={importEnabled}
+                            onCheckedChange={handleToggleImport}
+                        />
+                        <Label htmlFor="import-google">Importar eventos de Google Calendar a la plataforma</Label>
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

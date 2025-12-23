@@ -49,6 +49,9 @@ model User {
   googleWatchResourceId String? @map("google_watch_resource_id")
   googleWatchExpiration BigInt? @map("google_watch_expiration")
   
+  // Google Calendar Configuration
+  googleImportCalendar Boolean @default(true)
+  
   // Stripe integration
   stripeCustomerId String? @unique @map("stripe_customer_id")
   

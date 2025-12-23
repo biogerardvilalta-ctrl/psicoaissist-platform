@@ -205,6 +205,7 @@ export class UsersService {
           status: true,
           createdAt: true,
           lastLogin: true,
+          googleImportCalendar: true,
         },
       });
 
@@ -276,6 +277,7 @@ export class UsersService {
           preferredLanguage: true,
           scheduleConfig: true,
           hourlyRate: true,
+          googleImportCalendar: true,
         },
       });
       return this.mapToResponseDto(updatedUser);
@@ -597,6 +599,7 @@ export class UsersService {
       preferredLanguage: user.preferredLanguage,
       dashboardLayout: user.dashboardLayout,
       hourlyRate: user.hourlyRate,
+      googleImportCalendar: user.googleImportCalendar,
       // Include group members if available
       groupMembers: user.groupMembers ? user.groupMembers.map(m => ({
         id: m.id,

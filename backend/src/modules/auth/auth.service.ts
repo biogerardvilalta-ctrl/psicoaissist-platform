@@ -370,6 +370,7 @@ export class AuthService {
           scheduleConfig: data.scheduleConfig,
           preferredLanguage: data.preferredLanguage,
           hourlyRate: data.hourlyRate,
+          googleImportCalendar: data.googleImportCalendar,
           updatedAt: new Date(),
         },
       });

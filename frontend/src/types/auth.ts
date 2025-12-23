@@ -25,6 +25,7 @@ export interface User {
   dashboardLayout?: string[];
   groupMembers?: { id: string; firstName: string; lastName: string }[];
   googleRefreshToken?: string;
+  googleImportCalendar?: boolean;
 }
 
 export interface AuthTokens {
