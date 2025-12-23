@@ -6,8 +6,10 @@ import { EncryptionModule } from '../encryption/encryption.module';
 import { AiModule } from '../ai/ai.module';
 import { PrismaModule } from '../../common/prisma/prisma.module';
 
+import { GoogleModule } from '../google/google.module';
+
 @Module({
-    imports: [EncryptionModule, PrismaModule, AiModule],
+    imports: [EncryptionModule, PrismaModule, AiModule, GoogleModule],
     controllers: [SessionsController],
     providers: [SessionsService, SessionsGateway],
     exports: [SessionsService],

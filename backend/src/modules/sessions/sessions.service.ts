@@ -12,6 +12,8 @@ interface EncryptedSessionData {
 import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '@prisma/client';
 
+import { GoogleService } from '../google/google.service';
+
 @Injectable()
 export class SessionsService {
     constructor(
@@ -19,6 +21,7 @@ export class SessionsService {
         private encryption: EncryptionService,
         private aiService: AiService,
         private auditService: AuditService,
+        private googleService: GoogleService,
     ) { }
 
     // ... (keep private methods)
@@ -136,6 +139,32 @@ export class SessionsService {
             resourceId: session.id,
             details: `Programada sesión de tipo ${createSessionDto.sessionType} con cliente (ID: ${createSessionDto.clientId})`
         });
+
+        // Sync to Google Calendar
+        console.log(`[SessionsService] Starting Google Sync for Session ${session.id}`);
+        try {
+            const googleEvent = await this.googleService.insertEvent(targetUserId, {
+                summary: `Sesión PsicoAI`,
+                description: `Sesión de ${createSessionDto.sessionType}. Gestionado por PsycoAI.`,
+                start: { dateTime: session.startTime.toISOString() },
+                end: { dateTime: session.endTime.toISOString() },
+            });
+
+            console.log(`[SessionsService] insertEvent returned:`, googleEvent);
+
+            if (googleEvent && googleEvent.id) {
+                console.log(`[SessionsService] Updating local session with Google ID...`);
+                await this.prisma.session.update({
+                    where: { id: session.id },
+                    data: { googleEventId: googleEvent.id } as any
+                });
+                console.log(`[SessionsService] Update complete.`);
+            } else {
+                console.log(`[SessionsService] Google ID not found in response.`);
+            }
+        } catch (error) {
+            console.error('[SessionsService] Failed to sync new session to Google Calendar', error);
+        }
 
         return this.mapToDto(session, createSessionDto.notes);
     }
@@ -445,6 +474,22 @@ export class SessionsService {
             });
         }
 
+        // Sync to Google Calendar
+        // Warning: ignoring potential type error on googleEventId until restart
+        if ((updatedSession as any).googleEventId && (updateSessionDto.startTime || updateSessionDto.endTime || updateSessionDto.status === SessionStatus.CANCELLED)) {
+            try {
+                if (updateSessionDto.status === SessionStatus.CANCELLED) {
+                    await this.googleService.deleteEvent(updatedSession.userId, (updatedSession as any).googleEventId);
+                    await this.prisma.session.update({ where: { id }, data: { googleEventId: null } as any });
+                } else {
+                    await this.googleService.updateEvent(updatedSession.userId, (updatedSession as any).googleEventId, {
+                        start: { dateTime: updatedSession.startTime.toISOString() },
+                        end: { dateTime: updatedSession.endTime.toISOString() },
+                    });
+                }
+            } catch (e) { console.error('Failed to update Google Event', e); }
+        }
+
         return this.mapToDto(updatedSession, notesToReturn, transcriptionToReturn);
     }
 
@@ -454,6 +499,16 @@ export class SessionsService {
         if (!session || session.userId !== userId) {
             throw new NotFoundException('Session not found');
         }
+
+        // Sync Google Calendar Delete
+        if ((session as any).googleEventId) {
+            try {
+                await this.googleService.deleteEvent(userId, (session as any).googleEventId);
+            } catch (e) {
+                console.error('Failed to delete Google Event', e);
+            }
+        }
+
         await this.prisma.session.delete({ where: { id } });
 
         await this.auditService.log({

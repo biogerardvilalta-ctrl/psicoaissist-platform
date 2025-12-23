@@ -207,6 +207,9 @@ model Session {
   consentTimestamp DateTime?    @map("consent_timestamp")
   consentVersion   String?      @map("consent_version")
   startedAt        DateTime?    @map("started_at")
+
+  // Google Integration
+  googleEventId    String?      @map("google_event_id")
   
   // Timestamps
   createdAt       DateTime      @default(now()) @map("created_at")
