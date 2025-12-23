@@ -1,14 +1,55 @@
 # Node
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Next.js
+.next/
+out/
+build/
+dist/
+
+# TypeScript
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDES
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+*.env.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+backend_debug.log
+
+# Testing
+coverage/
+
+# Misc
+cookies.txt
+lint_output.txt
+
+# Project specific
 frontend/.next/
 frontend/out/
-
-# TypeScript build
 backend/dist/
-*.tsbuildinfo
-dist/
-.env
-.env.*
-npm-debug.log*
