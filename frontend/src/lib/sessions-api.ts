@@ -94,7 +94,11 @@ export class SessionsAPI {
         return httpClient.delete<void>(`${this.BASE_PATH}/${id}`);
     }
 
-    static async getAvailability(date: string): Promise<{ date: string; slots: string[] }> {
-        return httpClient.get<{ date: string; slots: string[] }>(`${this.BASE_PATH}/availability?date=${date}`);
+    static async getAvailability(date: string, professionalId?: string): Promise<{ date: string; slots: string[] }> {
+        let url = `${this.BASE_PATH}/availability?date=${date}`;
+        if (professionalId) {
+            url += `&professionalId=${professionalId}`;
+        }
+        return httpClient.get<{ date: string; slots: string[] }>(url);
     }
 }

@@ -1,5 +1,5 @@
 
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { CreateSessionDto, UpdateSessionDto, SessionStatus, SessionType } from './dto/sessions.dto';
@@ -39,9 +39,26 @@ export class SessionsService {
     }
 
     async create(userId: string, createSessionDto: CreateSessionDto) {
-        // 1. Verify client exists and belongs to user
+        let targetUserId = userId;
+
+        if (createSessionDto.professionalId) {
+            // Verify if user is manager of this professional
+            const manager = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { managedProfessionals: true }
+            });
+
+            const isManaged = manager?.managedProfessionals.some(p => p.id === createSessionDto.professionalId);
+
+            if (!isManaged) {
+                throw new ForbiddenException('You are not authorized to create sessions for this professional');
+            }
+            targetUserId = createSessionDto.professionalId;
+        }
+
+        // 1. Verify client exists and belongs to target user
         const client = await this.prisma.client.findFirst({
-            where: { id: createSessionDto.clientId, userId },
+            where: { id: createSessionDto.clientId, userId: targetUserId },
         });
 
         if (!client) {
@@ -53,14 +70,14 @@ export class SessionsService {
         let keyId: string | undefined;
 
         if (createSessionDto.notes) {
-            const encrypted = await this.encryption.encryptData({ notes: createSessionDto.notes }, userId);
+            const encrypted = await this.encryption.encryptData({ notes: createSessionDto.notes }, targetUserId);
             encryptedNotesBuffer = this.packEncryptedData(encrypted);
             keyId = encrypted.keyId;
         }
 
         // Fetch user preferences for default duration
         const user = await this.prisma.user.findUnique({
-            where: { id: userId },
+            where: { id: targetUserId },
             select: { defaultDuration: true }
         });
         const durationMinutes = user?.defaultDuration || 60;
@@ -73,9 +90,23 @@ export class SessionsService {
             endDate = new Date(startDate.getTime() + durationMinutes * 60000);
         }
 
+        // 2. Check for Overlaps
+        const conflictingSession = await this.prisma.session.findFirst({
+            where: {
+                userId: targetUserId,
+                status: { not: SessionStatus.CANCELLED },
+                startTime: { lt: endDate },
+                endTime: { gt: startDate },
+            }
+        });
+
+        if (conflictingSession) {
+            throw new ConflictException('The professional already has a session scheduled for this time slot.');
+        }
+
         const session = await this.prisma.session.create({
             data: {
-                userId,
+                userId: targetUserId,
                 clientId: createSessionDto.clientId,
                 startTime: startDate,
                 endTime: endDate,
@@ -491,10 +522,27 @@ export class SessionsService {
         };
     }
 
-    async getAvailability(userId: string, dateStr: string) {
+    async getAvailability(userId: string, dateStr: string, professionalId?: string) {
+        let targetUserId = userId;
+
+        if (professionalId) {
+            // Verify if user is manager of this professional
+            const manager = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { managedProfessionals: true }
+            });
+
+            const isManaged = manager?.managedProfessionals.some(p => p.id === professionalId);
+
+            // Only switch if managed, otherwise stick to userId (or throw? Stick to userId might be confusing, better throw or ignore)
+            if (isManaged) {
+                targetUserId = professionalId;
+            }
+        }
+
         // 1. Get User Config
         const user = await this.prisma.user.findUnique({
-            where: { id: userId },
+            where: { id: targetUserId },
             select: {
                 workStartHour: true,
                 workEndHour: true,
@@ -545,7 +593,7 @@ export class SessionsService {
 
         const sessions = await this.prisma.session.findMany({
             where: {
-                userId,
+                userId: targetUserId,
                 startTime: { gte: dayStart, lte: dayEnd },
                 status: { notIn: ['CANCELLED'] } // Ignore cancelled
             },

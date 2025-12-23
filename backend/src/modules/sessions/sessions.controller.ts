@@ -28,8 +28,8 @@ export class SessionsController {
     }
 
     @Get('availability')
-    getAvailability(@Request() req, @Query('date') date: string) {
-        return this.sessionsService.getAvailability(req.user.id, date);
+    getAvailability(@Request() req, @Query('date') date: string, @Query('professionalId') professionalId?: string) {
+        return this.sessionsService.getAvailability(req.user.id, date, professionalId);
     }
 
     @Get(':id')

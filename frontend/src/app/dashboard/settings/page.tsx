@@ -36,6 +36,11 @@ export default function SettingsPage() {
   const [preferredLanguage, setPreferredLanguage] = useState<string>("ca");
   const [loading, setLoading] = useState(false);
 
+  // Blocking State
+  const [blockDate, setBlockDate] = useState<string>("");
+  const [blockStartTime, setBlockStartTime] = useState<string>("");
+  const [blockEndTime, setBlockEndTime] = useState<string>("");
+
   // Initial Load
   useEffect(() => {
     if (user) {
@@ -73,6 +78,44 @@ export default function SettingsPage() {
   const handleReminderChange = (checked: boolean) => {
     setEnableReminders(checked);
     handleUpdateProfile({ enableReminders: checked });
+  };
+
+  const handleAddHoliday = () => {
+    if (!blockDate) return;
+    const newConfig = { ...user?.scheduleConfig };
+    if (!newConfig.holidays) newConfig.holidays = [];
+
+    if (!newConfig.holidays.includes(blockDate)) {
+      newConfig.holidays.push(blockDate);
+      updateUser({ ...user!, scheduleConfig: newConfig });
+      handleUpdateProfile({ scheduleConfig: newConfig });
+      toast({ title: "Día bloqueado", description: "Se ha añadido el día festivo." });
+      setBlockDate("");
+    } else {
+      toast({ title: "Info", description: "Este día ya está bloqueado." });
+    }
+  };
+
+  const handleAddPartialBlock = () => {
+    if (!blockDate || !blockStartTime || !blockEndTime) {
+      toast({ title: "Error", description: "Completa fecha y horas.", variant: "destructive" });
+      return;
+    }
+    if (blockStartTime >= blockEndTime) {
+      toast({ title: "Error", description: "La hora de inicio debe ser anterior a la final.", variant: "destructive" });
+      return;
+    }
+
+    const newConfig = { ...user?.scheduleConfig };
+    if (!newConfig.blockedBlocks) newConfig.blockedBlocks = [];
+    newConfig.blockedBlocks.push({ date: blockDate, start: blockStartTime, end: blockEndTime });
+
+    updateUser({ ...user!, scheduleConfig: newConfig });
+    handleUpdateProfile({ scheduleConfig: newConfig });
+
+    setBlockStartTime("");
+    setBlockEndTime("");
+    toast({ title: "Bloqueo añadido", description: "Se ha añadido el bloqueo horario." });
   };
 
   const menuItems = [
@@ -215,26 +258,64 @@ export default function SettingsPage() {
                 <h3 className="text-lg font-medium">Bloqueos y Excepciones</h3>
                 <p className="text-sm text-gray-500">Agrega días festivos o bloquea horas específicas.</p>
 
-                <div className="flex flex-col md:flex-row gap-4 items-end bg-muted/50 p-4 rounded-lg">
-                  <div className="space-y-2">
-                    <Label>Fecha</Label>
-                    <Input type="date" id="block-date" />
+                <div className="flex flex-col gap-4 bg-muted/50 p-4 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div className="space-y-2">
+                      <Label>Fecha</Label>
+                      <Input
+                        type="date"
+                        value={blockDate}
+                        onChange={(e) => setBlockDate(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Inicio</Label>
+                      <Input
+                        type="time"
+                        value={blockStartTime}
+                        onChange={(e) => setBlockStartTime(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Fin</Label>
+                      <Input
+                        type="time"
+                        value={blockEndTime}
+                        onChange={(e) => setBlockEndTime(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Button onClick={handleAddHoliday} variant="secondary" className="w-full" disabled={!blockDate}>
+                        Bloquear Día
+                      </Button>
+                      <Button onClick={handleAddPartialBlock} className="w-full" disabled={!blockDate || !blockStartTime || !blockEndTime}>
+                        Bloquear Horario
+                      </Button>
+                    </div>
                   </div>
-                  {/* ... mid content ... */}
-                  <div className="flex flex-wrap gap-2">
-                    {user?.scheduleConfig?.holidays?.map(date => (
-                      <div key={date} className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-rose-200">
-                        <CalendarIcon className="h-3 w-3" />
-                        {date}
-                        <button onClick={() => {
-                          const newConfig = { ...user?.scheduleConfig };
-                          if (newConfig.holidays) {
-                            newConfig.holidays = newConfig.holidays.filter((d: string) => d !== date);
-                            handleUpdateProfile({ scheduleConfig: newConfig });
-                          }
-                        }} className="hover:text-rose-900 font-bold">×</button>
-                      </div>
-                    ))}
+
+                  <div className="space-y-2 pt-2 border-t border-gray-200/50">
+                    <h4 className="text-sm font-medium text-gray-700">Días Festivos (Día Completo)</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {user?.scheduleConfig?.holidays?.length > 0 ? (
+                        user?.scheduleConfig?.holidays?.map((date: string) => (
+                          <div key={date} className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-rose-200">
+                            <CalendarIcon className="h-3 w-3" />
+                            {date}
+                            <button onClick={() => {
+                              const newConfig = { ...user?.scheduleConfig };
+                              if (newConfig.holidays) {
+                                newConfig.holidays = newConfig.holidays.filter((d: string) => d !== date);
+                                updateUser({ ...user!, scheduleConfig: newConfig }); // Update local
+                                handleUpdateProfile({ scheduleConfig: newConfig });
+                              }
+                            }} className="hover:text-rose-900 font-bold ml-1">×</button>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-gray-400 italic">No hay días festivos configurados.</p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -249,9 +330,10 @@ export default function SettingsPage() {
                           const newConfig = { ...user?.scheduleConfig };
                           if (newConfig.blockedBlocks) {
                             newConfig.blockedBlocks = newConfig.blockedBlocks.filter((_: any, i: number) => i !== idx);
+                            updateUser({ ...user!, scheduleConfig: newConfig }); // Update local
                             handleUpdateProfile({ scheduleConfig: newConfig });
                           }
-                        }} className="hover:text-amber-950 font-bold">×</button>
+                        }} className="hover:text-amber-950 font-bold ml-1">×</button>
                       </div>
                     ))}
                   </div>

@@ -41,6 +41,10 @@ export class CreateSessionDto {
     @IsOptional()
     @IsBoolean()
     isMinor?: boolean;
+
+    @IsOptional()
+    @IsString()
+    professionalId?: string;
 }
 
 export class UpdateSessionDto {

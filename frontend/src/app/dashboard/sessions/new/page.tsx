@@ -109,6 +109,7 @@ export default function NewSessionPage() {
 
     // Watch for date changes to fetch availability
     const selectedDate = form.watch('date');
+    const selectedProfessionalId = form.watch('professionalId');
 
     useEffect(() => {
         const fetchClients = async () => {
@@ -137,7 +138,6 @@ export default function NewSessionPage() {
 
         fetchClients();
     }, [toast, preselectedClientId, form]);
-
     useEffect(() => {
         const fetchAvailability = async () => {
             if (!selectedDate) return;
@@ -145,7 +145,7 @@ export default function NewSessionPage() {
             setIsLoadingSlots(true);
             try {
                 // Ensure correct formatted date YYYY-MM-DD
-                const data = await SessionsAPI.getAvailability(selectedDate);
+                const data = await SessionsAPI.getAvailability(selectedDate, selectedProfessionalId);
                 setAvailableSlots(data.slots);
             } catch (error) {
                 console.error("Failed to fetch slots", error);
@@ -156,7 +156,7 @@ export default function NewSessionPage() {
         };
 
         fetchAvailability();
-    }, [selectedDate]);
+    }, [selectedDate, selectedProfessionalId]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Validate professional selection for Agenda Managers
@@ -191,16 +191,14 @@ export default function NewSessionPage() {
             router.push('/dashboard/sessions');
             router.refresh();
         } catch (error) {
-            console.error('Error creating session:', error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Ocurrió un error al crear la sesión.',
-            });
+            console.error("Failed to fetch slots", error);
+            // Optionally toast
         } finally {
-            setIsSubmitting(false);
+            setIsLoadingSlots(false);
         }
-    }
+    };
+
+
 
     return (
         <div className="container max-w-2xl py-6 mx-auto">
