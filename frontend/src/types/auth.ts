@@ -3,7 +3,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN';
+  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER';
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   subscription?: {
     planType: 'BASIC' | 'PRO' | 'PREMIUM';

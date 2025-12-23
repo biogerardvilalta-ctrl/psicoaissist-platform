@@ -1,9 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Search, MoreHorizontal, FileText, Calendar, Trash2, Pencil, PieChart, RefreshCcw } from 'lucide-react';
 import { ClientsAPI, Client } from '@/lib/clients-api';
+import { UserAPI } from '@/lib/user-api';
+import { User } from '@/types/auth';
+import { useRole } from '@/hooks/useRole';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -30,16 +34,45 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function ClientsPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { toast } = useToast();
     const [clients, setClients] = useState<Client[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('active');
 
+    // Agenda Manager State
+    const { isAgendaManager } = useRole();
+    const [managedProfessionals, setManagedProfessionals] = useState<User[]>([]);
+    const [selectedProfessionalId, setSelectedProfessionalId] = useState<string>('all');
+
+    // Initialize from URL parameter if present
+    useEffect(() => {
+        const professionalIdFromUrl = searchParams.get('professionalId');
+        if (professionalIdFromUrl) {
+            setSelectedProfessionalId(professionalIdFromUrl);
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
+        if (isAgendaManager()) {
+            loadManagedProfessionals();
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const loadManagedProfessionals = async () => {
+        try {
+            const pros = await UserAPI.getManagedProfessionals();
+            setManagedProfessionals(pros);
+        } catch (error) {
+            console.error('Failed to load professionals', error);
+        }
+    };
+
     const fetchClients = useCallback(async (isActive: boolean) => {
         try {
             setIsLoading(true);
-            const data = await ClientsAPI.getAll(isActive);
+            const data = await ClientsAPI.getAll(isActive, isAgendaManager() ? selectedProfessionalId : undefined);
             setClients(data);
         } catch (error) {
             console.error('Error fetching clients:', error);
@@ -51,7 +84,7 @@ export default function ClientsPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [toast]);
+    }, [toast, isAgendaManager, selectedProfessionalId]); // Re-fetch when professional changes
 
     useEffect(() => {
         fetchClients(activeTab === 'active');
@@ -128,6 +161,17 @@ export default function ClientsPage() {
                 </Button>
             </div>
 
+            {isAgendaManager() && managedProfessionals.length === 0 && (
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-3">
+                    <div className="flex-1">
+                        <h4 className="font-medium text-amber-900">Atención: Sin datos visibles</h4>
+                        <p className="text-sm text-amber-700">
+                            No se muestran pacientes porque no tienes profesionales asignados.
+                        </p>
+                    </div>
+                </div>
+            )}
+
             <Tabs defaultValue="active" value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList>
                     <TabsTrigger value="active">Activos</TabsTrigger>
@@ -145,7 +189,7 @@ export default function ClientsPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center py-4">
+                            <div className="flex items-center gap-4 py-4 flex-col sm:flex-row">
                                 <div className="relative w-full max-w-sm">
                                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input
@@ -155,6 +199,34 @@ export default function ClientsPage() {
                                         className="pl-8"
                                     />
                                 </div>
+
+                                {isAgendaManager() && (
+                                    <div className="w-full sm:w-[250px]">
+                                        <Select
+                                            value={selectedProfessionalId}
+                                            onValueChange={(val) => {
+                                                setSelectedProfessionalId(val);
+                                                // fetchClients triggered by useEffect dependency or manually?
+                                                // Ideally useCallback dep catches it, but we need to trigger effect or call it.
+                                                // Actually, fetchClients is in useEffect [activeTab, fetchClients]. 
+                                                // fetchClients depends on selectedProfessionalId.
+                                                // So changing state -> new fetchClients -> useEffect triggers.
+                                            }}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Filtrar por Profesional" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">Todos los profesionales</SelectItem>
+                                                {managedProfessionals.map(pro => (
+                                                    <SelectItem key={pro.id} value={pro.id}>
+                                                        {pro.firstName} {pro.lastName}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="rounded-md border">

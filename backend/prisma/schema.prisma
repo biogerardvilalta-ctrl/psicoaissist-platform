@@ -57,6 +57,14 @@ model User {
   auditLogs       AuditLog[]
   encryptionKeys  EncryptionKey[]
   subscription    Subscription?
+
+  // Agenda Manager Relations
+  createdById          String?  @map("created_by_id")
+  createdBy            User?    @relation("UserCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdUsers         User[]   @relation("UserCreator")
+  
+  managedProfessionals User[]   @relation("AgendaManagement")
+  agendaManagers       User[]   @relation("AgendaManagement")
   
   @@map("users")
 }
@@ -288,7 +296,9 @@ enum UserRole {
   PSYCHOLOGIST  // Add a general psychologist role
   STUDENT
   ADMIN
+
   SUPER_ADMIN
+  AGENDA_MANAGER
 }
 
 enum UserStatus {

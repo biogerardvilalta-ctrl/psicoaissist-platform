@@ -1,8 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { ClientsAPI } from '@/lib/clients-api';
+import { UserAPI } from '@/lib/user-api';
+import { useRole } from '@/hooks/useRole';
+import { User } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ClientForm } from '@/components/clients/ClientForm';
@@ -10,8 +14,28 @@ import { ClientForm } from '@/components/clients/ClientForm';
 export default function NewClientPage() {
     const router = useRouter();
     const { toast } = useToast();
+    const { isAgendaManager } = useRole();
+    const [managedProfessionals, setManagedProfessionals] = useState<User[]>([]);
+
+    useEffect(() => {
+        if (isAgendaManager()) {
+            UserAPI.getManagedProfessionals()
+                .then(pros => setManagedProfessionals(pros))
+                .catch(err => console.error('Failed to load professionals', err));
+        }
+    }, [isAgendaManager]);
 
     async function handleSubmit(values: any) {
+        // Validate professional selection for Agenda Managers
+        if (isAgendaManager() && !values.professionalId) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Debes seleccionar un profesional.',
+            });
+            return;
+        }
+
         await ClientsAPI.create(values);
         toast({
             title: "Cliente creado exitosamente",
@@ -38,6 +62,8 @@ export default function NewClientPage() {
                 onSubmit={handleSubmit}
                 onCancel={() => router.back()}
                 submitLabel="Guardar Paciente"
+                managedProfessionals={managedProfessionals}
+                isAgendaManager={isAgendaManager()}
             />
         </div>
     );

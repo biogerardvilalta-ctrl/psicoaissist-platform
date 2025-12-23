@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Put,
 import { ClientsService } from './clients.service';
 import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto } from './dto/clients.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Request } from 'express';
 
 @ApiTags('Clients')
@@ -22,10 +22,12 @@ export class ClientsController {
     @Get()
     @ApiOperation({ summary: 'Listar todos los clientes activos del usuario' })
     @ApiResponse({ status: 200, type: [ClientResponseDto] })
-    findAll(@Req() req: Request & { user: any }, @Query('active') active?: string) {
+    @ApiQuery({ name: 'active', required: false, type: Boolean })
+    @ApiQuery({ name: 'professionalId', required: false, type: String })
+    findAll(@Req() req: Request & { user: any }, @Query('active') active?: string, @Query('professionalId') professionalId?: string) {
         // active defaults to true if not provided. string 'false' becomes boolean false.
         const isActive = active === undefined ? true : active === 'true';
-        return this.clientsService.findAll(req.user.id, isActive);
+        return this.clientsService.findAll(req.user.id, isActive, professionalId);
     }
 
     @Get(':id')

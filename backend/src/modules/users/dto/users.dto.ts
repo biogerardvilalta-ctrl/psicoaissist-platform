@@ -161,8 +161,34 @@ export class UserResponseDto {
   hourlyRate?: number;
 }
 
+// ... existing code ...
 export class ChangeRoleDto {
   @ApiProperty({ enum: UserRole })
   @IsEnum(UserRole)
   role: UserRole;
+}
+
+export class CreateAgendaManagerDto {
+  @ApiProperty({ example: 'manager@ejemplo.com' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ example: 'contraseña123' })
+  @IsString()
+  @MinLength(6)
+  password: string;
+
+  @ApiProperty({ example: 'Ana' })
+  @IsString()
+  firstName: string;
+
+  @ApiProperty({ example: 'García' })
+  @IsString()
+  lastName: string;
+}
+
+export class LinkProfessionalDto {
+  @ApiProperty()
+  @IsString()
+  managerId: string;
 }

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException, Logger } from '@nestj
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { UserRole, UserStatus } from '@prisma/client';
-import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto/users.dto';
+import { CreateUserDto, UpdateUserDto, UserResponseDto, CreateAgendaManagerDto, LinkProfessionalDto } from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -321,6 +321,177 @@ export class UsersService {
       return this.mapToResponseDto(updatedUser);
     } catch (error) {
       this.logger.error(`Error changing user role: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Crear un Agenda Manager vinculado a un profesional
+   */
+  async createAgendaManager(professionalId: string, dto: CreateAgendaManagerDto): Promise<UserResponseDto> {
+    try {
+      // Verificar si el email ya existe
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: dto.email.toLowerCase() },
+      });
+
+      if (existingUser) {
+        throw new ConflictException('El email ya está registrado');
+      }
+
+      // Hashear la contraseña
+      const passwordHash = await this.encryptionService.hashPassword(dto.password);
+
+      // Crear el usuario Agenda Manager
+      // Y vincularlo automáticamente al profesional que lo crea
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email.toLowerCase(),
+          passwordHash,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          role: UserRole.AGENDA_MANAGER,
+          status: UserStatus.ACTIVE, // Created by professional, so implicitly active/verified? Or pending? Let's say ACTIVE for simplicity for now.
+          createdById: professionalId,
+          managedProfessionals: {
+            connect: { id: professionalId }
+          },
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      this.logger.log(`Agenda Manager created: ${user.email} by Professional ${professionalId}`);
+
+      return this.mapToResponseDto(user);
+    } catch (error) {
+      this.logger.error(`Error creating agenda manager: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener Agenda Managers de un profesional
+   */
+  async getAgendaManagers(professionalId: string): Promise<UserResponseDto[]> {
+    try {
+      const managers = await this.prisma.user.findMany({
+        where: {
+          role: UserRole.AGENDA_MANAGER,
+          managedProfessionals: {
+            some: { id: professionalId }
+          }
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+
+      return managers.map(this.mapToResponseDto);
+    } catch (error) {
+      this.logger.error(`Error fetching agenda managers: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Eliminar Agenda Manager (Soft delete + Unlink)
+   */
+  async deleteAgendaManager(professionalId: string, managerId: string): Promise<void> {
+    try {
+      // Verify manager exists and is linked to this professional
+      // Or if createdBy this professional. The constraint is "ese usuario creado estara vinculado al profesional que tambien lo podra borarr"
+      // So only the creator can delete? Or any professional they manage?
+      // Strict interpretation: "vinculado al profesional que tambien lo podra borarr".
+      // Let's check ownership (createdById) OR management link.
+      // But typically only admins or creators should delete users.
+
+      const manager = await this.prisma.user.findFirst({
+        where: {
+          id: managerId,
+          role: UserRole.AGENDA_MANAGER,
+          OR: [
+            { createdById: professionalId },
+            { managedProfessionals: { some: { id: professionalId } } } // Allow managed pro to delete? Maybe just unlink?
+          ]
+        }
+      });
+
+      if (!manager) {
+        throw new NotFoundException('Agenda Manager no encontrado o no autorizado');
+      }
+
+      // If the professional created it, we might soft delete the user entirely if it's not managing others?
+      // Simplified: Just soft delete for now as per "lo podra borrar".
+
+      await this.prisma.user.update({
+        where: { id: managerId },
+        data: {
+          status: UserStatus.INACTIVE,
+          updatedAt: new Date()
+        }
+      });
+
+      this.logger.log(`Agenda Manager deleted: ${managerId} by ${professionalId}`);
+    } catch (error) {
+      this.logger.error(`Error deleting agenda manager: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener profesionales vinculados a un Agenda Manager
+   */
+  async getLinkedProfessionals(managerId: string): Promise<UserResponseDto[]> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: managerId },
+        include: {
+          managedProfessionals: true
+        }
+      });
+
+      if (!user) throw new NotFoundException('Usuario no encontrado');
+
+      return user.managedProfessionals.map(this.mapToResponseDto);
+    } catch (error) {
+      this.logger.error(`Error fetching linked professionals: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Vincular un profesional adicional a un Agenda Manager
+   */
+  async linkProfessional(managerId: string, professionalId: string): Promise<void> {
+    try {
+      await this.prisma.user.update({
+        where: { id: managerId },
+        data: {
+          managedProfessionals: {
+            connect: { id: professionalId }
+          }
+        }
+      });
+    } catch (error) {
+      this.logger.error(`Error linking professional: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Desvincular profesional
+   */
+  async unlinkProfessional(managerId: string, professionalId: string): Promise<void> {
+    try {
+      await this.prisma.user.update({
+        where: { id: managerId },
+        data: {
+          managedProfessionals: {
+            disconnect: { id: professionalId }
+          }
+        }
+      });
+    } catch (error) {
+      this.logger.error(`Error unlinking professional: ${error.message}`);
       throw error;
     }
   }

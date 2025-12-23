@@ -109,9 +109,44 @@ export class SessionsService {
         return this.mapToDto(session, createSessionDto.notes);
     }
 
-    async findAll(userId: string) {
+    async findAll(user: any, filters?: { clientId?: string; status?: SessionStatus; from?: string; to?: string; professionalId?: string }) {
+        let targetUserIds: string[] = [user.id];
+
+        if (user.role === 'AGENDA_MANAGER') {
+            const manager = await this.prisma.user.findUnique({
+                where: { id: user.id },
+                include: { managedProfessionals: true }
+            });
+            const managedIds = manager?.managedProfessionals.map(p => p.id) || [];
+
+            if (filters?.professionalId && filters.professionalId !== 'all') {
+                if (managedIds.includes(filters.professionalId)) {
+                    targetUserIds = [filters.professionalId];
+                } else {
+                    targetUserIds = []; // Access denied
+                }
+            } else {
+                targetUserIds = managedIds;
+            }
+        } else {
+            targetUserIds = [user.id];
+        }
+
+        const whereClause: any = {
+            userId: { in: targetUserIds }
+        };
+
+        if (filters?.clientId) whereClause.clientId = filters.clientId;
+        if (filters?.status && filters.status !== 'ALL' as any) whereClause.status = filters.status;
+
+        if (filters?.from || filters?.to) {
+            whereClause.startTime = {};
+            if (filters.from) whereClause.startTime.gte = new Date(filters.from);
+            if (filters.to) whereClause.startTime.lte = new Date(filters.to);
+        }
+
         const sessions = await this.prisma.session.findMany({
-            where: { userId },
+            where: whereClause,
             include: {
                 client: true, // Need name for display
             },
@@ -122,7 +157,7 @@ export class SessionsService {
         return Promise.all(sessions.map(s => this.mapToDto(s, undefined)));
     }
 
-    async findByDateRange(userId: string, start: string, end: string) {
+    async findByDateRange(user: any, start: string, end: string, professionalId?: string) {
         const startDate = new Date(start);
         const endDate = new Date(end);
 
@@ -130,9 +165,31 @@ export class SessionsService {
             throw new BadRequestException('Invalid date range');
         }
 
+        let targetUserIds: string[] = [user.id];
+
+        if (user.role === 'AGENDA_MANAGER') {
+            const manager = await this.prisma.user.findUnique({
+                where: { id: user.id },
+                include: { managedProfessionals: true }
+            });
+            const managedIds = manager?.managedProfessionals.map(p => p.id) || [];
+
+            if (professionalId && professionalId !== 'all') {
+                if (managedIds.includes(professionalId)) {
+                    targetUserIds = [professionalId];
+                } else {
+                    targetUserIds = [];
+                }
+            } else {
+                targetUserIds = managedIds;
+            }
+        } else {
+            targetUserIds = [user.id];
+        }
+
         const sessions = await this.prisma.session.findMany({
             where: {
-                userId,
+                userId: { in: targetUserIds },
                 startTime: {
                     gte: startDate,
                     lte: endDate,

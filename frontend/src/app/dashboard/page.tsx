@@ -3,7 +3,7 @@
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import {
-  User,
+  User as UserIcon,
   BarChart3,
   Euro,
   Calendar,
@@ -13,7 +13,8 @@ import {
   TrendingUp,
   CalendarDays,
   PlusCircle,
-  Trash2
+  Trash2,
+  ArrowRight
 } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useRouter } from 'next/navigation';
@@ -41,6 +42,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { User } from '@/types/auth'; // Type import
+import { useRole } from '@/hooks/useRole';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 const ALL_WIDGETS = [
   { id: 'todaysSessions', label: 'Agenda de Hoy', category: 'Operational' },
@@ -95,8 +101,29 @@ export default function DashboardPage() {
   const [advancedStats, setAdvancedStats] = useState<AdvancedStats | null>(null);
   const [dashboardStats, setDashboardStats] = useState<any | null>(null);
   const [layout, setLayout] = useState<string[]>([]);
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+
+  // Agenda Manager State
+  const { isAgendaManager } = useRole();
+  const [managedProfessionals, setManagedProfessionals] = useState<User[]>([]);
+  const [selectedProfessionalId, setSelectedProfessionalId] = useState<string>('all');
+
+  useEffect(() => {
+    // Check role safely without dependency
+    const checkAndLoad = async () => {
+      if (user?.role === 'AGENDA_MANAGER') {
+        try {
+          const pros = await UserAPI.getManagedProfessionals();
+          setManagedProfessionals(pros);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    };
+    checkAndLoad();
+  }, [user?.role]); // Only re-run if role changes
 
   // Initialize layout
   useEffect(() => {
@@ -115,9 +142,9 @@ export default function DashboardPage() {
     const fetchStats = async () => {
       try {
         const [dashData, allSessions, backendStats] = await Promise.all([
-          DashboardAPI.getStats(),
-          SessionsAPI.getAll(),
-          DashboardAPI.getStats() // Fetching backend stats just in case
+          DashboardAPI.getStats(undefined, isAgendaManager() ? selectedProfessionalId : undefined),
+          SessionsAPI.getAll({ professionalId: isAgendaManager() ? selectedProfessionalId : undefined }),
+          DashboardAPI.getStats(undefined, isAgendaManager() ? selectedProfessionalId : undefined) // Fetching backend stats just in case
         ]);
         setStats(dashData);
         setDashboardStats(backendStats);
@@ -133,7 +160,7 @@ export default function DashboardPage() {
       }
     };
     fetchStats();
-  }, [toast, user?.hourlyRate]);
+  }, [toast, user?.hourlyRate, selectedProfessionalId]);
 
   const handleSaveLayout = async (newLayout: string[]) => {
     if (!user) return;
@@ -220,7 +247,7 @@ export default function DashboardPage() {
         />;
 
       case 'sessionsThisMonth': return <StatsWidget id={id} data={{ title: "Sesiones", value: advancedStats.sessionsThisMonth.toString(), icon: BarChart3, iconBgColor: "bg-primary/10", iconColor: "text-primary", subtitle: "Este Mes", trend: { value: "Realizadas", isPositive: true }, onClick: () => handleCardClick(id) }} />;
-      case 'activePatients': return <StatsWidget id={id} data={{ title: "Pacientes", value: stats.activeClients.toString(), icon: User, iconBgColor: "bg-primary/10", iconColor: "text-primary", subtitle: "Activos", trend: stats.clientTrend, onClick: () => handleCardClick(id) }} />;
+      case 'activePatients': return <StatsWidget id={id} data={{ title: "Pacientes", value: stats.activeClients.toString(), icon: UserIcon, iconBgColor: "bg-primary/10", iconColor: "text-primary", subtitle: "Activos", trend: stats.clientTrend, onClick: () => handleCardClick(id) }} />;
       case 'monthIncome': return <StatsWidget id={id} data={{ title: "Ingresos (Est)", value: `${advancedStats.monthIncome}€`, icon: Euro, iconBgColor: "bg-emerald-100", iconColor: "text-emerald-700", subtitle: "Este Mes", trend: { value: "60€/h", isPositive: true }, onClick: () => handleCardClick(id) }} />;
       case 'sessionsNextWeek': return <StatsWidget id={id} data={{ title: "Agenda (7d)", value: advancedStats.sessionsNextWeek.toString(), icon: Calendar, iconBgColor: "bg-violet-100", iconColor: "text-violet-700", subtitle: "Sesiones", trend: { value: "Vista", isPositive: true }, onClick: () => handleCardClick(id) }} />;
       case 'attendanceRate': return <StatsWidget id={id} data={{ title: "Asistencia", value: advancedStats.attendanceRate > 0 ? `${advancedStats.attendanceRate}%` : "-", icon: CheckCircle, iconBgColor: "bg-emerald-100", iconColor: "text-emerald-700", subtitle: "Tasa Global", trend: { value: "General", isPositive: true }, onClick: () => handleCardClick(id) }} />;
@@ -236,67 +263,130 @@ export default function DashboardPage() {
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-slate-800 tracking-tight">
-              Hola, {user?.firstName || 'Doctor/a'}
+              {isAgendaManager() ? `Hola, ${user?.firstName || 'Gestor/a'}` : `Hola, ${user?.firstName || 'Doctor/a'}`}
             </h1>
             <p className="text-slate-500 mt-2">
-              Bienvenido a tu asistente clínico inteligente.
+              {isAgendaManager()
+                ? 'Gestiona la agenda y pacientes de tus profesionales asignados.'
+                : 'Bienvenido a tu asistente clínico inteligente.'}
             </p>
-          </div>
-
-          <Sheet open={isLibraryOpen} onOpenChange={setIsLibraryOpen}>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <PlusCircle className="h-4 w-4" />
-                Librería de Widgets
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Librería de Widgets</SheetTitle>
-                <SheetDescription>
-                  Activa o desactiva los widgets que quieres ver en tu dashboard.
-                </SheetDescription>
-              </SheetHeader>
-              <div className="mt-6 space-y-4 h-[calc(100vh-140px)] overflow-y-auto pr-2 pb-4">
-                {ALL_WIDGETS.map(widget => {
-                  const isActive = layout.includes(widget.id);
-                  return (
-                    <div key={widget.id} className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                      <div>
-                        <h4 className="font-medium text-sm">{widget.label}</h4>
-                        <span className="text-xs text-muted-foreground">{widget.category}</span>
-                      </div>
-                      <Button
-                        variant={isActive ? "secondary" : "default"}
-                        size="sm"
-                        onClick={() => handleAddWidget(widget.id)}
-                      >
-                        {isActive ? 'Ocultar' : 'Añadir'}
-                      </Button>
-                    </div>
-                  );
-                })}
+            {isAgendaManager() && managedProfessionals.length === 0 && (
+              <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+                <div>
+                  <h4 className="font-medium text-amber-900">Sin profesionales asignados</h4>
+                  <p className="text-sm text-amber-700 mt-1">
+                    Parece que tienes el rol de Gestor de Agenda pero no tienes profesionales asignados.
+                    Por favor, pide a un profesional que te vincule desde su panel de control.
+                  </p>
+                </div>
               </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-
-        {isLoaded ? (
-          <DashboardGrid
-            items={layout}
-            renderItem={renderItem}
-            onSave={handleSaveLayout}
-            defaultItems={DEFAULT_LAYOUT}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            )}
           </div>
-        )}
 
-        <div className="mt-8">
-          <RecentActivity />
+          <div className="flex items-center gap-4">
+            {!isAgendaManager() && (
+              <Sheet open={isLibraryOpen} onOpenChange={setIsLibraryOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <PlusCircle className="h-4 w-4" />
+                    Librería de Widgets
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Librería de Widgets</SheetTitle>
+                    <SheetDescription>
+                      Activa o desactiva los widgets que quieres ver en tu dashboard.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-4 h-[calc(100vh-140px)] overflow-y-auto pr-2 pb-4">
+                    {ALL_WIDGETS.map(widget => {
+                      const isActive = layout.includes(widget.id);
+                      return (
+                        <div key={widget.id} className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                          <div>
+                            <h4 className="font-medium text-sm">{widget.label}</h4>
+                            <span className="text-xs text-muted-foreground">{widget.category}</span>
+                          </div>
+                          <Button
+                            variant={isActive ? "secondary" : "default"}
+                            size="sm"
+                            onClick={() => handleAddWidget(widget.id)}
+                          >
+                            {isActive ? 'Ocultar' : 'Añadir'}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
+          </div>
         </div>
+
+        {isAgendaManager() ? (
+          // Simplified view for Agenda Managers - Professional Cards Only
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-slate-800">Profesionales Asignados</h2>
+            {managedProfessionals.length === 0 ? (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <UserIcon className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                  <p className="text-slate-500">No tienes profesionales asignados todavía.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {managedProfessionals.map(pro => (
+                  <Card
+                    key={pro.id}
+                    className="cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-200 group"
+                    onClick={() => router.push(`/dashboard/sessions?professionalId=${pro.id}`)}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-4">
+                        <Avatar className="h-16 w-16 ring-2 ring-slate-100 group-hover:ring-blue-200 transition-all">
+                          <AvatarFallback className="text-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
+                            {pro.firstName?.[0]}{pro.lastName?.[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg text-slate-800 group-hover:text-blue-600 transition-colors">
+                            {pro.firstName} {pro.lastName}
+                          </h3>
+                          <p className="text-sm text-slate-500">{pro.email}</p>
+                        </div>
+                        <ArrowRight className="h-5 w-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          // Full dashboard for Psychologists
+          <>
+            {isLoaded ? (
+              <DashboardGrid
+                items={layout}
+                renderItem={renderItem}
+                onSave={handleSaveLayout}
+                defaultItems={DEFAULT_LAYOUT}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              </div>
+            )}
+
+            <div className="mt-8">
+              <RecentActivity />
+            </div>
+          </>
+        )}
       </div>
     </ProtectedRoute>
   );

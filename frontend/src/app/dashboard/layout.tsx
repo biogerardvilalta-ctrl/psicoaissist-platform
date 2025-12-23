@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
+import { useRole } from '@/hooks/useRole';
 import { Heart, User, Settings, LogOut, Bell, Menu, X, Shield, LayoutDashboard, Users, FileText, Calendar, PieChart } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -21,6 +22,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const router = useRouter();
     const pathname = usePathname();
     const { user, logout } = useAuth();
+    const { isAgendaManager } = useRole();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const handleLogout = async () => {
@@ -33,13 +35,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
 
     const navItems = [
-        { name: 'Dashboard', title: 'Dashboard | PsicoAIssist', href: '/dashboard', icon: LayoutDashboard },
-        { name: 'Pacientes', href: '/dashboard/clients', icon: Users },
-        { name: 'Sesiones', href: '/dashboard/sessions', icon: Calendar },
-        { name: 'Informes', href: '/dashboard/reports', icon: FileText },
-        { name: 'Estadísticas', href: '/dashboard/statistics', icon: PieChart },
-        { name: 'Legal', href: '/dashboard/compliance', icon: Shield, extraMargin: true },
-    ];
+        { name: 'Dashboard', title: 'Dashboard | PsicoAIssist', href: '/dashboard', icon: LayoutDashboard, show: true },
+        { name: 'Pacientes', href: '/dashboard/clients', icon: Users, show: true },
+        { name: 'Sesiones', href: '/dashboard/sessions', icon: Calendar, show: true },
+        { name: 'Informes', href: '/dashboard/reports', icon: FileText, show: !isAgendaManager() },
+        { name: 'Estadísticas', href: '/dashboard/statistics', icon: PieChart, show: !isAgendaManager() },
+        { name: 'Legal', href: '/dashboard/compliance', icon: Shield, extraMargin: true, show: true },
+    ].filter(item => item.show);
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -117,12 +119,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center">
-                                            <Settings className="mr-2 h-4 w-4" />
-                                            <span>Configuración</span>
-                                        </Link>
-                                    </DropdownMenuItem>
+                                    {!isAgendaManager() && (
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center">
+                                                <Settings className="mr-2 h-4 w-4" />
+                                                <span>Configuración</span>
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    )}
                                     <DropdownMenuItem asChild>
                                         <Link href="/dashboard/profile" className="w-full cursor-pointer flex items-center">
                                             <User className="mr-2 h-4 w-4" />

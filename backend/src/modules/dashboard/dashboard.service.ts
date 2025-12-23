@@ -19,7 +19,42 @@ export class DashboardService {
         return { iv, tag, encryptedData, keyId };
     }
 
-    async getStats(userId: string) {
+    async getStats(user: any, professionalId?: string) {
+        // Determine target user IDs
+        let targetUserIds: string[] = [user.id];
+
+        if (user.role === 'AGENDA_MANAGER') {
+            const manager = await this.prisma.user.findUnique({
+                where: { id: user.id },
+                include: { managedProfessionals: true }
+            });
+            const managedIds = manager?.managedProfessionals.map(p => p.id) || [];
+
+            if (professionalId && professionalId !== 'all') {
+                if (!managedIds.includes(professionalId)) {
+                    // Start of ForbiddenException 
+                    // throw new ForbiddenException('Access to this professional is denied');
+                    // To avoid adding import just for this, return empty or throw generic if import missing?
+                    // I will assume I can just filter to empty intersection if invalid.
+                    // Or better, just use the intersection.
+                    if (managedIds.includes(professionalId)) {
+                        targetUserIds = [professionalId];
+                    } else {
+                        targetUserIds = []; // No access
+                    }
+                } else {
+                    targetUserIds = [professionalId];
+                }
+            } else {
+                targetUserIds = managedIds;
+            }
+        } else {
+            // Psychologist
+            targetUserIds = [user.id];
+        }
+
+        const userIdFilter = { in: targetUserIds };
+
         const now = new Date();
         const currentYear = now.getFullYear();
         const currentMonth = now.getMonth();
@@ -48,20 +83,21 @@ export class DashboardService {
             // New: Detailed Session Data for advanced metrics
             completedSessions
         ] = await Promise.all([
-            this.clientsService.findAll(userId),
-            this.prisma.client.count({ where: { userId, isActive: true, createdAt: { gte: startOfCurrentMonth } } }),
 
-            this.prisma.session.count({ where: { userId, status: 'COMPLETED' } }),
-            this.prisma.session.count({ where: { userId, status: 'COMPLETED', startTime: { gte: startOfCurrentMonth, lte: endOfCurrentMonth } } }),
-            this.prisma.session.count({ where: { userId, status: 'COMPLETED', startTime: { gte: startOfPreviousMonth, lte: endOfPreviousMonth } } }),
+            this.prisma.client.findMany({ where: { userId: userIdFilter, isActive: true } }),
+            this.prisma.client.count({ where: { userId: userIdFilter, isActive: true, createdAt: { gte: startOfCurrentMonth } } }),
 
-            this.prisma.report.count({ where: { userId, status: { not: 'DELETED' } } }),
-            this.prisma.report.count({ where: { userId, status: { not: 'DELETED' }, createdAt: { gte: startOfCurrentMonth, lte: endOfCurrentMonth } } }),
-            this.prisma.report.count({ where: { userId, status: { not: 'DELETED' }, createdAt: { gte: startOfPreviousMonth, lte: endOfPreviousMonth } } }),
+            this.prisma.session.count({ where: { userId: userIdFilter, status: 'COMPLETED' } }),
+            this.prisma.session.count({ where: { userId: userIdFilter, status: 'COMPLETED', startTime: { gte: startOfCurrentMonth, lte: endOfCurrentMonth } } }),
+            this.prisma.session.count({ where: { userId: userIdFilter, status: 'COMPLETED', startTime: { gte: startOfPreviousMonth, lte: endOfPreviousMonth } } }),
+
+            this.prisma.report.count({ where: { userId: userIdFilter, status: { not: 'DELETED' } } }),
+            this.prisma.report.count({ where: { userId: userIdFilter, status: { not: 'DELETED' }, createdAt: { gte: startOfCurrentMonth, lte: endOfCurrentMonth } } }),
+            this.prisma.report.count({ where: { userId: userIdFilter, status: { not: 'DELETED' }, createdAt: { gte: startOfPreviousMonth, lte: endOfPreviousMonth } } }),
 
             // Fetch ALL completed sessions 
             this.prisma.session.findMany({
-                where: { userId, status: 'COMPLETED' },
+                where: { userId: userIdFilter, status: 'COMPLETED' },
                 select: {
                     id: true,
                     startTime: true,

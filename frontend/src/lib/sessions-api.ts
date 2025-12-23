@@ -67,12 +67,13 @@ export interface Session {
 export class SessionsAPI {
     private static readonly BASE_PATH = '/api/v1/sessions';
 
-    static async getAll(filters?: { clientId?: string; status?: string; from?: string; to?: string }): Promise<Session[]> {
+    static async getAll(filters?: { clientId?: string; status?: string; from?: string; to?: string; professionalId?: string }): Promise<Session[]> {
         const params = new URLSearchParams();
         if (filters?.clientId) params.append('clientId', filters.clientId);
         if (filters?.status) params.append('status', filters.status);
         if (filters?.from) params.append('from', filters.from);
         if (filters?.to) params.append('to', filters.to);
+        if (filters?.professionalId && filters.professionalId !== 'all') params.append('professionalId', filters.professionalId);
 
         return httpClient.get<Session[]>(`${this.BASE_PATH}?${params.toString()}`);
     }
@@ -81,7 +82,7 @@ export class SessionsAPI {
         return httpClient.get<Session>(`${this.BASE_PATH}/${id}`);
     }
 
-    static async create(data: { clientId: string; startTime: string; sessionType: string; notes?: string }): Promise<Session> {
+    static async create(data: { clientId: string; startTime: string; sessionType: string; notes?: string; professionalId?: string }): Promise<Session> {
         return httpClient.post<Session>(this.BASE_PATH, data);
     }
 

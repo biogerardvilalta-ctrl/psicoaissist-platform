@@ -32,6 +32,7 @@ export type CreateClientData = {
     tags?: string[];
     sendEmailReminders?: boolean;
     sendWhatsappReminders?: boolean;
+    professionalId?: string;
 };
 
 export type UpdateClientData = Partial<CreateClientData> & {
@@ -41,8 +42,10 @@ export type UpdateClientData = Partial<CreateClientData> & {
 export class ClientsAPI {
     private static readonly BASE_URL = '/api/v1/clients';
 
-    static async getAll(active: boolean = true) {
-        return httpClient.get<Client[]>(`${this.BASE_URL}?active=${active}`);
+    static async getAll(active: boolean = true, professionalId?: string) {
+        const queryParams = new URLSearchParams({ active: String(active) });
+        if (professionalId && professionalId !== 'all') queryParams.append('professionalId', professionalId);
+        return httpClient.get<Client[]>(`${this.BASE_URL}?${queryParams.toString()}`);
     }
 
     static async getById(id: string) {
@@ -64,7 +67,8 @@ export class ClientsAPI {
                             tags: data.tags,
                             riskLevel: data.riskLevel,
                             sendEmailReminders: data.sendEmailReminders,
-                            sendWhatsappReminders: data.sendWhatsappReminders
+                            sendWhatsappReminders: data.sendWhatsappReminders,
+                            professionalId: data.professionalId
                         });
                     }
                 } catch (e) {

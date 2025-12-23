@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
-import { Loader2, Calendar as CalendarIcon, Clock, User, FileText, CheckCircle2 } from 'lucide-react';
+import { Loader2, Calendar as CalendarIcon, Clock, User as UserIcon, FileText, CheckCircle2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,8 +30,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SessionsAPI, SessionType } from '@/lib/sessions-api';
 import { ClientsAPI, Client } from '@/lib/clients-api';
+import { UserAPI } from '@/lib/user-api';
+import { useRole } from '@/hooks/useRole';
+import { User } from '@/types/auth';
 
 const formSchema = z.object({
+    professionalId: z.string().optional(), // Required for Agenda Managers, will validate conditionally
     clientId: z.string().min(1, 'Debes seleccionar un paciente'),
     date: z.string().min(1, 'La fecha es requerida'),
     time: z.string().min(1, 'La hora es requerida'),
@@ -45,9 +49,12 @@ export default function NewSessionPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
+    const { isAgendaManager } = useRole();
     const [clients, setClients] = useState<Client[]>([]);
     const [isLoadingClients, setIsLoadingClients] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [managedProfessionals, setManagedProfessionals] = useState<User[]>([]);
+    const [isLoadingProfessionals, setIsLoadingProfessionals] = useState(false);
 
     // Get clientId and date from URL query param
     const preselectedClientId = searchParams.get('clientId') || '';
@@ -71,6 +78,7 @@ export default function NewSessionPage() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            professionalId: '',
             clientId: preselectedClientId,
             date: defaultDate,
             time: defaultTime,
@@ -78,6 +86,23 @@ export default function NewSessionPage() {
             notes: '',
         },
     });
+
+    // Load managed professionals for Agenda Managers
+    useEffect(() => {
+        if (isAgendaManager()) {
+            setIsLoadingProfessionals(true);
+            UserAPI.getManagedProfessionals()
+                .then(pros => {
+                    setManagedProfessionals(pros);
+                    // Auto-select if only one professional
+                    if (pros.length === 1) {
+                        form.setValue('professionalId', pros[0].id);
+                    }
+                })
+                .catch(err => console.error('Failed to load professionals', err))
+                .finally(() => setIsLoadingProfessionals(false));
+        }
+    }, [isAgendaManager, form]);
 
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
@@ -134,6 +159,16 @@ export default function NewSessionPage() {
     }, [selectedDate]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        // Validate professional selection for Agenda Managers
+        if (isAgendaManager() && !values.professionalId) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Debes seleccionar un profesional.',
+            });
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             // Combine date and time into ISO string
@@ -145,6 +180,7 @@ export default function NewSessionPage() {
                 startTime: startTime,
                 sessionType: values.sessionType,
                 notes: values.notes,
+                professionalId: values.professionalId, // Pass professional ID if Agenda Manager
             });
 
             toast({
@@ -183,6 +219,38 @@ export default function NewSessionPage() {
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+                            {/* Professional Selection (Agenda Managers only) */}
+                            {isAgendaManager() && (
+                                <FormField
+                                    control={form.control}
+                                    name="professionalId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Profesional *</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                value={field.value}
+                                                disabled={isLoadingProfessionals}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder={isLoadingProfessionals ? "Cargando profesionales..." : "Seleccionar profesional"} />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {managedProfessionals.map((pro) => (
+                                                        <SelectItem key={pro.id} value={pro.id}>
+                                                            {pro.firstName} {pro.lastName}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
 
                             {/* Client Selection */}
                             <FormField

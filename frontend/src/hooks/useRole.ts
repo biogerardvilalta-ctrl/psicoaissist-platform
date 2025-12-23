@@ -1,4 +1,5 @@
 'use client';
+import { useCallback } from 'react';
 
 import { useAuth } from '@/contexts/auth-context';
 import { User } from '@/types/auth';
@@ -6,28 +7,32 @@ import { User } from '@/types/auth';
 export function useRole() {
   const { user, isAuthenticated } = useAuth();
 
-  const hasRole = (requiredRole: User['role']): boolean => {
+  const hasRole = useCallback((requiredRole: User['role']): boolean => {
     if (!isAuthenticated || !user) return false;
     return user.role === requiredRole;
-  };
+  }, [user, isAuthenticated]);
 
-  const hasAnyRole = (requiredRoles: User['role'][]): boolean => {
+  const hasAnyRole = useCallback((requiredRoles: User['role'][]): boolean => {
     if (!isAuthenticated || !user) return false;
     return requiredRoles.includes(user.role);
-  };
+  }, [user, isAuthenticated]);
 
-  const isAdmin = (): boolean => {
+  const isAdmin = useCallback((): boolean => {
     return hasRole('ADMIN') || hasRole('SUPER_ADMIN');
-  };
+  }, [hasRole]);
 
-  const isPsychologist = (): boolean => {
+  const isPsychologist = useCallback((): boolean => {
     return hasRole('PSYCHOLOGIST');
-  };
+  }, [hasRole]);
 
-  const isSuperAdmin = (): boolean => {
+
+  const isSuperAdmin = useCallback((): boolean => {
     return hasRole('SUPER_ADMIN');
-  };
+  }, [hasRole]);
 
+  const isAgendaManager = useCallback((): boolean => {
+    return hasRole('AGENDA_MANAGER');
+  }, [hasRole]);
   return {
     user,
     isAuthenticated,
@@ -36,6 +41,8 @@ export function useRole() {
     isAdmin,
     isPsychologist,
     isSuperAdmin,
+    isAgendaManager,
     currentRole: user?.role
+
   };
 }

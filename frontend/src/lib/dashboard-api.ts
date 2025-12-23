@@ -18,8 +18,13 @@ export interface DashboardStats {
 export class DashboardAPI {
     private static readonly BASE_URL = '/api/v1/dashboard';
 
-    static async getStats(clientId?: string) {
-        const url = clientId ? `${this.BASE_URL}/stats?clientId=${clientId}` : `${this.BASE_URL}/stats`;
+    static async getStats(clientId?: string, professionalId?: string) {
+        const params = new URLSearchParams();
+        if (clientId) params.append('clientId', clientId);
+        if (professionalId && professionalId !== 'all') params.append('professionalId', professionalId);
+
+        const queryString = params.toString();
+        const url = queryString ? `${this.BASE_URL}/stats?${queryString}` : `${this.BASE_URL}/stats`;
         return httpClient.get<DashboardStats>(url);
     }
 }

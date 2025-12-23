@@ -7,7 +7,7 @@ import { Heart, Home, Users, Settings, Shield, BarChart3, CreditCard, FileText, 
 
 export default function Navigation() {
   const pathname = usePathname();
-  const { isAdmin, isPsychologist, isAuthenticated } = useRole();
+  const { isAdmin, isPsychologist, isAuthenticated, isAgendaManager } = useRole();
 
   if (!isAuthenticated) return null;
 
@@ -67,7 +67,7 @@ export default function Navigation() {
       name: 'Configuración',
       href: '/dashboard/settings',
       icon: Settings,
-      show: true
+      show: !isAgendaManager()
     }
   ];
 

@@ -28,6 +28,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const formSchema = z.object({
+    professionalId: z.string().optional(), // Required for Agenda Managers
     firstName: z.string().min(2, {
         message: "El nombre debe tener al menos 2 caracteres.",
     }),
@@ -52,15 +53,18 @@ interface ClientFormProps {
     onSubmit: (values: ClientFormValues) => Promise<void>;
     onCancel: () => void;
     submitLabel?: string;
+    managedProfessionals?: Array<{ id: string; firstName: string; lastName: string }>;
+    isAgendaManager?: boolean;
 }
 
-export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Guardar Paciente" }: ClientFormProps) {
+export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Guardar Paciente", managedProfessionals = [], isAgendaManager = false }: ClientFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const form = useForm<ClientFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            professionalId: initialData?.professionalId || "",
             firstName: initialData?.firstName || "",
             lastName: initialData?.lastName || "",
             email: initialData?.email || "",
@@ -111,6 +115,37 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-6">
+                            {/* Professional Selection (Agenda Managers only) */}
+                            {isAgendaManager && (
+                                <FormField
+                                    control={form.control}
+                                    name="professionalId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Profesional *</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                value={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Seleccionar profesional" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {managedProfessionals.map((pro) => (
+                                                        <SelectItem key={pro.id} value={pro.id}>
+                                                            {pro.firstName} {pro.lastName}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <FormField
                                     control={form.control}

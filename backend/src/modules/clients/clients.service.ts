@@ -96,10 +96,30 @@ export class ClientsService {
                 keyId = encrypted.keyId;
             }
 
+            // Determine owner of the client
+            let targetUserId = userId;
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { managedProfessionals: true }
+            });
+
+            if (user?.role === UserRole.AGENDA_MANAGER) {
+                if (!createClientDto.professionalId) {
+                    throw new Error('Agenda Managers must specify a professionalId');
+                }
+
+                // Verify management permission
+                const managedIds = user.managedProfessionals.map(u => u.id);
+                if (!managedIds.includes(createClientDto.professionalId)) {
+                    throw new Error('You are not authorized to manage this professional');
+                }
+                targetUserId = createClientDto.professionalId;
+            }
+
             // Save to DB
             const client = await this.prisma.client.create({
                 data: {
-                    user: { connect: { id: userId } },
+                    user: { connect: { id: targetUserId } },
                     encryptedPersonalData: packedData,
                     encryptionKeyId: keyId,
                     tags: createClientDto.tags || [],
@@ -138,10 +158,50 @@ export class ClientsService {
         }
     }
 
-    async findAll(userId: string, active: boolean = true): Promise<ClientResponseDto[]> {
+    async findAll(userId: string, active: boolean = true, professionalId?: string): Promise<ClientResponseDto[]> {
         try {
+            // Check user role first to determine scope
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { managedProfessionals: true }
+            });
+
+            if (!user) {
+                throw new NotFoundException('Usuario no encontrado');
+            }
+
+            let targetUserIds: string[] = [userId];
+
+            // Should we force active=true? Default is yes.
+
+            if (user.role === UserRole.AGENDA_MANAGER) {
+                // Agenda Manager sees clients of their managed professionals
+                const managedIds = user.managedProfessionals.map(u => u.id);
+
+                if (professionalId) {
+                    // Filter by specific professional if requested and authorized
+                    if (managedIds.includes(professionalId)) {
+                        targetUserIds = [professionalId];
+                    } else {
+                        // Unauthorized request for non-managed pro, return empty or throw? 
+                        // Let's return empty to stay safe.
+                        return [];
+                    }
+                } else {
+                    // Show ALL managed professionals' clients
+                    targetUserIds = managedIds;
+                }
+            } else {
+                // Professionals/Admins see their own clients (or all if admin? Assuming scoped to own for now)
+                // If professionalId param passed by a Professional? Maybe ignored.
+                targetUserIds = [userId];
+            }
+
             const clients = await this.prisma.client.findMany({
-                where: { userId, ...(active !== undefined ? { isActive: active } : {}) },
+                where: {
+                    userId: { in: targetUserIds },
+                    ...(active !== undefined ? { isActive: active } : {})
+                },
                 orderBy: { createdAt: 'desc' },
             });
 

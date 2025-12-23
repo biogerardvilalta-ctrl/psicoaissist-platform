@@ -66,6 +66,11 @@ export class CreateClientDto {
     @IsBoolean()
     @IsOptional()
     sendWhatsappReminders?: boolean;
+
+    @ApiPropertyOptional({ description: 'ID of the professional to assign this client to (Agenda Manager only)' })
+    @IsString()
+    @IsOptional()
+    professionalId?: string;
 }
 
 export class CreateClientEncryptedDto {
@@ -100,6 +105,11 @@ export class CreateClientEncryptedDto {
     @IsBoolean()
     @IsOptional()
     sendWhatsappReminders?: boolean;
+
+    @ApiPropertyOptional({ description: 'ID of the professional to assign this client to (Agenda Manager only)' })
+    @IsString()
+    @IsOptional()
+    professionalId?: string;
 }
 
 import { PartialType } from '@nestjs/mapped-types';

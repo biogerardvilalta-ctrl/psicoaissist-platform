@@ -10,13 +10,14 @@ import {
   Query,
   ParseIntPipe,
   Logger,
+  Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { CreateUserDto, UpdateUserDto, UserResponseDto, ChangeRoleDto } from './dto/users.dto';
+import { CreateUserDto, UpdateUserDto, UserResponseDto, ChangeRoleDto, CreateAgendaManagerDto, LinkProfessionalDto } from './dto/users.dto';
 import { UserRole } from '@prisma/client';
 
 @ApiTags('Users')
@@ -27,6 +28,7 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
 
   constructor(private readonly usersService: UsersService) { }
+
 
   @ApiOperation({ summary: 'Crear nuevo usuario (solo administradores)' })
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente', type: UserResponseDto })
@@ -137,4 +139,48 @@ export class UsersController {
       throw error;
     }
   }
+
+
+  // --- Agenda Manager Endpoints ---
+
+  @ApiOperation({ summary: 'Crear Agenda Manager (Solo Profesionales)' })
+  @ApiResponse({ status: 201, type: UserResponseDto })
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @Post('agenda-managers')
+  async createAgendaManager(@Req() req: any, @Body() dto: CreateAgendaManagerDto) {
+    return this.usersService.createAgendaManager(req.user.id, dto);
+  }
+
+  @ApiOperation({ summary: 'Listar mis Agenda Managers' })
+  @ApiResponse({ status: 200, type: [UserResponseDto] })
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @Get('me/agenda-managers')
+  async getMyAgendaManagers(@Req() req: any) {
+    return this.usersService.getAgendaManagers(req.user.id);
+  }
+
+  @ApiOperation({ summary: 'Eliminar Agenda Manager' })
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @Delete('agenda-managers/:id')
+  async deleteAgendaManager(@Req() req: any, @Param('id') id: string) {
+    return this.usersService.deleteAgendaManager(req.user.id, id);
+  }
+
+  @ApiOperation({ summary: 'Obtener profesionales gestionados (Para Agenda Manager)' })
+  @Roles(UserRole.AGENDA_MANAGER)
+  @Get('me/managed-professionals')
+  async getManagedProfessionals(@Req() req: any) {
+    return this.usersService.getLinkedProfessionals(req.user.id);
+  }
+
+  @ApiOperation({ summary: 'Vincular profesional a Agenda Manager' })
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM) // Who can do this? The professional linking themselves? Or the owner? Assuming the professional wants to add themselves to a manager.
+  @Post('agenda-managers/:id/link')
+  async linkProfessional(@Req() req: any, @Param('id') managerId: string) {
+    // A professional links THEMSELVES to an existing manager (e.g. by invitation code in future, but for now direct link)
+    // Or maybe the owner links another professional?
+    // Let's assume the logged in professional is linking themselves to the manager.
+    return this.usersService.linkProfessional(managerId, req.user.id);
+  }
+
 }

@@ -11,7 +11,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           url: configService.get('DATABASE_URL'),
         },
       },
-      log: configService.get('NODE_ENV') === 'development' 
+      log: configService.get('NODE_ENV') === 'development'
         ? ['query', 'info', 'warn', 'error']
         : ['warn', 'error'],
     });
@@ -19,20 +19,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   async onModuleInit() {
     await this.$connect();
-    
+
     // Add middleware for soft delete
     this.$use(async (params, next) => {
       // Soft delete for models that have isActive field
       if (params.action === 'delete') {
-        if (params.model === 'User' || params.model === 'Client') {
+        if (params.model === 'Client') {
           params.action = 'update';
           params.args['data'] = { isActive: false };
         }
       }
-      
+
       // Filter out soft deleted records for findMany
       if (params.action === 'findMany') {
-        if (params.model === 'User' || params.model === 'Client') {
+        if (params.model === 'Client') {
           if (params.args.where) {
             if (params.args.where.isActive === undefined) {
               params.args.where.isActive = true;
@@ -42,7 +42,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           }
         }
       }
-      
+
       return next(params);
     });
   }

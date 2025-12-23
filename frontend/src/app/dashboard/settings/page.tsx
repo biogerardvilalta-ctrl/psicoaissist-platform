@@ -17,14 +17,15 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
-import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro } from 'lucide-react';
+import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro, Users } from 'lucide-react';
+import { AgendaManagersSettings } from '@/components/dashboard/settings/agenda-managers-settings';
 
 export default function SettingsPage() {
   const { user, updateUser } = useAuth();
   const { toast } = useToast();
 
   // Navigation State
-  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'billing'>('agenda');
+  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'billing' | 'managers'>('agenda');
 
   // Form State
   const [enableReminders, setEnableReminders] = useState<boolean>(false);
@@ -77,6 +78,7 @@ export default function SettingsPage() {
   const menuItems = [
     { id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon },
     { id: 'billing', label: 'Facturación y Tarifas', icon: Euro },
+    { id: 'managers', label: 'Gestores de Agenda', icon: Users },
     { id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
   ];
@@ -347,6 +349,20 @@ export default function SettingsPage() {
                   </p>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+        )}
+
+        {/* AGENDA MANAGERS SECTION */}
+        {activeSection === 'managers' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Gestores de Agenda</CardTitle>
+              <CardDescription>Gestiona los usuarios que tienen acceso a tu agenda y pacientes.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AgendaManagersSettings />
             </CardContent>
           </Card>
         )}

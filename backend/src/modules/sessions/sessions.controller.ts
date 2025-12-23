@@ -18,13 +18,13 @@ export class SessionsController {
     }
 
     @Get()
-    findAll(@Request() req) {
-        return this.sessionsService.findAll(req.user.id);
+    findAll(@Request() req, @Query() query: any) {
+        return this.sessionsService.findAll(req.user, query);
     }
 
     @Get('calendar')
-    findByDateRange(@Request() req, @Query('start') start: string, @Query('end') end: string) {
-        return this.sessionsService.findByDateRange(req.user.id, start, end);
+    findByDateRange(@Request() req, @Query('start') start: string, @Query('end') end: string, @Query('professionalId') professionalId?: string) {
+        return this.sessionsService.findByDateRange(req.user, start, end, professionalId);
     }
 
     @Get('availability')
