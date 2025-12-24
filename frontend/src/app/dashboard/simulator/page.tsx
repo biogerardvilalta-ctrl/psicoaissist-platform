@@ -20,7 +20,7 @@ export default function SimulatorPage() {
     const [metrics, setMetrics] = useState<{ empathy: number; intervention_effectiveness: number; professionalism: number } | null>(null);
 
     // Voice - Default to Catalan (ca-ES) as per user request
-    const { isListening, transcript, startListening, stopListening, resetTranscript } = useSpeechRecognition('ca-ES');
+    const { isListening, transcript, interimTranscript, startListening, stopListening, resetTranscript } = useSpeechRecognition('ca-ES');
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -94,12 +94,11 @@ export default function SimulatorPage() {
 
     const handleStopRecording = () => {
         stopListening();
-        // Small delay to ensure transcript is final?
-        // But transcript state here is from hook.
-        // We might need to wait for final transcript?
-        // For now, use current transcript.
-        if (transcript.trim()) {
-            handleSendMessage(transcript);
+        // Combine final and interim transcripts to ensure we capture everything
+        const fullText = (transcript + ' ' + (interimTranscript || '')).trim();
+
+        if (fullText) {
+            handleSendMessage(fullText);
         }
     };
 
@@ -240,9 +239,9 @@ export default function SimulatorPage() {
                         {/* Controls */}
                         <div className="p-4 border-t bg-white">
                             {/* Transcript Preview */}
-                            {transcript && (
+                            {(transcript || interimTranscript) && (
                                 <div className="mb-2 p-2 bg-gray-50 text-gray-500 italic text-sm rounded border">
-                                    "{transcript}"
+                                    "{transcript} {interimTranscript}"
                                 </div>
                             )}
 

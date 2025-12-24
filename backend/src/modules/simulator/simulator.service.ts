@@ -54,13 +54,14 @@ export class SimulatorService {
             const response = await result.response;
             let text = response.text();
 
-            // Aggressive cleanup to ensure no markdown
-            text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            // Robust JSON extraction
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) throw new Error("No JSON found in response");
 
-            const data = JSON.parse(text);
+            const data = JSON.parse(jsonMatch[0]);
 
             // Validate essential fields exists
-            if (!data.name || !data.age) throw new Error("Invalid structure");
+            if (!data.name || !data.age) throw new Error("Invalid structure: Missing fields");
 
             return { ...data, difficulty };
         } catch (error) {
@@ -130,9 +131,6 @@ export class SimulatorService {
     }
 
     /**
-     * Generates a supervisory report after the session.
-     */
-    /**
      * Generates a supervisory report after the session with statistics.
      */
     async evaluate(history: { role: 'user' | 'model'; parts: string }[]): Promise<{ feedback: string; metrics: any }> {
@@ -172,14 +170,19 @@ export class SimulatorService {
 
             const result = await model.generateContent(prompt);
             const response = await result.response;
-            const text = response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+            const text = response.text();
 
-            return JSON.parse(text);
+            // Robust JSON extraction
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) throw new Error("No JSON found in response");
+
+            return JSON.parse(jsonMatch[0]);
         } catch (error) {
             this.logger.error('Error in evaluation:', error);
+            // Fallback to avoid breaking frontend
             return {
-                metrics: { empathy: 0, intervention_effectiveness: 0, professionalism: 0 },
-                feedback: "⚠️ No s'ha pogut generar l'informe detallat degut a un error del sistema."
+                metrics: { empathy: 50, intervention_effectiveness: 50, professionalism: 50 },
+                feedback: "⚠️ Error en generar l'informe. Si us plau, torna-ho a provar.\n\n" + error
             };
         }
     }
