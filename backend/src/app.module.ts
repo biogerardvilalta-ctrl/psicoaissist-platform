@@ -23,6 +23,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { RemindersModule } from './modules/reminders/reminders.module';
 import { GoogleModule } from './modules/google/google.module';
+import { SimulatorModule } from './modules/simulator/simulator.module';
 // import { HealthModule } from './modules/health/health.module';
 
 // Shared services
@@ -96,7 +97,8 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     AuditModule,
     AuditModule,
     RemindersModule,
-    GoogleModule, // New Google integration
+    GoogleModule,
+    SimulatorModule, // Clinical Simulator
     // HealthModule,
   ],
   controllers: [],

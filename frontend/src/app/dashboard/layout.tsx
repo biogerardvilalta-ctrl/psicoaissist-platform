@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useRole } from '@/hooks/useRole';
-import { Heart, User, Settings, LogOut, Bell, Menu, X, Shield, LayoutDashboard, Users, FileText, Calendar, PieChart } from 'lucide-react';
+import { Heart, User, Settings, LogOut, Bell, Menu, X, Shield, LayoutDashboard, Users, FileText, Calendar, PieChart, Mic } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import {
@@ -40,6 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { name: 'Sesiones', href: '/dashboard/sessions', icon: Calendar, show: true },
         { name: 'Informes', href: '/dashboard/reports', icon: FileText, show: !isAgendaManager() },
         { name: 'Estadísticas', href: '/dashboard/statistics', icon: PieChart, show: !isAgendaManager() },
+        { name: 'Simulador', href: '/dashboard/simulator', icon: Mic, show: !isAgendaManager() },
         { name: 'Legal', href: '/dashboard/compliance', icon: Shield, extraMargin: true, show: true },
     ].filter(item => item.show);
 
