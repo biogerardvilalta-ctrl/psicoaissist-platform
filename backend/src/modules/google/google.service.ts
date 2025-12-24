@@ -92,7 +92,8 @@ export class GoogleService {
         });
 
         if (!user || !user.googleRefreshToken) {
-            throw new UnauthorizedException('User not connected to Google Calendar');
+            // Instead of throwing 401 (which logs out the user), return empty list
+            return [];
         }
 
         if (user.googleImportCalendar === false) {

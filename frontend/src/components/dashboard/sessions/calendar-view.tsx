@@ -70,9 +70,6 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
 
         if (user && user.googleRefreshToken) {
             fetchGoogleEvents();
-        } else {
-            // Try optimistic fetch
-            fetchGoogleEvents();
         }
 
     }, [currentDate, user]);
