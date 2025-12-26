@@ -1,6 +1,7 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common';
 import { SimulatorService, PatientProfile } from './simulator.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Public } from '../auth/decorators/public.decorator';
 
 import { IsString, IsEnum, IsArray, IsNotEmpty, IsObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -37,8 +38,8 @@ export class SimulatorController {
     constructor(private readonly simulatorService: SimulatorService) { }
 
     @Post('start')
-    async start(@Body() dto: StartSimulationDto) {
-        return this.simulatorService.generateCase(dto.difficulty);
+    async start(@Body() dto: StartSimulationDto, @Request() req) {
+        return this.simulatorService.generateCase(req.user.id, dto.difficulty);
     }
 
     @Post('chat')
@@ -53,5 +54,34 @@ export class SimulatorController {
     @Post('evaluate')
     async evaluate(@Body() dto: EndSimulationDto) {
         return this.simulatorService.evaluate(dto.history);
+    }
+
+    // === PUBLIC DEMO ROUTES ===
+
+    @Public()
+    @Get('demo/start')
+    async startDemo() {
+        // Hardcoded demo case to save AI costs and ensure quality
+        return {
+            name: "Marta R.",
+            age: 28,
+            condition: "Ansietat Social (Demo)",
+            traits: ["Nerviosa", "Evitativa", "Autocrítica"],
+            difficulty: 'medium',
+            scenario: "Sénto molta ansietat quan he de parlar en les reunions de zoom de la feina. Tinc por que es noti que em tremola la veu."
+        };
+    }
+
+    @Public()
+    @Post('demo/chat')
+    async chatDemo(@Body() dto: ChatDto) {
+        // Limit history length strictly to prevent abuse
+        if (dto.history.length > 6) {
+            return "... (Límite de la demo alcanzado. Regístrate para continuar)";
+        }
+
+        return {
+            response: await this.simulatorService.chat(dto.history, dto.message, dto.profile)
+        };
     }
 }

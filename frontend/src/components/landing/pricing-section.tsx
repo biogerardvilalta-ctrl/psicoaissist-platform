@@ -40,6 +40,7 @@ const plans = [
       'Transcripción tiempo real ilimitada',
       'Sincronización Google Calendar',
       'Informes clínicos automaticos',
+      'Simulador Clínico (5 casos/mes)',
       'Soporte prioritario',
       'Almacenamiento 50GB',
     ],

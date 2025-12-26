@@ -1,6 +1,7 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { Injectable, Logger, Inject, ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AiProvider, AiMessage } from '../ai/interfaces/ai-provider.interface';
+import { PrismaService } from '../../common/prisma/prisma.service';
 
 interface SimulationState {
     patientProfile: PatientProfile;
@@ -23,13 +24,65 @@ export class SimulatorService {
 
     constructor(
         private configService: ConfigService,
+        private prisma: PrismaService,
         @Inject('AI_PROVIDER') private aiProvider: AiProvider
     ) { }
+
+    private async checkAndIncrementUsage(userId: string): Promise<void> {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { subscription: true }
+        });
+
+        if (!user) throw new ForbiddenException("User not found");
+
+        const plan = user.subscription?.planType || 'basic';
+
+        // Unlimited plans
+        if (['premium', 'clinics', 'admin'].includes(plan)) return;
+
+        // Basic plan (No access, though frontend should hide it)
+        if (plan === 'basic') {
+            throw new ForbiddenException("El plan Basic no incluye simulador. Actualiza a Pro.");
+        }
+
+        // Pro / Team Plan (Limited to 5)
+        // Reset Logic
+        const now = new Date();
+        const lastReset = user.simulatorLastReset || new Date(0);
+        const isNewMonth = now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear();
+
+        if (isNewMonth) {
+            await this.prisma.user.update({
+                where: { id: userId },
+                data: {
+                    simulatorUsageCount: 1, // Start with 1 for this usage
+                    simulatorLastReset: now
+                }
+            });
+            return;
+        }
+
+        if (user.simulatorUsageCount >= 5) {
+            throw new ForbiddenException("Has alcanzado el límite de 5 casos/mes del Plan Pro. Espera al próximo mes o contacta para ampliar.");
+        }
+
+        // Increment
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                simulatorUsageCount: { increment: 1 }
+            }
+        });
+    }
 
     /**
      * Generates a random clinical case (Persona).
      */
-    async generateCase(difficulty: 'easy' | 'medium' | 'hard' = 'medium'): Promise<PatientProfile> {
+    async generateCase(userId: string, difficulty: 'easy' | 'medium' | 'hard' = 'medium'): Promise<PatientProfile> {
+        // Enforce Limits
+        await this.checkAndIncrementUsage(userId);
+
         const prompt = `
         Genera un perfil d'un "pacient simulat" per a l'entrenament de psicòlegs.
         Dificultat: ${difficulty}.
@@ -98,7 +151,6 @@ export class SimulatorService {
             // Prepend System Prompt
             const fullHistory: AiMessage[] = [
                 { role: 'system', content: systemPrompt },
-                { role: 'model', content: "Entes. Em posaré en el paper. Començem." }, // Initial acknowledgement to seed the chat
                 ...validHistory
             ];
 

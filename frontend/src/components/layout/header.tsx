@@ -29,6 +29,12 @@ export function Header() {
               Características
             </a>
             <a
+              href="/simulator/try"
+              className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+            >
+              Simulador
+            </a>
+            <a
               href="#pricing"
               className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
@@ -102,6 +108,13 @@ export function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Características
+              </a>
+              <a
+                href="/simulator/try"
+                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Simulador
               </a>
               <a
                 href="#pricing"

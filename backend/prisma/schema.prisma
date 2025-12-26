@@ -41,6 +41,10 @@ model User {
   // AI Settings
   preferredLanguage String @default("ca") @map("preferred_language")
   dashboardLayout   Json?    @map("dashboard_layout")
+  
+  // Simulator Limits
+  simulatorUsageCount Int      @default(0) @map("simulator_usage_count")
+  simulatorLastReset  DateTime? @map("simulator_last_reset")
 
   // Google Integration
   googleRefreshToken String?  @map("google_refresh_token")
