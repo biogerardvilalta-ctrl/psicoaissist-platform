@@ -24,9 +24,10 @@ interface DashboardGridProps {
     renderItem: (id: string) => React.ReactNode;
     onSave: (items: string[]) => void;
     defaultItems?: string[];
+    headerActions?: React.ReactNode;
 }
 
-export function DashboardGrid({ items: initialItems, renderItem, onSave, defaultItems }: DashboardGridProps) {
+export function DashboardGrid({ items: initialItems, renderItem, onSave, defaultItems, headerActions }: DashboardGridProps) {
     const [items, setItems] = useState<string[]>(initialItems);
     const [isEditMode, setIsEditMode] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
@@ -78,7 +79,10 @@ export function DashboardGrid({ items: initialItems, renderItem, onSave, default
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-end gap-2 mb-4">
+            <div className="flex justify-end gap-2 mb-4 items-center">
+                <div className="flex-1"></div>
+                {headerActions}
+
                 {isEditMode ? (
                     <>
                         <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground">

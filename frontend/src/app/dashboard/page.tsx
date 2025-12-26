@@ -34,6 +34,7 @@ import { GroupsSection } from '@/components/dashboard/groups/GroupsSection';
 import { ThemesWidget } from '@/components/dashboard/widgets/ThemesWidget';
 import { SentimentWidget } from '@/components/dashboard/widgets/SentimentWidget';
 import { DistributionWidget } from '@/components/dashboard/widgets/DistributionWidget';
+import { ReferralWidget } from '@/components/dashboard/widgets/ReferralWidget';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -65,7 +66,9 @@ const ALL_WIDGETS = [
   { id: 'sentimentWidget', label: 'Tendencia Bienestar', category: 'Charts' },
   { id: 'sessionTypesWidget', label: 'Tipos de Sesión', category: 'Charts' },
   { id: 'testsWidget', label: 'Pruebas Realizadas', category: 'Analítica Clínica' },
+  { id: 'testsWidget', label: 'Pruebas Realizadas', category: 'Analítica Clínica' },
   { id: 'techniquesWidget', label: 'Técnicas Terapéuticas', category: 'Analítica Clínica' },
+  { id: 'referralWidget', label: 'Invita y Gana', category: 'Growth' },
 ];
 
 const DEFAULT_LAYOUT = [
@@ -247,6 +250,8 @@ export default function DashboardPage() {
           data={dashboardStats?.techniques || []}
         />;
 
+      case 'referralWidget': return <ReferralWidget />;
+
       case 'sessionsThisMonth': return <StatsWidget id={id} data={{ title: "Sesiones", value: advancedStats.sessionsThisMonth.toString(), icon: BarChart3, iconBgColor: "bg-primary/10", iconColor: "text-primary", subtitle: "Este Mes", trend: { value: "Realizadas", isPositive: true }, onClick: () => handleCardClick(id) }} />;
       case 'activePatients': return <StatsWidget id={id} data={{ title: "Pacientes", value: stats.activeClients.toString(), icon: UserIcon, iconBgColor: "bg-primary/10", iconColor: "text-primary", subtitle: "Activos", trend: stats.clientTrend, onClick: () => handleCardClick(id) }} />;
       case 'monthIncome': return <StatsWidget id={id} data={{ title: "Ingresos (Est)", value: `${advancedStats.monthIncome}€`, icon: Euro, iconBgColor: "bg-emerald-100", iconColor: "text-emerald-700", subtitle: "Este Mes", trend: { value: "60€/h", isPositive: true }, onClick: () => handleCardClick(id) }} />;
@@ -262,6 +267,8 @@ export default function DashboardPage() {
     <ProtectedRoute>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 flex justify-between items-center">
+
+
           <div>
             <h1 className="text-3xl font-bold text-slate-800 tracking-tight">
               {isAgendaManager() ? `Hola, ${user?.firstName || 'Gestor/a'}` : `Hola, ${user?.firstName || 'Doctor/a'}`}
@@ -287,42 +294,9 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-4">
             {!isAgendaManager() && (
-              <Sheet open={isLibraryOpen} onOpenChange={setIsLibraryOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    <PlusCircle className="h-4 w-4" />
-                    Librería de Widgets
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Librería de Widgets</SheetTitle>
-                    <SheetDescription>
-                      Activa o desactiva los widgets que quieres ver en tu dashboard.
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="mt-6 space-y-4 h-[calc(100vh-140px)] overflow-y-auto pr-2 pb-4">
-                    {ALL_WIDGETS.map(widget => {
-                      const isActive = layout.includes(widget.id);
-                      return (
-                        <div key={widget.id} className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                          <div>
-                            <h4 className="font-medium text-sm">{widget.label}</h4>
-                            <span className="text-xs text-muted-foreground">{widget.category}</span>
-                          </div>
-                          <Button
-                            variant={isActive ? "secondary" : "default"}
-                            size="sm"
-                            onClick={() => handleAddWidget(widget.id)}
-                          >
-                            {isActive ? 'Ocultar' : 'Añadir'}
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </SheetContent>
-              </Sheet>
+              <div className="w-72 h-auto hidden lg:block hover:scale-[1.02] transition-transform duration-200">
+                <ReferralWidget />
+              </div>
             )}
           </div>
         </div>
@@ -394,6 +368,44 @@ export default function DashboardPage() {
                 renderItem={renderItem}
                 onSave={handleSaveLayout}
                 defaultItems={DEFAULT_LAYOUT}
+                headerActions={
+                  <Sheet open={isLibraryOpen} onOpenChange={setIsLibraryOpen}>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <PlusCircle className="h-4 w-4" />
+                        <span className="hidden sm:inline">Widgets</span>
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <SheetHeader>
+                        <SheetTitle>Librería de Widgets</SheetTitle>
+                        <SheetDescription>
+                          Activa o desactiva los widgets que quieres ver en tu dashboard.
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="mt-6 space-y-4 h-[calc(100vh-140px)] overflow-y-auto pr-2 pb-4">
+                        {ALL_WIDGETS.filter(w => w.id !== 'referralWidget').map(widget => {
+                          const isActive = layout.includes(widget.id);
+                          return (
+                            <div key={widget.id} className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                              <div>
+                                <h4 className="font-medium text-sm">{widget.label}</h4>
+                                <span className="text-xs text-muted-foreground">{widget.category}</span>
+                              </div>
+                              <Button
+                                variant={isActive ? "secondary" : "default"}
+                                size="sm"
+                                onClick={() => handleAddWidget(widget.id)}
+                              >
+                                {isActive ? 'Ocultar' : 'Añadir'}
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                }
               />
             ) : (
               <div className="flex items-center justify-center h-64">

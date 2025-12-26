@@ -46,6 +46,11 @@ model User {
   simulatorUsageCount Int      @default(0) @map("simulator_usage_count")
   simulatorLastReset  DateTime? @map("simulator_last_reset")
 
+  // Growth & Referrals
+  referralCode    String?  @unique @map("referral_code")
+  referredBy      String?  @map("referred_by")
+  referralsCount  Int      @default(0) @map("referrals_count")
+
   // Google Integration
   googleRefreshToken String?  @map("google_refresh_token")
   googleCalendarId   String?  @map("google_calendar_id")

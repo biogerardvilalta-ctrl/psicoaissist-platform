@@ -26,6 +26,8 @@ export interface User {
   groupMembers?: { id: string; firstName: string; lastName: string }[];
   googleRefreshToken?: string;
   googleImportCalendar?: boolean;
+  referralCode?: string;
+  referralsCount?: number;
 }
 
 export interface AuthTokens {

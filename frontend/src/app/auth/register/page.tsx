@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, UserPlus, Heart, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, Heart, AlertCircle, Gift } from 'lucide-react';
 
 interface RegisterFormData {
   firstName: string;
@@ -13,6 +13,7 @@ interface RegisterFormData {
   confirmPassword: string;
   professionalNumber: string;
   country: string;
+  referralCode: string;
   termsAccepted: boolean;
 }
 
@@ -25,6 +26,7 @@ export default function RegisterPage() {
     confirmPassword: '',
     professionalNumber: '',
     country: 'España',
+    referralCode: '',
     termsAccepted: false,
   });
 
@@ -35,6 +37,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -109,25 +112,7 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      // Por ahora simulamos el registro
-      console.log('📝 Registrando usuario:', {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        professionalNumber: formData.professionalNumber,
-        country: formData.country,
-        legalLiabilityAccepted
-      });
-
-      // Simulamos delay de red
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Simulamos éxito
-      alert('¡Registro exitoso! Tu cuenta está en proceso de validación.');
-      router.push('/auth/login?message=registro-exitoso');
-
-      /* Cuando tengamos el backend real:
-      const response = await fetch('http://localhost:3005/api/v1/auth/register', {
+      const response = await fetch(`${API_URL}/api/v1/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -139,17 +124,20 @@ export default function RegisterPage() {
           password: formData.password,
           professionalNumber: formData.professionalNumber,
           country: formData.country,
+          referralCode: formData.referralCode || undefined, // Send undefined if empty
+          role: 'PSYCHOLOGIST' // Default role
         }),
       });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error en el registro');
-      }
-      
+
       const data = await response.json();
-      // Guardar token y redirigir
-      */
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error en el registro');
+      }
+
+      // Success!
+      // In a real app we might auto-login, but here we redirect to login with a message
+      router.push('/auth/login?message=registro-exitoso');
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error en el registro';
@@ -261,7 +249,7 @@ export default function RegisterPage() {
                   name="country"
                   required
                   value={formData.country}
-                  onChange={handleInputChange} // React select handling might differ slightly but this usually works for native select
+                  onChange={handleInputChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Selección</option>
@@ -333,6 +321,24 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Referral Code */}
+            <div>
+              <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700 flex items-center">
+                <Gift className="w-4 h-4 mr-1 text-purple-600" />
+                Código de invitación (Opcional)
+              </label>
+              <input
+                id="referralCode"
+                name="referralCode"
+                type="text"
+                value={formData.referralCode}
+                onChange={handleInputChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-purple-50/50"
+                placeholder="Si tienes uno, ingrésalo aquí"
+              />
+              <p className="mt-1 text-xs text-gray-500">¿Tus colegas ya usan PsicoAIssist? Pídeles su código.</p>
+            </div>
+
             {/* Liability Checkbox */}
             <div className="flex items-start p-3 bg-red-50 rounded-md border border-red-100">
               <div className="flex items-center h-5">
@@ -397,7 +403,7 @@ export default function RegisterPage() {
               {loading ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creando cuenta...
+                  Registrando...
                 </div>
               ) : (
                 <div className="flex items-center">

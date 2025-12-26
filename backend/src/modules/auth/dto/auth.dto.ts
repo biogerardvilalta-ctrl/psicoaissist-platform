@@ -50,6 +50,11 @@ export class RegisterDto {
   @ApiProperty({ example: 'España' })
   @IsString()
   country: string;
+
+  @ApiProperty({ required: false, example: 'REF12345' })
+  @IsString()
+  @IsOptional()
+  referralCode?: string;
 }
 
 export class TokensDto {
@@ -105,6 +110,12 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   dashboardLayout?: string[];
+
+  @ApiProperty({ required: false })
+  referralCode?: string;
+
+  @ApiProperty({ required: false })
+  referralsCount?: number;
 }
 
 export class AuthResponseDto {

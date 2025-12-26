@@ -46,7 +46,11 @@ export class SimulatorService {
             throw new ForbiddenException("El plan Basic no incluye simulador. Actualiza a Pro.");
         }
 
-        // Pro / Team Plan (Limited to 5)
+        // Pro / Team Plan (Limited to 5 + Referrals)
+        const baseLimit = 5;
+        const referralBonus = (user.referralsCount || 0) * 5;
+        const totalLimit = baseLimit + referralBonus;
+
         // Reset Logic
         const now = new Date();
         const lastReset = user.simulatorLastReset || new Date(0);
@@ -63,8 +67,8 @@ export class SimulatorService {
             return;
         }
 
-        if (user.simulatorUsageCount >= 5) {
-            throw new ForbiddenException("Has alcanzado el límite de 5 casos/mes del Plan Pro. Espera al próximo mes o contacta para ampliar.");
+        if (user.simulatorUsageCount >= totalLimit) {
+            throw new ForbiddenException(`Has alcanzado el límite de ${totalLimit} casos/mes (${baseLimit} base + ${referralBonus} por referidos). Invita a más profesionales para ampliar.`);
         }
 
         // Increment

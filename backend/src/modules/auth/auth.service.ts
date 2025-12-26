@@ -95,6 +95,16 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
 
+    // Backfill Referral Code (Migration for existing users)
+    if (!user.referralCode) {
+      const newCode = await this.generateUniqueReferralCode(user.firstName);
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { referralCode: newCode }
+      });
+      user.referralCode = newCode;
+    }
+
     const tokens = await this.generateTokens(user);
     const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(user.id);
 
@@ -144,6 +154,26 @@ export class AuthService {
         throw new ConflictException('El email ya está registrado');
       }
 
+      // Referral Logic
+      let referredByUserId: string | null = null;
+      if (registerDto.referralCode) {
+        const referrer = await this.prisma.user.findUnique({
+          where: { referralCode: registerDto.referralCode },
+        });
+
+        if (referrer) {
+          referredByUserId = referrer.id;
+          // Increment referrer count
+          await this.prisma.user.update({
+            where: { id: referrer.id },
+            data: { referralsCount: { increment: 1 } }
+          });
+        }
+      }
+
+      // Generate unique referral code for new user
+      const referralCode = await this.generateUniqueReferralCode(registerDto.firstName);
+
       // Hashear la contraseña
       const passwordHash = await this.encryptionService.hashPassword(registerDto.password);
 
@@ -160,10 +190,12 @@ export class AuthService {
           status: UserStatus.PENDING_REVIEW,
           createdAt: new Date(),
           updatedAt: new Date(),
+          referralCode,
+          referredBy: referredByUserId,
         },
       });
 
-      this.logger.log(`New user registered: ${user.email}`);
+      this.logger.log(`New user registered: ${user.email} (Referred by: ${referredByUserId || 'None'})`);
 
       // Enviar email de bienvenida
       try {
@@ -196,6 +228,8 @@ export class AuthService {
           scheduleConfig: user.scheduleConfig as any,
           dashboardLayout: user.dashboardLayout as any,
           hourlyRate: user.hourlyRate,
+          referralCode: user.referralCode,
+          referralsCount: user.referralsCount,
         },
         tokens,
         encryptionKey: {
@@ -207,6 +241,21 @@ export class AuthService {
       this.logger.error(`Error registering user: ${error.message}`);
       throw error;
     }
+  }
+
+  private async generateUniqueReferralCode(firstName: string): Promise<string> {
+    const prefix = firstName.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'PSY');
+    const random = Math.floor(1000 + Math.random() * 9000);
+    let code = `${prefix}${random}`;
+
+    // Simple collision check (rare)
+    let exists = await this.prisma.user.findUnique({ where: { referralCode: code } });
+    while (exists) {
+      const random2 = Math.floor(1000 + Math.random() * 9000);
+      code = `${prefix}${random2}`;
+      exists = await this.prisma.user.findUnique({ where: { referralCode: code } });
+    }
+    return code;
   }
 
   /**
@@ -383,5 +432,27 @@ export class AuthService {
       this.logger.error(`Error updating profile: ${error.message}`);
       throw error;
     }
+  }
+  async getProfile(userId: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    // Backfill Referral Code if missing
+    if (!user.referralCode) {
+      const newCode = await this.generateUniqueReferralCode(user.firstName);
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { referralCode: newCode, updatedAt: new Date() }
+      });
+      user.referralCode = newCode;
+    }
+
+    const { passwordHash, ...result } = user;
+    return result;
   }
 }

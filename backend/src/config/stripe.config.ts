@@ -35,6 +35,23 @@ export default registerAs('stripe', () => ({
         apiAccess: true
       }
     },
+    team: {
+      priceId: process.env.STRIPE_TEAM_PRICE_ID || 'price_team',
+      amount: 7900, // €79.00
+      currency: 'eur',
+      interval: 'month',
+      name: 'Plan Equipo',
+      features: {
+        maxClients: -1, // unlimited
+        transcriptionHours: 350, // Shared pool approx
+        reportsPerMonth: -1,
+        supportLevel: 'priority',
+        advancedAnalytics: true,
+        apiAccess: false,
+        isTeam: true,
+        maxProfessionals: 3
+      }
+    },
     premium: {
       priceId: process.env.STRIPE_PREMIUM_PRICE_ID || 'price_premium',
       amount: 9900, // €99.00

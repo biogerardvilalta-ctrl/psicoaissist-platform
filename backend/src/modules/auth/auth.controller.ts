@@ -174,7 +174,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Req() req: Request & { user: any }) {
-    return req.user;
+    return this.authService.getProfile(req.user.id);
   }
 
   @ApiOperation({ summary: 'Cambiar contraseña' })
