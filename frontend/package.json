@@ -55,6 +55,7 @@
     "zustand": "^4.4.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "eslint": "^8",
     "eslint-config-next": "14.0.4"
   }
