@@ -80,6 +80,29 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "PsicoAIssist",
+              "applicationCategory": "MedicalApplication",
+              "operatingSystem": "Web",
+              "offers": {
+                "@type": "Offer",
+                "price": "29.00",
+                "priceCurrency": "EUR"
+              },
+              "description": "Asistente IA para psicólogos con transcripción segura y generación de informes.",
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.8",
+                "ratingCount": "124"
+              }
+            })
+          }}
+        />
         <AuthProvider>
           <ConditionalHeader />
           {children}

@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { getPromptByType } from './prompt.selector';
+import { AiProvider } from './interfaces/ai-provider.interface';
 
 const FORBIDDEN_WORDS_REGEX = /(ansietat|ansiedad|anxiety|depressió|depresión|depression|trastorn|trastorno|disorder|diagnòstic|diagnóstico|diagnosis|dsm|criteris|criterios|criteria|patologia|patología|pathology|paciente sufre|patient suffers|debe|must|obligatorio|mandatory|compleix criteris|cumple criterios|meets criteria|hauries de|deberías|should|és recomanable que|se recomienda que|it is recommended)/i;
 
@@ -309,15 +310,11 @@ const TEST_MAPPING_MENORS = {
     }
 };
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
 @Injectable()
 export class AiService {
-    private genAI: GoogleGenerativeAI;
-
-    constructor() {
-        this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-    }
+    constructor(
+        @Inject('AI_PROVIDER') private aiProvider: AiProvider
+    ) { }
 
     private filterContent(text: string): string | null {
         if (FORBIDDEN_WORDS_REGEX.test(text)) {
@@ -420,15 +417,16 @@ export class AiService {
                 console.log(`[AiService] Generating summary for transcription length: ${transcription.length}`);
 
                 try {
-                    // Using Gemini 2.0 Flash as it is available and fast
-                    const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-                    const result = await model.generateContent([
+                    // Using Gemini 2.0 Flash via Agnostic Provider
+                    const prompt = [
                         FACTUAL_SUMMARY_PROMPT(language),
                         `TRANSCRIPCIÓ A RESUMIR:\n${transcription}`
-                    ]);
+                    ];
 
-                    const response = await result.response;
-                    generatedSummary = response.text();
+                    generatedSummary = await this.aiProvider.generateText(prompt, {
+                        modelName: "gemini-2.0-flash"
+                    });
+
                     console.log(`[AiService] Summary generated successfully.`);
                 } catch (innerError) {
                     console.error("[AiService] Error generating summary:", innerError);
@@ -801,37 +799,26 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
      */
     async getLiveSuggestions(context: string): Promise<{ questions: string[]; considerations: string[]; indicators: { type: string; label: string }[] }> {
         try {
-            const prompt = `
+            // Combine System Prompt + Context
+            const combinedPrompt = `
+${LIVE_SESSION_SYSTEM_PROMPT}
+
 CONTEXT ACTUAL (Text viu de la sessió):
 "${context || '(Sessió iniciada, sense text encara)'}"
 
 Genera suggeriments en temps real format JSON.
 `;
 
-            const model = this.genAI.getGenerativeModel({
-                model: "gemini-2.0-flash", // Use latest available flash model
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    temperature: 0.7,
-                },
-                systemInstruction: LIVE_SESSION_SYSTEM_PROMPT
-            });
+            const parsed = await this.aiProvider.generateJSON<{ questions: string[]; considerations: string[]; indicators: { type: string; label: string }[] }>(
+                combinedPrompt,
+                { modelName: "gemini-2.0-flash", temperature: 0.7 }
+            );
 
-            const result = await model.generateContent(prompt);
-            const response = result.response;
-            const text = response.text();
-
-            try {
-                const parsed = JSON.parse(text);
-                return {
-                    questions: parsed.questions || [],
-                    considerations: parsed.considerations || [],
-                    indicators: parsed.indicators || []
-                };
-            } catch (e) {
-                console.error("Error parsing live AI JSON", e);
-                return { questions: [], considerations: [], indicators: [] };
-            }
+            return {
+                questions: parsed.questions || [],
+                considerations: parsed.considerations || [],
+                indicators: parsed.indicators || []
+            };
 
         } catch (error) {
             console.error("Error generating live suggestions:", error);
@@ -843,6 +830,7 @@ Genera suggeriments en temps real format JSON.
             };
         }
     }
+
     async generateReportDraft(data: {
         clientName: string;
         reportType: string;
@@ -882,19 +870,12 @@ Genera suggeriments en temps real format JSON.
             language: data.language || 'Català' // Injecting target language
         };
 
-        const prompt = promptTemplate(promptInput);
+        const promptContent = promptTemplate(promptInput);
 
-        // --- 2. REAL AI GENERATION ---
-        try {
-            const model = this.genAI.getGenerativeModel({
-                model: "gemini-2.0-flash",
-                generationConfig: {
-                    temperature: 0.3,
-                    maxOutputTokens: 8192, // Increased to prevent cut-offs
-                    responseMimeType: "text/plain", // Force HTML structure via prompt, not mimeType
-                },
-                systemInstruction: OFFICIAL_REPORT_SYSTEM_PROMPT + `
-                
+        // Combine System Prompt + Specific Instructions + User Content
+        const fullPrompt = [
+            OFFICIAL_REPORT_SYSTEM_PROMPT,
+            `
                 IDIOMA DE RESPOSTA OBLIGATORI: ${data.language || 'Català'} (Tot el contingut ha de ser generat en aquest idioma).
 
                 FORMAT DE SORTIDA OBLIGATORI:
@@ -905,14 +886,18 @@ Genera suggeriments en temps real format JSON.
                 - SI fas servir taules, fes servir <table>, <tr>, <td> amb estil simple (border="1" style="border-collapse: collapse; width: 100%;").
                 - NO facis servir Markdown (no facis servir **, ##, ni taules amb |).
                 - Assegura't de tancar totes les etiquetes.
-                `
+            `,
+            promptContent
+        ];
+
+        // --- 2. REAL AI GENERATION ---
+        try {
+            let text = await this.aiProvider.generateText(fullPrompt, {
+                modelName: "gemini-2.0-flash",
+                temperature: 0.3,
+                maxOutputTokens: 8192
             });
 
-            const result = await model.generateContent(prompt);
-            const response = result.response;
-            let text = response.text();
-
-            // formatting cleanup if needed (ensure it didn't wrap in markdown code blocks)
             // formatting cleanup: robustly remove markdown code blocks
             text = text.replace(/^```(?:html)?\s*/i, '').replace(/\s*```$/, '').trim();
 

@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AiProvider, AiMessage } from '../ai/interfaces/ai-provider.interface';
 
 interface SimulationState {
     patientProfile: PatientProfile;
@@ -18,14 +18,13 @@ export interface PatientProfile {
 
 @Injectable()
 export class SimulatorService {
-    private genAI: GoogleGenerativeAI;
     private readonly logger = new Logger(SimulatorService.name);
-    private modelName = 'gemini-2.0-flash'; // Available model
+    private modelName = 'gemini-2.0-flash'; // Default model
 
-    constructor(private configService: ConfigService) {
-        const apiKey = this.configService.get<string>('GEMINI_API_KEY');
-        this.genAI = new GoogleGenerativeAI(apiKey || '');
-    }
+    constructor(
+        private configService: ConfigService,
+        @Inject('AI_PROVIDER') private aiProvider: AiProvider
+    ) { }
 
     /**
      * Generates a random clinical case (Persona).
@@ -46,19 +45,9 @@ export class SimulatorService {
         `;
 
         try {
-            const model = this.genAI.getGenerativeModel({
-                model: this.modelName,
-                generationConfig: { responseMimeType: "application/json" }
+            const data = await this.aiProvider.generateJSON<PatientProfile>(prompt, {
+                modelName: this.modelName
             });
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            let text = response.text();
-
-            // Robust JSON extraction
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) throw new Error("No JSON found in response");
-
-            const data = JSON.parse(jsonMatch[0]);
 
             // Validate essential fields exists
             if (!data.name || !data.age) throw new Error("Invalid structure: Missing fields");
@@ -100,32 +89,23 @@ export class SimulatorService {
         `;
 
         try {
-            const model = this.genAI.getGenerativeModel({ model: this.modelName });
-
-            // Validate and sanitize history
-            const validHistory = (history || []).map(h => ({
+            // Convert history to Agnostic format
+            const validHistory: AiMessage[] = (history || []).map(h => ({
                 role: h.role === 'user' ? 'user' : 'model',
-                parts: [{ text: h.parts || '' }]
+                content: typeof h.parts === 'string' ? h.parts : (h.parts as any)[0]?.text || ''
             }));
 
-            // Construct history for Gemini SDK
-            const chatObj = model.startChat({
-                history: [
-                    {
-                        role: "user",
-                        parts: [{ text: systemPrompt }]
-                    },
-                    {
-                        role: "model",
-                        parts: [{ text: "Entes. Em posaré en el paper. Començem." }]
-                    },
-                    ...validHistory
-                ]
-            });
+            // Prepend System Prompt
+            const fullHistory: AiMessage[] = [
+                { role: 'system', content: systemPrompt },
+                { role: 'model', content: "Entes. Em posaré en el paper. Començem." }, // Initial acknowledgement to seed the chat
+                ...validHistory
+            ];
 
-            const result = await chatObj.sendMessage(newMessage);
-            const response = await result.response;
-            return response.text();
+            const responseText = await this.aiProvider.chat(fullHistory, newMessage, {
+                modelName: this.modelName
+            });
+            return responseText;
         } catch (error) {
             this.logger.error('Error in chat:', error);
             // Fallback response explicitly to avoid 500
@@ -166,20 +146,11 @@ export class SimulatorService {
         `;
 
         try {
-            const model = this.genAI.getGenerativeModel({
-                model: this.modelName,
-                generationConfig: { responseMimeType: "application/json" }
+            const result = await this.aiProvider.generateJSON<{ feedback: string; metrics: any }>(prompt, {
+                modelName: this.modelName
             });
 
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            const text = response.text();
-
-            // Robust JSON extraction
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) throw new Error("No JSON found in response");
-
-            return JSON.parse(jsonMatch[0]);
+            return result;
         } catch (error) {
             this.logger.error('Error in evaluation:', error);
             // Fallback to avoid breaking frontend
