@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, X, Heart, LogIn, UserPlus, Building2 } from 'lucide-react';
 
@@ -10,79 +11,81 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <Heart className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900">PsicoAIssist</span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
             <a
               href="#features"
-              className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Características
             </a>
-            <a
+            <Link
               href="/simulator/try"
-              className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Simulador
-            </a>
+            </Link>
             <a
               href="#pricing"
-              className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Precios
             </a>
             <a
               href="#testimonials"
-              className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Testimonios
             </a>
-            <a
-              href="/docs"
-              className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
-            >
-              Documentación
-            </a>
-            <a
-              href="/blog"
-              className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
-            >
-              Blog
-            </a>
+            <div className="hidden lg:flex items-center space-x-8">
+              <Link
+                href="/docs"
+                className="text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              >
+                Documentación
+              </Link>
+              <Link
+                href="/blog"
+                className="text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              >
+                Blog
+              </Link>
+            </div>
           </nav>
 
           {/* Desktop CTA buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <a
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-4 flex-shrink-0">
+            <Link
               href="/clinics"
-              className="hidden lg:inline-flex items-center px-3 py-1.5 text-xs bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors mr-2"
+              className="hidden xl:inline-flex items-center px-3 py-1.5 text-xs bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors"
             >
               <Building2 className="w-3 h-3 mr-1" />
               Para Clínicas
-            </a>
-            <a
+            </Link>
+            <Link
               href="/auth/login"
-              className="inline-flex items-center px-4 py-2 text-gray-700 font-medium hover:text-blue-600 transition-colors"
+              className="inline-flex items-center px-3 py-2 text-sm lg:text-base text-gray-700 font-medium hover:text-blue-600 transition-colors whitespace-nowrap"
             >
               <LogIn className="w-4 h-4 mr-2" />
               Iniciar sesión
-            </a>
-            <a
+            </Link>
+            <Link
               href="/auth/register"
-              className="inline-flex items-center px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm lg:text-base font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
             >
               <UserPlus className="w-4 h-4 mr-2" />
               Prueba gratis
-            </a>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -100,7 +103,7 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
+          <div className="md:hidden border-t border-gray-200 py-4 absolute top-16 left-0 right-0 bg-white shadow-lg z-40 px-4">
             <nav className="space-y-4">
               <a
                 href="#features"
@@ -109,13 +112,13 @@ export function Header() {
               >
                 Características
               </a>
-              <a
+              <Link
                 href="/simulator/try"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Simulador
-              </a>
+              </Link>
               <a
                 href="#pricing"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
@@ -130,35 +133,48 @@ export function Header() {
               >
                 Testimonios
               </a>
-              <a
+              <Link
                 href="/docs"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Documentación
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/blog"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Blog
-              </a>
+              </Link>
+              <Link
+                href="/clinics"
+                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Para Clínicas
+              </Link>
               <div className="pt-4 border-t border-gray-200 space-y-3">
-                <a
-                  href="/login"
+                <Link
+                  href="/auth/login"
                   className="block text-gray-700 font-medium hover:text-blue-600 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Iniciar sesión
-                </a>
-                <a
-                  href="/register"
+                  <div className="flex items-center">
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Iniciar sesión
+                  </div>
+                </Link>
+                <Link
+                  href="/auth/register"
                   className="block w-full text-center px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Prueba gratis
-                </a>
+                  <div className="flex items-center justify-center">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Prueba gratis
+                  </div>
+                </Link>
               </div>
             </nav>
           </div>

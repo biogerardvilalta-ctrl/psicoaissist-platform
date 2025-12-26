@@ -53,7 +53,7 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="py-16 bg-white sm:py-24">
+    <section id="features" className="py-16 bg-white sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center">
@@ -72,7 +72,7 @@ export function FeaturesSection() {
         <div className="mt-16">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
-              <div 
+              <div
                 key={feature.title}
                 className="relative group"
               >
@@ -81,7 +81,7 @@ export function FeaturesSection() {
                   <div className={`inline-flex p-3 rounded-lg ${feature.color}`}>
                     <feature.icon className="h-6 w-6" aria-hidden="true" />
                   </div>
-                  
+
                   {/* Content */}
                   <div className="mt-4">
                     <h3 className="text-lg font-semibold text-gray-900">
@@ -91,7 +91,7 @@ export function FeaturesSection() {
                       {feature.description}
                     </p>
                   </div>
-                  
+
                   {/* Hover effect */}
                   <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10 group-hover:ring-blue-500/20" />
                 </div>
