@@ -45,7 +45,7 @@ export interface CheckoutSession {
 }
 
 export interface CreateCheckoutSessionRequest {
-  plan: 'basic' | 'pro' | 'premium';
+  plan: 'basic' | 'pro' | 'team' | 'premium';
   customerId?: string;
   metadata?: Record<string, string>;
 }

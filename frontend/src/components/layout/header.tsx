@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Menu, X, Heart, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, Heart, LogIn, UserPlus, Building2 } from 'lucide-react';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -57,10 +57,11 @@ export function Header() {
           {/* Desktop CTA buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <a
-              href="/admin"
-              className="inline-flex items-center px-3 py-1.5 text-xs bg-purple-100 text-purple-700 font-medium rounded-lg hover:bg-purple-200 transition-colors"
+              href="/clinics"
+              className="hidden lg:inline-flex items-center px-3 py-1.5 text-xs bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors mr-2"
             >
-              Admin
+              <Building2 className="w-3 h-3 mr-1" />
+              Para Clínicas
             </a>
             <a
               href="/auth/login"

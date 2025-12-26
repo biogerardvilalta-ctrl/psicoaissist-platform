@@ -2,12 +2,12 @@ import { Injectable, Logger, NotFoundException, BadRequestException } from '@nes
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { StripeService } from './stripe.service';
 import { EmailService } from '../email/email.service';
-import { 
-  CreateCheckoutSessionDto, 
-  CreateCustomerDto, 
-  CreateSubscriptionDto, 
+import {
+  CreateCheckoutSessionDto,
+  CreateCustomerDto,
+  CreateSubscriptionDto,
   UpdateSubscriptionDto,
-  PlanType 
+  PlanType
 } from './dto/payments.dto';
 import Stripe from 'stripe';
 
@@ -19,7 +19,7 @@ export class PaymentsService {
     private prisma: PrismaService,
     private stripeService: StripeService,
     private emailService: EmailService,
-  ) {}
+  ) { }
 
   async createCheckoutSession(createCheckoutDto: CreateCheckoutSessionDto, userId: string) {
     try {
@@ -44,7 +44,7 @@ export class PaymentsService {
 
       // Create or get Stripe customer
       let stripeCustomerId = user.stripeCustomerId;
-      
+
       if (!stripeCustomerId) {
         const customer = await this.stripeService.createCustomer(
           user.email,
@@ -111,7 +111,7 @@ export class PaymentsService {
       }
 
       const session = await this.stripeService.createPortalSession(user.stripeCustomerId);
-      
+
       return {
         url: session.url,
       };
@@ -203,27 +203,27 @@ export class PaymentsService {
         case 'checkout.session.completed':
           await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
           break;
-          
+
         case 'customer.subscription.created':
           await this.handleSubscriptionCreated(event.data.object as Stripe.Subscription);
           break;
-          
+
         case 'customer.subscription.updated':
           await this.handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
           break;
-          
+
         case 'customer.subscription.deleted':
           await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
           break;
-          
+
         case 'invoice.payment_succeeded':
           await this.handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
           break;
-          
+
         case 'invoice.payment_failed':
           await this.handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
           break;
-          
+
         default:
           this.logger.warn(`Unhandled event type: ${event.type}`);
       }
@@ -417,7 +417,7 @@ export class PaymentsService {
 
   getAvailablePlans() {
     const plans = this.stripeService.getPlans();
-    
+
     return Object.entries(plans).map(([key, plan]) => ({
       type: key,
       name: plan.name,
@@ -445,7 +445,8 @@ export class PaymentsService {
       const demoPlans = {
         basic: { name: 'Plan Básico', amount: 2900, currency: 'eur', interval: 'month' },
         pro: { name: 'Plan Pro', amount: 5900, currency: 'eur', interval: 'month' },
-        premium: { name: 'Plan Premium', amount: 9900, currency: 'eur', interval: 'month' }
+        team: { name: 'Plan Equipo', amount: 7900, currency: 'eur', interval: 'month' },
+        premium: { name: 'Plan Clínicas', amount: 14900, currency: 'eur', interval: 'month' }
       };
 
       const plan = demoPlans[createCheckoutDto.plan];

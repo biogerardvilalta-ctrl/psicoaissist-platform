@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Mic, MicOff, Square, Play, RotateCcw, User, UserCheck } from 'lucide-react';
+import { Mic, MicOff, Square, Play, RotateCcw, User, UserCheck, Settings2 } from 'lucide-react';
+
 import { useSpeechRecognition } from '@/hooks/use-speech-recognition';
 import { simulatorService, PatientProfile } from '@/services/simulator.service';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +19,11 @@ export default function SimulatorPage() {
     const [messages, setMessages] = useState<Array<{ role: 'user' | 'model'; parts: string }>>([]);
     const [feedback, setFeedback] = useState<string>('');
     const [metrics, setMetrics] = useState<{ empathy: number; intervention_effectiveness: number; professionalism: number } | null>(null);
+
+    // TTS Settings
+    const [ttsRate, setTtsRate] = useState(0.9); // Slightly slower is more natural
+    const [ttsPitch, setTtsPitch] = useState(0.9);
+    const [showSettings, setShowSettings] = useState(false);
 
     // Voice - Default to Catalan (ca-ES) as per user request
     const { isListening, transcript, interimTranscript, startListening, stopListening, resetTranscript } = useSpeechRecognition('ca-ES');
@@ -35,8 +41,11 @@ export default function SimulatorPage() {
     // Update TTS as well
     const speak = (text: string) => {
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Stop previous
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ca-ES'; // Match input language
+            utterance.rate = ttsRate;
+            utterance.pitch = ttsPitch;
             window.speechSynthesis.speak(utterance);
         }
     };
@@ -242,6 +251,49 @@ export default function SimulatorPage() {
                             {(transcript || interimTranscript) && (
                                 <div className="mb-2 p-2 bg-gray-50 text-gray-500 italic text-sm rounded border">
                                     "{transcript} {interimTranscript}"
+                                </div>
+                            )}
+
+                            {/* Voice Settings Toggle */}
+                            <div className="flex justify-end mb-2">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setShowSettings(!showSettings)}
+                                    className={`text-xs ${showSettings ? 'text-blue-600 bg-blue-50' : 'text-gray-500'}`}
+                                >
+                                    <Settings2 className="w-3 h-3 mr-1" />
+                                    Ajustar Voz
+                                </Button>
+                            </div>
+
+                            {/* Voice Settings Panel */}
+                            {showSettings && (
+                                <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100 grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-xs font-semibold text-gray-500 block mb-1">Velocidad ({ttsRate}x)</label>
+                                        <input
+                                            type="range"
+                                            min="0.5"
+                                            max="1.5"
+                                            step="0.1"
+                                            value={ttsRate}
+                                            onChange={(e) => setTtsRate(parseFloat(e.target.value))}
+                                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-semibold text-gray-500 block mb-1">Tono ({ttsPitch})</label>
+                                        <input
+                                            type="range"
+                                            min="0.5"
+                                            max="2"
+                                            step="0.1"
+                                            value={ttsPitch}
+                                            onChange={(e) => setTtsPitch(parseFloat(e.target.value))}
+                                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                        />
+                                    </div>
                                 </div>
                             )}
 

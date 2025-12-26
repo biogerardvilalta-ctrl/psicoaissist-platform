@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, X, Star, Loader2 } from 'lucide-react';
+import { Check, X, Star, Loader2, Users, Building, Zap } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -14,21 +14,20 @@ const plans = [
     description: 'Perfecto para psicólogos independientes que comienzan',
     features: [
       'Hasta 25 clientes activos',
-      'Transcripción básica',
-      'Informes estándar',
+      'Agenda y facturación básica',
+      'Notas clínicas manuales',
       'Soporte por email',
       'Almacenamiento 5GB',
     ],
     limitations: [
-      'Sin IA avanzada',
+      'Sin IA avanzada (0 min/mes)',
       'Sin sesiones simultáneas',
       'Sin simulador de casos',
-      'Sin API access',
     ],
-    cta: 'Comenzar Basic',
+    cta: 'Comenzar 14 días gratis',
     popular: false,
-    color: 'border-gray-300',
-    buttonColor: 'bg-gray-900 hover:bg-gray-800 text-white',
+    color: 'border-gray-200',
+    buttonColor: 'bg-white hover:bg-gray-50 text-gray-900 border border-gray-200',
   },
   {
     id: 'pro',
@@ -37,40 +36,57 @@ const plans = [
     description: 'La opción más popular para práctica profesional',
     features: [
       'Clientes ilimitados',
-      'IA asistente completa',
-      'Transcripción en tiempo real',
-      'Sesiones simultáneas',
-      'Analytics avanzados',
-      'Informes personalizados',
+      'IA Completa (900 min/mes)',
+      'Transcripción tiempo real ilimitada',
+      'Sincronización Google Calendar',
+      'Informes clínicos automaticos',
       'Soporte prioritario',
       'Almacenamiento 50GB',
-      'Backup automático',
     ],
     limitations: [],
-    cta: 'Elegir Pro',
+    cta: 'Prueba Pro 14 días gratis',
     popular: true,
-    color: 'border-blue-500 ring-2 ring-blue-500',
+    color: 'border-blue-500 ring-2 ring-blue-500 relative',
     buttonColor: 'bg-blue-600 hover:bg-blue-700 text-white',
   },
   {
-    id: 'premium',
-    name: 'Premium',
-    price: 99,
-    description: 'Para clínicas, formación y uso empresarial',
+    id: 'team',
+    name: 'Equipo',
+    price: 79,
+    description: 'Para pequeños gabinetes con secretaría',
     features: [
-      'Todo lo incluido en Pro',
-      'Simulador completo de casos',
-      'API access completo',
-      'Usuarios múltiples',
-      'Dashboard administrativo',
-      'Integraciones avanzadas',
-      'Soporte 24/7 dedicado',
-      'Almacenamiento ilimitado',
-      'Compliance personalizado',
-      'Entrenamiento personalizado',
+      'Incluye 2 Profesionales + 1 Manager',
+      'IA Compartida (2.000 min/mes)',
+      'Agenda Manager incluido',
+      'Calendario unificado de grupo',
+      'Almacenamiento 100GB',
+      '+20€ por profesional extra',
+    ],
+    limitations: [
+      'Sin Simulador Clínico',
+      'Sin API Access',
+    ],
+    cta: 'Prueba Equipo 14 días gratis',
+    popular: false,
+    color: 'border-indigo-500',
+    buttonColor: 'bg-indigo-600 hover:bg-indigo-700 text-white',
+  },
+  {
+    id: 'premium',
+    name: 'Clínicas',
+    price: 149,
+    description: 'Centros que priorizan formación y control',
+    features: [
+      'Incluye 3 Profesionales + 1 Gestor',
+      'Simulador Clínico Ilimitado',
+      'IA Extendida (5.000 min/mes)',
+      'API Access (HIS integration)',
+      'Compliance avanzado',
+      'Almacenamiento Ilimitado *',
+      '+15€ por profesional extra',
     ],
     limitations: [],
-    cta: 'Elegir Premium',
+    cta: 'Contactar Ventas',
     popular: false,
     color: 'border-purple-500',
     buttonColor: 'bg-purple-600 hover:bg-purple-700 text-white',
@@ -89,10 +105,15 @@ export default function PricingSection() {
 
   const handleSelectPlan = async (planId: string) => {
     console.log('Plan seleccionado:', planId);
-    
+
+    if (planId === 'premium') {
+      router.push('/contact');
+      return;
+    }
+
     try {
       await createCheckoutSession({
-        plan: planId as 'basic' | 'pro' | 'premium',
+        plan: planId as 'basic' | 'pro' | 'team',
       });
     } catch (err) {
       console.error('Error al crear la sesión de checkout:', err);
@@ -112,7 +133,7 @@ export default function PricingSection() {
             Planes diseñados para cada etapa profesional
           </p>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
-            Comienza gratis y escala según crezca tu práctica. Sin sorpresas, sin compromisos.
+            Comienza con <strong>14 días gratis</strong> en todos los planes. Sin sorpresas.
           </p>
         </div>
 
@@ -129,15 +150,15 @@ export default function PricingSection() {
         </div>
 
         {/* Plans grid */}
-        <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-4">
           {plans.map((plan, index) => (
-            <div 
+            <div
               key={plan.name}
-              className={`relative bg-white rounded-2xl shadow-sm ${plan.color} transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
+              className={`relative bg-white rounded-2xl shadow-sm ${plan.color} border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col`}
             >
               {/* Popular badge */}
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-full text-center">
                   <div className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
                     <Star className="h-4 w-4 mr-1" />
                     Más popular
@@ -145,63 +166,112 @@ export default function PricingSection() {
                 </div>
               )}
 
-              <div className="p-8">
+              <div className="p-6 flex-1 flex flex-col">
                 {/* Plan header */}
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
-                  <p className="mt-2 text-sm text-gray-600">{plan.description}</p>
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+                  <p className="mt-2 text-xs text-gray-600 h-10">{plan.description}</p>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold text-gray-900">€{plan.price}</span>
-                    <span className="text-gray-600">/mes</span>
+                    <span className="text-3xl font-bold text-gray-900">€{plan.price}</span>
+                    <span className="text-gray-600 text-sm">/mes</span>
                   </div>
                 </div>
 
+                {/* Features list */}
+                <div className="flex-1">
+                  <ul className="space-y-3 mb-6">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-start">
+                        <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5" />
+                        <span className="ml-3 text-xs text-gray-600">{feature}</span>
+                      </li>
+                    ))}
+                    {plan.limitations.map((limitation, limitationIndex) => (
+                      <li key={`limitation-${limitationIndex}`} className="flex items-start">
+                        <X className="flex-shrink-0 h-4 w-4 text-gray-400 mt-0.5" />
+                        <span className="ml-3 text-xs text-gray-400">{limitation}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
                 {/* CTA button */}
-                <div className="mt-8">
+                <div className="mt-auto">
                   <button
                     onClick={() => handleSelectPlan(plan.id)}
                     disabled={loading}
-                    className={`w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.buttonColor}`}
+                    className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.buttonColor}`}
                   >
                     {loading ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Procesando...
+                        <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                        ...
                       </>
                     ) : (
                       plan.cta
                     )}
                   </button>
                 </div>
-
-                {/* Features list */}
-                <div className="mt-8">
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start">
-                        <Check className="flex-shrink-0 h-5 w-5 text-green-500 mt-0.5" />
-                        <span className="ml-3 text-sm text-gray-600">{feature}</span>
-                      </li>
-                    ))}
-                    {plan.limitations.map((limitation, limitationIndex) => (
-                      <li key={`limitation-${limitationIndex}`} className="flex items-start">
-                        <X className="flex-shrink-0 h-5 w-5 text-gray-400 mt-0.5" />
-                        <span className="ml-3 text-sm text-gray-400">{limitation}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Add-ons Section */}
+        <div className="mt-16 max-w-4xl mx-auto">
+          <h3 className="text-xl font-bold text-gray-900 text-center mb-8">Extras y Servicios Adicionales</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Minute Pack Card */}
+            <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-300 transition-colors">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="p-3 bg-blue-100 rounded-lg">
+                  <Zap className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">Pack Minutos IA</h4>
+                  <p className="text-sm text-gray-500">Solo para planes Pro+</p>
+                </div>
+                <div className="ml-auto text-right">
+                  <span className="block text-xl font-bold text-gray-900">15€</span>
+                  <span className="text-xs text-gray-500">/500 min</span>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">
+                ¿Un mes con muchos pacientes? No te quedes sin IA. Añade minutos extra a tu plan cuando lo necesites para cubrir picos de trabajo.
+              </p>
+            </div>
+
+            {/* Onboarding Card */}
+            <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-purple-300 transition-colors">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="p-3 bg-purple-100 rounded-lg">
+                  <Users className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">Sesión Onboarding</h4>
+                  <p className="text-sm text-gray-500">Puesta en marcha</p>
+                </div>
+                <div className="ml-auto text-right">
+                  <span className="block text-xl font-bold text-gray-900">50€</span>
+                  <span className="text-xs text-gray-500">pago único</span>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">
+                Configuramos tu cuenta contigo en 45 min: importación de pacientes, enlace con Google Calendar y personalización. Garantía de funcionamiento.
+              </p>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 text-center mt-6">
+            * Política de Uso Razonable (Fair Use) aplica al almacenamiento ilimitado (hasta 1TB) para garantizar la estabilidad del servicio.
+          </p>
+        </div>
+
         {/* Bottom note */}
         <div className="mt-12 text-center">
           <p className="text-base text-gray-600">
-            ¿Necesitas algo específico?{' '}
+            ¿Necesitas un plan a medida para una universidad u hospital?{' '}
             <Link href="/contact" className="text-blue-600 hover:text-blue-700 font-medium">
-              Contáctanos para un plan personalizado
+              Contáctanos
             </Link>
           </p>
           <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-gray-500">
