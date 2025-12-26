@@ -50,7 +50,7 @@ export default function QuickGuidePage() {
                                 <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
                                     <h3 className="font-semibold text-lg mb-3 text-slate-800">Sincronizar Google Calendar</h3>
                                     <ol className="space-y-3 text-slate-600 list-decimal list-inside marker:text-amber-600 marker:font-bold">
-                                        <li>Vaya a <strong>Ajustes > Preferencias</strong>.</li>
+                                        <li>Vaya a <strong>Ajustes &gt; Preferencias</strong>.</li>
                                         <li>Busque la sección <strong>Google Calendar</strong>.</li>
                                         <li>Active <strong>Importar eventos</strong>.</li>
                                         <li>Complete la autenticación con Google.</li>

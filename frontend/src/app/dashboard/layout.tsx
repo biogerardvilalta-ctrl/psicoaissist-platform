@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { HelpWidget } from '@/components/dashboard/widgets/HelpWidget';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -188,6 +189,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <main className="flex-1">
                 {children}
             </main>
+
+            <HelpWidget />
         </div>
     );
 }

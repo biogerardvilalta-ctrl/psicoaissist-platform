@@ -29,4 +29,9 @@ export class AiController {
             text: await this.transcriptionService.transcribeAudio(file)
         };
     }
+
+    @Post('help')
+    async askHelp(@Body('question') question: string) {
+        return { answer: await this.aiService.askHelp(question) };
+    }
 }
