@@ -131,6 +131,8 @@ export class AuthService {
         scheduleConfig: user.scheduleConfig as any,
         dashboardLayout: user.dashboardLayout as any,
         hourlyRate: user.hourlyRate,
+        referralCode: user.referralCode,
+        referralsCount: user.referralsCount,
       },
       tokens,
       encryptionKey: {
@@ -187,11 +189,21 @@ export class AuthService {
           professionalNumber: registerDto.professionalNumber,
           country: registerDto.country,
           role: registerDto.role || UserRole.PSYCHOLOGIST,
-          status: UserStatus.PENDING_REVIEW,
+          status: UserStatus.ACTIVE, // Changed from PENDING_REVIEW for immediate access
           createdAt: new Date(),
           updatedAt: new Date(),
           referralCode,
           referredBy: referredByUserId,
+          // Developer Mode / Testing: Auto-assign Pro Plan to enable Simulator access
+          subscription: {
+            create: {
+              stripeSubscriptionId: `sub_test_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+              status: 'active',
+              planType: 'pro',
+              currentPeriodStart: new Date(),
+              currentPeriodEnd: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+            }
+          }
         },
       });
 

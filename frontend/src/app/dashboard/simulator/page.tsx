@@ -298,6 +298,31 @@ export default function SimulatorPage() {
                             )}
 
                             <div className="flex items-center gap-2">
+                                <form
+                                    className="flex-1 flex gap-2"
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        const input = e.currentTarget.elements.namedItem('message') as HTMLInputElement;
+                                        if (input.value.trim()) {
+                                            handleSendMessage(input.value);
+                                            input.value = '';
+                                        }
+                                    }}
+                                >
+                                    <input
+                                        name="message"
+                                        type="text"
+                                        placeholder="Escribe tu respuesta..."
+                                        className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        disabled={isListening}
+                                    />
+                                    <Button type="submit" size="sm" disabled={isListening}>
+                                        Enviar
+                                    </Button>
+                                </form>
+                            </div>
+
+                            <div className="flex items-center gap-2 mt-2">
                                 <Button
                                     size="lg"
                                     variant={isListening ? "destructive" : "default"}
