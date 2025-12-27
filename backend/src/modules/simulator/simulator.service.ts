@@ -88,16 +88,16 @@ export class SimulatorService {
         await this.checkAndIncrementUsage(userId);
 
         const prompt = `
-        Genera un perfil d'un "pacient simulat" per a l'entrenament de psicòlegs.
-        Dificultat: ${difficulty}.
+        Genera un perfil de un "paciente simulado" para el entrenamiento de psicólogos.
+        Dificultad: ${difficulty}.
         
-        Retorna EXCLUSIVAMENT un objecte JSON RAW (sense markdown, sense \`\`\`) amb aquest format exacte:
+        Retorna EXCLUSIVAMENTE un objeto JSON RAW (sin markdown, sin \`\`\`) con este formato exacto:
         {
-          "name": "Nom fictici",
+          "name": "Nombre ficticio",
           "age": 25,
-          "condition": "Breu descripció del motiu de consulta",
-          "traits": ["Tret 1", "Tret 2"],
-          "scenario": "Breu descripció del context."
+          "condition": "Breve descripción del motivo de consulta",
+          "traits": ["Rasgo 1", "Rasgo 2"],
+          "scenario": "Breve descripción del contexto."
         }
         `;
 
@@ -142,7 +142,7 @@ export class SimulatorService {
         5. MOSTRA, NO DIGUIS. En lloc de dir "estic trist", digues "no tinc ganes de llevar-me".
         6. Si la dificultat és 'hard', sigues resistent, qüestiona al terapeuta o menteix sobre els teus hàbits.
         
-        IDIOMA: ${profile.name.match(/[A-Z][a-z]+/) ? 'Català' : 'Castellà'} (Detecta l'idioma de l'usuari i mantingues la coherència).
+        IDIOMA: Español (Mantén coherencia con la variante regional si el nombre lo sugiere).
         `;
 
         try {
@@ -175,30 +175,30 @@ export class SimulatorService {
     async evaluate(history: { role: 'user' | 'model'; parts: string }[]): Promise<{ feedback: string; metrics: any }> {
         // Format history into a readable transcript
         const transcript = (history || []).map(msg => {
-            const speaker = msg.role === 'user' ? 'Psicòleg (Usuari)' : 'Pacient (IA)';
+            const speaker = msg.role === 'user' ? 'Psicólogo (Usuario)' : 'Paciente (IA)';
             const text = typeof msg.parts === 'string' ? msg.parts : JSON.stringify(msg.parts);
             return `**${speaker}**: ${text}`;
         }).join('\n\n');
 
         const prompt = `
-        ACTUA COM UN SUPERVISOR CLÍNIC EXPERT (MODEL CBT/Humanista).
-        Analitza la següent transcripció d'una sessió simulada.
+        ACTÚA COMO UN SUPERVISOR CLÍNICO EXPERTO (MODELO CBT/Humanista).
+        Analiza la siguiente transcripción de una sesión simulada.
         
-        === TRANSCRIPCIÓ ===
+        === TRANSCRIPCIÓN ===
         ${transcript}
         ====================
         
-        Analitza la sessió i retorna un objecte JSON amb el següent format EXACTE:
+        Analiza la sesión y retorna un objeto JSON con el siguiente formato EXACTO:
         {
           "metrics": {
             "empathy": (0-100),
             "intervention_effectiveness": (0-100),
             "professionalism": (0-100)
           },
-          "feedback": "Informe complet en format Markdown. Inclou: \n## 📊 Resum Executiu\n\n## ✅ Punts Forts\n\n## ⚠️ Àrees de Millora\n\n## 💡 Recomanació Clínica Específica"
+          "feedback": "Informe completo en formato Markdown. Incluye: \n## 📊 Resumen Ejecutivo\n\n## ✅ Puntos Fuertes\n\n## ⚠️ Áreas de Mejora\n\n## 💡 Recomendación Clínica Específica"
         }
         
-        Important: Retorna NOMÉS el JSON RAW (sense \`\`\`).
+        Importante: Retorna SOLO el JSON RAW (sin \`\`\`).
         `;
 
         try {

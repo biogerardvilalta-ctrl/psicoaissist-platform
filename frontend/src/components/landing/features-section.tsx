@@ -22,7 +22,7 @@ const features = [
   {
     icon: Shield,
     title: 'Seguridad Total',
-    description: 'Cifrado AES-256, cumplimiento GDPR/HIPAA. Tus datos y los de tus clientes están protegidos.',
+    description: 'Cifrado AES-256, cumplimiento GDPR. Tus datos y los de tus clientes están protegidos.',
     color: 'bg-red-100 text-red-600',
   },
   {

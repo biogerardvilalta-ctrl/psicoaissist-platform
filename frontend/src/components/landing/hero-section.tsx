@@ -30,7 +30,7 @@ export function HeroSection() {
             {/* Description */}
             <p className="mt-6 text-lg text-gray-600 sm:text-xl">
               Transcripción automática, análisis inteligente y gestión segura de clientes.
-              Diseñado por psicólogos, para psicólogos. Cumplimiento total con GDPR y HIPAA.
+              Diseñado por psicólogos, para psicólogos. Cumplimiento total con GDPR.
             </p>
 
             {/* Features list */}

@@ -1,0 +1,207 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "PsicoAIssist" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img [ref=e7]
+        - generic [ref=e9]: PsicoAIssist
+      - navigation [ref=e10]:
+        - link "Características" [ref=e11] [cursor=pointer]:
+          - /url: /#features
+        - link "Simulador" [ref=e12] [cursor=pointer]:
+          - /url: /simulator/try
+        - link "Precios" [ref=e13] [cursor=pointer]:
+          - /url: /#pricing
+        - link "Testimonios" [ref=e14] [cursor=pointer]:
+          - /url: /#testimonials
+        - generic [ref=e15]:
+          - link "Documentación" [ref=e16] [cursor=pointer]:
+            - /url: /docs
+          - link "Blog" [ref=e17] [cursor=pointer]:
+            - /url: /blog
+      - generic [ref=e18]:
+        - link "Para Clínicas" [ref=e19] [cursor=pointer]:
+          - /url: /clinics
+          - img [ref=e20]
+          - text: Para Clínicas
+        - link "Iniciar sesión" [ref=e24] [cursor=pointer]:
+          - /url: /auth/login
+          - img [ref=e25]
+          - text: Iniciar sesión
+        - link "Prueba gratis" [ref=e28] [cursor=pointer]:
+          - /url: /auth/register
+          - img [ref=e29]
+          - text: Prueba gratis
+  - generic [ref=e33]:
+    - generic [ref=e34]:
+      - img [ref=e37]
+      - heading "Bienvenido de vuelta" [level=2] [ref=e39]
+      - paragraph [ref=e40]: Accede a tu cuenta de PsicoAIssist
+    - generic [ref=e41]:
+      - heading "🎮 Credenciales de prueba:" [level=3] [ref=e42]
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - strong [ref=e45]: "Admin:"
+          - text: admin@psicoaissist.com / password123
+        - generic [ref=e46]:
+          - strong [ref=e47]: "Psicólogo 1:"
+          - text: dr.martinez@ejemplo.com / password123
+        - generic [ref=e48]:
+          - strong [ref=e49]: "Psicólogo 2:"
+          - text: laura.sanchez@ejemplo.com / password123
+    - generic [ref=e50]:
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]: Email
+          - textbox "Email" [active] [ref=e54]:
+            - /placeholder: tu@email.com
+        - generic [ref=e55]:
+          - generic [ref=e56]: Contraseña
+          - generic [ref=e57]:
+            - textbox "Contraseña" [ref=e58]:
+              - /placeholder: Tu contraseña
+              - text: password123
+            - button [ref=e59] [cursor=pointer]:
+              - img [ref=e60]
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - checkbox "Recordarme" [ref=e65]
+          - generic [ref=e66]: Recordarme
+        - link "¿Olvidaste tu contraseña?" [ref=e68] [cursor=pointer]:
+          - /url: /auth/forgot-password
+      - button "Iniciar sesión" [ref=e70] [cursor=pointer]:
+        - generic [ref=e71]:
+          - img [ref=e72]
+          - text: Iniciar sesión
+      - paragraph [ref=e76]:
+        - text: ¿No tienes cuenta?
+        - link "Regístrate gratis" [ref=e77] [cursor=pointer]:
+          - /url: /auth/register
+  - contentinfo [ref=e78]:
+    - generic [ref=e80]:
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - img [ref=e84]
+          - generic [ref=e86]: PsicoAIssist
+        - paragraph [ref=e87]: Transformando la práctica psicológica con inteligencia artificial. Ayudamos a profesionales de la salud mental a optimizar su tiempo y mejorar la atención a sus pacientes.
+        - generic [ref=e88]:
+          - img [ref=e89]
+          - generic [ref=e91]: 100% Seguro y Confidencial
+      - generic [ref=e92]:
+        - heading "Producto" [level=3] [ref=e93]
+        - list [ref=e94]:
+          - listitem [ref=e95]:
+            - link "Características" [ref=e96] [cursor=pointer]:
+              - /url: /features
+          - listitem [ref=e97]:
+            - link "Precios" [ref=e98] [cursor=pointer]:
+              - /url: /pricing
+          - listitem [ref=e99]:
+            - link "Integraciones" [ref=e100] [cursor=pointer]:
+              - /url: /integrations
+          - listitem [ref=e101]:
+            - link "Seguridad" [ref=e102] [cursor=pointer]:
+              - /url: /security
+          - listitem [ref=e103]:
+            - link "API" [ref=e104] [cursor=pointer]:
+              - /url: /api
+          - listitem [ref=e105]:
+            - link "Roadmap" [ref=e106] [cursor=pointer]:
+              - /url: /roadmap
+      - generic [ref=e107]:
+        - heading "Soporte" [level=3] [ref=e108]
+        - list [ref=e109]:
+          - listitem [ref=e110]:
+            - link "Centro de Ayuda" [ref=e111] [cursor=pointer]:
+              - /url: /help
+          - listitem [ref=e112]:
+            - link "Documentación" [ref=e113] [cursor=pointer]:
+              - /url: /docs
+          - listitem [ref=e114]:
+            - link "Tutoriales" [ref=e115] [cursor=pointer]:
+              - /url: /tutorials
+          - listitem [ref=e116]:
+            - link "Comunidad" [ref=e117] [cursor=pointer]:
+              - /url: /community
+          - listitem [ref=e118]:
+            - link "Contacto" [ref=e119] [cursor=pointer]:
+              - /url: /contact
+          - listitem [ref=e120]:
+            - link "Estado del Sistema" [ref=e121] [cursor=pointer]:
+              - /url: /status
+      - generic [ref=e122]:
+        - heading "Contacto" [level=3] [ref=e123]
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - img [ref=e126]
+            - link "hola@psicoaissist.com" [ref=e129] [cursor=pointer]:
+              - /url: mailto:hola@psicoaissist.com
+          - generic [ref=e130]:
+            - img [ref=e131]
+            - link "+34 900 123 456" [ref=e133] [cursor=pointer]:
+              - /url: tel:+34900123456
+          - generic [ref=e134]:
+            - img [ref=e135]
+            - generic [ref=e138]:
+              - generic [ref=e139]: Calle Serrano 123
+              - generic [ref=e140]: 28006 Madrid, España
+        - generic [ref=e141]:
+          - heading "Síguenos" [level=4] [ref=e142]
+          - generic [ref=e143]:
+            - link [ref=e144] [cursor=pointer]:
+              - /url: https://twitter.com/psicoaissist
+              - img [ref=e145]
+            - link [ref=e147] [cursor=pointer]:
+              - /url: https://linkedin.com/company/psicoaissist
+              - img [ref=e148]
+            - link [ref=e152] [cursor=pointer]:
+              - /url: https://youtube.com/@psicoaissist
+              - img [ref=e153]
+            - link [ref=e156] [cursor=pointer]:
+              - /url: https://instagram.com/psicoaissist
+              - img [ref=e157]
+    - generic [ref=e162]:
+      - generic [ref=e163]:
+        - heading "Mantente al día con PsicoAIssist" [level=3] [ref=e164]
+        - paragraph [ref=e165]: Recibe las últimas noticias, actualizaciones y consejos directamente en tu email.
+      - generic [ref=e167]:
+        - textbox "tu@email.com" [ref=e168]: video.demo@psicoaissist.com
+        - button "Suscribirse" [ref=e169] [cursor=pointer]
+    - generic [ref=e172]:
+      - generic [ref=e173]: © 2025 PsicoAIssist. Todos los derechos reservados.
+      - list [ref=e175]:
+        - listitem [ref=e176]:
+          - link "Privacidad" [ref=e177] [cursor=pointer]:
+            - /url: /dashboard/compliance?tab=gdpr
+        - listitem [ref=e178]:
+          - link "Términos" [ref=e179] [cursor=pointer]:
+            - /url: /dashboard/compliance?tab=terms
+        - listitem [ref=e180]:
+          - link "Cookies" [ref=e181] [cursor=pointer]:
+            - /url: /dashboard/compliance?tab=cookies
+        - listitem [ref=e182]:
+          - link "Legal" [ref=e183] [cursor=pointer]:
+            - /url: /dashboard/compliance?tab=legal-justification
+        - listitem [ref=e184]:
+          - link "Política de Privacitat/GDPR" [ref=e185] [cursor=pointer]:
+            - /url: /dashboard/compliance?tab=gdpr
+    - generic [ref=e188]:
+      - generic [ref=e189]:
+        - img [ref=e190]
+        - generic [ref=e192]: GDPR Compliant
+      - generic [ref=e193]:
+        - img [ref=e194]
+        - generic [ref=e196]: ISO 27001
+      - generic [ref=e197]:
+        - img [ref=e198]
+        - generic [ref=e200]: AES-256 Encryption
+      - generic [ref=e201]:
+        - img [ref=e202]
+        - generic [ref=e204]: SOC 2 Type II
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e205]
+```
