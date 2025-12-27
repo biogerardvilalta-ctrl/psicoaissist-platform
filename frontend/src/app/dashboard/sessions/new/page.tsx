@@ -219,11 +219,15 @@ export default function NewSessionPage() {
 
             router.push('/dashboard/sessions');
             router.refresh();
-        } catch (error) {
-            console.error("Failed to fetch slots", error);
-            // Optionally toast
+        } catch (error: any) {
+            console.error("Failed to create session", error);
+            toast({
+                variant: 'destructive',
+                title: 'Error al agendar',
+                description: error.response?.data?.message || 'No se pudo crear la sesión. Por favor intenta nuevamente.',
+            });
         } finally {
-            setIsLoadingSlots(false);
+            setIsSubmitting(false);
         }
     };
 

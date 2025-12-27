@@ -181,86 +181,177 @@ export default function PricingSection() {
           </div>
         </div>
 
-        {/* Plans grid */}
-        <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5">
-          {plans.map((plan, index) => {
-            const isAnnual = billingInterval === 'year';
-            const price = typeof plan.price === 'number'
-              ? (isAnnual ? Math.round(plan.price * 10 / 12) : plan.price)
-              : plan.price;
+        {/* Individual Plans Section */}
+        <div className="relative mt-12 p-8 rounded-3xl border-2 border-indigo-100 bg-indigo-50/30">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4">
+            <span className="bg-indigo-100 text-indigo-700 text-sm font-bold px-4 py-1.5 rounded-full border border-indigo-200 shadow-sm">
+              PLANES INDIVIDUALES
+            </span>
+          </div>
 
-            return (
-              <div
-                key={plan.name}
-                className={`relative bg-white rounded-2xl shadow-sm ${plan.color} border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col`}
-              >
-                {/* Popular badge */}
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-full text-center">
-                    <div className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                      <Star className="h-4 w-4 mr-1" />
-                      Más popular
-                    </div>
-                  </div>
-                )}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {plans.filter(p => ['basic', 'pro', 'premium_plus'].includes(p.id)).map((plan) => {
+              const isAnnual = billingInterval === 'year';
+              const price = typeof plan.price === 'number'
+                ? (isAnnual ? Math.round(plan.price * 10 / 12) : plan.price)
+                : plan.price;
 
-                <div className="p-6 flex-1 flex flex-col">
-                  {/* Plan header */}
-                  <div className="text-center mb-6">
-                    <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-                    <p className="mt-2 text-xs text-gray-600 h-10">{plan.description}</p>
-                    <div className="mt-4 flex flex-col items-center justify-center h-16">
-                      <div className="flex items-baseline">
-                        <span className="text-3xl font-bold text-gray-900">{typeof price === 'number' ? `€${price}` : price}</span>
-                        {typeof price === 'number' && <span className="text-gray-600 text-sm">/mes</span>}
+              return (
+                <div
+                  key={plan.name}
+                  className={`relative bg-white rounded-2xl shadow-sm ${plan.color} border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col`}
+                >
+                  {/* Popular badge */}
+                  {plan.popular && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-full text-center">
+                      <div className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+                        <Star className="h-4 w-4 mr-1" />
+                        Más popular
                       </div>
-                      {isAnnual && typeof plan.price === 'number' && (
-                        <span className="text-xs text-green-600 font-medium mt-1">
-                          Facturado €{plan.price * 10}/año
-                        </span>
-                      )}
                     </div>
-                  </div>
+                  )}
 
-                  {/* Features list */}
-                  <div className="flex-1">
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start">
-                          <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5" />
-                          <span className="ml-3 text-xs text-gray-600">{feature}</span>
-                        </li>
-                      ))}
-                      {plan.limitations.map((limitation, limitationIndex) => (
-                        <li key={`limitation-${limitationIndex}`} className="flex items-start">
-                          <X className="flex-shrink-0 h-4 w-4 text-gray-400 mt-0.5" />
-                          <span className="ml-3 text-xs text-gray-400">{limitation}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <div className="p-6 flex-1 flex flex-col">
+                    {/* Plan header */}
+                    <div className="text-center mb-6">
+                      <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+                      <p className="mt-2 text-xs text-gray-600 h-10">{plan.description}</p>
+                      <div className="mt-4 flex flex-col items-center justify-center h-16">
+                        <div className="flex items-baseline">
+                          <span className="text-3xl font-bold text-gray-900">{typeof price === 'number' ? `€${price}` : price}</span>
+                          {typeof price === 'number' && <span className="text-gray-600 text-sm">/mes</span>}
+                        </div>
+                        {isAnnual && typeof plan.price === 'number' && (
+                          <span className="text-xs text-green-600 font-medium mt-1">
+                            Facturado €{plan.price * 10}/año
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-                  {/* CTA button */}
-                  <div className="mt-auto">
-                    <button
-                      onClick={() => handleSelectPlan(plan.id)}
-                      disabled={loading}
-                      className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.buttonColor}`}
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                          ...
-                        </>
-                      ) : (
-                        plan.cta
-                      )}
-                    </button>
+                    {/* Features list */}
+                    <div className="flex-1">
+                      <ul className="space-y-3 mb-6">
+                        {plan.features.map((feature, featureIndex) => (
+                          <li key={featureIndex} className="flex items-start">
+                            <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5" />
+                            <span className="ml-3 text-xs text-gray-600">{feature}</span>
+                          </li>
+                        ))}
+                        {plan.limitations.map((limitation, limitationIndex) => (
+                          <li key={`limitation-${limitationIndex}`} className="flex items-start">
+                            <X className="flex-shrink-0 h-4 w-4 text-gray-400 mt-0.5" />
+                            <span className="ml-3 text-xs text-gray-400">{limitation}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* CTA button */}
+                    <div className="mt-auto">
+                      <button
+                        onClick={() => handleSelectPlan(plan.id)}
+                        disabled={loading}
+                        className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.buttonColor}`}
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                            ...
+                          </>
+                        ) : (
+                          plan.cta
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Team/Corporate Plans Section */}
+        <div className="mt-16">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 flex items-center justify-center gap-2">
+              <Building className="w-6 h-6 text-gray-400" />
+              Planes para Equipos y Organizaciones
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+            {plans.filter(p => ['business', 'clinics'].includes(p.id)).map((plan) => {
+              // Logic for team plans rendering (same card structure essentially or slightly different?)
+              // Reusing same card structure for consistency but in 2 cols
+              const isAnnual = billingInterval === 'year';
+              const price = typeof plan.price === 'number'
+                ? (isAnnual ? Math.round(plan.price * 10 / 12) : plan.price)
+                : plan.price;
+
+              return (
+                <div
+                  key={plan.name}
+                  className={`relative bg-gray-50 rounded-2xl shadow-sm ${plan.color} border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col`}
+                >
+                  <div className="p-6 flex-1 flex flex-col">
+                    {/* Plan header */}
+                    <div className="text-center mb-6">
+                      <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+                      <p className="mt-2 text-xs text-gray-600 h-10">{plan.description}</p>
+                      <div className="mt-4 flex flex-col items-center justify-center h-16">
+                        <div className="flex items-baseline">
+                          <span className="text-3xl font-bold text-gray-900">{typeof price === 'number' ? `€${price}` : price}</span>
+                          {typeof price === 'number' && <span className="text-gray-600 text-sm">/mes</span>}
+                        </div>
+                        {isAnnual && typeof plan.price === 'number' && (
+                          <span className="text-xs text-green-600 font-medium mt-1">
+                            Facturado €{plan.price * 10}/año
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Features list */}
+                    <div className="flex-1">
+                      <ul className="space-y-3 mb-6">
+                        {plan.features.map((feature, featureIndex) => (
+                          <li key={featureIndex} className="flex items-start">
+                            <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5" />
+                            <span className="ml-3 text-xs text-gray-600">{feature}</span>
+                          </li>
+                        ))}
+                        {plan.limitations.map((limitation, limitationIndex) => (
+                          <li key={`limitation-${limitationIndex}`} className="flex items-start">
+                            <X className="flex-shrink-0 h-4 w-4 text-gray-400 mt-0.5" />
+                            <span className="ml-3 text-xs text-gray-400">{limitation}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* CTA button */}
+                    <div className="mt-auto">
+                      <button
+                        onClick={() => handleSelectPlan(plan.id)}
+                        disabled={loading}
+                        className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.buttonColor}`}
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                            ...
+                          </>
+                        ) : (
+                          plan.cta
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Add-ons Section */}
