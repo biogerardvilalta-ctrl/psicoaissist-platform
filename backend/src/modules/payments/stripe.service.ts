@@ -231,8 +231,20 @@ export class StripeService {
     return this.config.plans;
   }
 
-  getPlan(planName: string) {
-    return this.config.plans[planName];
+  getPlan(planName: string, interval: 'month' | 'year' = 'month') {
+    const plan = this.config.plans[planName];
+    if (!plan) return null;
+
+    if (interval === 'year') {
+      return {
+        ...plan,
+        priceId: plan.priceIdAnnual || plan.priceId,
+        amount: plan.amountAnnual || plan.amount * 12,
+        interval: 'year',
+      };
+    }
+
+    return plan;
   }
 
   // Método para verificar si está en modo demo

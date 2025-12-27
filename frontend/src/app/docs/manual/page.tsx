@@ -24,7 +24,7 @@ export default function ManualPage() {
                         </div>
                         <h1 className="text-3xl md:text-4xl font-bold mb-4">Manual de Usuario</h1>
                         <p className="text-slate-300 text-lg max-w-2xl">
-                            Guía competa para dominar PsicoAIssist Platform, desde la configuración inicial hasta el análisis avanzado con IA.
+                            Guía completa para dominar PsicoAIssist, desde la configuración inicial hasta el análisis avanzado con IA.
                         </p>
                     </div>
 
@@ -35,17 +35,18 @@ export default function ManualPage() {
                             <ul className="space-y-2 text-slate-600">
                                 <li><a href="#introduccion" className="hover:text-blue-600 hover:underline">1. Introducción</a></li>
                                 <li><a href="#roles" className="hover:text-blue-600 hover:underline">2. Roles de Usuario</a></li>
-                                <li><a href="#primeros-pasos" className="hover:text-blue-600 hover:underline">3. Primeros Pasos</a></li>
-                                <li><a href="#dashboard" className="hover:text-blue-600 hover:underline">4. El Dashboard</a></li>
-                                <li><a href="#funcionalidades" className="hover:text-blue-600 hover:underline">5. Funcionalidades Principales</a></li>
-                                <li><a href="#configuracion" className="hover:text-blue-600 hover:underline">6. Configuración e Integraciones</a></li>
+                                <li><a href="#planes" className="hover:text-blue-600 hover:underline">3. Planes y Suscripciones</a></li>
+                                <li><a href="#primeros-pasos" className="hover:text-blue-600 hover:underline">4. Primeros Pasos</a></li>
+                                <li><a href="#dashboard" className="hover:text-blue-600 hover:underline">5. El Dashboard</a></li>
+                                <li><a href="#funcionalidades" className="hover:text-blue-600 hover:underline">6. Funcionalidades Principales</a></li>
+                                <li><a href="#configuracion" className="hover:text-blue-600 hover:underline">7. Configuración Detallada</a></li>
                             </ul>
                         </nav>
 
                         <section id="introduccion" className="scroll-mt-24">
                             <h2>1. Introducción</h2>
                             <p>
-                                PsycoAI Platform es una solución integral que permite a psicólogos y terapeutas gestionar sus agendas,
+                                PsicoAIssist es una solución integral que permite a psicólogos y terapeutas gestionar sus agendas,
                                 pacientes y sesiones clínico-terapéuticas. Además de las funciones administrativas básicas, la plataforma
                                 ofrece análisis avanzados mediante IA para detectar tendencias en el bienestar del paciente, temas
                                 recurrentes y métricas de eficacia terapéutica.
@@ -82,8 +83,73 @@ export default function ManualPage() {
 
                         <hr className="my-8 border-slate-200" />
 
+                        <section id="planes" className="scroll-mt-24">
+                            <h2>3. Planes y Suscripciones</h2>
+                            <p>PsicoAIssist ofrece cinco niveles de servicio, divididos en opciones individuales y para grupos. Puede consultar su plan actual en <strong>Perfil {'>'} Suscripción</strong>.</p>
+
+                            <h3 className="mt-6 mb-4 text-xl font-bold text-slate-800">1. Planes Individuales</h3>
+                            <div className="grid md:grid-cols-3 gap-4 mb-8 not-prose">
+                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                    <h4 className="text-base font-bold text-slate-800 mb-1">🥉 Basic</h4>
+                                    <p className="text-xl font-bold text-slate-900">29€<span className="text-xs text-slate-500 font-normal">/mes</span></p>
+                                    <ul className="mt-3 space-y-2 text-xs text-slate-600">
+                                        <li>• 25 Pacientes</li>
+                                        <li>• 5GB Almacenamiento</li>
+                                        <li>• Sin IA</li>
+                                    </ul>
+                                </div>
+                                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 relative overflow-hidden ring-1 ring-blue-500">
+                                    <div className="absolute top-0 right-0 bg-blue-500 text-white text-[9px] px-2 py-0.5 rounded-bl font-bold">POPULAR</div>
+                                    <h4 className="text-base font-bold text-blue-800 mb-1">🥈 Pro</h4>
+                                    <p className="text-xl font-bold text-blue-900">59€<span className="text-xs text-blue-500 font-normal">/mes</span></p>
+                                    <ul className="mt-3 space-y-2 text-xs text-blue-700">
+                                        <li>• Pacientes Ilimitados</li>
+                                        <li>• 900 min IA/mes</li>
+                                        <li>• 5 Casos Simulador</li>
+                                        <li>• 50GB Almacenamiento</li>
+                                    </ul>
+                                </div>
+                                <div className="p-4 bg-purple-50 rounded-xl border border-purple-200">
+                                    <h4 className="text-base font-bold text-purple-800 mb-1">🥇 Premium</h4>
+                                    <p className="text-xl font-bold text-purple-900">99€<span className="text-xs text-purple-500 font-normal">/mes</span></p>
+                                    <ul className="mt-3 space-y-2 text-xs text-purple-700">
+                                        <li>• IA Extendida (3.000 min)</li>
+                                        <li>• Simulador Ilimitado</li>
+                                        <li>• Soporte 24/7</li>
+                                        <li>• 1TB Almacenamiento</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <h3 className="mt-6 mb-4 text-xl font-bold text-slate-800">2. Planes Grupales</h3>
+                            <div className="grid md:grid-cols-2 gap-4 not-prose">
+                                <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-200">
+                                    <h4 className="text-base font-bold text-indigo-800 mb-1">👥 Business</h4>
+                                    <p className="text-xl font-bold text-indigo-900">129€<span className="text-xs text-indigo-500 font-normal">/mes</span></p>
+                                    <ul className="mt-3 space-y-2 text-xs text-indigo-700">
+                                        <li>• 2 Pros + 1 Manager</li>
+                                        <li>• 2.000 min IA (Comp.)</li>
+                                        <li>• Agenda Unificada</li>
+                                        <li>• 100GB Almacenamiento</li>
+                                    </ul>
+                                </div>
+                                <div className="p-4 bg-slate-100 rounded-xl border border-slate-300">
+                                    <h4 className="text-base font-bold text-slate-800 mb-1">🏥 Clínicas</h4>
+                                    <p className="text-xl font-bold text-slate-900">A Medida</p>
+                                    <ul className="mt-3 space-y-2 text-xs text-slate-700">
+                                        <li>• 3+ Profesionales</li>
+                                        <li>• 5.000+ min IA</li>
+                                        <li>• API & Compliance</li>
+                                        <li>• Onboarding Dedicado</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <hr className="my-8 border-slate-200" />
+
                         <section id="primeros-pasos" className="scroll-mt-24">
-                            <h2>3. Primeros Pasos</h2>
+                            <h2>4. Primeros Pasos</h2>
                             <h3>Acceso</h3>
                             <p>Ingrese con sus credenciales (email y contraseña) en la página de inicio de sesión.</p>
 
@@ -99,7 +165,7 @@ export default function ManualPage() {
                         <hr className="my-8 border-slate-200" />
 
                         <section id="dashboard" className="scroll-mt-24">
-                            <h2>4. El Dashboard</h2>
+                            <h2>5. El Dashboard</h2>
                             <p>El Dashboard es la pantalla principal y varía según su rol.</p>
 
                             <h3>Para el Profesional</h3>
@@ -110,7 +176,7 @@ export default function ManualPage() {
                             <ul className="list-disc pl-5 space-y-2">
                                 <li><strong>Operativos:</strong> Agenda de Hoy, Notas Pendientes, Agenda (7 días).</li>
                                 <li><strong>Analíticos (Negocio):</strong> Ingresos Estimados, Tasa de Asistencia, Pacientes Activos.</li>
-                                <li><strong>Clínicos (AI):</strong> Temas Recurrentes (análisis de notas), Tendencia de Bienestar, Técnicas Terapéuticas.</li>
+                                <li><strong>Clínicos (IA):</strong> Temas Recurrentes (análisis de notas), Tendencia de Bienestar, Técnicas Terapéuticas.</li>
                             </ul>
 
                             <div className="my-6 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-900 not-prose rounded-r">
@@ -124,7 +190,7 @@ export default function ManualPage() {
                         <hr className="my-8 border-slate-200" />
 
                         <section id="funcionalidades" className="scroll-mt-24">
-                            <h2>5. Funcionalidades Principales</h2>
+                            <h2>6. Funcionalidades Principales</h2>
                             <h3>Gestión de Pacientes</h3>
                             <p>
                                 En la sección <strong>Pacientes</strong>, cree nuevos expedientes, vea historiales y acceda a datos demográficos.
@@ -134,18 +200,37 @@ export default function ManualPage() {
                             <p>
                                 En <strong>Sesiones</strong>, use la vista de calendario para crear citas. Marque las sesiones como "Realizada" o "Cancelada" para mantener las estadísticas precisas.
                             </p>
+
+                            <h3>Simulador Clínico</h3>
+                            <p>
+                                Acceda desde el menú "Simulador" para practicar con pacientes virtuales. La IA le dará feedback sobre su empatía y técnica al terminar la sesión simulada.
+                            </p>
                         </section>
 
                         <hr className="my-8 border-slate-200" />
 
                         <section id="configuracion" className="scroll-mt-24">
-                            <h2>6. Configuración e Integraciones</h2>
-                            <h3>Google Calendar</h3>
+                            <h2>7. Configuración Detallada</h2>
+
+                            <h3>📅 Agenda y Calendario</h3>
+                            <ul className="list-disc pl-5 space-y-2">
+                                <li><strong>Duración por Defecto:</strong> Tiempo estándar de sus sesiones (ej. 60 min).</li>
+                                <li><strong>Buffer:</strong> Tiempo de descanso automático entre citas (ej. 10 min).</li>
+                                <li><strong>Bloqueos:</strong> Use "Bloquear día completo" para vacaciones.</li>
+                            </ul>
+
+                            <h3 className="mt-6">🔗 Google Calendar</h3>
                             <p>La integración permite:</p>
-                            <ol>
-                                <li><strong>Importar:</strong> Eventos de su Google Calendar personal bloquean huecos en PsycoAI.</li>
-                                <li><strong>Exportar:</strong> Las sesiones creadas en PsycoAI aparecen en su Google Calendar.</li>
+                            <ol className="list-decimal pl-5 space-y-2">
+                                <li><strong>Importar:</strong> Eventos de su Google Calendar personal bloquean huecos en PsicoAIssist.</li>
+                                <li><strong>Exportar:</strong> Las sesiones creadas en PsicoAIssist aparecen en su Google Calendar.</li>
                             </ol>
+
+                            <h3 className="mt-6">🤖 Inteligencia Artificial</h3>
+                            <p><strong>Idioma Preferido:</strong> Define en qué idioma generará la IA los informes automáticos.</p>
+
+                            <h3 className="mt-6">🔔 Notificaciones</h3>
+                            <p><strong>Recordatorios por Email:</strong> Si está activo, el sistema envía un correo al paciente 24h antes de la cita (requiere email en la ficha del paciente).</p>
                         </section>
                     </div>
                 </div>

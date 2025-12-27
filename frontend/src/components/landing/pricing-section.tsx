@@ -26,8 +26,8 @@ const plans = [
     ],
     cta: 'Comenzar 14 días gratis',
     popular: false,
-    color: 'border-gray-200',
-    buttonColor: 'bg-white hover:bg-gray-50 text-gray-900 border border-gray-200',
+    color: 'border-slate-200',
+    buttonColor: 'bg-white hover:bg-slate-50 text-slate-900 border border-slate-200',
   },
   {
     id: 'pro',
@@ -39,58 +39,75 @@ const plans = [
       'IA Completa (900 min/mes)',
       'Transcripción tiempo real ilimitada',
       'Sincronización Google Calendar',
-      'Informes clínicos automaticos',
       'Simulador Clínico (5 casos/mes)',
-      'Soporte prioritario',
       'Almacenamiento 50GB',
     ],
-    limitations: [],
+    limitations: [
+      'Soporte estándar'
+    ],
     cta: 'Prueba Pro 14 días gratis',
     popular: true,
     color: 'border-blue-500 ring-2 ring-blue-500 relative',
     buttonColor: 'bg-blue-600 hover:bg-blue-700 text-white',
   },
   {
-    id: 'team',
-    name: 'Equipo',
-    price: 79,
-    description: 'Para pequeños gabinetes con secretaría',
+    id: 'premium_plus',
+    name: 'Premium',
+    price: 99,
+    description: 'Para especialistas con alto volumen de trabajo',
+    features: [
+      'Todo lo incluido en Pro',
+      'IA Extendida (3.000 min/mes)',
+      'Almacenamiento 1TB',
+      'Soporte Prioritario 24/7',
+      'Simulador Clínico Ilimitado',
+      'Análisis de tendencias avanzado',
+    ],
+    limitations: [],
+    cta: 'Prueba Premium 14 días gratis',
+    popular: false,
+    color: 'border-purple-500',
+    buttonColor: 'bg-purple-600 hover:bg-purple-700 text-white',
+  },
+  {
+    id: 'business',
+    name: 'Business',
+    price: 129,
+    description: 'Pequeños gabinetes (2 profesionales + manager)',
     features: [
       'Incluye 2 Profesionales + 1 Manager',
       'IA Compartida (2.000 min/mes)',
       'Agenda Manager incluido',
       'Calendario unificado de grupo',
       'Almacenamiento 100GB',
-      '+20€ por profesional extra',
+      '+40€ por profesional extra',
     ],
     limitations: [
-      'Sin Simulador Clínico',
       'Sin API Access',
     ],
-    cta: 'Prueba Equipo 14 días gratis',
+    cta: 'Prueba Business 14 días gratis',
     popular: false,
     color: 'border-indigo-500',
     buttonColor: 'bg-indigo-600 hover:bg-indigo-700 text-white',
   },
   {
-    id: 'premium',
+    id: 'clinics',
     name: 'Clínicas',
-    price: 149,
+    price: 'Custom',
     description: 'Centros que priorizan formación y control',
     features: [
-      'Incluye 3 Profesionales + 1 Gestor',
-      'Simulador Clínico Ilimitado',
-      'IA Extendida (5.000 min/mes)',
+      'Usuarios ilimitados (a medida)',
+      'IA Corporativa (5.000+ min/mes)',
       'API Access (HIS integration)',
-      'Compliance avanzado',
-      'Almacenamiento Ilimitado *',
-      '+15€ por profesional extra',
+      'Compliance avanzado y SSO',
+      'Onboarding dedicado',
+      'Facturación unificada',
     ],
     limitations: [],
     cta: 'Contactar Ventas',
     popular: false,
-    color: 'border-purple-500',
-    buttonColor: 'bg-purple-600 hover:bg-purple-700 text-white',
+    color: 'border-slate-800 bg-slate-50',
+    buttonColor: 'bg-slate-900 hover:bg-slate-800 text-white',
   },
 ];
 
@@ -107,14 +124,16 @@ export default function PricingSection() {
   const handleSelectPlan = async (planId: string) => {
     console.log('Plan seleccionado:', planId);
 
-    if (planId === 'premium') {
+    if (planId === 'clinics') {
       router.push('/contact');
       return;
     }
 
     try {
       await createCheckoutSession({
-        plan: planId as 'basic' | 'pro' | 'team',
+        // @ts-ignore - IDs updated in frontend, backend type might need update
+        plan: planId,
+        interval: billingInterval,
       });
     } catch (err) {
       console.error('Error al crear la sesión de checkout:', err);
@@ -140,82 +159,108 @@ export default function PricingSection() {
 
         {/* Billing toggle */}
         <div className="mt-8 flex justify-center">
-          <div className="relative bg-white p-1 rounded-lg border border-gray-200">
-            <button className="relative px-4 py-2 text-sm font-medium text-gray-900 bg-gray-100 rounded-md">
+          <div className="relative bg-white p-1 rounded-lg border border-gray-200 flex">
+            <button
+              onClick={() => setBillingInterval('month')}
+              className={`relative px-4 py-2 text-sm font-medium rounded-md transition-colors ${billingInterval === 'month'
+                ? 'bg-gray-100 text-gray-900 border border-gray-200 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+                }`}
+            >
               Mensual
             </button>
-            <button className="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900">
-              Anual (2 meses gratis)
+            <button
+              onClick={() => setBillingInterval('year')}
+              className={`relative px-4 py-2 text-sm font-medium rounded-md transition-colors ${billingInterval === 'year'
+                ? 'bg-gray-100 text-gray-900 border border-gray-200 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+                }`}
+            >
+              Anual <span className="text-green-600 font-bold text-xs ml-1">(2 meses gratis)</span>
             </button>
           </div>
         </div>
 
         {/* Plans grid */}
-        <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-4">
-          {plans.map((plan, index) => (
-            <div
-              key={plan.name}
-              className={`relative bg-white rounded-2xl shadow-sm ${plan.color} border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col`}
-            >
-              {/* Popular badge */}
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-full text-center">
-                  <div className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                    <Star className="h-4 w-4 mr-1" />
-                    Más popular
+        <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5">
+          {plans.map((plan, index) => {
+            const isAnnual = billingInterval === 'year';
+            const price = typeof plan.price === 'number'
+              ? (isAnnual ? Math.round(plan.price * 10 / 12) : plan.price)
+              : plan.price;
+
+            return (
+              <div
+                key={plan.name}
+                className={`relative bg-white rounded-2xl shadow-sm ${plan.color} border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col`}
+              >
+                {/* Popular badge */}
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-full text-center">
+                    <div className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+                      <Star className="h-4 w-4 mr-1" />
+                      Más popular
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              <div className="p-6 flex-1 flex flex-col">
-                {/* Plan header */}
-                <div className="text-center mb-6">
-                  <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-                  <p className="mt-2 text-xs text-gray-600 h-10">{plan.description}</p>
-                  <div className="mt-4">
-                    <span className="text-3xl font-bold text-gray-900">€{plan.price}</span>
-                    <span className="text-gray-600 text-sm">/mes</span>
+                <div className="p-6 flex-1 flex flex-col">
+                  {/* Plan header */}
+                  <div className="text-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+                    <p className="mt-2 text-xs text-gray-600 h-10">{plan.description}</p>
+                    <div className="mt-4 flex flex-col items-center justify-center h-16">
+                      <div className="flex items-baseline">
+                        <span className="text-3xl font-bold text-gray-900">{typeof price === 'number' ? `€${price}` : price}</span>
+                        {typeof price === 'number' && <span className="text-gray-600 text-sm">/mes</span>}
+                      </div>
+                      {isAnnual && typeof plan.price === 'number' && (
+                        <span className="text-xs text-green-600 font-medium mt-1">
+                          Facturado €{plan.price * 10}/año
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Features list */}
-                <div className="flex-1">
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start">
-                        <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5" />
-                        <span className="ml-3 text-xs text-gray-600">{feature}</span>
-                      </li>
-                    ))}
-                    {plan.limitations.map((limitation, limitationIndex) => (
-                      <li key={`limitation-${limitationIndex}`} className="flex items-start">
-                        <X className="flex-shrink-0 h-4 w-4 text-gray-400 mt-0.5" />
-                        <span className="ml-3 text-xs text-gray-400">{limitation}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  {/* Features list */}
+                  <div className="flex-1">
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-start">
+                          <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5" />
+                          <span className="ml-3 text-xs text-gray-600">{feature}</span>
+                        </li>
+                      ))}
+                      {plan.limitations.map((limitation, limitationIndex) => (
+                        <li key={`limitation-${limitationIndex}`} className="flex items-start">
+                          <X className="flex-shrink-0 h-4 w-4 text-gray-400 mt-0.5" />
+                          <span className="ml-3 text-xs text-gray-400">{limitation}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                {/* CTA button */}
-                <div className="mt-auto">
-                  <button
-                    onClick={() => handleSelectPlan(plan.id)}
-                    disabled={loading}
-                    className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.buttonColor}`}
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                        ...
-                      </>
-                    ) : (
-                      plan.cta
-                    )}
-                  </button>
+                  {/* CTA button */}
+                  <div className="mt-auto">
+                    <button
+                      onClick={() => handleSelectPlan(plan.id)}
+                      disabled={loading}
+                      className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.buttonColor}`}
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                          ...
+                        </>
+                      ) : (
+                        plan.cta
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Add-ons Section */}

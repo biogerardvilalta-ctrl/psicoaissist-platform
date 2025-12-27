@@ -23,30 +23,30 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
-            <a
-              href="#features"
+            <Link
+              href="/#features"
               className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Características
-            </a>
+            </Link>
             <Link
               href="/simulator/try"
               className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Simulador
             </Link>
-            <a
-              href="#pricing"
+            <Link
+              href="/#pricing"
               className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Precios
-            </a>
-            <a
-              href="#testimonials"
+            </Link>
+            <Link
+              href="/#testimonials"
               className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
               Testimonios
-            </a>
+            </Link>
             <div className="hidden lg:flex items-center space-x-8">
               <Link
                 href="/docs"
@@ -105,13 +105,13 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4 absolute top-16 left-0 right-0 bg-white shadow-lg z-40 px-4">
             <nav className="space-y-4">
-              <a
-                href="#features"
+              <Link
+                href="/#features"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Características
-              </a>
+              </Link>
               <Link
                 href="/simulator/try"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
@@ -119,20 +119,20 @@ export function Header() {
               >
                 Simulador
               </Link>
-              <a
-                href="#pricing"
+              <Link
+                href="/#pricing"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Precios
-              </a>
-              <a
-                href="#testimonials"
+              </Link>
+              <Link
+                href="/#testimonials"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Testimonios
-              </a>
+              </Link>
               <Link
                 href="/docs"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"

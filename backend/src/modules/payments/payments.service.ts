@@ -37,7 +37,7 @@ export class PaymentsService {
         throw new BadRequestException('User already has an active subscription');
       }
 
-      const plan = this.stripeService.getPlan(createCheckoutDto.plan);
+      const plan = this.stripeService.getPlan(createCheckoutDto.plan, createCheckoutDto.interval);
       if (!plan) {
         throw new BadRequestException('Invalid plan selected');
       }

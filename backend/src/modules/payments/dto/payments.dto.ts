@@ -12,6 +12,10 @@ export class CreateCheckoutSessionDto {
   plan: PlanType;
 
   @IsOptional()
+  @IsEnum(['month', 'year'])
+  interval?: 'month' | 'year';
+
+  @IsOptional()
   @IsString()
   customerId?: string;
 

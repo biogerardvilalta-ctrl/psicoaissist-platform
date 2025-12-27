@@ -9,6 +9,8 @@ import { useState, useEffect } from 'react';
 import { AuthAPI } from '@/lib/auth-api';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { CreditCard, Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export default function ProfilePage() {
     const { user, login } = useAuth();
@@ -164,6 +166,78 @@ export default function ProfilePage() {
                             <Button variant="outline" onClick={() => setIsEditing(true)}>Editar Perfil</Button>
                         )}
                     </div>
+                </CardContent>
+            </Card>
+
+            {/* Subscription Card */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5 text-purple-600" />
+                        Suscripción
+                    </CardTitle>
+                    <CardDescription>Detalles de tu plan actual y facturación.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    {user?.subscription ? (
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-100">
+                                <div className="space-y-1">
+                                    <p className="text-sm font-medium text-purple-900">Plan Actual</p>
+                                    <h3 className="text-2xl font-bold text-purple-700 capitalize">
+                                        {user.subscription.planType.toLowerCase()}
+                                    </h3>
+                                </div>
+                                <Badge variant={user.subscription.status === 'active' ? 'default' : 'destructive'} className="capitalize">
+                                    {user.subscription.status === 'active' ? 'Activo' : user.subscription.status}
+                                </Badge>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="flex items-start gap-3">
+                                    <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-700">Próxima Renovación</p>
+                                        <p className="text-sm text-slate-500">
+                                            {user.subscription.currentPeriodEnd
+                                                ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString()
+                                                : "No disponible"}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    {user.subscription.status === 'active' ? (
+                                        <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" />
+                                    ) : (
+                                        <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5" />
+                                    )}
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-700">Estado</p>
+                                        <p className="text-sm text-slate-500">
+                                            {user.subscription.status === 'active'
+                                                ? "Tu suscripción está al corriente de pago."
+                                                : "Hay un problema con tu suscripción."}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center py-6 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                            <p className="text-slate-500 mb-4">No tienes una suscripción activa.</p>
+                            <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
+                                Ver Planes
+                            </Button>
+                        </div>
+                    )}
+
+                    {user?.subscription && (
+                        <div className="pt-4 border-t flex justify-end">
+                            <Button variant="outline" onClick={() => window.open('https://billing.stripe.com/p/login/test', '_blank')}>
+                                Gestionar Suscripción
+                            </Button>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 

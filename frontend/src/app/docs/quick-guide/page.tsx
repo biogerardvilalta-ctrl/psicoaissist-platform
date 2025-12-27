@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, Zap, CheckCircle2, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Zap, CheckCircle2, HelpCircle, Users } from 'lucide-react';
 
 export default function QuickGuidePage() {
     return (
@@ -55,6 +55,9 @@ export default function QuickGuidePage() {
                                         <li>Active <strong>Importar eventos</strong>.</li>
                                         <li>Complete la autenticación con Google.</li>
                                     </ol>
+                                    <p className="mt-2 text-xs text-slate-500 italic">
+                                        *Truco: Esto permite que sus citas de PsicoAIssist aparezcan en su calendario.
+                                    </p>
                                 </div>
                             </div>
 
@@ -83,29 +86,61 @@ export default function QuickGuidePage() {
                             </div>
                         </div>
 
+                        {/* Tips & Tricks Section (New) */}
+                        <div className="grid md:grid-cols-3 gap-6 mb-12">
+                            <div className="bg-amber-50 p-6 rounded-xl border border-amber-100">
+                                <h3 className="font-bold text-amber-900 mb-3 flex items-center gap-2">
+                                    <Zap className="w-5 h-5" /> Trucos Configuración
+                                </h3>
+                                <ul className="space-y-3 text-sm text-amber-800">
+                                    <li><strong>Cambiar Plan/Tarifa:</strong> En <em>Ajustes &gt; Facturación</em>. Consulte si es Basic, Pro, Premium, Business o clínicas.</li>
+                                    <li><strong>Vacaciones:</strong> En <em>Ajustes &gt; Agenda &gt; Bloqueos</em>. Use "Bloquear Día Completo" en lugar de borrar sesiones.</li>
+                                </ul>
+                            </div>
+
+                            <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                                <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                                    <CheckCircle2 className="w-5 h-5" /> Para Profesionales
+                                </h3>
+                                <ul className="space-y-3 text-sm text-blue-800">
+                                    <li><strong>Notas Completas:</strong> La IA necesita contexto. Escriba notas post-sesión para mejorar los "Temas Recurrentes".</li>
+                                    <li><strong>Marcar Asistencia:</strong> Use "Realizada" o "Cancelada". Las citas "Pendientes" no suman en estadísticas.</li>
+                                </ul>
+                            </div>
+
+                            <div className="bg-purple-50 p-6 rounded-xl border border-purple-100">
+                                <h3 className="font-bold text-purple-900 mb-3 flex items-center gap-2">
+                                    <Users className="w-5 h-5" /> Para Gestores
+                                </h3>
+                                <ul className="space-y-3 text-sm text-purple-800">
+                                    <li><strong>Grupos:</strong> Cree grupos (ej. "Tardes") si gestiona muchos doctores para filtrar rápido.</li>
+                                    <li><strong>Vista Unificada:</strong> Al seleccionar un grupo, verá una agenda combinada ideal para huecos.</li>
+                                </ul>
+                            </div>
+                        </div>
+
                         {/* Troubleshooting Section */}
-                        <div className="bg-blue-50 rounded-2xl p-8 border border-blue-100">
+                        <div className="bg-slate-100 rounded-2xl p-8 border border-slate-200">
                             <div className="flex items-center gap-3 mb-6">
-                                <HelpCircle className="w-6 h-6 text-blue-600" />
-                                <h2 className="text-2xl font-bold text-blue-900">¿Problemas Comunes?</h2>
+                                <HelpCircle className="w-6 h-6 text-slate-600" />
+                                <h2 className="text-2xl font-bold text-slate-900">¿Problemas Comunes?</h2>
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div>
-                                    <h4 className="font-bold text-blue-800 mb-2">"No veo mis citas de Google"</h4>
-                                    <p className="text-blue-700/80 text-sm leading-relaxed">
+                                    <h4 className="font-bold text-slate-800 mb-2">"No veo mis citas de Google"</h4>
+                                    <p className="text-slate-600 text-sm leading-relaxed">
                                         Asegúrese de que el interruptor "Importar eventos" esté activado en Ajustes y que haya dado todos los permisos solicitados en la pantalla de Google.
                                     </p>
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-blue-800 mb-2">"El Dashboard está vacío"</h4>
-                                    <p className="text-blue-700/80 text-sm leading-relaxed">
+                                    <h4 className="font-bold text-slate-800 mb-2">"El Dashboard está vacío"</h4>
+                                    <p className="text-slate-600 text-sm leading-relaxed">
                                         Si acaba de registrarse, es normal. Cree su primer paciente y primera sesión para empezar a ver datos y gráficas.
                                     </p>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

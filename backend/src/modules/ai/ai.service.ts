@@ -802,7 +802,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
     async askHelp(question: string): Promise<string> {
         try {
             // Hardcoded path to artifacts for this specific environment/agent session
-            const artifactsPath = '/home/ustec/.gemini/antigravity/brain/6c46e344-0c0b-449b-89a3-927b9edefa43';
+            const artifactsPath = '/home/ustec/.gemini/antigravity/brain/a5aaae08-9e71-4d91-967c-812d8d3d8817';
 
             let context = '';
             try {
@@ -826,7 +826,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
                 INSTRUCCIONS:
                 - Respon de manera breu, amable i directa.
                 - Utilitza la informació del manual si és rellevant.
-                - Si no ho saps, digues que contactin amb suport@psycoai.com.
+                - Si no ho saps, digues que contactin amb suport@psicoaissist.com.
                 - Idioma: Respon en l'idioma de la pregunta (o Castellà per defecte).
                 `,
             ];
