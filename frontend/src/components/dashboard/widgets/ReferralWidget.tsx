@@ -32,7 +32,7 @@ export function ReferralWidget() {
 
             <CardContent className="space-y-3 relative z-10 p-4 pt-2">
                 <p className="text-white/90 text-[11px] leading-tight">
-                    Regala <strong>5 casos de simulador</strong> a otro profesional.
+                    Recibe <strong>5 casos de simulador</strong> por cada profesional que invites.
                 </p>
 
                 <div className="bg-white/20 backdrop-blur-md rounded-lg p-2 flex items-center justify-between border border-white/30 h-10">

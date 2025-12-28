@@ -50,6 +50,7 @@ model User {
   referralCode    String?  @unique @map("referral_code")
   referredBy      String?  @map("referred_by")
   referralsCount  Int      @default(0) @map("referrals_count")
+  referralCredits Int      @default(0) @map("referral_credits") // Extra sessions earned via referrals
 
   // Google Integration
   googleRefreshToken String?  @map("google_refresh_token")
@@ -76,6 +77,7 @@ model User {
   auditLogs       AuditLog[]
   encryptionKeys  EncryptionKey[]
   subscription    Subscription?
+  simulationReports SimulationReport[]
 
   // Agenda Manager Relations
   createdById          String?  @map("created_by_id")
@@ -412,4 +414,26 @@ enum AuditAction {
   DATA_IMPORT
   CONSENT_GRANTED
   CONSENT_REVOKED
+}
+
+model SimulationReport {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  // Metadata
+  patientName String
+  difficulty  String // easy, medium, hard
+  scenario    String?
+
+  // Metrics (0-100)
+  empathyScore      Int
+  effectivenessScore Int
+  professionalismScore Int
+
+  // Full Content
+  feedbackMarkdown String @db.Text // The full AI report
+  
+  @@map("simulation_reports")
 }

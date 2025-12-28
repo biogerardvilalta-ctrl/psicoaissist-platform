@@ -383,7 +383,7 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Inteligencia Artificial</CardTitle>
-              <CardDescription>Personaliza la generación de informes y análisis.</CardDescription>
+              <CardDescription>Personaliza la generación de informes, análisis y el simulador de pacientes.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
@@ -406,9 +406,27 @@ export default function SettingsPage() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Este idioma definirá la redacción de los <strong>informes clínicos y el análisis post-sesión</strong>.
-                  <br />
-                  Nota: El <strong>Asistente en Vivo</strong> detectará automáticamente el idioma que hables.
+                  {preferredLanguage === 'ca' && (
+                    <>
+                      Aquest idioma definirà la redacció dels <strong>informes clínics, l'anàlisi post-sessió i l'idioma del simulador de pacients</strong>.
+                      <br />
+                      Nota: L'<strong>Assistent en Viu</strong> detectarà automàticament l'idioma que parlis.
+                    </>
+                  )}
+                  {preferredLanguage === 'en' && (
+                    <>
+                      This language will determine the wording of <strong>clinical reports, post-session analysis, and the patient simulator language</strong>.
+                      <br />
+                      Note: The <strong>Live Assistant</strong> will automatically detect the language you speak.
+                    </>
+                  )}
+                  {preferredLanguage !== 'ca' && preferredLanguage !== 'en' && (
+                    <>
+                      Este idioma definirá la redacción de los <strong>informes clínicos, el análisis post-sesión y el idioma del simulador de pacientes</strong>.
+                      <br />
+                      Nota: El <strong>Asistente en Vivo</strong> detectará automáticamente el idioma que hables.
+                    </>
+                  )}
                 </p>
               </div>
             </CardContent>

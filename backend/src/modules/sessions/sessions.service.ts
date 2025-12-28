@@ -754,7 +754,9 @@ export class SessionsService {
                 const timeStr = currentSlot.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
                 slots.push(timeStr);
             }
-            currentSlot = new Date(currentSlot.getTime() + (defaultDuration * 60000));
+
+            // Increment by Duration + Buffer to create the gap
+            currentSlot = new Date(currentSlot.getTime() + ((defaultDuration + bufferTime) * 60000));
         }
 
         return { date: dateStr, slots };

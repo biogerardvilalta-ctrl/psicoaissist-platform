@@ -3,13 +3,17 @@ import { SimulatorService, PatientProfile } from './simulator.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
 
-import { IsString, IsEnum, IsArray, IsNotEmpty, IsObject, ValidateNested } from 'class-validator';
+import { IsString, IsEnum, IsArray, IsNotEmpty, IsObject, ValidateNested, IsBoolean, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class StartSimulationDto {
     @IsEnum(['easy', 'medium', 'hard'])
     @IsNotEmpty()
     difficulty: 'easy' | 'medium' | 'hard';
+
+    @IsBoolean()
+    @IsOptional()
+    includeNonVerbal?: boolean;
 }
 
 class ChatDto {
@@ -30,30 +34,46 @@ class EndSimulationDto {
     @IsArray()
     @IsNotEmpty()
     history: { role: 'user' | 'model'; parts: string }[];
+
+    @IsObject()
+    @IsNotEmpty()
+    profile: PatientProfile;
 }
 
 @Controller('simulator')
 @UseGuards(JwtAuthGuard)
 export class SimulatorController {
-    constructor(private readonly simulatorService: SimulatorService) { }
+    constructor(private readonly simulatorService: SimulatorService) {
+        console.log("✅✅✅ SIMULATOR CONTROLLER LOADED (V3) ✅✅✅");
+    }
 
     @Post('start')
     async start(@Body() dto: StartSimulationDto, @Request() req) {
-        return this.simulatorService.generateCase(req.user.id, dto.difficulty);
+        return this.simulatorService.generateCase(req.user.id, dto.difficulty, dto.includeNonVerbal);
     }
 
     @Post('chat')
-    async chat(@Body() dto: ChatDto) {
+    async chat(@Body() dto: ChatDto, @Request() req) {
         // Note: In a real app, we should validate 'profile' matches a cached session to prevent manipulation,
         // but for this MVP, passing it back is fine.
         return {
-            response: await this.simulatorService.chat(dto.history, dto.message, dto.profile)
+            response: await this.simulatorService.chat(dto.history, dto.message, dto.profile, req.user.id)
         };
     }
 
     @Post('evaluate')
-    async evaluate(@Body() dto: EndSimulationDto) {
-        return this.simulatorService.evaluate(dto.history);
+    async evaluate(@Body() dto: EndSimulationDto, @Request() req) {
+        return this.simulatorService.evaluate(dto.history, req.user.id, dto.profile);
+    }
+
+    @Get('reports')
+    async getReports(@Request() req) {
+        return this.simulatorService.getReports(req.user.id);
+    }
+
+    @Get('stats')
+    async getStats(@Request() req) {
+        return this.simulatorService.getStats(req.user.id);
     }
 
     // === PUBLIC DEMO ROUTES ===

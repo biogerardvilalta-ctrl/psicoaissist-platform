@@ -11,11 +11,12 @@ import { GeminiProvider } from './providers/gemini.provider';
     providers: [
         AiService,
         TranscriptionService,
+        GeminiProvider,
         {
             provide: 'AI_PROVIDER',
-            useClass: GeminiProvider // Default provider
+            useExisting: GeminiProvider // Alias to the concrete class
         }
     ],
-    exports: [AiService, TranscriptionService, 'AI_PROVIDER'],
+    exports: [AiService, TranscriptionService, 'AI_PROVIDER', GeminiProvider],
 })
 export class AiModule { }

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+// Force rebuild for Prisma Client update
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -91,10 +92,8 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     ClientsModule,
     DashboardModule,
     SessionsModule,
-    SessionsModule,
     ReportsModule,
     AiModule,
-    AuditModule,
     AuditModule,
     RemindersModule,
     GoogleModule,

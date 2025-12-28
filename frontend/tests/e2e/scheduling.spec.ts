@@ -404,11 +404,22 @@ test.describe('Scheduling Conflicts', () => {
         const timeSelectTrigger = timeContainer.locator('button[role="combobox"]');
         await timeSelectTrigger.click();
 
-        // 11:00 Should be gone. 
+        // With 60m duration + 15m buffer:
+        // Slots: 09:00, 10:15, 11:30, 12:45...
+
+        // 11:00 Should be hidden (not generated)
         await expect(page.getByRole('option', { name: '11:00', exact: true })).toBeHidden();
 
-        // 12:00 Should be visible
-        await expect(page.getByRole('option', { name: '12:00', exact: true })).toBeVisible();
+        // 11:30 Should be visible (First available slot after 10:15 blocked by 10:00 session)
+        // Wait, 10:15 slot collides with 10:00-11:00 session?
+        // Slot 10:15-11:15 (EndBuf 11:30). Session 10:00-11:00 (EndBuf 11:15).
+        // 10:15 < 11:15 Yes. 11:30 > 10:00 Yes. Collision.
+
+        // Next slot 11:30.
+        // Slot 11:30-12:30. Session 10:00-11:00 (EndBuf 11:15).
+        // 11:30 > 11:15. No Collision.
+
+        await expect(page.getByRole('option', { name: '11:30', exact: true })).toBeVisible();
     });
 
     test('Should respect manual blocked blocks', async ({ page, request }) => {

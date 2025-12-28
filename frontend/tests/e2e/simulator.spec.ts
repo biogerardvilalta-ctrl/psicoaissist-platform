@@ -57,21 +57,23 @@ test.describe('Simulator E2E', () => {
         await expect(page.locator(`text=${testMessage}`)).toBeVisible();
 
         // 6. Verify AI Response (Wait for invisible "Escribiendo..." or new bubble)
-        // Since we don't have a specific ID, we wait for *something* to happen.
-        // We can wait for the message list to grow.
-        // Or wait for the "model" message.
-        // Let's assume the AI reply contains some text, but we don't know what it is.
-        // However, the test framework can wait for any text that is NOT the user message.
-
-        // Better: Wait for the network response like before, it's reliable.
-        const responsePromise = page.waitForResponse(resp => resp.url().includes('/api/v1/simulator/chat/message') && resp.status() === 201);
-        // Note: The click might have already triggered it. Ideally we promise.all.
-        // But since we just clicked, it's fine.
-
-        // Just verify that "something" appears in the chat area that is a model message.
-        // Model messages have 'bg-gray-100'.
         await expect(page.locator('.bg-gray-100').first()).toBeVisible({ timeout: 30000 });
 
-        console.log('Simulator Test Passed: Text sent and response received');
+        console.log('Chat verified. Requesting evaluation...');
+
+        // 7. End Session & Request Evaluation
+        const endButton = page.locator('button:has-text("Finalizar Sesión")');
+        await expect(endButton).toBeVisible();
+        await endButton.click();
+
+        // 8. Verify Evaluation Report
+        // Expect "Informe de Supervisión Detallado"
+        await expect(page.locator('text=Informe de Supervisión Detallado')).toBeVisible({ timeout: 60000 }); // Generating report takes time
+
+        // Verify Metrics
+        await expect(page.locator('text=Empatía')).toBeVisible();
+        await expect(page.locator('text=Eficacia Clínica')).toBeVisible();
+
+        console.log('Simulator Test Passed: Chat and Evaluation verified');
     });
 });

@@ -12,6 +12,9 @@ import {
   Patch,
   Delete
 } from '@nestjs/common';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { PaymentsService } from './payments.service';
 import { UsageLimitsService } from './usage-limits.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -59,7 +62,8 @@ export class PaymentsController {
   }
 
   @Post('create-checkout-session')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   async createCheckoutSession(
     @Body() createCheckoutDto: CreateCheckoutSessionDto,
     @Req() req: any,
@@ -77,13 +81,15 @@ export class PaymentsController {
   }
 
   @Post('create-portal-session')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   async createPortalSession(@Req() req: any) {
     return this.paymentsService.createPortalSession(req.user.sub);
   }
 
   @Patch('subscription')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   async updateSubscription(
     @Body() updateSubscriptionDto: UpdateSubscriptionDto,
     @Req() req: any,
@@ -95,7 +101,8 @@ export class PaymentsController {
   }
 
   @Delete('subscription')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   async cancelSubscription(@Req() req: any) {
     return this.paymentsService.cancelSubscription(req.user.sub);
   }
