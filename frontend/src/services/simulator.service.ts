@@ -10,9 +10,9 @@ export interface PatientProfile {
 }
 
 export const simulatorService = {
-    startSimulation: async (difficulty: 'easy' | 'medium' | 'hard', includeNonVerbal: boolean = true): Promise<PatientProfile> => {
+    startSimulation: async (difficulty: 'easy' | 'medium' | 'hard', showNonVerbalCues: boolean = true): Promise<PatientProfile> => {
         // httpClient returns the data directly
-        return await httpClient.post<PatientProfile>('/api/v1/simulator/start', { difficulty, includeNonVerbal });
+        return await httpClient.post<PatientProfile>('/api/v1/simulator/start', { difficulty, showNonVerbalCues });
     },
 
     sendMessage: async (message: string, history: Array<{ role: 'user' | 'model'; parts: string }>, profile: PatientProfile) => {

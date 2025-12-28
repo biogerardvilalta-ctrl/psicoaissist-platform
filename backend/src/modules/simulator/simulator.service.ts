@@ -20,7 +20,6 @@ export interface PatientProfile {
     defenseMechanisms?: string[]; // e.g. ["Projection", "Intellectualization"]
     communicationStyle?: string; // e.g. "Passive-Aggressive", "Tangential", "Monosyllabic"
     triggers?: string[]; // e.g. ["Mention of father", "Silence"]
-    includeNonVerbal?: boolean; // NEW: Toggle for micro-behaviors
 }
 
 @Injectable()
@@ -89,17 +88,23 @@ export class SimulatorService {
     /**
      * Generates a random clinical case (Persona).
      */
-    async generateCase(userId: string, difficulty: 'easy' | 'medium' | 'hard' = 'medium', includeNonVerbal: boolean = true): Promise<PatientProfile> {
+    async generateCase(userId: string, difficulty: 'easy' | 'medium' | 'hard' = 'medium', showNonVerbalCues?: boolean): Promise<PatientProfile> {
         // Enforce Limits
         await this.checkAndIncrementUsage(userId);
 
         const user = await this.prisma.user.findUnique({ where: { id: userId } });
         const lang = user?.preferredLanguage || 'ca'; // Default to Catalan
 
+        // If showNonVerbalCues is true, we ask for more detailed body language
+        const nonVerbalInstruction = showNonVerbalCues
+            ? "INCLUYE DETALLES DE LENGUAJE NO VERBAL ESPECÍFICOS Y COMPLEJOS."
+            : "";
+
         const prompt = `
         Genera un perfil detallat d'un PACIENT SIMULAT per a una sessió de teràpia psicològica.
         Dificultat: ${difficulty}.
         Idioma del paciente: ${lang === 'es' ? 'ESPAÑOL' : lang === 'en' ? 'ENGLISH' : 'CATALÀ'}.
+        ${nonVerbalInstruction}
         
         Retorna un objecte JSON amb aquests camps:
         {
@@ -124,7 +129,7 @@ export class SimulatorService {
             // Validate essential fields exists
             if (!data.name || !data.age) throw new Error("Invalid structure: Missing fields");
 
-            return { ...data, difficulty, includeNonVerbal };
+            return { ...data, difficulty };
         } catch (error) {
             this.logger.error('Error generating case:', error);
             // Fallback case
@@ -195,22 +200,9 @@ export class SimulatorService {
                 content: typeof h.parts === 'string' ? h.parts : (h.parts as any)[0]?.text || ''
             }));
 
-
-            let finalSystemPrompt = systemPrompt;
-            if (profile.includeNonVerbal) {
-                const behavior = `Incluye lenguaje no verbal entre asteriscos (ej: *se frota las manos*, *mira hacia abajo*) para reflejar el estado emocional.`;
-                finalSystemPrompt = `${systemPrompt}\n${behavior}`;
-            } else {
-                const behavior = `IMPORTANTE: NO incluyas lenguaje no verbal ni acciones entre asteriscos. Solo respuesta verbal.`;
-                finalSystemPrompt = `${systemPrompt}\n${behavior}`;
-            }
-
-            // Prepend system prompt to history for context
-            // Note: AiMessage interface uses 'content', not 'parts'
-            // We use 'user' role for system instruction if provider doesn't support 'system'
+            // Prepend System Prompt
             const fullHistory: AiMessage[] = [
-                { role: 'user', content: finalSystemPrompt },
-                { role: 'model', content: 'Entendido. Actuaré según el perfil y las instrucciones.' },
+                { role: 'system', content: systemPrompt },
                 ...validHistory
             ];
 

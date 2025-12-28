@@ -3,7 +3,7 @@ import { SimulatorService, PatientProfile } from './simulator.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
 
-import { IsString, IsEnum, IsArray, IsNotEmpty, IsObject, ValidateNested, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsEnum, IsArray, IsNotEmpty, IsObject, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class StartSimulationDto {
@@ -11,9 +11,8 @@ class StartSimulationDto {
     @IsNotEmpty()
     difficulty: 'easy' | 'medium' | 'hard';
 
-    @IsBoolean()
     @IsOptional()
-    includeNonVerbal?: boolean;
+    showNonVerbalCues?: boolean;
 }
 
 class ChatDto {
@@ -49,7 +48,7 @@ export class SimulatorController {
 
     @Post('start')
     async start(@Body() dto: StartSimulationDto, @Request() req) {
-        return this.simulatorService.generateCase(req.user.id, dto.difficulty, dto.includeNonVerbal);
+        return this.simulatorService.generateCase(req.user.id, dto.difficulty, dto.showNonVerbalCues);
     }
 
     @Post('chat')

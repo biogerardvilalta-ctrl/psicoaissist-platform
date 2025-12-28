@@ -4,9 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Mic, MicOff, Square, Play, RotateCcw, User, UserCheck, Settings2, BarChart3, History } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
 
 import { useSpeechRecognition } from '@/hooks/use-speech-recognition';
 import { simulatorService, PatientProfile } from '@/services/simulator.service';
@@ -19,7 +20,7 @@ export default function SimulatorPage() {
     // States: 'idle', 'loading', 'active', 'evaluating', 'finished'
     const [status, setStatus] = useState<'idle' | 'loading' | 'active' | 'evaluating' | 'finished'>('idle');
     const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
-    const [includeNonVerbal, setIncludeNonVerbal] = useState<boolean>(true); // New State
+    const [showNonVerbalCues, setShowNonVerbalCues] = useState<boolean>(true);
     const [profile, setProfile] = useState<PatientProfile | null>(null);
     const [messages, setMessages] = useState<Array<{ role: 'user' | 'model'; parts: string }>>([]);
     const [feedback, setFeedback] = useState<string>('');
@@ -33,6 +34,7 @@ export default function SimulatorPage() {
     const [ttsRate, setTtsRate] = useState(0.9); // Slightly slower is more natural
     const [ttsPitch, setTtsPitch] = useState(0.9);
     const [showSettings, setShowSettings] = useState(false);
+    const [activeTab, setActiveTab] = useState("simulator");
 
     // Voice - Default to Catalan (ca-ES) as per user request
     const { isListening, transcript, interimTranscript, startListening, stopListening, resetTranscript } = useSpeechRecognition('ca-ES');
@@ -48,6 +50,7 @@ export default function SimulatorPage() {
 
     // Load Stats on Tab Change
     const handleTabChange = (value: string) => {
+        setActiveTab(value);
         if (value === 'history') {
             loadHistory();
         }
@@ -86,7 +89,7 @@ export default function SimulatorPage() {
     const handleStart = async () => {
         setStatus('loading');
         try {
-            const newProfile = await simulatorService.startSimulation(difficulty, includeNonVerbal);
+            const newProfile = await simulatorService.startSimulation(difficulty, showNonVerbalCues);
             setProfile(newProfile);
             setMessages([]);
             setStatus('active');
@@ -163,8 +166,11 @@ export default function SimulatorPage() {
         }
     };
 
+    const isAppMode = activeTab === 'simulator' && status === 'active';
+
     return (
-        <div className="container mx-auto p-6 max-w-5xl h-[calc(100vh-4rem)] flex flex-col gap-6">
+        <div className={`container mx-auto p-6 max-w-5xl flex flex-col gap-6 ${isAppMode ? 'h-[calc(100vh-140px)]' : 'h-auto min-h-[calc(100vh-140px)] pb-20'
+            }`}>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Simulador Clínico</h1>
@@ -178,14 +184,14 @@ export default function SimulatorPage() {
                 )}
             </div>
 
-            <Tabs defaultValue="simulator" className="flex-1 flex flex-col" onValueChange={handleTabChange}>
+            <Tabs defaultValue="simulator" className="flex-1 flex flex-col min-h-0" onValueChange={handleTabChange}>
                 <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
                     <TabsTrigger value="simulator">Simulador</TabsTrigger>
                     <TabsTrigger value="history">Historial y Progreso</TabsTrigger>
                 </TabsList>
 
                 {/* === SIMULATOR TAB === */}
-                <TabsContent value="simulator" className="flex-1 flex flex-col data-[state=active]:flex">
+                <TabsContent value="simulator" className="flex-1 flex flex-col min-h-0 data-[state=active]:flex">
 
                     {/* ERROR / IDLE STATE */}
                     {status === 'idle' && (
@@ -212,6 +218,17 @@ export default function SimulatorPage() {
                                             <span className="block font-bold mb-1">{level === 'easy' ? 'Fácil' : level === 'medium' ? 'Medio' : 'Difícil'}</span>
                                         </button>
                                     ))}
+                                </div>
+
+                                <div className="flex items-center space-x-2 py-4 justify-center">
+                                    <Checkbox
+                                        id="non-verbal"
+                                        checked={showNonVerbalCues}
+                                        onCheckedChange={(checked) => setShowNonVerbalCues(checked as boolean)}
+                                    />
+                                    <Label htmlFor="non-verbal" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                        Mostrar Micro-comportamientos (No verbales)
+                                    </Label>
                                 </div>
 
                                 <Button size="lg" onClick={handleStart} className="w-full bg-blue-600 hover:bg-blue-700">
@@ -365,39 +382,6 @@ export default function SimulatorPage() {
                                         </form>
                                     </div>
 
-                                    <div className="space-y-4">
-                                        <Label>Nivel de Dificultad</Label>
-                                        <div className="grid grid-cols-3 gap-4">
-                                            {(['easy', 'medium', 'hard'] as const).map((level) => (
-                                                <div
-                                                    key={level}
-                                                    className={`cursor-pointer rounded-lg border-2 p-4 text-center transition-all hover:bg-accent ${difficulty === level ? 'border-primary bg-primary/5' : 'border-muted'
-                                                        }`}
-                                                    onClick={() => setDifficulty(level)}
-                                                >
-                                                    <div className="font-semibold capitalize">
-                                                        {level === 'easy' ? 'Fácil' : level === 'medium' ? 'Medio' : 'Difícil'}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center space-x-2 pt-2">
-                                        <input
-                                            type="checkbox"
-                                            id="nonVerbal"
-                                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                            checked={includeNonVerbal}
-                                            onChange={(e) => setIncludeNonVerbal(e.target.checked)}
-                                        />
-                                        <Label htmlFor="nonVerbal" className="cursor-pointer">
-                                            Mostrar Micro-comportamientos (Lenguaje No Verbal)
-                                            <p className="text-xs text-muted-foreground font-normal">
-                                                Si se activa, el paciente describirá acciones entre asteriscos (ej: *se frota las manos*).
-                                            </p>
-                                        </Label>
-                                    </div>
                                     <div className="flex items-center gap-2 mt-2">
                                         <Button
                                             size="lg"
@@ -425,7 +409,7 @@ export default function SimulatorPage() {
 
                     {/* FEEDBACK & METRICS */}
                     {status === 'finished' && (
-                        <div className="flex-1 overflow-y-auto space-y-6 mt-4">
+                        <div className="flex-1 overflow-y-auto space-y-6 mt-4 pr-2 pb-4">
                             {/* Metrics Section */}
                             {metrics && (
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -496,7 +480,7 @@ export default function SimulatorPage() {
                 </TabsContent>
 
                 {/* === HISTORY TAB === */}
-                <TabsContent value="history" className="flex-1 overflow-y-auto mt-4 space-y-6">
+                <TabsContent value="history" className="flex-1 overflow-y-auto mt-4 space-y-6 data-[state=active]:flex flex-col justify-start pb-6">
                     {/* Evolution Chart */}
                     <div className="space-y-2">
                         <h2 className="text-lg font-semibold flex items-center gap-2">
