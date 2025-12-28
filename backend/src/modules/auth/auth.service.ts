@@ -28,6 +28,7 @@ export class AuthService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email: email.toLowerCase() },
+        include: { subscription: true },
       });
 
       if (!user) {
@@ -133,6 +134,8 @@ export class AuthService {
         hourlyRate: user.hourlyRate,
         referralCode: user.referralCode,
         referralsCount: user.referralsCount,
+        subscription: user.subscription,
+        simulatorUsageCount: user.simulatorUsageCount,
       },
       tokens,
       encryptionKey: {
@@ -205,6 +208,7 @@ export class AuthService {
             }
           }
         },
+        include: { subscription: true },
       });
 
       this.logger.log(`New user registered: ${user.email} (Referred by: ${referredByUserId || 'None'})`);
@@ -242,6 +246,8 @@ export class AuthService {
           hourlyRate: user.hourlyRate,
           referralCode: user.referralCode,
           referralsCount: user.referralsCount,
+          subscription: user.subscription,
+          simulatorUsageCount: user.simulatorUsageCount,
         },
         tokens,
         encryptionKey: {
@@ -448,6 +454,7 @@ export class AuthService {
   async getProfile(userId: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
+      include: { subscription: true },
     });
 
     if (!user) {

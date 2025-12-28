@@ -52,7 +52,7 @@ export class SimulatorService {
         }
 
         // Pro / Team Plan (Limited to 5 + Referrals)
-        const baseLimit = 100; // Increased for development/testing
+        const baseLimit = 5;
         const referralBonus = (user.referralsCount || 0) * 5;
         const totalLimit = baseLimit + referralBonus;
 
@@ -73,7 +73,7 @@ export class SimulatorService {
         }
 
         if (user.simulatorUsageCount >= totalLimit) {
-            throw new ForbiddenException(`Has alcanzado el límite de ${totalLimit} casos/mes (${baseLimit} base + ${referralBonus} por referidos). Invita a más profesionales para ampliar.`);
+            throw new ForbiddenException(`Límite alcanzado (${totalLimit} casos/mes). Mejora tu plan o invita a colegas.`);
         }
 
         // Increment

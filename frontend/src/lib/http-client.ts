@@ -2,6 +2,18 @@ import { ApiResponse, PaginatedResponse } from '@/types'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
+export class ApiError extends Error {
+  status: number;
+  data: any;
+
+  constructor(message: string, status: number, data?: any) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+  }
+}
+
 class HttpClient {
   private baseURL: string
 
@@ -40,9 +52,13 @@ class HttpClient {
         }
         const errorData = await response.json().catch(() => ({}))
         console.error('❌ HTTP Error response:', errorData);
-        throw new Error(
-          errorData.message || `HTTP Error: ${response.status} ${response.statusText}`
-        )
+
+        // Throw custom ApiError
+        throw new ApiError(
+          errorData.message || `HTTP Error: ${response.status} ${response.statusText}`,
+          response.status,
+          errorData
+        );
       }
 
       // Handle no content responses

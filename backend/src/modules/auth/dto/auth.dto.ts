@@ -116,6 +116,12 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   referralsCount?: number;
+
+  @ApiProperty({ description: 'Suscripción del usuario', required: false })
+  subscription?: any;
+
+  @ApiProperty({ required: false })
+  simulatorUsageCount?: number;
 }
 
 export class AuthResponseDto {

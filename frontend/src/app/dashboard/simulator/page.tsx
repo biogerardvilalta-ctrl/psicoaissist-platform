@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useToast } from "@/hooks/use-toast";
 import { Mic, MicOff, Square, Play, RotateCcw, User, UserCheck, Settings2, BarChart3, History, Search, X } from 'lucide-react';
 import { simulatorService, PatientProfile, SimulationReport, StatsData } from '@/services/simulator.service';
+import { ApiError } from '@/lib/http-client';
+import Link from 'next/link';
 import { EvolutionChart } from './components/EvolutionChart';
 import { ReportsHistory } from './components/ReportsHistory';
 
@@ -186,8 +188,16 @@ export default function SimulatorPage() {
                 title: "Simulación iniciada",
                 description: "El paciente está esperando."
             });
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
+            // Handle Usage Limit (403)
+            if (error instanceof ApiError && error.status === 403) {
+                setLimitMessage(error.message);
+                setShowLimitModal(true);
+                setStatus('idle');
+                return;
+            }
+
             toast({
                 variant: "destructive",
                 title: "Error",
@@ -264,6 +274,8 @@ export default function SimulatorPage() {
     };
 
     const isFixedLayout = activeTab === 'simulator';
+    const [showLimitModal, setShowLimitModal] = useState(false);
+    const [limitMessage, setLimitMessage] = useState("");
 
     return (
         <div className={`container mx-auto p-6 max-w-5xl flex flex-col gap-6 ${isFixedLayout ? 'h-[calc(100vh-140px)] overflow-hidden' : 'h-auto min-h-[calc(100vh-140px)] pb-20'}`}>
@@ -577,6 +589,7 @@ export default function SimulatorPage() {
                     )}
                 </TabsContent>
 
+
                 {/* === HISTORY TAB === */}
                 <TabsContent value="history" className="flex-1 overflow-y-auto mt-4 space-y-8 data-[state=active]:flex flex-col justify-start pb-6">
                     {/* Evolution Chart */}
@@ -696,6 +709,35 @@ export default function SimulatorPage() {
                             </div>
                         </div>
                     )}
+                </DialogContent>
+            </Dialog>
+
+            {/* Limit Reached Modal */}
+            <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-amber-600">
+                            <span className="text-2xl">⚠️</span> Límite Alcanzado
+                        </DialogTitle>
+                        <DialogDescription className="pt-2 text-base text-gray-600">
+                            {limitMessage || "Has alcanzado el límite de casos mensuales. Para continuar practicando, necesitas ampliar tu plan."}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-3 mt-4">
+                        <Link href="/dashboard/settings" passHref>
+                            <Button className="w-full bg-amber-500 hover:bg-amber-600">
+                                🚀 Actualizar Plan (Ilimitado)
+                            </Button>
+                        </Link>
+                        <Link href="/dashboard/settings" passHref>
+                            <Button variant="outline" className="w-full">
+                                📩 Invitar Colegas (+5 casos/ref)
+                            </Button>
+                        </Link>
+                        <Button variant="ghost" onClick={() => setShowLimitModal(false)} className="text-gray-400">
+                            Cerrar
+                        </Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

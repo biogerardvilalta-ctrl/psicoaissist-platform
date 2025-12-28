@@ -170,6 +170,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false, type: 'object', isArray: true })
   groupMembers?: { id: string; firstName: string; lastName: string }[];
+
+  @ApiProperty({ required: false })
+  simulatorUsageCount?: number;
 }
 
 // ... existing code ...

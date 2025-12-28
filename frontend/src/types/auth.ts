@@ -28,6 +28,7 @@ export interface User {
   googleImportCalendar?: boolean;
   referralCode?: string;
   referralsCount?: number;
+  simulatorUsageCount?: number;
 }
 
 export interface AuthTokens {

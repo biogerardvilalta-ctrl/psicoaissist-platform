@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { AuthAPI } from '@/lib/auth-api';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { CreditCard, Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
+import { CreditCard, Calendar, CheckCircle2, AlertCircle, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export default function ProfilePage() {
@@ -238,6 +238,52 @@ export default function ProfilePage() {
                             </Button>
                         </div>
                     )}
+                </CardContent>
+            </Card>
+
+            {/* Simulator Usage Card */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Activity className="w-5 h-5 text-blue-600" />
+                        Uso del Simulador
+                    </CardTitle>
+                    <CardDescription>Monitoriza tu uso mensual del simulador clínico.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-slate-700">Sesiones Realizadas</p>
+                            <h3 className="text-2xl font-bold text-slate-900">
+                                {user?.simulatorUsageCount || 0}
+                                <span className="text-sm font-normal text-muted-foreground ml-1">
+                                    / {5 + ((user?.referralsCount || 0) * 5)} permitidas
+                                </span>
+                            </h3>
+                        </div>
+                        {user?.subscription?.planType === 'PRO' || user?.subscription?.planType === 'PREMIUM' ? (
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                Sin Límite (Plan {user.subscription.planType})
+                            </Badge>
+                        ) : (
+                            <Badge variant="secondary">
+                                {Math.max(0, (5 + ((user?.referralsCount || 0) * 5)) - (user?.simulatorUsageCount || 0))} restantes
+                            </Badge>
+                        )}
+                    </div>
+
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-600 rounded-full transition-all duration-500"
+                            style={{
+                                width: `${Math.min(100, ((user?.simulatorUsageCount || 0) / (5 + ((user?.referralsCount || 0) * 5))) * 100)}%`
+                            }}
+                        />
+                    </div>
+
+                    <p className="text-xs text-muted-foreground">
+                        * El límite se reinicia mensualmente. Invita colegas para obtener +5 casos cada uno.
+                    </p>
                 </CardContent>
             </Card>
 
