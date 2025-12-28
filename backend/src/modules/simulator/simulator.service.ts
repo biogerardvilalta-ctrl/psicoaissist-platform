@@ -100,15 +100,23 @@ export class SimulatorService {
             ? "INCLUYE DETALLES DE LENGUAJE NO VERBAL ESPECÍFICOS Y COMPLEJOS."
             : "";
 
+        const randomSeed = Math.random().toString(36).substring(7) + Date.now();
+
         const prompt = `
         Genera un perfil detallat d'un PACIENT SIMULAT per a una sessió de teràpia psicològica.
         Dificultat: ${difficulty}.
         Idioma del paciente: ${lang === 'es' ? 'ESPAÑOL' : lang === 'en' ? 'ENGLISH' : 'CATALÀ'}.
+        Random Seed: ${randomSeed} (USA ESTA SEMILLA PARA VARIAR DRASTICAMENTE EL NOMBRE Y LA PATOLOGÍA).
         ${nonVerbalInstruction}
+
+        IMPORTANTE:
+        1. NO uses nombres comunes como "Laia", "Aina", "Marc". Inventa nombres variados.
+        2. NO repitas patologías comunes (ansiedad, depresión). Inventa casos complejos o poco frecuentes.
+        3. VARIA la edad y el género.
         
         Retorna un objecte JSON amb aquests camps:
         {
-          "name": "Nombre ficticio",
+          "name": "Nombre ficticio (VARIADO)",
           "age": 25,
           "condition": "Breve descripción del motivo de consulta",
           "traits": ["Rasgo 1", "Rasgo 2"],
@@ -123,7 +131,8 @@ export class SimulatorService {
 
         try {
             const data = await this.aiProvider.generateJSON<PatientProfile>(prompt, {
-                modelName: this.modelName
+                modelName: this.modelName,
+                temperature: 0.9 // High creativity
             });
 
             // Validate essential fields exists
@@ -178,7 +187,7 @@ export class SimulatorService {
         2. REGLA "SHOW, DON'T TELL"(IMPORTANTE):
         - NO digas "estoy nervioso".
            - USA ACCIONES ENTRE ASTERISCOS: "*Desvía la mirada y juega con las manos*" o "*Se calla abruptamente*".
-           - Incluye al menos una señal no verbal en cada respuesta.
+           - Usa señales no verbales SOLO cuando haya un cambio emocional relevante o sea necesario para el contexto (no en cada respuesta).
 
         3. RESISTENCIA DINÁMICA:
         - Si el terapeuta va muy rápido -> Activa mecanismo de defensa(ej: cambia de tema, intelectualiza).
@@ -279,9 +288,51 @@ export class SimulatorService {
         }
     }
 
-    async getReports(userId: string) {
+    async getReports(userId: string, filters?: { period?: string; patientName?: string; date?: string }) {
+        const where: any = { userId };
+
+        if (filters?.period) {
+            const now = new Date();
+            let startDate: Date;
+
+            switch (filters.period) {
+                case 'week':
+                    startDate = new Date(now.setDate(now.getDate() - 7));
+                    break;
+                case 'month':
+                    startDate = new Date(now.setMonth(now.getMonth() - 1));
+                    break;
+                case 'year':
+                    startDate = new Date(now.setFullYear(now.getFullYear() - 1));
+                    break;
+            }
+
+            if (startDate) {
+                where.createdAt = { gte: startDate };
+            }
+        }
+
+        if (filters?.date) {
+            const date = new Date(filters.date);
+            const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+            const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+            where.createdAt = {
+                ...where.createdAt,
+                gte: startOfDay,
+                lte: endOfDay
+            };
+        }
+
+        if (filters?.patientName) {
+            where.patientName = {
+                contains: filters.patientName,
+                mode: 'insensitive'
+            };
+        }
+
         return this.prisma.simulationReport.findMany({
-            where: { userId },
+            where,
             orderBy: { createdAt: 'desc' },
             select: {
                 id: true,
@@ -290,7 +341,8 @@ export class SimulatorService {
                 difficulty: true,
                 empathyScore: true,
                 effectivenessScore: true,
-                professionalismScore: true
+                professionalismScore: true,
+                feedbackMarkdown: true
             }
         });
     }
@@ -303,11 +355,34 @@ export class SimulatorService {
         return report;
     }
 
-    async getStats(userId: string) {
+    async getStats(userId: string, period?: string) {
+        const where: any = { userId };
+
+        if (period) {
+            const now = new Date();
+            let startDate: Date;
+
+            switch (period) {
+                case 'week':
+                    startDate = new Date(now.setDate(now.getDate() - 7));
+                    break;
+                case 'month':
+                    startDate = new Date(now.setMonth(now.getMonth() - 1));
+                    break;
+                case 'year':
+                    startDate = new Date(now.setFullYear(now.getFullYear() - 1));
+                    break;
+            }
+
+            if (startDate) {
+                where.createdAt = { gte: startDate };
+            }
+        }
+
         const reports = await this.prisma.simulationReport.findMany({
-            where: { userId },
+            where,
             orderBy: { createdAt: 'asc' }, // Chronological for graph
-            take: 20 // Last 20 sessions
+            take: period ? undefined : 20 // If period is specified, get everything in that period. If not, default to 20.
         });
 
         // Calc averages

@@ -9,6 +9,23 @@ export interface PatientProfile {
     scenario: string;
 }
 
+export interface SimulationReport {
+    id: string;
+    createdAt: string;
+    patientName: string;
+    difficulty: string;
+    empathyScore: number;
+    effectivenessScore: number;
+    professionalismScore: number;
+    feedbackMarkdown: string;
+}
+
+export interface StatsData {
+    count: number;
+    avgEmpathy: number;
+    evolution: Array<{ date: string; empathy: number; effectiveness: number }>;
+}
+
 export const simulatorService = {
     startSimulation: async (difficulty: 'easy' | 'medium' | 'hard', showNonVerbalCues: boolean = true): Promise<PatientProfile> => {
         // httpClient returns the data directly
@@ -26,23 +43,22 @@ export const simulatorService = {
         }>('/api/v1/simulator/evaluate', { history, profile });
     },
 
-    getReports: async () => {
-        return await httpClient.get<Array<{
-            id: string,
-            createdAt: string,
-            patientName: string,
-            difficulty: string,
-            empathyScore: number,
-            effectivenessScore: number,
-            professionalismScore: number
-        }>>('/api/v1/simulator/reports');
+    getReports: async (filters?: { period?: string; patientName?: string; date?: string }) => {
+        const params = new URLSearchParams();
+        if (filters?.period && filters.period !== 'all') params.append('period', filters.period);
+        if (filters?.patientName) params.append('patientName', filters.patientName);
+        if (filters?.date) params.append('date', filters.date);
+
+        const queryString = params.toString() ? `?${params.toString()}` : '';
+        return await httpClient.get<SimulationReport[]>(`/api/v1/simulator/reports${queryString}`);
     },
 
-    getStats: async () => {
-        return await httpClient.get<{
-            count: number,
-            avgEmpathy: number,
-            evolution: Array<{ date: string, empathy: number, effectiveness: number }>
-        }>('/api/v1/simulator/stats');
+    getStats: async (period?: string) => {
+        const params = new URLSearchParams();
+        if (period && period !== 'all') params.append('period', period);
+
+        const queryString = params.toString() ? `?${params.toString()}` : '';
+
+        return await httpClient.get<StatsData>(`/api/v1/simulator/stats${queryString}`);
     }
 };

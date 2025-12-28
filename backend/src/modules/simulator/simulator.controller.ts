@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Request, Query } from '@nestjs/common';
 import { SimulatorService, PatientProfile } from './simulator.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
@@ -66,13 +66,21 @@ export class SimulatorController {
     }
 
     @Get('reports')
-    async getReports(@Request() req) {
-        return this.simulatorService.getReports(req.user.id);
+    async getReports(
+        @Request() req,
+        @Query('period') period?: string,
+        @Query('patientName') patientName?: string,
+        @Query('date') date?: string
+    ) {
+        return this.simulatorService.getReports(req.user.id, { period, patientName, date });
     }
 
     @Get('stats')
-    async getStats(@Request() req) {
-        return this.simulatorService.getStats(req.user.id);
+    async getStats(
+        @Request() req,
+        @Query('period') period?: string
+    ) {
+        return this.simulatorService.getStats(req.user.id, period);
     }
 
     // === PUBLIC DEMO ROUTES ===

@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -17,55 +17,57 @@ interface Report {
 }
 
 interface ReportsHistoryProps {
-    reports: Report[];
+    reports: Array<any>;
+    onReportClick?: (report: any) => void;
 }
 
-export function ReportsHistory({ reports }: ReportsHistoryProps) {
-    if (!reports || reports.length === 0) {
+export function ReportsHistory({ reports, onReportClick }: ReportsHistoryProps) {
+    if (reports.length === 0) {
         return (
-            <div className="text-center py-10 text-gray-400">
-                No hay informes guardados todavía. Completa una simulación para empezar.
+            <div className="text-center py-10 text-gray-400 bg-gray-50 rounded-lg border border-dashed">
+                No hay informes archivados para este periodo.
             </div>
         );
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {reports.map((report) => (
-                <Card key={report.id} className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500">
-                    <CardContent className="p-5">
-                        <div className="flex justify-between items-start mb-3">
-                            <div className="flex items-center text-sm text-gray-500">
-                                <Calendar className="w-3 h-3 mr-1" />
-                                {format(new Date(report.createdAt), "d MMM yyyy", { locale: es })}
-                            </div>
-                            <Badge variant={report.difficulty === 'hard' ? 'destructive' : 'secondary'} className="capitalize text-xs">
-                                {report.difficulty}
+                <Card
+                    key={report.id}
+                    className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500"
+                    onClick={() => onReportClick?.(report)}
+                >
+                    <CardHeader className="pb-2">
+                        <div className="flex justify-between items-start">
+                            <CardTitle className="text-base font-semibold truncate pr-2" title={report.patientName}>
+                                {report.patientName}
+                            </CardTitle>
+                            <Badge variant={
+                                report.difficulty === 'hard' ? 'destructive' :
+                                    report.difficulty === 'medium' ? 'default' : 'secondary'
+                            } className="uppercase text-[10px]">
+                                {report.difficulty === 'medium' ? 'Medio' : report.difficulty === 'hard' ? 'Difícil' : 'Fácil'}
                             </Badge>
                         </div>
-
-                        <h3 className="font-bold flex items-center gap-2 text-gray-900 mb-4">
-                            <User className="w-4 h-4 text-gray-400" />
-                            {report.patientName}
-                        </h3>
-
-                        <div className="flex justify-between items-center text-sm">
-                            <div className="flex flex-col items-center">
-                                <span className="text-xs text-gray-500 mb-1">Empatía</span>
-                                <span className={`font-bold ${report.empathyScore >= 70 ? 'text-green-600' : 'text-orange-500'}`}>
-                                    {report.empathyScore}%
-                                </span>
+                        <CardDescription className="text-xs">
+                            {new Date(report.createdAt).toLocaleDateString()} - {new Date(report.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Empatía</span>
+                                <span className="font-medium text-blue-600">{report.empathyScore}%</span>
                             </div>
-                            <div className="w-px h-8 bg-gray-100" />
-                            <div className="flex flex-col items-center">
-                                <span className="text-xs text-gray-500 mb-1">Eficacia</span>
-                                <span className="font-bold text-gray-700">{report.effectivenessScore}%</span>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Eficacia</span>
+                                <span className="font-medium text-green-600">{report.effectivenessScore}%</span>
                             </div>
-                            <div className="w-px h-8 bg-gray-100" />
-                            <div className="flex flex-col items-center">
-                                <span className="text-xs text-gray-500 mb-1">Prof.</span>
-                                <span className="font-bold text-gray-700">{report.professionalismScore}%</span>
-                            </div>
+                            {/* <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Profesionalidad</span>
+                                <span className="font-medium text-purple-600">{report.professionalismScore}%</span>
+                            </div> */}
                         </div>
                     </CardContent>
                 </Card>
