@@ -44,6 +44,7 @@ model User {
   
   // Simulator Limits
   simulatorUsageCount Int      @default(0) @map("simulator_usage_count")
+  simulatorMinutesUsed Int     @default(0) @map("simulator_minutes_used") // Track active minutes separately
   simulatorLastReset  DateTime? @map("simulator_last_reset")
 
   // Growth & Referrals

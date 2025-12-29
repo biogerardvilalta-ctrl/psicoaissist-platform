@@ -37,6 +37,9 @@ class EndSimulationDto {
     @IsObject()
     @IsNotEmpty()
     profile: PatientProfile;
+
+    @IsOptional()
+    durationSeconds?: number;
 }
 
 @Controller('simulator')
@@ -62,7 +65,7 @@ export class SimulatorController {
 
     @Post('evaluate')
     async evaluate(@Body() dto: EndSimulationDto, @Request() req) {
-        return this.simulatorService.evaluate(dto.history, req.user.id, dto.profile);
+        return this.simulatorService.evaluate(dto.history, req.user.id, dto.profile, dto.durationSeconds);
     }
 
     @Get('reports')

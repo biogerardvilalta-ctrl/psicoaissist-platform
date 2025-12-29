@@ -1,5 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
+import { PLAN_FEATURES } from '../modules/payments/plan-features';
+
 export default registerAs('stripe', () => ({
   secretKey: process.env.STRIPE_SECRET_KEY || 'sk_test_...',
   publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_...',
@@ -15,12 +17,7 @@ export default registerAs('stripe', () => ({
       currency: 'eur',
       interval: 'month',
       name: 'Plan Básico',
-      features: {
-        maxClients: 25,
-        transcriptionHours: 50,
-        reportsPerMonth: 100,
-        supportLevel: 'email'
-      }
+      features: PLAN_FEATURES.basic
     },
     pro: {
       priceId: process.env.STRIPE_PRO_PRICE_ID || 'price_pro',
@@ -30,14 +27,7 @@ export default registerAs('stripe', () => ({
       currency: 'eur',
       interval: 'month',
       name: 'Plan Pro',
-      features: {
-        maxClients: -1, // unlimited
-        transcriptionHours: 200,
-        reportsPerMonth: -1, // unlimited
-        supportLevel: 'priority',
-        advancedAnalytics: true,
-        apiAccess: true
-      }
+      features: PLAN_FEATURES.pro
     },
     team: {
       priceId: process.env.STRIPE_TEAM_PRICE_ID || 'price_team',
@@ -47,16 +37,7 @@ export default registerAs('stripe', () => ({
       currency: 'eur',
       interval: 'month',
       name: 'Plan Equipo',
-      features: {
-        maxClients: -1, // unlimited
-        transcriptionHours: 350, // Shared pool approx
-        reportsPerMonth: -1,
-        supportLevel: 'priority',
-        advancedAnalytics: true,
-        apiAccess: false,
-        isTeam: true,
-        maxProfessionals: 3
-      }
+      features: PLAN_FEATURES.team
     },
     premium: {
       priceId: process.env.STRIPE_PREMIUM_PRICE_ID || 'price_premium',
@@ -64,16 +45,7 @@ export default registerAs('stripe', () => ({
       currency: 'eur',
       interval: 'month',
       name: 'Plan Premium',
-      features: {
-        maxClients: -1, // unlimited
-        transcriptionHours: -1, // unlimited
-        reportsPerMonth: -1, // unlimited
-        supportLevel: 'phone',
-        advancedAnalytics: true,
-        apiAccess: true,
-        ssoIntegration: true,
-        prioritySupport: true
-      }
+      features: PLAN_FEATURES.premium
     },
     // New Business plan (Business 129€/mo) would map to 'team' internally or new key? 
     // Assuming 'business' maps to 'team' for now or need a new key? 

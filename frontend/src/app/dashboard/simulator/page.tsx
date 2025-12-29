@@ -102,9 +102,15 @@ export default function SimulatorPage() {
     const [feedback, setFeedback] = useState<string>('');
     const [metrics, setMetrics] = useState<any>(null);
     const [activeTab, setActiveTab] = useState('simulator');
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [startTime, setStartTime] = useState<number | null>(null);
 
-    // Filter & History State
+    // ...
+
+
+
+    // ...
+
+
     const [reports, setReports] = useState<SimulationReport[] | null>(null);
     const [stats, setStats] = useState<StatsData | null>(null);
     const [selectedReport, setSelectedReport] = useState<SimulationReport | null>(null);
@@ -169,6 +175,11 @@ export default function SimulatorPage() {
         }
     }, [statsPeriod, reportsFilter, activeTab]);
 
+    // Ensure stats are loaded on mount for the usage display
+    useEffect(() => {
+        simulatorService.getStats('all').then(data => setStats(data)).catch(console.error);
+    }, []);
+
     const handleReportFilterChange = (key: string, value: string) => {
         setReportsFilter(prev => ({ ...prev, [key]: value }));
     };
@@ -183,6 +194,7 @@ export default function SimulatorPage() {
             setStatus('active');
             setMetrics(null);
             setFeedback('');
+            setStartTime(Date.now()); // Start timer
 
             toast({
                 title: "Simulación iniciada",
@@ -257,8 +269,11 @@ export default function SimulatorPage() {
     const handleEndSession = async () => {
         setStatus('evaluating');
         try {
+            // Calculate duration
+            const durationSeconds = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+
             // Using non-null assertion for profile because we are 'active' only if profile is set
-            const res = await simulatorService.evaluateSession(messages, profile!);
+            const res = await simulatorService.evaluateSession(messages, profile!, durationSeconds);
             setFeedback(res.feedback);
             setMetrics(res.metrics);
             setStatus('finished');
@@ -309,6 +324,51 @@ export default function SimulatorPage() {
                                     <UserCheck className="w-8 h-8 text-blue-600" />
                                 </div>
                                 <h2 className="text-2xl font-bold">Configura tu Simulación</h2>
+
+                                {/* Usage Display */}
+                                {!stats?.usage && <div className="p-4 text-center text-gray-400 text-sm">Cargando uso...</div>}
+                                {stats?.usage && (
+                                    <div className="bg-white p-4 rounded-lg border shadow-sm w-full mb-4 text-left space-y-4">
+
+                                        {/* Cases Limit */}
+                                        <div>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-sm font-semibold text-gray-700">Casos Clínicos</span>
+                                                <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
+                                                    {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} Restantes`}
+                                                </Badge>
+                                            </div>
+                                            {stats.usage.limit < 1000 && (
+                                                <div className="space-y-1">
+                                                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                                        <div
+                                                            className={`h-full rounded-full ${stats.usage.remaining === 0 ? 'bg-red-500' : 'bg-blue-500'}`}
+                                                            style={{ width: `${Math.min(100, (stats.usage.used / stats.usage.limit) * 100)}%` }}
+                                                        />
+                                                    </div>
+                                                    <p className="text-xs text-gray-400 text-right">
+                                                        {stats.usage.used} / {stats.usage.limit} Usados
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+
+
+
+                                        {/* Reset Info & Upsell */}
+                                        <div className="pt-2 border-t text-xs text-gray-400 flex justify-between items-center">
+                                            <span>Se reinicia el 1/{new Date(stats.usage.nextReset).getMonth() + 1}</span>
+                                            {(stats.usage.limit < 1000 || stats.usage.minutesLimit < 1000) && (
+                                                <div>
+                                                    <Link href="/dashboard/settings" className="text-blue-600 hover:underline font-medium">
+                                                        Mejorar Plan
+                                                    </Link>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
                                 <p className="text-muted-foreground">
                                     Selecciona el nivel de dificultad. El sistema generará un paciente con una patología y personalidad aleatoria.
                                 </p>

@@ -2,6 +2,7 @@ import { Injectable, Logger, Inject, ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AiProvider, AiMessage } from '../ai/interfaces/ai-provider.interface';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { UsageLimitsService } from '../payments/usage-limits.service';
 
 interface SimulationState {
     patientProfile: PatientProfile;
@@ -30,33 +31,15 @@ export class SimulatorService {
     constructor(
         private configService: ConfigService,
         private prisma: PrismaService,
+        private usageLimitsService: UsageLimitsService,
         @Inject('AI_PROVIDER') private aiProvider: AiProvider
     ) { }
 
     private async checkAndIncrementUsage(userId: string): Promise<void> {
-        const user = await this.prisma.user.findUnique({
-            where: { id: userId },
-            include: { subscription: true }
-        });
-
+        // Reset Logic Check (handled here to ensure it runs before limit check)
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
         if (!user) throw new ForbiddenException("User not found");
 
-        const plan = user.subscription?.planType || 'basic';
-
-        // Unlimited plans
-        if (['premium', 'clinics', 'admin'].includes(plan)) return;
-
-        // Basic plan (No access, though frontend should hide it)
-        if (plan === 'basic') {
-            throw new ForbiddenException("El plan Basic no incluye simulador. Actualiza a Pro.");
-        }
-
-        // Pro / Team Plan (Limited to 5 + Referrals)
-        const baseLimit = 5;
-        const referralBonus = (user.referralsCount || 0) * 5;
-        const totalLimit = baseLimit + referralBonus;
-
-        // Reset Logic
         const now = new Date();
         const lastReset = user.simulatorLastReset || new Date(0);
         const isNewMonth = now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear();
@@ -65,16 +48,16 @@ export class SimulatorService {
             await this.prisma.user.update({
                 where: { id: userId },
                 data: {
-                    simulatorUsageCount: 1, // Start with 1 for this usage
+                    simulatorUsageCount: 0, // Reset to 0
+                    simulatorMinutesUsed: 0,
                     simulatorLastReset: now
                 }
             });
-            return;
+            // Re-fetch user to have updated counts (0)
         }
 
-        if (user.simulatorUsageCount >= totalLimit) {
-            throw new ForbiddenException(`Límite alcanzado (${totalLimit} casos/mes). Mejora tu plan o invita a colegas.`);
-        }
+        // Use centralized service to check limits
+        await this.usageLimitsService.checkSimulatorLimit(userId);
 
         // Increment
         await this.prisma.user.update({
@@ -229,7 +212,24 @@ export class SimulatorService {
     /**
      * Generates a supervisory report after the session with statistics.
      */
-    async evaluate(history: { role: 'user' | 'model'; parts: string }[], userId: string, profile: PatientProfile): Promise<{ feedback: string; metrics: any }> {
+    async evaluate(history: { role: 'user' | 'model'; parts: string }[], userId: string, profile: PatientProfile, durationSeconds?: number): Promise<{ feedback: string; metrics: any }> {
+        // Increment Minutes Used if duration provided
+        if (durationSeconds && durationSeconds > 0) {
+            const minutes = Math.ceil(durationSeconds / 60);
+
+            // Limit check for minutes (optional, but good practice to ensure they don't go over if we want strict enforcement)
+            // But usually we deduct after usage.
+            // Just increment for now.
+            try {
+                await this.prisma.user.update({
+                    where: { id: userId },
+                    data: { simulatorMinutesUsed: { increment: minutes } }
+                });
+            } catch (e) {
+                this.logger.error(`Failed to increment simulator minutes for user ${userId}`, e);
+            }
+        }
+
         // Format history into a readable transcript
         const transcript = (history || []).map(msg => {
             const speaker = msg.role === 'user' ? 'Psicólogo (Usuario)' : 'Paciente (IA)';
@@ -356,10 +356,36 @@ export class SimulatorService {
     }
 
     async getStats(userId: string, period?: string) {
+        // 1. Get Usage & Limits from centralized service
+        const usageData = await this.usageLimitsService.getUserUsage(userId);
+
+        if (!usageData) {
+            throw new ForbiddenException("Could not retrieve usage data");
+        }
+
+        const plan = usageData.planType;
+        const limitCases = usageData.limits.simulatorCases;
+        const usedCases = usageData.currentUsage.simulatorCases;
+        const limitMinutes = usageData.limits.simulatorMinutes;
+        const usedMinutes = usageData.currentUsage.simulatorMinutes;
+
+        // Calculate remaining
+        // UsageLimitsService returns 9999 for UNLIMITED cases, but -1 for UNLIMITED minutes.
+        // We normalize here for frontend consistency.
+        const displayLimitMinutes = limitMinutes === -1 ? 9999 : limitMinutes;
+        const remainingMinutes = limitMinutes === -1 ? 9999 : Math.max(0, limitMinutes - usedMinutes);
+
+        // Cases are already normalized to 9999 in UsageLimitsService if UNLIMITED
+        const remainingCases = Math.max(0, limitCases - usedCases);
+
+        // Calculate next reset (1st of next month)
+        const now = new Date();
+        const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+        // 2. Existing Stats Logic (Charts)
         const where: any = { userId };
 
         if (period) {
-            const now = new Date();
             let startDate: Date;
 
             switch (period) {
@@ -387,18 +413,51 @@ export class SimulatorService {
 
         // Calc averages
         const total = reports.length;
-        if (total === 0) return { count: 0, avgEmpathy: 0, evolution: [] };
+        let avgEmpathy = 0;
+        let evolution = [];
 
-        const avgEmpathy = reports.reduce((acc, r) => acc + r.empathyScore, 0) / total;
+        if (total > 0) {
+            avgEmpathy = reports.reduce((acc, r) => acc + r.empathyScore, 0) / total;
+            evolution = reports.map(r => ({
+                date: r.createdAt,
+                empathy: r.empathyScore,
+                effectiveness: r.effectivenessScore
+            }));
+        }
 
         return {
             count: total,
             avgEmpathy: Math.round(avgEmpathy),
-            evolution: reports.map(r => ({
-                date: r.createdAt,
-                empathy: r.empathyScore,
-                effectiveness: r.effectivenessScore
-            }))
+            evolution,
+            // New Fields
+            usage: (() => {
+                const limitHours = usageData.limits.transcriptionHours;
+                const usedMinutes = usageData.currentUsage.transcriptionMinutes || 0;
+
+                console.log('[DEBUG] Stats Usage:', {
+                    plan: usageData.planType,
+                    limitHours,
+                    usedMinutes
+                });
+
+                return {
+                    used: usedCases,
+                    limit: limitCases,
+                    remaining: remainingCases,
+                    // Minutes Logic
+                    minutesUsed: usedMinutes, // reuse variable
+                    minutesLimit: displayLimitMinutes,
+                    minutesRemaining: remainingMinutes,
+
+                    // Transcription Logic (Minutes)
+                    transcriptionUsed: usedMinutes,
+                    transcriptionLimit: limitHours === -1 ? -1 : limitHours * 60,
+                    transcriptionRemaining: limitHours === -1 ? 99999 : Math.max(0, (limitHours * 60) - usedMinutes),
+
+                    plan: plan,
+                    nextReset: nextReset
+                };
+            })()
         };
     }
 }

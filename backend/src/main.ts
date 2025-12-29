@@ -90,6 +90,7 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`🚀 Server running on http://localhost:${port}`);
+  console.log(`✅ Transcription Limits Logic Updated.`);
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 

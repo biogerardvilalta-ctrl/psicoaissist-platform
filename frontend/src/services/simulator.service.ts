@@ -24,6 +24,19 @@ export interface StatsData {
     count: number;
     avgEmpathy: number;
     evolution: Array<{ date: string; empathy: number; effectiveness: number }>;
+    usage?: {
+        used: number;
+        limit: number;
+        remaining: number;
+        minutesUsed: number;
+        minutesLimit: number;
+        minutesRemaining: number;
+        transcriptionUsed?: number;
+        transcriptionLimit?: number;
+        transcriptionRemaining?: number;
+        plan: string;
+        nextReset: string;
+    };
 }
 
 export const simulatorService = {
@@ -36,11 +49,11 @@ export const simulatorService = {
         return await httpClient.post<{ response: string }>('/api/v1/simulator/chat', { message, history, profile });
     },
 
-    evaluateSession: async (history: Array<{ role: 'user' | 'model'; parts: string }>, profile: PatientProfile) => {
+    evaluateSession: async (history: Array<{ role: 'user' | 'model'; parts: string }>, profile: PatientProfile, durationSeconds?: number) => {
         return await httpClient.post<{
             feedback: string;
             metrics: { empathy: number; intervention_effectiveness: number; professionalism: number }
-        }>('/api/v1/simulator/evaluate', { history, profile });
+        }>('/api/v1/simulator/evaluate', { history, profile, durationSeconds });
     },
 
     getReports: async (filters?: { period?: string; patientName?: string; date?: string }) => {

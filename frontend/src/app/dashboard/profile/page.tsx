@@ -12,9 +12,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { CreditCard, Calendar, CheckCircle2, AlertCircle, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
+// ... imports
+import { simulatorService, StatsData } from '@/services/simulator.service';
+// ... inside component
 export default function ProfilePage() {
     const { user, login } = useAuth();
     const { toast } = useToast();
+
+    // Simulator Stats
+    const [stats, setStats] = useState<StatsData | null>(null);
+
+    useEffect(() => {
+        const loadStats = async () => {
+            try {
+                const data = await simulatorService.getStats('all');
+                setStats(data);
+            } catch (err) {
+                console.error("Failed to load stats", err);
+            }
+        };
+        loadStats();
+    }, []);
 
     // Edit Profile State
     const [isEditing, setIsEditing] = useState(false);
@@ -250,40 +268,67 @@ export default function ProfilePage() {
                     </CardTitle>
                     <CardDescription>Monitoriza tu uso mensual del simulador clínico.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm font-medium text-slate-700">Sesiones Realizadas</p>
-                            <h3 className="text-2xl font-bold text-slate-900">
-                                {user?.simulatorUsageCount || 0}
-                                <span className="text-sm font-normal text-muted-foreground ml-1">
-                                    / {5 + ((user?.referralsCount || 0) * 5)} permitidas
-                                </span>
-                            </h3>
-                        </div>
-                        {user?.subscription?.planType === 'PRO' || user?.subscription?.planType === 'PREMIUM' ? (
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                Sin Límite (Plan {user.subscription.planType})
-                            </Badge>
-                        ) : (
-                            <Badge variant="secondary">
-                                {Math.max(0, (5 + ((user?.referralsCount || 0) * 5)) - (user?.simulatorUsageCount || 0))} restantes
-                            </Badge>
-                        )}
-                    </div>
+                <CardContent className="space-y-6">
+                    {!stats?.usage ? (
+                        <div className="text-center py-4 text-slate-500">Cargando estadísticas...</div>
+                    ) : (
+                        <>
+                            {/* Clinical Cases */}
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-700">Casos Clínicos</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} restantes de ${stats.usage.limit}`}
+                                        </p>
+                                    </div>
+                                    <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
+                                        {stats.usage.used} Usados
+                                    </Badge>
+                                </div>
+                                {stats.usage.limit < 1000 && (
+                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full rounded-full ${stats.usage.remaining === 0 ? 'bg-red-500' : 'bg-blue-600'}`}
+                                            style={{ width: `${Math.min(100, (stats.usage.used / stats.usage.limit) * 100)}%` }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
 
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-blue-600 rounded-full transition-all duration-500"
-                            style={{
-                                width: `${Math.min(100, ((user?.simulatorUsageCount || 0) / (5 + ((user?.referralsCount || 0) * 5))) * 100)}%`
-                            }}
-                        />
-                    </div>
+                            {/* Live Minutes (Moved from Simulator Page) */}
+                            {/* Transcription Minutes */}
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-700">Minutos de Transcripción</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit === -1
+                                                ? "Ilimitado"
+                                                : stats.usage.transcriptionLimit !== undefined
+                                                    ? `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${stats.usage.transcriptionLimit}`
+                                                    : "Calculando..."}
+                                        </p>
+                                    </div>
+                                    <Badge variant={(stats.usage.transcriptionRemaining || 0) > 0 ? "outline" : "destructive"} className={(stats.usage.transcriptionRemaining || 0) > 0 ? "text-green-600 border-green-200 bg-green-50" : ""}>
+                                        {Math.round(stats.usage.transcriptionUsed || 0)} Min Usados
+                                    </Badge>
+                                </div>
+                                {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit !== -1 && (
+                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full rounded-full ${(stats.usage.transcriptionRemaining || 0) <= 0 ? 'bg-red-500' : 'bg-green-500'}`}
+                                            style={{ width: `${Math.min(100, ((stats.usage.transcriptionUsed || 0) / stats.usage.transcriptionLimit) * 100)}%` }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
 
-                    <p className="text-xs text-muted-foreground">
-                        * El límite se reinicia mensualmente. Invita colegas para obtener +5 casos cada uno.
-                    </p>
+                            <p className="text-xs text-muted-foreground pt-2 border-t">
+                                * El límite se reinicia mensualmente (Próximo: {new Date(stats.usage.nextReset).toLocaleDateString()}).
+                            </p>
+                        </>
+                    )}
                 </CardContent>
             </Card>
 
