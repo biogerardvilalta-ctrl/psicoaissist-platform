@@ -51,6 +51,41 @@ export default function ManualPage() {
                                 ofrece análisis avanzados mediante IA para detectar tendencias en el bienestar del paciente, temas
                                 recurrentes y métricas de eficacia terapéutica.
                             </p>
+
+                            <h3 className="mt-8 mb-4 text-xl font-bold text-slate-800">Resumen de Capacidades del Sistema</h3>
+                            <div className="grid md:grid-cols-2 gap-8 not-prose bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                <div>
+                                    <h4 className="font-semibold text-blue-900 mb-2">🧠 Inteligencia Artificial y Clínica</h4>
+                                    <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                                        <li>• <strong>Transcripción:</strong> Audio a texto automático.</li>
+                                        <li>• <strong>Análisis IA:</strong> Resúmenes, notas SOAP y puntos clave.</li>
+                                        <li>• <strong>Analíticas:</strong> Detección de tendencias de ánimo y temas recurrentes.</li>
+                                        <li>• <strong>Simulador:</strong> Roleplay con pacientes virtuales.</li>
+                                    </ul>
+
+                                    <h4 className="font-semibold text-blue-900 mb-2">📋 Gestión y Documentación</h4>
+                                    <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                                        <li>• <strong>Expediente Digital:</strong> Historial único y seguro.</li>
+                                        <li>• <strong>Generación de Informes:</strong> PDFs clínicos en un clic.</li>
+                                        <li>• <strong>Almacenamiento Seguro:</strong> Cifrado de datos sensibles.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-blue-900 mb-2">📅 Agenda y Negocio</h4>
+                                    <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                                        <li>• <strong>Calendario Inteligente:</strong> Citas, buffers y sincro con Google.</li>
+                                        <li>• <strong>Control de Ingresos:</strong> Estimación de ganancias tiempo real.</li>
+                                        <li>• <strong>Recordatorios:</strong> Emails automáticos anti-ausentismo.</li>
+                                    </ul>
+
+                                    <h4 className="font-semibold text-blue-900 mb-2">🚀 Extras y Equipos</h4>
+                                    <ul className="space-y-2 text-sm text-slate-600">
+                                        <li>• <strong>Gestión de Equipos:</strong> Roles Manager/Doctor.</li>
+                                        <li>• <strong>Branding:</strong> Tu logo en los informes.</li>
+                                        <li>• <strong>Integraciones:</strong> API y SSO (Planes superiores).</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </section>
 
                         <hr className="my-8 border-slate-200" />
@@ -88,60 +123,302 @@ export default function ManualPage() {
                             <p>PsicoAIssist ofrece cinco niveles de servicio, divididos en opciones individuales y para grupos. Puede consultar su plan actual en <strong>Perfil {'>'} Suscripción</strong>.</p>
 
                             <h3 className="mt-6 mb-4 text-xl font-bold text-slate-800">1. Planes Individuales</h3>
-                            <div className="grid md:grid-cols-3 gap-4 mb-8 not-prose">
-                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                                    <h4 className="text-base font-bold text-slate-800 mb-1">🥉 Basic</h4>
-                                    <p className="text-xl font-bold text-slate-900">29€<span className="text-xs text-slate-500 font-normal">/mes</span></p>
-                                    <ul className="mt-3 space-y-2 text-xs text-slate-600">
-                                        <li>• 25 Pacientes</li>
-                                        <li>• 5GB Almacenamiento</li>
-                                        <li>• Sin IA</li>
-                                    </ul>
+                            <div className="space-y-6 mb-8 not-prose">
+                                {/* BASIC PLAN */}
+                                <div className="p-6 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-slate-800">🥉 Basic</h4>
+                                            <p className="text-sm text-slate-500">Para iniciar la práctica privada</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-2xl font-bold text-slate-900">29€<span className="text-xs text-slate-500 font-normal">/mes</span></p>
+                                            <p className="text-xs text-green-600">290€/año (2 meses gratis)</p>
+                                        </div>
+                                    </div>
+                                    {/* BASIC PLAN - COMPARATIVE MATRIX */}
+                                    <div className="space-y-2 mt-4 text-sm text-slate-600">
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100">
+                                            <span>Pacientes Activos</span>
+                                            <span className="font-semibold">25</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100">
+                                            <span>Transcripción (Solo Texto)</span>
+                                            <span className="font-semibold">10 Horas</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100 opacity-50">
+                                            <span>Análisis IA Avanzado</span>
+                                            <span className="flex items-center text-red-400 font-medium"><span className="mr-1">✕</span> No</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100 opacity-50">
+                                            <span>Simulador Clínico</span>
+                                            <span className="flex items-center text-red-400 font-medium"><span className="mr-1">✕</span> No</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100 opacity-50">
+                                            <span>Google Calendar Sync</span>
+                                            <span className="flex items-center text-red-400 font-medium"><span className="mr-1">✕</span> No</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100">
+                                            <span>Almacenamiento</span>
+                                            <span className="font-semibold">5GB</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1">
+                                            <span>Soporte</span>
+                                            <span>Email</span>
+                                        </div>
+                                    </div>
+
+                                    {/* DETAILED EXPLANATION BASIC */}
+                                    <div className="mt-6 pt-6 border-t border-slate-200">
+                                        <h5 className="font-bold text-slate-800 mb-3 text-sm">Detalle de Características:</h5>
+                                        <ul className="text-xs text-slate-600 space-y-3">
+                                            <li>
+                                                <strong className="block text-slate-700">10 Horas Transcripción (Literal)</strong>
+                                                Ideal para convertir audio a texto simple. No incluye inteligencia artificial, por lo que no genera resúmenes ni detecta tendencias.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-slate-700">Límites Básicos</strong>
+                                                Diseñado para arrancar. Sin acceso a herramientas avanzadas como Simulador o Sincronización de Calendario.
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 relative overflow-hidden ring-1 ring-blue-500">
-                                    <div className="absolute top-0 right-0 bg-blue-500 text-white text-[9px] px-2 py-0.5 rounded-bl font-bold">POPULAR</div>
-                                    <h4 className="text-base font-bold text-blue-800 mb-1">🥈 Pro</h4>
-                                    <p className="text-xl font-bold text-blue-900">59€<span className="text-xs text-blue-500 font-normal">/mes</span></p>
-                                    <ul className="mt-3 space-y-2 text-xs text-blue-700">
-                                        <li>• Pacientes Ilimitados</li>
-                                        <li>• 900 min IA/mes</li>
-                                        <li>• 5 Casos Simulador</li>
-                                        <li>• 50GB Almacenamiento</li>
-                                    </ul>
+
+                                {/* PRO PLAN */}
+                                <div className="p-6 bg-blue-50 rounded-xl border border-blue-200 relative ring-1 ring-blue-500">
+                                    <div className="absolute top-0 right-0 bg-blue-500 text-white text-[10px] px-3 py-1 rounded-bl font-bold uppercase tracking-wide">Más Popular</div>
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-blue-800">🥈 Pro</h4>
+                                            <p className="text-sm text-blue-600">Para psicólogos establecidos</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-2xl font-bold text-blue-900">59€<span className="text-xs text-blue-500 font-normal">/mes</span></p>
+                                            <p className="text-xs text-blue-600">590€/año (2 meses gratis)</p>
+                                        </div>
+                                    </div>
+                                    {/* PRO PLAN - COMPARATIVE MATRIX */}
+                                    <div className="space-y-2 mt-4 text-sm text-blue-800">
+                                        <div className="flex justify-between items-center py-1 border-b border-blue-200/50">
+                                            <span>Pacientes Activos</span>
+                                            <span className="font-bold text-blue-900 flex items-center"><span className="text-green-500 mr-1">✓</span> Ilimitados</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-blue-200/50">
+                                            <span>Transcripción + IA Avanzada</span>
+                                            <span className="font-bold text-blue-900 flex items-center"><span className="text-green-500 mr-1">✓</span> 15 Horas (900 min)</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-blue-200/50">
+                                            <span>Análisis IA Avanzado</span>
+                                            <span className="font-bold text-blue-900 flex items-center"><span className="text-green-500 mr-1">✓</span> Incluido</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-blue-200/50">
+                                            <span>Simulador Clínico</span>
+                                            <span className="font-bold text-blue-900 flex items-center"><span className="text-green-500 mr-1">✓</span> 5 Casos/mes</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-blue-200/50">
+                                            <span>Google Calendar Sync</span>
+                                            <span className="font-bold text-blue-900 flex items-center"><span className="text-green-500 mr-1">✓</span> Sí</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-blue-200/50">
+                                            <span>Almacenamiento</span>
+                                            <span className="font-semibold">50GB</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1">
+                                            <span>Soporte</span>
+                                            <span>Prioritario</span>
+                                        </div>
+                                    </div>
+
+                                    {/* DETAILED EXPLANATION PRO */}
+                                    <div className="mt-6 pt-6 border-t border-blue-200/50">
+                                        <h5 className="font-bold text-blue-900 mb-3 text-sm">Detalle de Características:</h5>
+                                        <ul className="text-xs text-blue-800/80 space-y-3">
+                                            <li>
+                                                <strong className="block text-blue-900">15h (900 min) de Inteligencia Total</strong>
+                                                Unificamos el tiempo: cada minuto grabado se transcribe Y se analiza por IA. No tienes que preocuparte por límites separados.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-blue-900">Google Calendar</strong>
+                                                Sincronización bidireccional automática: tus citas aparecen en tu móvil y tus eventos personales bloquean huecos en la agenda.
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div className="p-4 bg-purple-50 rounded-xl border border-purple-200">
-                                    <h4 className="text-base font-bold text-purple-800 mb-1">🥇 Premium</h4>
-                                    <p className="text-xl font-bold text-purple-900">99€<span className="text-xs text-purple-500 font-normal">/mes</span></p>
-                                    <ul className="mt-3 space-y-2 text-xs text-purple-700">
-                                        <li>• IA Extendida (3.000 min)</li>
-                                        <li>• Simulador Ilimitado</li>
-                                        <li>• Soporte 24/7</li>
-                                        <li>• 1TB Almacenamiento</li>
-                                    </ul>
+
+                                {/* PREMIUM PLUS PLAN */}
+                                <div className="p-6 bg-purple-50 rounded-xl border border-purple-200">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-purple-800">🥇 Premium Plus</h4>
+                                            <p className="text-sm text-purple-600">Para especialistas intensivos</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-2xl font-bold text-purple-900">99€<span className="text-xs text-purple-500 font-normal">/mes</span></p>
+                                            <p className="text-xs text-purple-600">990€/año (2 meses gratis)</p>
+                                        </div>
+                                    </div>
+                                    {/* PREMIUM PLAN - COMPARATIVE MATRIX */}
+                                    <div className="space-y-2 mt-4 text-sm text-purple-800">
+                                        <div className="flex justify-between items-center py-1 border-b border-purple-200/50">
+                                            <span>Pacientes Activos</span>
+                                            <span className="font-bold text-purple-900 flex items-center"><span className="text-green-500 mr-1">✓</span> Ilimitados</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-purple-200/50">
+                                            <span>Transcripción + IA Avanzada</span>
+                                            <span className="font-bold text-purple-900 flex items-center"><span className="text-green-500 mr-1">✓</span> 50 Horas (3.000 min)</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-purple-200/50">
+                                            <span>Análisis IA Avanzado</span>
+                                            <span className="font-bold text-purple-900 flex items-center"><span className="text-green-500 mr-1">✓</span> Incluido</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-purple-200/50">
+                                            <span>Simulador Clínico</span>
+                                            <span className="font-bold text-purple-900 flex items-center"><span className="text-green-500 mr-1">✓</span> Ilimitado</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-purple-200/50">
+                                            <span>Google Calendar Sync</span>
+                                            <span className="font-bold text-purple-900 flex items-center"><span className="text-green-500 mr-1">✓</span> Sí</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-purple-200/50">
+                                            <span>Almacenamiento</span>
+                                            <span className="font-semibold">1TB (1.000GB)</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1">
+                                            <span>Soporte</span>
+                                            <span>Prioritario + Videollamada</span>
+                                        </div>
+                                    </div>
+
+                                    {/* DETAILED EXPLANATION PREMIUM PLUS */}
+                                    <div className="mt-6 pt-6 border-t border-purple-200/50">
+                                        <h5 className="font-bold text-purple-900 mb-3 text-sm">Detalle de Características:</h5>
+                                        <ul className="text-xs text-purple-800/80 space-y-3">
+                                            <li>
+                                                <strong className="block text-purple-900">50h (3.000 min) de IA</strong>
+                                                Capacidad masiva para profesionales clínicos intensivos.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-purple-900">Simulador Ilimitado</strong>
+                                                Entrena sin restricciones. Ideal para preparar casos complejos o uso docente.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-purple-900">Branding Personalizado</strong>
+                                                Tus informes con tu logotipo y marca personal.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-purple-900">Soporte Premium</strong>
+                                                Atención prioritaria por email y posibilidad de agendar videollamadas 1:1 para resolver dudas complejas o configurar tu cuenta.
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
 
-                            <h3 className="mt-6 mb-4 text-xl font-bold text-slate-800">2. Planes Grupales</h3>
-                            <div className="grid md:grid-cols-2 gap-4 not-prose">
-                                <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-200">
-                                    <h4 className="text-base font-bold text-indigo-800 mb-1">👥 Business</h4>
-                                    <p className="text-xl font-bold text-indigo-900">129€<span className="text-xs text-indigo-500 font-normal">/mes</span></p>
-                                    <ul className="mt-3 space-y-2 text-xs text-indigo-700">
-                                        <li>• 2 Pros + 1 Manager</li>
-                                        <li>• 2.000 min IA (Comp.)</li>
-                                        <li>• Agenda Unificada</li>
-                                        <li>• 100GB Almacenamiento</li>
-                                    </ul>
+                            <h3 className="mt-8 mb-4 text-xl font-bold text-slate-800">2. Planes Grupales y Corporativos</h3>
+                            <div className="space-y-6 mb-8 not-prose">
+                                {/* BUSINESS PLAN */}
+                                <div className="p-6 bg-indigo-50 rounded-xl border border-indigo-200">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-indigo-800">👥 Business (Pequeños Equipos)</h4>
+                                            <p className="text-sm text-indigo-600">Gabinetes de 2 psicólogos + gestión</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-2xl font-bold text-indigo-900">129€<span className="text-xs text-indigo-500 font-normal">/mes</span></p>
+                                            <p className="text-xs text-indigo-600">1.290€/año (+40€/usuario extra)</p>
+                                        </div>
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <h5 className="font-semibold text-indigo-800 mb-2">Capacidad Compartida</h5>
+                                            <ul className="space-y-1 text-indigo-700">
+                                                <li>• Incluye <strong>2 Profesionales</strong> + 1 Manager</li>
+                                                <li>• <strong>2.000</strong> Minutos IA Generativa (Análisis)/mes</li>
+                                                <li>• <strong>15</strong> Casos Simulador/mes (Global)</li>
+                                                <li>• <strong>100GB</strong> Almacenamiento</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h5 className="font-semibold text-indigo-800 mb-2">Herramientas de Gestión</h5>
+                                            <ul className="space-y-1 text-indigo-700">
+                                                <li>• <strong>Panel de Agenda Manager</strong> (Gestión centralizada)</li>
+                                                <li>• Calendario Unificado de Grupo</li>
+                                                <li>• Roles y Permisos Avanzados</li>
+                                                <li>• Facturación Unificada</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    {/* DETAILED EXPLANATION BUSINESS */}
+                                    <div className="mt-6 pt-6 border-t border-indigo-200/50">
+                                        <h5 className="font-bold text-indigo-900 mb-3 text-sm">Detalle de Características:</h5>
+                                        <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4 text-xs text-indigo-800/80">
+                                            <li>
+                                                <strong className="block text-indigo-900">Agenda Manager</strong>
+                                                Rol especial para secretariado. Permite gestionar las citas de todos los profesionales desde un único panel sin ver datos clínicos sensibles.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-indigo-900">Pool Compartido (2.000 min)</strong>
+                                                Los minutos de IA se comparten entre todos los miembros del equipo, optimizando el uso en gabinetes donde la actividad varía.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-indigo-900">Calendario Unificado</strong>
+                                                Vista global de la disponibilidad de todos los terapeutas para asignar pacientes eficientemente.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-indigo-900">Usuarios Adicionales</strong>
+                                                Puedes añadir más profesionales al equipo por una cuota reducida (+40€/mes/usuario).
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div className="p-4 bg-slate-100 rounded-xl border border-slate-300">
-                                    <h4 className="text-base font-bold text-slate-800 mb-1">🏥 Clínicas</h4>
-                                    <p className="text-xl font-bold text-slate-900">A Medida</p>
-                                    <ul className="mt-3 space-y-2 text-xs text-slate-700">
-                                        <li>• 3+ Profesionales</li>
-                                        <li>• 5.000+ min IA</li>
-                                        <li>• API & Compliance</li>
-                                        <li>• Onboarding Dedicado</li>
-                                    </ul>
+
+                                {/* CLINICS PLAN */}
+                                <div className="p-6 bg-slate-100 rounded-xl border border-slate-300">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-slate-800">🏥 Clínicas y Hospitales</h4>
+                                            <p className="text-sm text-slate-600">Para organizaciones de más de 3 profesionales</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xl font-bold text-slate-900">Consultar</p>
+                                        </div>
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <ul className="space-y-1 text-slate-700">
+                                                <li>• Usuarios Ilimitados (Precio por asiento)</li>
+                                                <li>• <strong>5.000+</strong> Minutos IA Generativa (Análisis)</li>
+                                                <li>• Integración HIS/EHR vía API</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <ul className="space-y-1 text-slate-700">
+                                                <li>• Compliance Avanzado (Auditoría RGPD y Logs)</li>
+                                                <li>• Onboarding y Formación Dedicada</li>
+                                                <li>• SLA Garantizado 99.9%</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    {/* DETAILED EXPLANATION CLINICS */}
+                                    <div className="mt-6 pt-6 border-t border-slate-300/50">
+                                        <h5 className="font-bold text-slate-900 mb-3 text-sm">Detalle de Características:</h5>
+                                        <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4 text-xs text-slate-600">
+                                            <li>
+                                                <strong className="block text-slate-800">API & Integración HIS</strong>
+                                                Conectamos PsicoAIssist directamente con el software de gestión hospitalaria de tu centro.
+                                            </li>
+                                            <li>
+                                                <strong className="block text-slate-800">Compliance Avanzado</strong>
+                                                Auditorías de seguridad, registro detallado de accesos (Audit Logs) para inspecciones y gestión estricta de protección de datos (RGPD).
+                                            </li>
+                                            <li>
+                                                <strong className="block text-slate-800">Formación Dedicada</strong>
+                                                Nuestro equipo formará a tu staff clínico y administrativo para sacar el máximo partido a la herramienta.
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </section>

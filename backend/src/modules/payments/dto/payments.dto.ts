@@ -3,8 +3,8 @@ import { IsString, IsEmail, IsOptional, IsEnum, IsObject } from 'class-validator
 export enum PlanType {
   BASIC = 'basic',
   PRO = 'pro',
-  TEAM = 'team',
-  PREMIUM = 'premium',
+  BUSINESS = 'business',
+  PREMIUM_PLUS = 'premium_plus',
 }
 
 export class CreateCheckoutSessionDto {

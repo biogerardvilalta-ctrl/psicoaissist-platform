@@ -445,8 +445,8 @@ export class PaymentsService {
       const demoPlans = {
         basic: { name: 'Plan Básico', amount: 2900, currency: 'eur', interval: 'month' },
         pro: { name: 'Plan Pro', amount: 5900, currency: 'eur', interval: 'month' },
-        team: { name: 'Plan Equipo', amount: 7900, currency: 'eur', interval: 'month' },
-        premium: { name: 'Plan Clínicas', amount: 14900, currency: 'eur', interval: 'month' }
+        business: { name: 'Plan Business', amount: 12900, currency: 'eur', interval: 'month' },
+        premium_plus: { name: 'Plan Premium Plus', amount: 9900, currency: 'eur', interval: 'month' }
       };
 
       const plan = demoPlans[createCheckoutDto.plan];

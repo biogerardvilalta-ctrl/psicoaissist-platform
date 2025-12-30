@@ -29,23 +29,25 @@ export default registerAs('stripe', () => ({
       name: 'Plan Pro',
       features: PLAN_FEATURES.pro
     },
-    team: {
-      priceId: process.env.STRIPE_TEAM_PRICE_ID || 'price_team',
-      priceIdAnnual: process.env.STRIPE_TEAM_ANNUAL_PRICE_ID || 'price_team_annual',
-      amount: 7900, // €79.00
-      amountAnnual: 79000, // €790.00
+    business: {
+      priceId: process.env.STRIPE_BUSINESS_PRICE_ID || 'price_business',
+      priceIdAnnual: process.env.STRIPE_BUSINESS_ANNUAL_PRICE_ID || 'price_business_annual',
+      amount: 12900, // €129.00
+      amountAnnual: 129000, // €1290.00
       currency: 'eur',
       interval: 'month',
-      name: 'Plan Equipo',
-      features: PLAN_FEATURES.team
+      name: 'Plan Business',
+      features: PLAN_FEATURES.business
     },
-    premium: {
-      priceId: process.env.STRIPE_PREMIUM_PRICE_ID || 'price_premium',
+    premium_plus: {
+      priceId: process.env.STRIPE_PREMIUM_PLUS_PRICE_ID || 'price_premium_plus',
+      priceIdAnnual: process.env.STRIPE_PREMIUM_PLUS_ANNUAL_PRICE_ID || 'price_premium_plus_annual',
       amount: 9900, // €99.00
+      amountAnnual: 99000, // €990.00
       currency: 'eur',
       interval: 'month',
       name: 'Plan Premium',
-      features: PLAN_FEATURES.premium
+      features: PLAN_FEATURES.premium_plus
     },
     // New Business plan (Business 129€/mo) would map to 'team' internally or new key? 
     // Assuming 'business' maps to 'team' for now or need a new key? 
