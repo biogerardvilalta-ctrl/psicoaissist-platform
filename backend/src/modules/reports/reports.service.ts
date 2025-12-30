@@ -465,7 +465,8 @@ export class ReportsService {
             type: report.reportType,
             content: report.content,
             psychologistName,
-            professionalNumber
+            professionalNumber,
+            branding: (user as any)?.brandingConfig || {}
         });
     }
 }

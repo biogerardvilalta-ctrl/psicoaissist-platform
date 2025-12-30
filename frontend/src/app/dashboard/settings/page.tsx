@@ -17,8 +17,9 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
-import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro, Users } from 'lucide-react';
+import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro, Users, Palette } from 'lucide-react';
 import { AgendaManagersSettings } from '@/components/dashboard/settings/agenda-managers-settings';
+import { BrandingSettings } from '@/components/dashboard/settings/branding-settings';
 import { GoogleCalendarConnect } from "@/components/settings/GoogleCalendarConnect";
 
 export default function SettingsPage() {
@@ -26,7 +27,7 @@ export default function SettingsPage() {
   const { toast } = useToast();
 
   // Navigation State
-  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'billing' | 'managers'>('agenda');
+  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'billing' | 'managers' | 'branding'>('agenda');
 
   // Form State
   const [enableReminders, setEnableReminders] = useState<boolean>(false);
@@ -122,6 +123,8 @@ export default function SettingsPage() {
   const menuItems = [
     { id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon },
     { id: 'billing', label: 'Facturación y Tarifas', icon: Euro },
+    // Solo mostrar Marca Personal si es PREMIUM
+    ...((user as any)?.plan === 'PREMIUM' ? [{ id: 'branding', label: 'Marca Personal', icon: Palette }] : []),
     { id: 'managers', label: 'Gestores de Agenda', icon: Users },
     { id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
@@ -471,6 +474,19 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <AgendaManagersSettings />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* BRANDING SECTION */}
+        {activeSection === 'branding' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Marca Personal</CardTitle>
+              <CardDescription>Personaliza el aspecto de tus informes y documentos con tu identidad corporativa.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <BrandingSettings />
             </CardContent>
           </Card>
         )}

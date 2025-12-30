@@ -600,6 +600,7 @@ export class UsersService {
       dashboardLayout: user.dashboardLayout,
       hourlyRate: user.hourlyRate,
       googleImportCalendar: user.googleImportCalendar,
+      brandingConfig: user.brandingConfig,
       // Include group members if available
       groupMembers: user.groupMembers ? user.groupMembers.map(m => ({
         id: m.id,

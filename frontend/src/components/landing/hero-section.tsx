@@ -1,7 +1,6 @@
-'use client';
-
 import { ArrowRight, Brain, Shield, Zap } from 'lucide-react';
 import Link from 'next/link';
+import { HeroDemo } from './hero-demo';
 
 export function HeroSection() {
   return (
@@ -19,9 +18,9 @@ export function HeroSection() {
             </div>
 
             {/* Title */}
-            <h1 className="mt-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
+            <h1 className="mt-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl leading-snug">
               <span className="block">Potencia tu</span>
-              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pb-2">
                 práctica psicológica
               </span>
               <span className="block">con IA responsable</span>
@@ -93,44 +92,8 @@ export function HeroSection() {
           </div>
 
           {/* Hero image/video */}
-          <div className="mt-12 relative lg:mt-0 lg:col-span-6">
-            <div className="relative mx-auto w-full max-w-lg">
-              {/* Placeholder for demo video or screenshot */}
-              <div className="aspect-video rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 shadow-2xl">
-                <div className="flex h-full items-center justify-center">
-                  <div className="text-center">
-                    <div className="mx-auto h-16 w-16 rounded-full bg-white shadow-lg flex items-center justify-center">
-                      <Brain className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <p className="mt-4 text-lg font-medium text-gray-700">Demo Interactivo</p>
-                    <p className="text-sm text-gray-600">Próximamente</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating cards */}
-              <div className="absolute -right-4 -top-4 rounded-lg bg-white p-4 shadow-lg">
-                <div className="flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                    <div className="h-2 w-2 rounded-full bg-green-500" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-900">Transcripción en tiempo real</p>
-                    <p className="text-xs text-gray-500">95% precisión</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute -bottom-4 -left-4 rounded-lg bg-white p-4 shadow-lg">
-                <div className="flex items-center">
-                  <Shield className="h-8 w-8 text-blue-500" />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-900">GDPR Compliant</p>
-                    <p className="text-xs text-gray-500">Datos seguros</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="mt-12 relative lg:mt-0 lg:col-span-6 flex items-center justify-center">
+            <HeroDemo />
           </div>
         </div>
       </div>

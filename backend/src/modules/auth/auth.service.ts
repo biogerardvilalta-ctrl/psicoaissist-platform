@@ -438,6 +438,7 @@ export class AuthService {
           preferredLanguage: data.preferredLanguage,
           hourlyRate: data.hourlyRate,
           googleImportCalendar: data.googleImportCalendar,
+          brandingConfig: data.brandingConfig,
           updatedAt: new Date(),
         },
       });

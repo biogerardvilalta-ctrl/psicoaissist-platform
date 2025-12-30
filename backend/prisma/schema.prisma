@@ -42,6 +42,9 @@ model User {
   preferredLanguage String @default("ca") @map("preferred_language")
   dashboardLayout   Json?    @map("dashboard_layout")
   
+  // Branding
+  brandingConfig  Json?    @map("branding_config")
+  
   // Simulator Limits
   simulatorUsageCount Int      @default(0) @map("simulator_usage_count")
   simulatorMinutesUsed Int     @default(0) @map("simulator_minutes_used") // Track active minutes separately

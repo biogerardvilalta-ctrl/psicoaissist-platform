@@ -127,6 +127,19 @@ export default function PublicSimulatorPage() {
 
                     {/* Messages Area */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
+                        {/* Voice Capability Note */}
+                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 flex items-start gap-3">
+                            <span className="text-xl">🎙️</span>
+                            <div>
+                                <p className="text-sm font-medium text-blue-900">
+                                    Nota para la demo:
+                                </p>
+                                <p className="text-sm text-blue-800">
+                                    Esta versión es <strong>solo texto</strong>. La plataforma completa permite <strong>conversar por voz</strong> fluida en tiempo real.
+                                </p>
+                            </div>
+                        </div>
+
                         {messages.length === 0 && !isLoading && (
                             <div className="text-center text-gray-400 mt-8 px-4">
                                 <p className="mb-2 text-2xl">👋</p>

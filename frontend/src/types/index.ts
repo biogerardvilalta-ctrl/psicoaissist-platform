@@ -7,6 +7,23 @@ export interface User {
   createdAt: string
   updatedAt: string
   dashboardLayout?: string[]
+  brandingConfig?: {
+    companyName?: string
+    primaryColor?: string
+    secondaryColor?: string
+    logoUrl?: string
+    showLogo?: boolean
+    showFooter?: boolean
+  }
+  enableReminders?: boolean
+  defaultDuration?: number
+  bufferTime?: number
+  workStartHour?: string
+  workEndHour?: string
+  scheduleConfig?: any
+  preferredLanguage?: string
+  hourlyRate?: number
+  googleImportCalendar?: boolean
 }
 
 export enum UserRole {

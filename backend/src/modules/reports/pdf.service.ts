@@ -21,8 +21,9 @@ export class PdfService {
             });
 
             // --- Brand Colors ---
-            const PRIMARY_COLOR = '#4F46E5'; // Indigo 600
-            const SECONDARY_COLOR = '#1E293B'; // Slate 800
+            const branding = reportData.branding || {};
+            const PRIMARY_COLOR = branding.primaryColor || '#4F46E5'; // Indigo 600 or Custom
+            const SECONDARY_COLOR = branding.secondaryColor || '#1E293B'; // Slate 800 or Custom
             const ACCENT_COLOR = '#F1F5F9'; // Slate 100
             const TEXT_COLOR = '#334155'; // Slate 700
 
@@ -31,7 +32,7 @@ export class PdfService {
             const range = doc.bufferedPageRange(); // Will apply at end, but we can do first page now
 
             // --- Header & Logo ---
-            this.drawHeader(doc, PRIMARY_COLOR, SECONDARY_COLOR);
+            this.drawHeader(doc, PRIMARY_COLOR, SECONDARY_COLOR, branding);
 
             // --- Title Section ---
             doc.moveDown(3);
@@ -125,13 +126,22 @@ export class PdfService {
         });
     }
 
-    private drawHeader(doc: PDFKit.PDFDocument, primary: string, secondary: string) {
+    private drawHeader(doc: PDFKit.PDFDocument, primary: string, secondary: string, branding: any = {}) {
         // Logo Placeholder
-        doc.circle(70, 60, 20).fill(primary);
-        doc.font('Helvetica-Bold').fontSize(20).fillColor('white').text('P', 63, 53);
+        if (branding.showLogo === false) {
+            // Do nothing if explicitly hidden? Or just hide the icon?
+            // Let's keep the text at least
+        } else {
+            doc.circle(70, 60, 20).fill(primary);
+            const letter = (branding.companyName || 'P').charAt(0).toUpperCase();
+            doc.font('Helvetica-Bold').fontSize(20).fillColor('white').text(letter, 63, 53);
+        }
 
-        doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text('PsicoAIssist', 100, 45);
-        doc.font('Helvetica').fontSize(10).fillColor('#64748B').text('Asistente Clínico Inteligente', 100, 68);
+        const title = branding.companyName || 'PsicoAIssist';
+        const subtitle = branding.companyName ? 'Informe Clínico Personalizado' : 'Asistente Clínico Inteligente';
+
+        doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text(title, 100, 45);
+        doc.font('Helvetica').fontSize(10).fillColor('#64748B').text(subtitle, 100, 68);
 
         doc.moveTo(350, 60).lineTo(545, 60).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
     }

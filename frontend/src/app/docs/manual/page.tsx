@@ -29,7 +29,7 @@ export default function ManualPage() {
                     </div>
 
                     {/* Content */}
-                    <div className="p-8 md:p-12 prose prose-slate max-w-none">
+                    <div className="p-8 md:p-12 prose prose-slate max-w-none text-justify prose-li:marker:text-blue-500 prose-ul:list-disc prose-ol:list-decimal">
                         <nav className="p-6 bg-slate-50 rounded-xl mb-12 not-prose border border-slate-100">
                             <h3 className="text-lg font-semibold text-slate-900 mb-4">Índice de Contenidos</h3>
                             <ul className="space-y-2 text-slate-600">
@@ -44,8 +44,11 @@ export default function ManualPage() {
                         </nav>
 
                         <section id="introduccion" className="scroll-mt-24">
-                            <h2>1. Introducción</h2>
-                            <p>
+                            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
+                                <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">1</span>
+                                Introducción
+                            </h2>
+                            <p className="leading-relaxed text-lg text-slate-600 mb-6">
                                 PsicoAIssist es una solución integral que permite a psicólogos y terapeutas gestionar sus agendas,
                                 pacientes y sesiones clínico-terapéuticas. Además de las funciones administrativas básicas, la plataforma
                                 ofrece análisis avanzados mediante IA para detectar tendencias en el bienestar del paciente, temas
@@ -56,7 +59,7 @@ export default function ManualPage() {
                             <div className="grid md:grid-cols-2 gap-8 not-prose bg-slate-50 p-6 rounded-xl border border-slate-200">
                                 <div>
                                     <h4 className="font-semibold text-blue-900 mb-2">🧠 Inteligencia Artificial y Clínica</h4>
-                                    <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                                    <ul className="space-y-3 text-sm text-slate-600 mb-6 pl-5">
                                         <li>• <strong>Transcripción:</strong> Audio a texto automático.</li>
                                         <li>• <strong>Análisis IA:</strong> Resúmenes, notas SOAP y puntos clave.</li>
                                         <li>• <strong>Analíticas:</strong> Detección de tendencias de ánimo y temas recurrentes.</li>
@@ -64,7 +67,7 @@ export default function ManualPage() {
                                     </ul>
 
                                     <h4 className="font-semibold text-blue-900 mb-2">📋 Gestión y Documentación</h4>
-                                    <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                                    <ul className="space-y-3 text-sm text-slate-600 mb-6 pl-5">
                                         <li>• <strong>Expediente Digital:</strong> Historial único y seguro.</li>
                                         <li>• <strong>Generación de Informes:</strong> PDFs clínicos en un clic.</li>
                                         <li>• <strong>Almacenamiento Seguro:</strong> Cifrado de datos sensibles.</li>
@@ -72,14 +75,14 @@ export default function ManualPage() {
                                 </div>
                                 <div>
                                     <h4 className="font-semibold text-blue-900 mb-2">📅 Agenda y Negocio</h4>
-                                    <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                                    <ul className="space-y-3 text-sm text-slate-600 mb-6 pl-5">
                                         <li>• <strong>Calendario Inteligente:</strong> Citas, buffers y sincro con Google.</li>
                                         <li>• <strong>Control de Ingresos:</strong> Estimación de ganancias tiempo real.</li>
                                         <li>• <strong>Recordatorios:</strong> Emails automáticos anti-ausentismo.</li>
                                     </ul>
 
                                     <h4 className="font-semibold text-blue-900 mb-2">🚀 Extras y Equipos</h4>
-                                    <ul className="space-y-2 text-sm text-slate-600">
+                                    <ul className="space-y-3 text-sm text-slate-600 pl-5">
                                         <li>• <strong>Gestión de Equipos:</strong> Roles Manager/Doctor.</li>
                                         <li>• <strong>Branding:</strong> Tu logo en los informes.</li>
                                         <li>• <strong>Integraciones:</strong> API y SSO (Planes superiores).</li>
@@ -91,15 +94,18 @@ export default function ManualPage() {
                         <hr className="my-8 border-slate-200" />
 
                         <section id="roles" className="scroll-mt-24">
-                            <h2>2. Roles de Usuario</h2>
-                            <p>El sistema distingue principalmente entre dos roles con interfaces adaptadas:</p>
+                            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
+                                <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">2</span>
+                                Roles de Usuario
+                            </h2>
+                            <p className="leading-relaxed text-lg text-slate-600 mb-6">El sistema distingue principalmente entre dos roles con interfaces adaptadas:</p>
 
                             <div className="grid md:grid-cols-2 gap-6 my-6 not-prose">
                                 <div className="p-6 bg-blue-50 rounded-xl border border-blue-100">
                                     <h3 className="text-lg font-semibold text-blue-900 mb-2">Professional (Doctor/a)</h3>
                                     <p className="text-blue-800 text-sm mb-4">Usuario principal (terapeuta/psicólogo).</p>
-                                    <ul className="space-y-2 text-sm text-blue-700">
-                                        <li className="flex gap-2">✓ Gestión de sus propios pacientes</li>
+                                    <ul className="space-y-3 text-sm text-blue-700 pl-5">
+                                        <li className="flex gap-2"><span className="shrink-0">✓</span> Gestión de sus propios pacientes</li>
                                         <li className="flex gap-2">✓ Dashboard analítico con IA</li>
                                         <li className="flex gap-2">✓ Configuración de facturación</li>
                                     </ul>
@@ -107,8 +113,8 @@ export default function ManualPage() {
                                 <div className="p-6 bg-purple-50 rounded-xl border border-purple-100">
                                     <h3 className="text-lg font-semibold text-purple-900 mb-2">Agenda Manager</h3>
                                     <p className="text-purple-800 text-sm mb-4">Rol administrativo para secretarios.</p>
-                                    <ul className="space-y-2 text-sm text-purple-700">
-                                        <li className="flex gap-2">✓ Gestión de agendas de terceros</li>
+                                    <ul className="space-y-3 text-sm text-purple-700 pl-5">
+                                        <li className="flex gap-2"><span className="shrink-0">✓</span> Gestión de agendas de terceros</li>
                                         <li className="flex gap-2">✓ Creación de Grupos de Profesionales</li>
                                         <li className="flex gap-2">✕ Sin acceso a estadísticas clínicas</li>
                                     </ul>
@@ -119,8 +125,11 @@ export default function ManualPage() {
                         <hr className="my-8 border-slate-200" />
 
                         <section id="planes" className="scroll-mt-24">
-                            <h2>3. Planes y Suscripciones</h2>
-                            <p>PsicoAIssist ofrece cinco niveles de servicio, divididos en opciones individuales y para grupos. Puede consultar su plan actual en <strong>Perfil {'>'} Suscripción</strong>.</p>
+                            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
+                                <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">3</span>
+                                Planes y Suscripciones
+                            </h2>
+                            <p className="leading-relaxed text-lg text-slate-600 mb-6">PsicoAIssist ofrece cinco niveles de servicio, divididos en opciones individuales y para grupos. Puede consultar su plan actual en <strong>Perfil {'>'} Suscripción</strong>.</p>
 
                             <h3 className="mt-6 mb-4 text-xl font-bold text-slate-800">1. Planes Individuales</h3>
                             <div className="space-y-6 mb-8 not-prose">
@@ -171,9 +180,9 @@ export default function ManualPage() {
                                     {/* DETAILED EXPLANATION BASIC */}
                                     <div className="mt-6 pt-6 border-t border-slate-200">
                                         <h5 className="font-bold text-slate-800 mb-3 text-sm">Detalle de Características:</h5>
-                                        <ul className="text-xs text-slate-600 space-y-3">
+                                        <ul className="text-xs text-slate-600 space-y-4 pl-4">
                                             <li>
-                                                <strong className="block text-slate-700">10 Horas Transcripción (Literal)</strong>
+                                                <strong className="block text-slate-700 mb-1">10 Horas Transcripción (Literal)</strong>
                                                 Ideal para convertir audio a texto simple. No incluye inteligencia artificial, por lo que no genera resúmenes ni detecta tendencias.
                                             </li>
                                             <li>
@@ -232,9 +241,9 @@ export default function ManualPage() {
                                     {/* DETAILED EXPLANATION PRO */}
                                     <div className="mt-6 pt-6 border-t border-blue-200/50">
                                         <h5 className="font-bold text-blue-900 mb-3 text-sm">Detalle de Características:</h5>
-                                        <ul className="text-xs text-blue-800/80 space-y-3">
+                                        <ul className="text-xs text-blue-800/80 space-y-4 pl-4">
                                             <li>
-                                                <strong className="block text-blue-900">15h (900 min) de Inteligencia Total</strong>
+                                                <strong className="block text-blue-900 mb-1">15h (900 min) de Inteligencia Total</strong>
                                                 Unificamos el tiempo: cada minuto grabado se transcribe Y se analiza por IA. No tienes que preocuparte por límites separados.
                                             </li>
                                             <li>
@@ -292,9 +301,9 @@ export default function ManualPage() {
                                     {/* DETAILED EXPLANATION PREMIUM PLUS */}
                                     <div className="mt-6 pt-6 border-t border-purple-200/50">
                                         <h5 className="font-bold text-purple-900 mb-3 text-sm">Detalle de Características:</h5>
-                                        <ul className="text-xs text-purple-800/80 space-y-3">
+                                        <ul className="text-xs text-purple-800/80 space-y-4 pl-4">
                                             <li>
-                                                <strong className="block text-purple-900">50h (3.000 min) de IA</strong>
+                                                <strong className="block text-purple-900 mb-1">50h (3.000 min) de IA</strong>
                                                 Capacidad masiva para profesionales clínicos intensivos.
                                             </li>
                                             <li>
@@ -352,9 +361,9 @@ export default function ManualPage() {
                                     {/* DETAILED EXPLANATION BUSINESS */}
                                     <div className="mt-6 pt-6 border-t border-indigo-200/50">
                                         <h5 className="font-bold text-indigo-900 mb-3 text-sm">Detalle de Características:</h5>
-                                        <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4 text-xs text-indigo-800/80">
+                                        <ul className="grid md:grid-cols-2 gap-x-8 gap-y-6 text-xs text-indigo-800/80 pl-4">
                                             <li>
-                                                <strong className="block text-indigo-900">Agenda Manager</strong>
+                                                <strong className="block text-indigo-900 mb-1">Agenda Manager</strong>
                                                 Rol especial para secretariado. Permite gestionar las citas de todos los profesionales desde un único panel sin ver datos clínicos sensibles.
                                             </li>
                                             <li>
@@ -404,9 +413,9 @@ export default function ManualPage() {
                                     {/* DETAILED EXPLANATION CLINICS */}
                                     <div className="mt-6 pt-6 border-t border-slate-300/50">
                                         <h5 className="font-bold text-slate-900 mb-3 text-sm">Detalle de Características:</h5>
-                                        <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4 text-xs text-slate-600">
+                                        <ul className="grid md:grid-cols-2 gap-x-8 gap-y-6 text-xs text-slate-600 pl-4">
                                             <li>
-                                                <strong className="block text-slate-800">API & Integración HIS</strong>
+                                                <strong className="block text-slate-800 mb-1">API & Integración HIS</strong>
                                                 Conectamos PsicoAIssist directamente con el software de gestión hospitalaria de tu centro.
                                             </li>
                                             <li>
@@ -426,13 +435,18 @@ export default function ManualPage() {
                         <hr className="my-8 border-slate-200" />
 
                         <section id="primeros-pasos" className="scroll-mt-24">
-                            <h2>4. Primeros Pasos</h2>
-                            <h3>Acceso</h3>
-                            <p>Ingrese con sus credenciales (email y contraseña) en la página de inicio de sesión.</p>
+                            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
+                                <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">4</span>
+                                Primeros Pasos
+                            </h2>
+                            <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 mb-8">
+                                <h3 className="!mt-0 text-xl font-bold text-slate-800 mb-3 block">Acceso Inicial</h3>
+                                <p className="leading-relaxed text-slate-600">Ingrese con sus credenciales (email y contraseña) en la página de inicio de sesión segura.</p>
+                            </div>
 
-                            <h3>Configuración Inicial (Recomendado)</h3>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Configuración Inicial (Recomendado)</h3>
                             <p>Antes de empezar a citar pacientes, diríjase a <strong>Ajustes (Settings)</strong> para configurar:</p>
-                            <ul>
+                            <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">
                                 <li><strong>Horario Laboral:</strong> Defina su hora de inicio y fin, y la duración por defecto de sus sesiones.</li>
                                 <li><strong>Tarifa:</strong> Establezca su precio por hora para que el sistema calcule sus ingresos estimados.</li>
                                 <li><strong>Google Calendar:</strong> Active la sincronización bidireccional para que sus citas aparezcan en su calendario personal y viceversa.</li>
@@ -442,15 +456,18 @@ export default function ManualPage() {
                         <hr className="my-8 border-slate-200" />
 
                         <section id="dashboard" className="scroll-mt-24">
-                            <h2>5. El Dashboard</h2>
-                            <p>El Dashboard es la pantalla principal y varía según su rol.</p>
+                            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
+                                <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">5</span>
+                                El Dashboard
+                            </h2>
+                            <p className="leading-relaxed text-lg text-slate-600 mb-6">El Dashboard es el centro de control principal y su diseño se adapta dinámicamente según su rol.</p>
 
-                            <h3>Para el Profesional</h3>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Para el Profesional</h3>
                             <p>
                                 Es un panel modular y personalizable. Puede añadir o quitar "Widgets" desde la <strong>Librería de Widgets</strong>.
                             </p>
-                            <h4>Widgets Disponibles:</h4>
-                            <ul className="list-disc pl-5 space-y-2">
+                            <h4 className="mt-4 mb-2 text-lg font-semibold text-slate-700 block">Widgets Disponibles:</h4>
+                            <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">
                                 <li><strong>Operativos:</strong> Agenda de Hoy, Notas Pendientes, Agenda (7 días).</li>
                                 <li><strong>Analíticos (Negocio):</strong> Ingresos Estimados, Tasa de Asistencia, Pacientes Activos.</li>
                                 <li><strong>Clínicos (IA):</strong> Temas Recurrentes (análisis de notas), Tendencia de Bienestar, Técnicas Terapéuticas.</li>
@@ -460,25 +477,28 @@ export default function ManualPage() {
                                 <strong>Nota:</strong> Los widgets clínicos requieren que complete sus notas de sesión para que la IA pueda generar datos útiles.
                             </div>
 
-                            <h3>Para el Agenda Manager</h3>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Para el Agenda Manager</h3>
                             <p>Su dashboard muestra "Tarjetas de Profesionales". Haga clic en una tarjeta para gestionar la agenda específica de ese doctor.</p>
                         </section>
 
                         <hr className="my-8 border-slate-200" />
 
                         <section id="funcionalidades" className="scroll-mt-24">
-                            <h2>6. Funcionalidades Principales</h2>
-                            <h3>Gestión de Pacientes</h3>
+                            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
+                                <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">6</span>
+                                Funcionalidades Principales
+                            </h2>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Gestión de Pacientes</h3>
                             <p>
                                 En la sección <strong>Pacientes</strong>, cree nuevos expedientes, vea historiales y acceda a datos demográficos.
                             </p>
 
-                            <h3>Gestión de Sesiones</h3>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Gestión de Sesiones</h3>
                             <p>
                                 En <strong>Sesiones</strong>, use la vista de calendario para crear citas. Marque las sesiones como "Realizada" o "Cancelada" para mantener las estadísticas precisas.
                             </p>
 
-                            <h3>Simulador Clínico</h3>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Simulador Clínico</h3>
                             <p>
                                 Acceda desde el menú "Simulador" para practicar con pacientes virtuales. La IA le dará feedback sobre su empatía y técnica al terminar la sesión simulada.
                             </p>
@@ -487,26 +507,38 @@ export default function ManualPage() {
                         <hr className="my-8 border-slate-200" />
 
                         <section id="configuracion" className="scroll-mt-24">
-                            <h2>7. Configuración Detallada</h2>
+                            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
+                                <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">7</span>
+                                Configuración Detallada
+                            </h2>
 
-                            <h3>📅 Agenda y Calendario</h3>
-                            <ul className="list-disc pl-5 space-y-2">
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">📅 Agenda y Calendario</h3>
+                            <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">
                                 <li><strong>Duración por Defecto:</strong> Tiempo estándar de sus sesiones (ej. 60 min).</li>
                                 <li><strong>Buffer:</strong> Tiempo de descanso automático entre citas (ej. 10 min).</li>
                                 <li><strong>Bloqueos:</strong> Use "Bloquear día completo" para vacaciones.</li>
                             </ul>
 
-                            <h3 className="mt-6">🔗 Google Calendar</h3>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🔗 Google Calendar</h3>
                             <p>La integración permite:</p>
-                            <ol className="list-decimal pl-5 space-y-2">
+                            <ol className="list-decimal pl-5 space-y-3 marker:text-blue-500 font-medium">
                                 <li><strong>Importar:</strong> Eventos de su Google Calendar personal bloquean huecos en PsicoAIssist.</li>
                                 <li><strong>Exportar:</strong> Las sesiones creadas en PsicoAIssist aparecen en su Google Calendar.</li>
                             </ol>
 
-                            <h3 className="mt-6">🤖 Inteligencia Artificial</h3>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🎨 Marca Personal (Solo Premium)</h3>
+                            <p>Personalice la apariencia de sus informes clínicos para reflejar su identidad corporativa.</p>
+                            <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">
+                                <li><strong>Nombre de la Empresa:</strong> Aparecerá en el encabezado de los informes.</li>
+                                <li><strong>Colores Corporativos:</strong> Defina un color primario y secundario para los elementos gráficos del PDF.</li>
+                                <li><strong>Logo:</strong> Active o desactive la visualización del icono de su marca.</li>
+                            </ul>
+                            <p className="text-sm text-slate-500 mt-2"><i>Nota: Esta funcionalidad es exclusiva para usuarios con plan Premium o superior.</i></p>
+
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🤖 Inteligencia Artificial</h3>
                             <p><strong>Idioma Preferido:</strong> Define en qué idioma generará la IA los informes automáticos.</p>
 
-                            <h3 className="mt-6">🔔 Notificaciones</h3>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🔔 Notificaciones</h3>
                             <p><strong>Recordatorios por Email:</strong> Si está activo, el sistema envía un correo al paciente 24h antes de la cita (requiere email en la ficha del paciente).</p>
                         </section>
                     </div>

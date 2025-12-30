@@ -107,9 +107,11 @@ export class UpdateUserDto {
   hourlyRate?: number;
 
   @ApiProperty({ required: false })
-  @IsOptional()
-  @IsBoolean()
   googleImportCalendar?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  brandingConfig?: any;
 }
 
 export class UserResponseDto {
@@ -167,6 +169,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   googleImportCalendar?: boolean;
+
+  @ApiProperty({ required: false })
+  brandingConfig?: any;
 
   @ApiProperty({ required: false, type: 'object', isArray: true })
   groupMembers?: { id: string; firstName: string; lastName: string }[];

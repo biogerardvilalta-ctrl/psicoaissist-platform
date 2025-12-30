@@ -13,7 +13,7 @@ const faqs = [
   {
     id: 2,
     question: '¿Cómo funciona la transcripción automática?',
-    answer: 'Nuestro sistema de IA escucha la sesión en tiempo real y transcribe automáticamente. Reconoce el habla en español (incluyendo acentos regionales), identifica quién habla (terapeuta/paciente) y formatea el texto de manera profesional. La precisión es del 95%+. PsicoAIssist no graba audio permanente si no lo deseas.',
+    answer: 'Nuestro sistema de IA escucha la sesión en tiempo real y transcribe automáticamente. Reconoce el habla en español (incluyendo acentos regionales), identifica quién habla (terapeuta/paciente) y formatea el texto de manera profesional. La precisión es del 95%+. El audio se procesa en tiempo real y NO se graba ni almacena nunca en nuestros servidores.',
     category: 'Funcionalidad'
   },
   {
@@ -28,12 +28,7 @@ const faqs = [
     answer: 'Conservas acceso a todos tus datos durante 90 días. Puedes exportar todas las sesiones, informes y notas en cualquier momento. No hay penalizaciones por cancelación y puedes reactivar tu cuenta cuando desees.',
     category: 'Facturación'
   },
-  {
-    id: 5,
-    question: '¿Funciona con sesiones por videollamada?',
-    answer: 'Por supuesto. PsicoAIssist es compatible con Zoom, Google Meet, Teams y otras plataformas. Puedes usar nuestro bot de audio o grabar directamente desde tu dispositivo. La calidad de transcripción es la misma que en sesiones presenciales.',
-    category: 'Funcionalidad'
-  },
+
   {
     id: 6,
     question: '¿Hay límite en el número de pacientes?',
@@ -55,7 +50,7 @@ const faqs = [
   {
     id: 9,
     question: '¿Qué idiomas soporta el sistema?',
-    answer: 'Principalmente español (España y Latinoamérica) con alta precisión. También soportamos inglés, francés, portugués e italiano. Estamos añadiendo más idiomas basándose en la demanda de nuestros usuarios.',
+    answer: 'Principalmente Catalán, Español e Inglés con alta precisión. También soportamos francés, portugués e italiano. Estamos añadiendo más idiomas basándose en la demanda de nuestros usuarios.',
     category: 'Funcionalidad'
   },
   {
