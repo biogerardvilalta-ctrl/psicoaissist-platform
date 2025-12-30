@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Brain, Mic, Activity, CheckCircle2 } from 'lucide-react';
+import { Sparkles, MessageSquare, Lightbulb, Zap, Mic, AlertTriangle, Brain, PlusCircle, XCircle } from 'lucide-react';
 
 const DEMO_SCRIPT = [
     {
@@ -10,10 +10,10 @@ const DEMO_SCRIPT = [
         duration: 2000
     },
     {
-        text: "Momento Clave: Sentimiento de autodesvalorización",
+        text: "Sentimiento de invisibilidad", // Indicator
         type: 'insight',
-        trait: 'Análisis',
-        color: 'bg-purple-100 text-purple-700'
+        category: 'indicator',
+        trait: 'mood' // for coloring
     },
     {
         text: "Terapeuta: \"Debe ser frustrante. Cuéntame más sobre eso.\"",
@@ -21,10 +21,9 @@ const DEMO_SCRIPT = [
         duration: 2500
     },
     {
-        text: "Punto Fuerte: Validación (Empatía)",
+        text: "Validar la emoción subyacente", // Consideration
         type: 'insight',
-        trait: 'Feedback',
-        color: 'bg-green-100 text-green-700'
+        category: 'consideration'
     },
     {
         text: "Pac: \"Simplemente me callo y no digo nada.\"",
@@ -32,17 +31,21 @@ const DEMO_SCRIPT = [
         duration: 1500
     },
     {
-        text: "Recomendación: Explorar patrón de evitación",
+        text: "¿Qué temes que pasaría si hablaras?", // Question
         type: 'insight',
-        trait: 'Supervisor IA',
-        color: 'bg-blue-100 text-blue-700'
+        category: 'question'
     }
 ];
 
 export function HeroDemo() {
     const [displayedText, setDisplayedText] = useState('');
     const [currentStep, setCurrentStep] = useState(0);
-    const [insights, setInsights] = useState<Array<{ text: string, trait: string, color: string }>>([]);
+
+    // State for the AI Assistant parts
+    const [indicators, setIndicators] = useState<{ type: string; label: string }[]>([]);
+    const [questions, setQuestions] = useState<string[]>([]);
+    const [considerations, setConsiderations] = useState<string[]>([]);
+
     const [isListening, setIsListening] = useState(true);
 
     useEffect(() => {
@@ -53,9 +56,11 @@ export function HeroDemo() {
                 // Reset loop after a pause
                 timeoutId = setTimeout(() => {
                     setDisplayedText('');
-                    setInsights([]);
+                    setIndicators([]);
+                    setQuestions([]);
+                    setConsiderations([]);
                     setCurrentStep(0);
-                }, 3000);
+                }, 4000);
                 return;
             }
 
@@ -66,26 +71,32 @@ export function HeroDemo() {
                 let charIndex = 0;
                 const text = step.text as string;
 
+                // For demo purposes, we append to text, or replace if it gets too long?
+                // Let's just append for the stream effect.
+
                 const typeChar = () => {
                     if (charIndex < text.length) {
                         setDisplayedText(prev => prev + text[charIndex]);
                         charIndex++;
-                        timeoutId = setTimeout(typeChar, 50); // Typing speed
+                        timeoutId = setTimeout(typeChar, 30); // Typing speed
                     } else {
                         // Finished typing this segment
+                        const hasMoreText = DEMO_SCRIPT.slice(currentStep + 1).some(s => s.type === 'transcription');
+                        setDisplayedText(prev => prev + (hasMoreText ? "\n\n" : ""));
                         setCurrentStep(prev => prev + 1);
                     }
                 };
 
                 typeChar();
             } else if (step.type === 'insight') {
-                // Flash insight
-                const newInsight = {
-                    text: step.text as string,
-                    trait: step.trait as string,
-                    color: step.color as string
-                };
-                setInsights(prev => [...prev, newInsight]);
+                // Add to specific category
+                if (step.category === 'indicator') {
+                    setIndicators(prev => [...prev, { type: step.trait || 'topic', label: step.text as string }]);
+                } else if (step.category === 'question') {
+                    setQuestions(prev => [...prev, step.text as string]);
+                } else if (step.category === 'consideration') {
+                    setConsiderations(prev => [...prev, step.text as string]);
+                }
                 setCurrentStep(prev => prev + 1);
             }
         };
@@ -96,105 +107,130 @@ export function HeroDemo() {
     }, [currentStep]);
 
     return (
-        <div className="relative mx-auto w-full max-w-lg">
-            {/* Main Interface Card */}
-            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100/50 backdrop-blur-sm">
+        <div className="relative mx-auto w-full max-w-lg font-sans">
+            {/* Main AI Assistant Card Structure - larger and no scroll */}
+            <div className="h-[630px] flex flex-col border-0 shadow-2xl rounded-xl bg-white/90 backdrop-blur-md overflow-hidden ring-1 ring-slate-200/50">
+                <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none" />
 
-                {/* Header / Status Bar */}
-                <div className="bg-white border-b border-gray-100 p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className={`w-3 h-3 rounded-full ${isListening ? 'bg-red-500 animate-pulse' : 'bg-gray-300'}`} />
-                        <span className="text-sm font-medium text-gray-600">
-                            {isListening ? 'Escuchando en vivo...' : 'En pausa'}
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-gray-400">00:14:23</span>
-                        <Mic className="w-4 h-4 text-gray-400" />
-                    </div>
-                </div>
-
-                {/* Content Area */}
-                <div className="p-6 h-[220px] bg-gray-50/50 flex flex-col relative overflow-hidden">
-
-                    {/* Transcription Text */}
-                    <div className="font-mono text-base leading-relaxed text-gray-700 whitespace-pre-wrap">
-                        {displayedText}
-                        <span className="animate-blink inline-block w-0.5 h-4 ml-1 bg-blue-500 align-middle"></span>
-                    </div>
-
-                    {/* Waveform Animation (Bottom Overlay) */}
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent flex items-end justify-center pb-4 gap-1">
-                        {[...Array(8)].map((_, i) => (
-                            <div
-                                key={i}
-                                className={`w-1 bg-blue-500/50 rounded-full animate-pulse`}
-                                style={{
-                                    height: `${Math.random() * 24 + 8}px`,
-                                    animationDuration: `${Math.random() * 0.5 + 0.5}s`
-                                }}
-                            />
-                        ))}
-                    </div>
-                </div>
-
-                {/* Insights / Analysis Panel (Simulated Floating popups) */}
-                <div className="bg-white p-4 border-t border-gray-100 min-h-[80px]">
-                    <div className="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                        <Brain className="w-3 h-3" />
-                        Análisis en Tiempo Real
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                        {insights.map((insight, idx) => (
-                            <div
-                                key={idx}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent shadow-sm flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-500 cursor-default ${insight.color}`}
-                            >
-                                <span className="opacity-75">{insight.trait}:</span>
-                                {insight.text}
-                                <CheckCircle2 className="w-3 h-3" />
+                {/* HEADER */}
+                <div className="pb-3 shrink-0 relative z-10 border-b border-blue-100/50 p-6">
+                    <div className="flex items-center justify-between text-indigo-700 font-bold tracking-tight">
+                        <div className="flex items-center gap-2">
+                            <div className="p-1.5 bg-indigo-100 rounded-lg">
+                                <Sparkles className="h-4 w-4 text-indigo-600" />
                             </div>
-                        ))}
-                        {insights.length === 0 && (
-                            <span className="text-sm text-gray-400 italic">Esperando datos...</span>
-                        )}
+                            Asistente IA
+                        </div>
+                        <div className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0 text-[10px] font-semibold transition-colors text-emerald-600 h-5">
+                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse" />
+                            Live
+                        </div>
                     </div>
+                    <p className="text-slate-500 font-medium text-xs mt-1">
+                        Análisis en tiempo real • 100% Privado
+                    </p>
+                </div>
+
+                {/* CONTENT - No scroll, larger area */}
+                <div className="flex-1 flex flex-col pt-4 px-6 relative z-10 space-y-4">
+
+                    {/* Simulated Context Stream (To show what AI is listening to) */}
+                    {/* This is NOT in the real panel, but necessary for the demo to make sense. We style it minimally. */}
+                    <div className="mb-1 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                        <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-400 uppercase">
+                            <Mic className="h-3 w-3" />
+                            Transcripción en vivo
+                        </div>
+                        <div className="text-xs font-mono text-slate-600 h-[8.75rem] overflow-y-auto leading-relaxed opacity-80 whitespace-pre-wrap scrollbar-hide">
+                            {displayedText}
+                            <span className="animate-blink inline-block w-0.5 h-3 ml-1 bg-blue-500 align-middle"></span>
+                        </div>
+                    </div>
+
+                    {/* INDICATORS AREA */}
+                    {indicators.length > 0 && (
+                        <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Zap className="h-3 w-3 text-amber-500" />
+                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Observaciones</h4>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {indicators.map((ind, i) => (
+                                    <span
+                                        key={i}
+                                        className={`
+                                            inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
+                                            pl-2 pr-3 py-1.5 shadow-sm select-none
+                                            ${ind.type === 'risk' ? 'bg-red-50 text-red-700 border-red-100' : ''}
+                                            ${ind.type === 'mood' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : ''}
+                                            ${ind.type === 'topic' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : ''}
+                                            ${!['risk', 'mood', 'topic'].includes(ind.type) ? 'bg-slate-100 text-slate-700 border-slate-200' : ''}
+                                        `}
+                                    >
+                                        {ind.type === 'mood' && <Brain className="h-3 w-3 mr-1.5" />}
+                                        {ind.label}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* QUESTIONS SECTION */}
+                    {questions.length > 0 && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+                            <div className="flex items-center gap-2 mb-1">
+                                <MessageSquare className="h-3 w-3 text-blue-500" />
+                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Preguntas Sugeridas</h4>
+                            </div>
+                            <div className="space-y-3">
+                                {questions.map((q, index) => (
+                                    <div
+                                        key={`q-${index}`}
+                                        className="
+                                            relative group cursor-pointer bg-white p-4 rounded-xl border border-slate-100 shadow-sm 
+                                            hover:shadow-md hover:border-blue-200 transition-all duration-300 transform hover:-translate-y-0.5
+                                        "
+                                    >
+                                        <p className="text-sm text-slate-700 leading-relaxed pr-2">{q}</p>
+                                        <div className="mt-3 flex items-center text-blue-500 text-xs font-medium">
+                                            <PlusCircle className="h-3 w-3 mr-1" />
+                                            Añadir a notas
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* CONSIDERATIONS SECTION */}
+                    {considerations.length > 0 && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Lightbulb className="h-3 w-3 text-amber-500" />
+                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Consideraciones</h4>
+                            </div>
+                            <div className="space-y-3">
+                                {considerations.map((c, index) => (
+                                    <div key={`c-${index}`} className="group relative bg-amber-50/50 p-4 rounded-xl border border-amber-100/50 text-sm">
+                                        <p className="text-slate-700 leading-relaxed pr-4">{c}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* FOOTER */}
+                <div className="p-3 bg-slate-50/80 backdrop-blur-sm border-t border-slate-100 z-10 mt-auto">
+                    <p className="text-[10px] text-center text-slate-400 font-medium">
+                        Ia Assistance © 2025 • PsicoAIssist
+                    </p>
                 </div>
             </div>
 
-            {/* Floating Trust Badges (Decorations) */}
-            <div className="absolute -right-6 top-10 flex flex-col gap-3">
-                <div className="bg-white p-3 rounded-xl shadow-lg border border-gray-100 flex items-center gap-3 animate-in fade-in zoom-in duration-700 delay-1000">
-                    <div className="bg-green-100 p-2 rounded-lg">
-                        <ShieldIcon className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase">Estado</p>
-                        <p className="text-xs font-semibold text-gray-800">Encriptado</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="absolute -left-6 bottom-20">
-                <div className="bg-white p-3 rounded-xl shadow-lg border border-gray-100 flex items-center gap-3 animate-in fade-in zoom-in duration-700 delay-500">
-                    <div className="bg-blue-100 p-2 rounded-lg">
-                        <Activity className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase">Precisión</p>
-                        <p className="text-xs font-semibold text-gray-800">98.5%</p>
-                    </div>
-                </div>
-            </div>
+            {/* Decorative background globs matched to Live panel vibes */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
         </div>
     );
-}
-
-function ShieldIcon({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-        </svg>
-    )
 }
