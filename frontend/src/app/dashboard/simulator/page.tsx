@@ -175,10 +175,12 @@ export default function SimulatorPage() {
         }
     }, [statsPeriod, reportsFilter, activeTab]);
 
-    // Ensure stats are loaded on mount for the usage display
+    // Ensure stats are loaded on mount for the usage display, and refresh when returning to idle
     useEffect(() => {
-        simulatorService.getStats('all').then(data => setStats(data)).catch(console.error);
-    }, []);
+        if (status === 'idle') {
+            simulatorService.getStats('all').then(data => setStats(data)).catch(console.error);
+        }
+    }, [status]);
 
     const handleReportFilterChange = (key: string, value: string) => {
         setReportsFilter(prev => ({ ...prev, [key]: value }));

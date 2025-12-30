@@ -26,6 +26,12 @@ export enum PlanLimits {
 
   // -1 significa ilimitado
   UNLIMITED = -1,
+
+  // Fair Use Limits (Safety Caps for Unlimited Plans)
+  FAIR_USE_TRANSCRIPTION_HOURS = 300,
+  FAIR_USE_CLIENTS = 5000,
+  FAIR_USE_REPORTS = 3000,
+  FAIR_USE_SIMULATOR_CASES = 500,
 }
 
 export interface PlanFeatures {

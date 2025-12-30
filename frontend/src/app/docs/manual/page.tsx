@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, Book } from 'lucide-react';
+import { ArrowLeft, Book, AlertCircle } from 'lucide-react';
 
 export default function ManualPage() {
     return (
@@ -318,6 +318,10 @@ export default function ManualPage() {
                                                 <strong className="block text-purple-900">Soporte Premium</strong>
                                                 Atención prioritaria por email y posibilidad de agendar videollamadas 1:1 para resolver dudas complejas o configurar tu cuenta.
                                             </li>
+                                            <li>
+                                                <strong className="block text-purple-900">Almacenamiento (1TB)</strong>
+                                                Capacidad para miles de horas de audio y documentos. *Aplica una Política de Uso Razonable para garantizar la estabilidad del servicio y evitar abusos del sistema de archivos.
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -429,6 +433,41 @@ export default function ManualPage() {
                                         </ul>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="mt-12 p-6 bg-red-50 rounded-xl border border-red-100">
+                                <h3 className="flex items-center gap-2 text-lg font-bold text-red-900 mb-4">
+                                    <AlertCircle className="h-5 w-5" />
+                                    Política de Uso Razonable (Fair Use Policy)
+                                </h3>
+                                <p className="text-sm text-red-800 mb-4">
+                                    Para garantizar la estabilidad del sistema y la calidad del servicio para todos los usuarios, los planes con características "Ilimitadas" están sujetos a los siguientes topes de seguridad mensual:
+                                </p>
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    <div className="bg-white p-3 rounded-lg border border-red-100">
+                                        <span className="block text-xs text-red-600 font-semibold uppercase">Pacientes Activos</span>
+                                        <span className="text-lg font-bold text-slate-800">5.000</span>
+                                        <span className="text-xs text-slate-500 ml-1">expedientes</span>
+                                    </div>
+                                    <div className="bg-white p-3 rounded-lg border border-red-100">
+                                        <span className="block text-xs text-red-600 font-semibold uppercase">Transcripción IA</span>
+                                        <span className="text-lg font-bold text-slate-800">300</span>
+                                        <span className="text-xs text-slate-500 ml-1">horas/mes</span>
+                                    </div>
+                                    <div className="bg-white p-3 rounded-lg border border-red-100">
+                                        <span className="block text-xs text-red-600 font-semibold uppercase">Generación de Informes</span>
+                                        <span className="text-lg font-bold text-slate-800">3.000</span>
+                                        <span className="text-xs text-slate-500 ml-1">informes/mes</span>
+                                    </div>
+                                    <div className="bg-white p-3 rounded-lg border border-red-100">
+                                        <span className="block text-xs text-red-600 font-semibold uppercase">Simulador Clínico</span>
+                                        <span className="text-lg font-bold text-slate-800">500</span>
+                                        <span className="text-xs text-slate-500 ml-1">casos/mes</span>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-red-700 mt-4 italic">
+                                    * El uso por encima de estos límites se considera "no humano" o abusivo y puede conllevar la suspensión temporal de la cuenta o el contacto por parte de soporte para migrar a un plan Enterprise personalizado.
+                                </p>
                             </div>
                         </section>
 

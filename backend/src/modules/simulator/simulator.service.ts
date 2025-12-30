@@ -58,6 +58,8 @@ export class SimulatorService {
 
         // Use centralized service to check limits
         await this.usageLimitsService.checkSimulatorLimit(userId);
+        // Check if user has at least 1 minute available to start a session
+        await this.usageLimitsService.checkSimulatorMinutesLimit(userId, 1);
 
         // Increment
         await this.prisma.user.update({
@@ -432,27 +434,23 @@ export class SimulatorService {
             // New Fields
             usage: (() => {
                 const limitHours = usageData.limits.transcriptionHours;
-                const usedMinutes = usageData.currentUsage.transcriptionMinutes || 0;
+                const transcriptionUsedMinutes = usageData.currentUsage.transcriptionMinutes || 0;
 
-                console.log('[DEBUG] Stats Usage:', {
-                    plan: usageData.planType,
-                    limitHours,
-                    usedMinutes
-                });
+
 
                 return {
                     used: usedCases,
                     limit: limitCases,
                     remaining: remainingCases,
                     // Minutes Logic
-                    minutesUsed: usedMinutes, // reuse variable
+                    minutesUsed: usedMinutes, // Correctly uses the outer scope usedMinutes (simulator)
                     minutesLimit: displayLimitMinutes,
                     minutesRemaining: remainingMinutes,
 
                     // Transcription Logic (Minutes)
-                    transcriptionUsed: usedMinutes,
+                    transcriptionUsed: transcriptionUsedMinutes,
                     transcriptionLimit: limitHours === -1 ? -1 : limitHours * 60,
-                    transcriptionRemaining: limitHours === -1 ? 99999 : Math.max(0, (limitHours * 60) - usedMinutes),
+                    transcriptionRemaining: limitHours === -1 ? 99999 : Math.max(0, (limitHours * 60) - transcriptionUsedMinutes),
 
                     plan: plan,
                     nextReset: nextReset

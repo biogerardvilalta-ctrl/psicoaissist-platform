@@ -39,6 +39,13 @@ export class UsageLimitsService {
           `Client limit reached. Your ${user.subscription.planType} plan allows up to ${planFeatures.maxClients} clients.`
         );
       }
+    } else {
+      // Fair Use Check for Unlimited
+      if (user._count.clients >= PlanLimits.FAIR_USE_CLIENTS) {
+        throw new ForbiddenException(
+          `Fair Use Policy: Maximum clients limit reached (${PlanLimits.FAIR_USE_CLIENTS}). Please contact support for enterprise options.`
+        );
+      }
     }
   }
 
@@ -57,11 +64,40 @@ export class UsageLimitsService {
       throw new ForbiddenException('Invalid subscription plan');
     }
 
-    // Check transcription limit (simplified - in real app you'd track usage)
+    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+    // Calculate actual usage for current month
+    const usage = await this.prisma.session.aggregate({
+      where: {
+        userId,
+        startTime: { gte: startOfMonth },
+        status: { not: 'CANCELLED' } // Count all valid sessions
+      },
+      _sum: {
+        duration: true
+      }
+    });
+
+    const usedMinutes = usage._sum.duration || 0;
+    const requestedMinutes = hoursToAdd * 60;
+    const totalProjectedMinutes = usedMinutes + requestedMinutes;
+
+    // Check transcription limit
     if (planFeatures.transcriptionHours !== PlanLimits.UNLIMITED) {
-      // Here you would implement actual usage tracking
-      // For now, we'll just check the plan allows transcription
-      console.log(`Checking transcription limit for user ${userId}: ${hoursToAdd} hours requested`);
+      const limitMinutes = planFeatures.transcriptionHours * 60;
+      if (totalProjectedMinutes > limitMinutes) {
+        throw new ForbiddenException(
+          `Monthly transcription limit reached. Used: ${Math.round(usedMinutes / 60)}h / ${planFeatures.transcriptionHours}h.`
+        );
+      }
+    } else {
+      // Fair Use Check for Unlimited
+      const fairUseLimitMinutes = PlanLimits.FAIR_USE_TRANSCRIPTION_HOURS * 60;
+      if (totalProjectedMinutes > fairUseLimitMinutes) {
+        throw new ForbiddenException(
+          `Fair Use Policy: Transcription usage excessive (${Math.round(usedMinutes / 60)}h used). Please contact commercial team.`
+        );
+      }
     }
   }
 
@@ -100,6 +136,13 @@ export class UsageLimitsService {
           `Monthly report limit reached. Your ${user.subscription.planType} plan allows up to ${planFeatures.reportsPerMonth} reports per month.`
         );
       }
+    } else {
+      // Fair Use Check
+      if (user._count.reports >= PlanLimits.FAIR_USE_REPORTS) {
+        throw new ForbiddenException(
+          `Fair Use Policy: Report generation excessive (${PlanLimits.FAIR_USE_REPORTS} reports/month). System protection engaged.`
+        );
+      }
     }
   }
 
@@ -134,6 +177,13 @@ export class UsageLimitsService {
       if (user.simulatorUsageCount >= totalLimit) {
         throw new ForbiddenException(
           `Simulator cases limit reached (${totalLimit} cases/month). Upgrade your plan or invite colleagues.`
+        );
+      }
+    } else {
+      // Fair Use Check for Unlimited
+      if (user.simulatorUsageCount >= PlanLimits.FAIR_USE_SIMULATOR_CASES) {
+        throw new ForbiddenException(
+          `Fair Use Policy: Simulator usage excessive (${PlanLimits.FAIR_USE_SIMULATOR_CASES} cases/month).`
         );
       }
     }

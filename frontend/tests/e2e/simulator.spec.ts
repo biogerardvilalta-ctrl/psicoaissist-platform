@@ -71,9 +71,25 @@ test.describe('Simulator E2E', () => {
         await expect(page.locator('text=Informe de Supervisión Detallado')).toBeVisible({ timeout: 60000 }); // Generating report takes time
 
         // Verify Metrics
-        await expect(page.locator('text=Empatía')).toBeVisible();
-        await expect(page.locator('text=Eficacia Clínica')).toBeVisible();
+        // Use specific class selector to avoid strict mode violations (e.g. "Empatía" in text body vs header)
+        await expect(page.locator('.text-lg', { hasText: 'Empatía' }).first()).toBeVisible();
+        await expect(page.locator('.text-lg', { hasText: 'Eficacia Clínica' }).first()).toBeVisible();
 
         console.log('Simulator Test Passed: Chat and Evaluation verified');
+
+        // 9. Verify Usage Deduction
+        // Click "Nueva Simulación" to go back to the setup screen
+        await page.click('button:has-text("Nueva Simulación")');
+
+        // Wait for usage stats to reload
+        await expect(page.locator('text=Casos Clínicos')).toBeVisible();
+
+        // Expect usage to be at least 1. We use .not.toContainText to allow Playwright to poll until it changes.
+        // Identify the usage text element more specifically if possible, or use text locator.
+        // The text is format: "{used} / {limit} Usados" e.g. "0 / 5 Usados" -> "1 / 5 Usados"
+        const usageLocator = page.locator('text=/\\d+ \\/ \\d+ Usados/');
+        await expect(usageLocator).not.toContainText('0 / 5 Usados', { timeout: 10000 });
+
+        console.log('Usage updated successfully.');
     });
 });

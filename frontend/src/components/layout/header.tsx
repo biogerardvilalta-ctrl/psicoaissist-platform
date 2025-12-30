@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, Heart, LogIn, UserPlus, Building2 } from 'lucide-react';
+import { Menu, X, Heart, LogIn, UserPlus, Building2, Scale } from 'lucide-react';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,6 +59,13 @@ export function Header() {
                 className="text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
                 Blog
+              </Link>
+              <Link
+                href="/dashboard/compliance?tab=terms"
+                className="flex items-center text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              >
+                <Scale className="w-4 h-4 mr-1.5" />
+                Legal
               </Link>
             </div>
           </nav>
@@ -145,7 +152,17 @@ export function Header() {
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Blog
+                blog
+              </Link>
+              <Link
+                href="/dashboard/compliance?tab=terms"
+                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="flex items-center">
+                  <Scale className="w-4 h-4 mr-2" />
+                  Legal
+                </div>
               </Link>
               <Link
                 href="/clinics"

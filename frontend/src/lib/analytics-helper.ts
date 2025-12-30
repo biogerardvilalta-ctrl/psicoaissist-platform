@@ -210,12 +210,34 @@ export function calculateDashboardStats(
     // 4. Top Themes (From Real Data)
     const themeCounts = new Map<string, number>();
     sessions.forEach(session => {
-        session.aiMetadata?.emotionalElements?.forEach(element => {
-            const count = themeCounts.get(element) || 0;
-            themeCounts.set(element, count + 1);
+        const aiData = session.aiMetadata as any;
+        const elements: string[] = [];
+
+        // 1. Emotional Elements (Standard)
+        if (aiData?.emotionalElements && Array.isArray(aiData.emotionalElements)) {
+            elements.push(...aiData.emotionalElements);
+        }
+
+        // 2. Emotional Analysis (Deep)
+        if (aiData?.emotional_analysis?.identified_emotions && Array.isArray(aiData.emotional_analysis.identified_emotions)) {
+            elements.push(...aiData.emotional_analysis.identified_emotions);
+        }
+
+        // 3. Emerging Themes (Catalan/Specific structure)
+        if (aiData?.temes_emergents_sessio?.temes_seleccionats && Array.isArray(aiData.temes_emergents_sessio.temes_seleccionats)) {
+            const themes = aiData.temes_emergents_sessio.temes_seleccionats.map((t: any) => t.tema);
+            elements.push(...themes);
+        }
+
+        elements.forEach(element => {
+            if (typeof element === 'string') {
+                const normalized = element.trim(); // We could add more normalization if needed
+                if (normalized) {
+                    const count = themeCounts.get(normalized) || 0;
+                    themeCounts.set(normalized, count + 1);
+                }
+            }
         });
-        // Also check narrativeIndicators if emotionalElements is empty? 
-        // For now sticking to emotionalElements as primary source for "Themes"
     });
 
     const topThemes = Array.from(themeCounts.entries())

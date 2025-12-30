@@ -545,7 +545,7 @@ export default function StatisticsPage() {
                                         <ResponsiveContainer width="100%" height="100%">
                                             <PieChart>
                                                 <Pie
-                                                    data={stats.topThemes}
+                                                    data={dashboardStats?.topThemes || stats.topThemes}
                                                     cx="50%"
                                                     cy="50%"
                                                     labelLine={false}
