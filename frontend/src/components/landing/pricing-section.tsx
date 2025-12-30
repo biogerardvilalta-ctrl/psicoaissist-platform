@@ -49,7 +49,7 @@ const plans = [
     buttonColor: 'bg-blue-600 hover:bg-blue-700 text-white',
   },
   {
-    id: 'premium_plus',
+    id: 'premium',
     name: 'Premium',
     price: 99,
     description: 'Para especialistas con alto volumen de trabajo',
@@ -188,7 +188,7 @@ export default function PricingSection() {
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {plans.filter(p => ['basic', 'pro', 'premium_plus'].includes(p.id)).map((plan) => {
+            {plans.filter(p => ['basic', 'pro', 'premium'].includes(p.id)).map((plan) => {
               const isAnnual = billingInterval === 'year';
               const price = typeof plan.price === 'number'
                 ? (isAnnual ? Math.round(plan.price * 10 / 12) : plan.price)

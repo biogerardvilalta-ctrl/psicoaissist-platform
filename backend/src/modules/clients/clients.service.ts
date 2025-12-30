@@ -253,8 +253,26 @@ export class ClientsService {
     }
 
     async findOne(userId: string, clientId: string): Promise<ClientResponseDto> {
+        // PERMISSION CHECK
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { managedProfessionals: true }
+        });
+
+        if (!user) {
+            throw new NotFoundException('Usuario no encontrado');
+        }
+
+        let targetUserIds: string[] = [userId];
+        if (user.role === UserRole.AGENDA_MANAGER) {
+            targetUserIds = user.managedProfessionals.map(u => u.id);
+        }
+
         const client = await this.prisma.client.findFirst({
-            where: { id: clientId, userId },
+            where: {
+                id: clientId,
+                userId: { in: targetUserIds }
+            },
         });
 
         if (!client) {
@@ -287,8 +305,26 @@ export class ClientsService {
     }
 
     async update(userId: string, clientId: string, updateClientDto: UpdateClientDto): Promise<ClientResponseDto> {
+        // PERMISSION CHECK
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { managedProfessionals: true }
+        });
+
+        if (!user) {
+            throw new NotFoundException('Usuario no encontrado');
+        }
+
+        let targetUserIds: string[] = [userId];
+        if (user.role === UserRole.AGENDA_MANAGER) {
+            targetUserIds = user.managedProfessionals.map(u => u.id);
+        }
+
         const client = await this.prisma.client.findFirst({
-            where: { id: clientId, userId },
+            where: {
+                id: clientId,
+                userId: { in: targetUserIds }
+            },
         });
 
         if (!client) {
@@ -359,11 +395,32 @@ export class ClientsService {
     }
 
     async remove(userId: string, clientId: string): Promise<void> {
+        this.logger.log(`Attempting to archive client ${clientId} by user ${userId}`);
+
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { managedProfessionals: true }
+        });
+
+        if (!user) {
+            this.logger.warn(`User ${userId} not found during client archive`);
+            throw new NotFoundException('Usuario no encontrado');
+        }
+
+        let targetUserIds: string[] = [userId];
+        if (user.role === UserRole.AGENDA_MANAGER) {
+            targetUserIds = user.managedProfessionals.map(u => u.id);
+        }
+
         const client = await this.prisma.client.findFirst({
-            where: { id: clientId, userId },
+            where: {
+                id: clientId,
+                userId: { in: targetUserIds }
+            },
         });
 
         if (!client) {
+            this.logger.warn(`Client ${clientId} not found for archive by user ${userId} (Targets: ${targetUserIds.join(', ')})`);
             throw new NotFoundException('Cliente no encontrado');
         }
 
@@ -376,6 +433,8 @@ export class ClientsService {
             },
         });
 
+        this.logger.log(`Client ${clientId} successfully archived`);
+
         await this.auditService.log({
             userId,
             action: AuditAction.DELETE,
@@ -383,5 +442,56 @@ export class ClientsService {
             resourceId: clientId,
             details: `Archivado paciente (ID: ${clientId})`
         });
+    }
+
+    async deletePermanent(userId: string, clientId: string): Promise<void> {
+        this.logger.log(`Attempting to PERMANENTLY delete client ${clientId} by user ${userId}`);
+
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { managedProfessionals: true }
+        });
+
+        if (!user) {
+            this.logger.warn(`User ${userId} not found during permanent deletion`);
+            throw new NotFoundException('Usuario no encontrado');
+        }
+
+        let targetUserIds: string[] = [userId];
+        if (user.role === UserRole.AGENDA_MANAGER) {
+            targetUserIds = user.managedProfessionals.map(u => u.id);
+        }
+
+        const client = await this.prisma.client.findFirst({
+            where: {
+                id: clientId,
+                userId: { in: targetUserIds }
+            },
+        });
+
+        if (!client) {
+            this.logger.warn(`Client ${clientId} not found for permanent deletion by user ${userId} (Targets: ${targetUserIds.join(', ')})`);
+            throw new NotFoundException('Cliente no encontrado');
+        }
+
+        try {
+            // Hard delete
+            await this.prisma.client.delete({
+                where: { id: clientId },
+            });
+
+            this.logger.log(`Client ${clientId} successfully deleted permanently`);
+
+            await this.auditService.log({
+                userId,
+                action: AuditAction.DELETE,
+                resourceType: 'CLIENT',
+                resourceId: clientId,
+                details: `Eliminado definitivamente paciente (ID: ${clientId})`
+            });
+        } catch (error) {
+            this.logger.error(`Failed to delete client ${clientId}: ${error.message}`);
+            throw error;
+        }
     }
 }

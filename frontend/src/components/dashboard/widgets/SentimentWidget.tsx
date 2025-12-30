@@ -22,14 +22,14 @@ export function SentimentWidget({ data }: { data: any[] }) {
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={data}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                            <XAxis dataKey="sessionDate" hide />
-                            <YAxis domain={[0, 1]} hide />
+                            <XAxis dataKey="date" hide />
+                            <YAxis domain={[0, 100]} hide />
                             <Tooltip
                                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                             />
                             <Line
                                 type="monotone"
-                                dataKey="sentimentScore"
+                                dataKey="value"
                                 stroke="#8b5cf6"
                                 strokeWidth={2}
                                 dot={false}

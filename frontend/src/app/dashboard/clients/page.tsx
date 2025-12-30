@@ -128,6 +128,28 @@ export default function ClientsPage() {
         }
     };
 
+    const handleDeletePermanent = async (id: string) => {
+        if (!confirm('¿Estás seguro de que deseas eliminar DEFINITIVAMENTE este paciente? esta acción NO se puede deshacer y borrará todo su historial, sesiones y notas asociadas.')) {
+            return;
+        }
+
+        try {
+            await ClientsAPI.deletePermanent(id);
+            setClients(prev => prev.filter(c => c.id !== id));
+            toast({
+                title: 'Paciente eliminado',
+                description: 'El paciente y todos sus datos han sido eliminados permanentemente.',
+                variant: 'destructive',
+            });
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: 'No se pudo eliminar el paciente',
+                variant: 'destructive',
+            });
+        }
+    };
+
     const filteredClients = clients.filter(client => {
         const searchLower = searchQuery.toLowerCase();
         return (
@@ -334,12 +356,21 @@ export default function ClientsPage() {
                                                                     </>
                                                                 )}
                                                                 {!client.isActive && (
-                                                                    <DropdownMenuItem
-                                                                        className="text-emerald-600 focus:text-emerald-600"
-                                                                        onClick={() => handleRestore(client.id)}
-                                                                    >
-                                                                        <RefreshCcw className="mr-2 h-4 w-4" /> Restaurar
-                                                                    </DropdownMenuItem>
+                                                                    <>
+                                                                        <DropdownMenuItem
+                                                                            className="text-emerald-600 focus:text-emerald-600"
+                                                                            onClick={() => handleRestore(client.id)}
+                                                                        >
+                                                                            <RefreshCcw className="mr-2 h-4 w-4" /> Restaurar
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuSeparator />
+                                                                        <DropdownMenuItem
+                                                                            className="text-red-600 focus:text-red-600 font-medium bg-red-50 focus:bg-red-100"
+                                                                            onClick={() => handleDeletePermanent(client.id)}
+                                                                        >
+                                                                            <Trash2 className="mr-2 h-4 w-4" /> Eliminar definitivamente
+                                                                        </DropdownMenuItem>
+                                                                    </>
                                                                 )}
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
@@ -354,6 +385,6 @@ export default function ClientsPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
-        </div>
+        </div >
     );
 }

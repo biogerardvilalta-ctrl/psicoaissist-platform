@@ -17,7 +17,6 @@ export interface Client {
     notes?: string;
     emergencyContact?: string;
     sendEmailReminders?: boolean;
-    sendWhatsappReminders?: boolean;
 }
 
 export type CreateClientData = {
@@ -31,7 +30,6 @@ export type CreateClientData = {
     riskLevel?: Client['riskLevel'];
     tags?: string[];
     sendEmailReminders?: boolean;
-    sendWhatsappReminders?: boolean;
     professionalId?: string;
 };
 
@@ -67,7 +65,6 @@ export class ClientsAPI {
                             tags: data.tags,
                             riskLevel: data.riskLevel,
                             sendEmailReminders: data.sendEmailReminders,
-                            sendWhatsappReminders: data.sendWhatsappReminders,
                             professionalId: data.professionalId
                         });
                     }
@@ -93,5 +90,9 @@ export class ClientsAPI {
 
     static async restore(id: string) {
         return httpClient.put<Client>(`${this.BASE_URL}/${id}`, { isActive: true });
+    }
+
+    static async deletePermanent(id: string) {
+        return httpClient.delete<{ message: string }>(`${this.BASE_URL}/permanent/${id}`);
     }
 }

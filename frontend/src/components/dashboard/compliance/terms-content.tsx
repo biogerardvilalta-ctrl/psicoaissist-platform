@@ -98,6 +98,13 @@ export function TermsContent() {
                             A continuació es detallen els plans disponibles i les seves característiques contractuals. Els preus poden estar subjectes a impostos aplicables.
                         </p>
 
+                        <div className="bg-amber-50 p-4 rounded-lg border border-amber-100 flex gap-3 text-sm my-4">
+                            <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <p className="text-amber-800">
+                                <strong>Política de Reinici Mensual:</strong> Totes les quotes incloses en els plans (minuts de transcripció, casos de simulador, etc.) es reinicien automàticament a l'inici de cada cicle de facturació mensual. <u>Els recursos no utilitzats durant el mes en curs no són acumulables per al mes següent.</u>
+                            </p>
+                        </div>
+
                         <div className="space-y-6 mt-4">
                             {/* BASIC */}
                             <div className="p-5 bg-slate-50 rounded-lg border border-slate-200">
@@ -159,7 +166,7 @@ export function TermsContent() {
                             {/* PREMIUM PLUS */}
                             <div className="p-5 bg-purple-50 rounded-lg border border-purple-200">
                                 <h3 className="font-bold text-purple-900 text-lg flex justify-between items-center mb-3">
-                                    <span className="flex items-center gap-2">🥇 Premium Plus</span>
+                                    <span className="flex items-center gap-2">🥇 Premium</span>
                                     <span className="text-base bg-purple-100 text-purple-800 px-3 py-1 rounded-full">99€ / mes</span>
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">

@@ -36,6 +36,8 @@ export interface StatsData {
         transcriptionRemaining?: number;
         plan: string;
         nextReset: string;
+        clientsUsed?: number;
+        clientsLimit?: number;
     };
 }
 

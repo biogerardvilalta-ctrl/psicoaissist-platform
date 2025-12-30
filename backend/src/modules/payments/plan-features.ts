@@ -1,34 +1,40 @@
 export enum PlanLimits {
   BASIC_MAX_CLIENTS = 25,
-  BASIC_TRANSCRIPTION_HOURS = 10,
+  BASIC_TRANSCRIPTION_MINUTES = 600, // 10 hours
   BASIC_REPORTS = 100,
   BASIC_SIMULATOR_CASES = 0,
   BASIC_SIMULATOR_MINUTES = 0,
 
   PRO_MAX_CLIENTS = -1,
-  PRO_TRANSCRIPTION_HOURS = 15,
+  PRO_TRANSCRIPTION_MINUTES = 900, // 15 hours
   PRO_REPORTS = -1,
   PRO_SIMULATOR_CASES = 5,
   PRO_SIMULATOR_MINUTES = 900,
 
   BUSINESS_MAX_CLIENTS = -1,
-  BUSINESS_TRANSCRIPTION_HOURS = 350,
+  BUSINESS_TRANSCRIPTION_MINUTES = 2000,
   BUSINESS_REPORTS = -1,
   BUSINESS_SIMULATOR_CASES = 15,
   BUSINESS_SIMULATOR_MINUTES = 2000,
   BUSINESS_MAX_PROFESSIONALS = 3,
 
-  PREMIUM_PLUS_MAX_CLIENTS = -1,
-  PREMIUM_PLUS_TRANSCRIPTION_HOURS = -1,
-  PREMIUM_PLUS_REPORTS = -1,
-  PREMIUM_PLUS_SIMULATOR_CASES = -1,
-  PREMIUM_PLUS_SIMULATOR_MINUTES = 3000,
+  PREMIUM_MAX_CLIENTS = -1,
+  PREMIUM_TRANSCRIPTION_MINUTES = 3000, // 50 hours
+  PREMIUM_REPORTS = -1,
+  PREMIUM_SIMULATOR_CASES = -1,
+  PREMIUM_SIMULATOR_MINUTES = 3000,
+
+  CLINICS_MAX_CLIENTS = -1,
+  CLINICS_TRANSCRIPTION_MINUTES = 30000, // 500 hours
+  CLINICS_REPORTS = -1,
+  CLINICS_SIMULATOR_CASES = -1,
+  CLINICS_SIMULATOR_MINUTES = 5000,
 
   // -1 significa ilimitado
   UNLIMITED = -1,
 
   // Fair Use Limits (Safety Caps for Unlimited Plans)
-  FAIR_USE_TRANSCRIPTION_HOURS = 300,
+  FAIR_USE_TRANSCRIPTION_MINUTES = 18000, // 300 hours
   FAIR_USE_CLIENTS = 5000,
   FAIR_USE_REPORTS = 3000,
   FAIR_USE_SIMULATOR_CASES = 500,
@@ -36,7 +42,7 @@ export enum PlanLimits {
 
 export interface PlanFeatures {
   maxClients: number;
-  transcriptionHours: number;
+  transcriptionMinutes: number;
   reportsPerMonth: number;
   simulatorCases: number;
   simulatorMinutes: number;
@@ -53,7 +59,7 @@ export interface PlanFeatures {
 export const PLAN_FEATURES: Record<string, PlanFeatures> = {
   basic: {
     maxClients: PlanLimits.BASIC_MAX_CLIENTS,
-    transcriptionHours: PlanLimits.BASIC_TRANSCRIPTION_HOURS,
+    transcriptionMinutes: PlanLimits.BASIC_TRANSCRIPTION_MINUTES,
     reportsPerMonth: PlanLimits.BASIC_REPORTS,
     simulatorCases: PlanLimits.BASIC_SIMULATOR_CASES,
     simulatorMinutes: PlanLimits.BASIC_SIMULATOR_MINUTES,
@@ -61,7 +67,7 @@ export const PLAN_FEATURES: Record<string, PlanFeatures> = {
   },
   pro: {
     maxClients: PlanLimits.UNLIMITED,
-    transcriptionHours: PlanLimits.PRO_TRANSCRIPTION_HOURS,
+    transcriptionMinutes: PlanLimits.PRO_TRANSCRIPTION_MINUTES,
     reportsPerMonth: PlanLimits.UNLIMITED,
     simulatorCases: PlanLimits.PRO_SIMULATOR_CASES,
     simulatorMinutes: PlanLimits.PRO_SIMULATOR_MINUTES,
@@ -71,7 +77,7 @@ export const PLAN_FEATURES: Record<string, PlanFeatures> = {
   },
   business: {
     maxClients: PlanLimits.UNLIMITED,
-    transcriptionHours: PlanLimits.BUSINESS_TRANSCRIPTION_HOURS,
+    transcriptionMinutes: PlanLimits.BUSINESS_TRANSCRIPTION_MINUTES,
     reportsPerMonth: PlanLimits.UNLIMITED,
     simulatorCases: PlanLimits.BUSINESS_SIMULATOR_CASES,
     simulatorMinutes: PlanLimits.BUSINESS_SIMULATOR_MINUTES,
@@ -81,12 +87,12 @@ export const PLAN_FEATURES: Record<string, PlanFeatures> = {
     apiAccess: false,
     isTeam: true,
   },
-  premium_plus: {
+  premium: {
     maxClients: PlanLimits.UNLIMITED,
-    transcriptionHours: PlanLimits.UNLIMITED,
+    transcriptionMinutes: PlanLimits.PREMIUM_TRANSCRIPTION_MINUTES,
     reportsPerMonth: PlanLimits.UNLIMITED,
     simulatorCases: PlanLimits.UNLIMITED,
-    simulatorMinutes: PlanLimits.PREMIUM_PLUS_SIMULATOR_MINUTES,
+    simulatorMinutes: PlanLimits.PREMIUM_SIMULATOR_MINUTES,
     supportLevel: 'priority',
     advancedAnalytics: true,
     apiAccess: true,
@@ -94,13 +100,26 @@ export const PLAN_FEATURES: Record<string, PlanFeatures> = {
     ssoIntegration: true,
     prioritySupport: true,
   },
-  premium: {
+  premium_plus: {
     maxClients: PlanLimits.UNLIMITED,
-    transcriptionHours: PlanLimits.UNLIMITED,
+    transcriptionMinutes: PlanLimits.PREMIUM_TRANSCRIPTION_MINUTES,
     reportsPerMonth: PlanLimits.UNLIMITED,
     simulatorCases: PlanLimits.UNLIMITED,
-    simulatorMinutes: PlanLimits.PREMIUM_PLUS_SIMULATOR_MINUTES,
+    simulatorMinutes: PlanLimits.PREMIUM_SIMULATOR_MINUTES,
     supportLevel: 'priority',
+    advancedAnalytics: true,
+    apiAccess: true,
+    customBranding: true,
+    ssoIntegration: true,
+    prioritySupport: true,
+  },
+  clinics: {
+    maxClients: PlanLimits.UNLIMITED,
+    transcriptionMinutes: PlanLimits.CLINICS_TRANSCRIPTION_MINUTES,
+    reportsPerMonth: PlanLimits.UNLIMITED,
+    simulatorCases: PlanLimits.UNLIMITED,
+    simulatorMinutes: PlanLimits.CLINICS_SIMULATOR_MINUTES,
+    supportLevel: 'phone',
     advancedAnalytics: true,
     apiAccess: true,
     customBranding: true,

@@ -83,16 +83,16 @@ export class UsageLimitsService {
     const totalProjectedMinutes = usedMinutes + requestedMinutes;
 
     // Check transcription limit
-    if (planFeatures.transcriptionHours !== PlanLimits.UNLIMITED) {
-      const limitMinutes = planFeatures.transcriptionHours * 60;
+    if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
+      const limitMinutes = planFeatures.transcriptionMinutes;
       if (totalProjectedMinutes > limitMinutes) {
         throw new ForbiddenException(
-          `Monthly transcription limit reached. Used: ${Math.round(usedMinutes / 60)}h / ${planFeatures.transcriptionHours}h.`
+          `Monthly transcription limit reached. Used: ${Math.round(usedMinutes / 60)}h / ${Math.round(planFeatures.transcriptionMinutes / 60)}h.`
         );
       }
     } else {
       // Fair Use Check for Unlimited
-      const fairUseLimitMinutes = PlanLimits.FAIR_USE_TRANSCRIPTION_HOURS * 60;
+      const fairUseLimitMinutes = PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES;
       if (totalProjectedMinutes > fairUseLimitMinutes) {
         throw new ForbiddenException(
           `Fair Use Policy: Transcription usage excessive (${Math.round(usedMinutes / 60)}h used). Please contact commercial team.`
@@ -287,7 +287,8 @@ export class UsageLimitsService {
       limits: {
         clients: planFeatures.maxClients,
         reportsPerMonth: planFeatures.reportsPerMonth,
-        transcriptionHours: planFeatures.transcriptionHours,
+        transcriptionHours: Math.round(planFeatures.transcriptionMinutes / 60),
+        transcriptionMinutes: planFeatures.transcriptionMinutes,
         simulatorCases: simulatorCasesLimit,
         simulatorMinutes: planFeatures.simulatorMinutes
       },

@@ -119,11 +119,54 @@ export default function LoginPage() {
 
         {/* Demo credentials */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-blue-900 mb-2">🎮 Credenciales de prueba:</h3>
-          <div className="text-xs text-blue-700 space-y-1">
-            <div><strong>Admin:</strong> admin@psicoaissist.com / password123</div>
-            <div><strong>Psicólogo 1:</strong> dr.martinez@ejemplo.com / password123</div>
-            <div><strong>Psicólogo 2:</strong> laura.sanchez@ejemplo.com / password123</div>
+          <h3 className="text-sm font-medium text-blue-900 mb-2">🎮 Quick Login (Click para rellenar):</h3>
+          <div className="grid grid-cols-1 gap-2">
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, email: 'admin@psicoaissist.com', password: 'password123' }))}
+              className="w-full text-left bg-white/50 hover:bg-white border border-blue-100 rounded p-2 text-xs text-blue-700 transition-colors flex justify-between items-center"
+            >
+              <span className="font-semibold">Admin</span>
+              <span className="opacity-75">admin@psicoaissist.com</span>
+            </button>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, email: 'basic@plan.com', password: 'password123' }))}
+                className="text-left bg-white/50 hover:bg-white border border-blue-100 rounded p-2 text-xs text-blue-700 transition-colors"
+              >
+                <div className="font-semibold">🥉 Basic</div>
+                <div className="opacity-75 truncate">basic@plan.com</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, email: 'pro@plan.com', password: 'password123' }))}
+                className="text-left bg-white/50 hover:bg-white border border-blue-100 rounded p-2 text-xs text-blue-700 transition-colors"
+              >
+                <div className="font-semibold">🥈 Pro</div>
+                <div className="opacity-75 truncate">pro@plan.com</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, email: 'premium@plan.com', password: 'password123' }))}
+                className="text-left bg-white/50 hover:bg-white border border-blue-100 rounded p-2 text-xs text-blue-700 transition-colors"
+              >
+                <div className="font-semibold">🥇 Premium</div>
+                <div className="opacity-75 truncate">premium@plan.com</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, email: 'business@plan.com', password: 'password123' }))}
+                className="text-left bg-white/50 hover:bg-white border border-blue-100 rounded p-2 text-xs text-blue-700 transition-colors"
+              >
+                <div className="font-semibold">👥 Business</div>
+                <div className="opacity-75 truncate">business@plan.com</div>
+              </button>
+            </div>
           </div>
         </div>
 

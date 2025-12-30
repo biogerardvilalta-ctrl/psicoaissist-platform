@@ -131,6 +131,15 @@ export default function ManualPage() {
                             </h2>
                             <p className="leading-relaxed text-lg text-slate-600 mb-6">PsicoAIssist ofrece cinco niveles de servicio, divididos en opciones individuales y para grupos. Puede consultar su plan actual en <strong>Perfil {'>'} Suscripción</strong>.</p>
 
+                            <div className="my-6 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-900 not-prose rounded-r flex gap-3">
+                                <AlertCircle className="h-6 w-6 text-amber-600 shrink-0" />
+                                <div>
+                                    <strong>Política de Reinicio Mensual:</strong> Todos los contadores de uso (minutos de transcripción, casos de simulador, etc.) son mensuales y se reinician a cero en la fecha de renovación de su suscripción.
+                                    <br />
+                                    <span className="underline font-semibold">Los recursos no consumidos NO son acumulables para el mes siguiente.</span>
+                                </div>
+                            </div>
+
                             <h3 className="mt-6 mb-4 text-xl font-bold text-slate-800">1. Planes Individuales</h3>
                             <div className="space-y-6 mb-8 not-prose">
                                 {/* BASIC PLAN */}
@@ -258,7 +267,7 @@ export default function ManualPage() {
                                 <div className="p-6 bg-purple-50 rounded-xl border border-purple-200">
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
-                                            <h4 className="text-lg font-bold text-purple-800">🥇 Premium Plus</h4>
+                                            <h4 className="text-lg font-bold text-purple-800">🥇 Premium</h4>
                                             <p className="text-sm text-purple-600">Para especialistas intensivos</p>
                                         </div>
                                         <div className="text-right">

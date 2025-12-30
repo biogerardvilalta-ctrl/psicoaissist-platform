@@ -37,6 +37,14 @@ export class ClientsController {
         return this.clientsService.findOne(req.user.id, id);
     }
 
+    @Delete('permanent/:id')
+    @ApiOperation({ summary: 'Eliminar definitivamente cliente (irreversible)' })
+    @ApiResponse({ status: 200 })
+    async deletePermanent(@Req() req: Request & { user: any }, @Param('id') id: string) {
+        await this.clientsService.deletePermanent(req.user.id, id);
+        return { message: 'Cliente eliminado definitivamente' };
+    }
+
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar (desactivar) cliente' })
     @ApiResponse({ status: 200 })

@@ -445,6 +445,7 @@ export class SessionsService {
                             disclaimer: analysis.disclaimer,
                             audit_session: analysis.audit_session,
                             clinical_report_text: analysis.clinical_report_text,
+                            sentimentScore: analysis.sentimentScore,
                             manual_methodology: updateSessionDto.methodology || aiMetadataToUpdate.manual_methodology // ensure persisting methodology
                         },
                         aiSuggestions: analysis.clinicalFollowUpSupport.suggestions as any

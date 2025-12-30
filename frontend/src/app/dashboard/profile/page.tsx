@@ -203,7 +203,7 @@ export default function ProfilePage() {
                                 <div className="space-y-1">
                                     <p className="text-sm font-medium text-purple-900">Plan Actual</p>
                                     <h3 className="text-2xl font-bold text-purple-700 capitalize">
-                                        {user.subscription.planType.toLowerCase()}
+                                        {user.subscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
                                     </h3>
                                 </div>
                                 <Badge variant={user.subscription.status === 'active' ? 'default' : 'destructive'} className="capitalize">
@@ -273,6 +273,33 @@ export default function ProfilePage() {
                         <div className="text-center py-4 text-slate-500">Cargando estadísticas...</div>
                     ) : (
                         <>
+                            {/* Clients Usage */}
+                            {(stats.usage.clientsLimit !== undefined) && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <p className="text-sm font-medium text-slate-700">Pacientes Activos</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {stats.usage.clientsLimit === -1
+                                                    ? "Pacientes Ilimitados"
+                                                    : `${stats.usage.clientsUsed || 0} de ${stats.usage.clientsLimit} pacientes`}
+                                            </p>
+                                        </div>
+                                        <Badge variant={stats.usage.clientsLimit !== -1 && (stats.usage.clientsUsed || 0) >= stats.usage.clientsLimit ? "destructive" : "secondary"}>
+                                            {stats.usage.clientsUsed || 0} {stats.usage.clientsLimit === -1 ? "Activos" : `/ ${stats.usage.clientsLimit}`}
+                                        </Badge>
+                                    </div>
+                                    {stats.usage.clientsLimit !== -1 && (
+                                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                            <div
+                                                className={`h-full rounded-full ${(stats.usage.clientsUsed || 0) >= stats.usage.clientsLimit ? 'bg-red-500' : 'bg-purple-600'}`}
+                                                style={{ width: `${Math.min(100, ((stats.usage.clientsUsed || 0) / stats.usage.clientsLimit) * 100)}%` }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
                             {/* Clinical Cases */}
                             <div className="space-y-2">
                                 <div className="flex justify-between items-center">
@@ -391,6 +418,6 @@ export default function ProfilePage() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 }

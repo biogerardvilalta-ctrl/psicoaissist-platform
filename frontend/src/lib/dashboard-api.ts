@@ -4,7 +4,7 @@ export interface DashboardStats {
     activeClients: number;
     clientTrend: { value: string; isPositive: boolean };
     topThemes: Array<{ topic: string; frequency: number }>;
-    sentimentTrend: Array<{ date: string; score: number }>;
+    sentimentTrend: Array<{ date: string; value: number }>;
 
     // Additional backend stats
     totalSessions?: number;

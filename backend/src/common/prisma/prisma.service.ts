@@ -24,10 +24,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     this.$use(async (params, next) => {
       // Soft delete for models that have isActive field
       if (params.action === 'delete') {
-        if (params.model === 'Client') {
-          params.action = 'update';
-          params.args['data'] = { isActive: false };
-        }
+        // Removed global soft delete interceptor for Client to allow permanent deletion
+        // Service layer handles soft/hard delete distinction
       }
 
       // Filter out soft deleted records for findMany

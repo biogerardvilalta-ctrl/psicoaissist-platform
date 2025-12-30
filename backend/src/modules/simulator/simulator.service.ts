@@ -433,7 +433,7 @@ export class SimulatorService {
             evolution,
             // New Fields
             usage: (() => {
-                const limitHours = usageData.limits.transcriptionHours;
+                const transcriptionLimitMinutes = usageData.limits.transcriptionMinutes;
                 const transcriptionUsedMinutes = usageData.currentUsage.transcriptionMinutes || 0;
 
 
@@ -449,11 +449,15 @@ export class SimulatorService {
 
                     // Transcription Logic (Minutes)
                     transcriptionUsed: transcriptionUsedMinutes,
-                    transcriptionLimit: limitHours === -1 ? -1 : limitHours * 60,
-                    transcriptionRemaining: limitHours === -1 ? 99999 : Math.max(0, (limitHours * 60) - transcriptionUsedMinutes),
+                    transcriptionLimit: transcriptionLimitMinutes === -1 ? -1 : transcriptionLimitMinutes,
+                    transcriptionRemaining: transcriptionLimitMinutes === -1 ? 99999 : Math.max(0, transcriptionLimitMinutes - transcriptionUsedMinutes),
 
                     plan: plan,
-                    nextReset: nextReset
+                    nextReset: nextReset,
+
+                    // Client Logic
+                    clientsUsed: usageData.currentUsage.clients,
+                    clientsLimit: usageData.limits.clients
                 };
             })()
         };

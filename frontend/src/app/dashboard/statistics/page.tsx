@@ -21,8 +21,10 @@ import {
     Line,
     PieChart,
     Pie,
+
     Cell
 } from 'recharts';
+import { format, parseISO } from 'date-fns';
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -81,7 +83,7 @@ export default function StatisticsPage() {
                 const [sessions, clients, backendStats] = await Promise.all([
                     SessionsAPI.getAll(),
                     ClientsAPI.getAll(),
-                    DashboardAPI.getStats(clientId || undefined)
+                    DashboardAPI.getStats(undefined, undefined) // Fix: Don't pass clientId as startDate
                 ]);
 
                 setAllClients(clients);
@@ -574,12 +576,25 @@ export default function StatisticsPage() {
                                     </CardHeader>
                                     <CardContent className="h-[300px]">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={stats.sentimentTrend}>
+                                            <LineChart data={
+                                                (clientId || !dashboardStats?.sentimentTrend)
+                                                    ? (stats.sentimentTrend || []).map(item => ({
+                                                        ...item,
+                                                        // Map 'sentiment' (1-10) to value (0-100) and ensure key string consistency
+                                                        value: (item.sentiment || 0) * 10,
+                                                        date: item.sessionDate // Already formatted or passed, needs check
+                                                    }))
+                                                    : (dashboardStats.sentimentTrend || []).map((item: any) => ({
+                                                        ...item,
+                                                        date: format(parseISO(item.date), 'dd/MM'),
+                                                        value: item.value // Already 0-100 from backend
+                                                    }))
+                                            }>
                                                 <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="sessionDate" />
-                                                <YAxis domain={[0, 1]} />
+                                                <XAxis dataKey="date" />
+                                                <YAxis domain={[0, 100]} />
                                                 <Tooltip />
-                                                <Line type="monotone" dataKey="sentimentScore" stroke="#8b5cf6" strokeWidth={2} />
+                                                <Line type="monotone" dataKey="value" stroke="#8b5cf6" strokeWidth={2} activeDot={{ r: 8 }} />
                                             </LineChart>
                                         </ResponsiveContainer>
                                     </CardContent>
