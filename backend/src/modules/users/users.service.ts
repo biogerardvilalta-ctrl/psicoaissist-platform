@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException, Logger } from '@nestj
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { UserRole, UserStatus } from '@prisma/client';
-import { CreateUserDto, UpdateUserDto, UserResponseDto, CreateAgendaManagerDto, LinkProfessionalDto } from './dto/users.dto';
+import { CreateUserDto, UpdateUserDto, UserResponseDto, CreateAgendaManagerDto } from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -102,17 +102,9 @@ export class UsersService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id },
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          role: true,
-          status: true,
-          createdAt: true,
-          lastLogin: true,
-          dashboardLayout: true,
-        },
+        include: {
+          subscription: true // Include subscription
+        }
       });
 
       if (!user) {
@@ -133,16 +125,9 @@ export class UsersService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email: email.toLowerCase() },
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          role: true,
-          status: true,
-          createdAt: true,
-          lastLogin: true,
-        },
+        include: {
+          subscription: true // Include subscription
+        }
       });
 
       return user ? this.mapToResponseDto(user) : null;
@@ -151,6 +136,9 @@ export class UsersService {
       throw error;
     }
   }
+
+  // ... (update method needs check if we want subscription there too, usually update returns user which updates context)
+  // Let's safe update mapToResponseDto first.
 
   /**
    * Actualizar un usuario
@@ -196,17 +184,9 @@ export class UsersService {
       const updatedUser = await this.prisma.user.update({
         where: { id },
         data: updateData,
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          role: true,
-          status: true,
-          createdAt: true,
-          lastLogin: true,
-          googleImportCalendar: true,
-        },
+        include: {
+          subscription: true
+        }
       });
 
       this.logger.log(`User updated: ${updatedUser.email}`);
@@ -259,26 +239,9 @@ export class UsersService {
           dashboardLayout: layout,
           updatedAt: new Date(),
         },
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          role: true,
-          status: true,
-          createdAt: true,
-          lastLogin: true,
-          dashboardLayout: true,
-          enableReminders: true,
-          defaultDuration: true,
-          bufferTime: true,
-          workStartHour: true,
-          workEndHour: true,
-          preferredLanguage: true,
-          scheduleConfig: true,
-          hourlyRate: true,
-          googleImportCalendar: true,
-        },
+        include: {
+          subscription: true
+        }
       });
       return this.mapToResponseDto(updatedUser);
     } catch (error) {
@@ -306,16 +269,9 @@ export class UsersService {
           role: newRole,
           updatedAt: new Date(),
         },
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          role: true,
-          status: true,
-          createdAt: true,
-          lastLogin: true,
-        },
+        include: {
+          subscription: true
+        }
       });
 
       this.logger.log(`User role changed: ${updatedUser.email} -> ${newRole}`);
@@ -335,6 +291,7 @@ export class UsersService {
       // Verificar si el email ya existe
       const existingUser = await this.prisma.user.findUnique({
         where: { email: dto.email.toLowerCase() },
+        include: { subscription: true }
       });
 
       if (existingUser) {
@@ -359,7 +316,7 @@ export class UsersService {
           firstName: dto.firstName,
           lastName: dto.lastName,
           role: UserRole.AGENDA_MANAGER,
-          status: UserStatus.ACTIVE, // Created by professional, so implicitly active/verified? Or pending? Let's say ACTIVE for simplicity for now.
+          status: UserStatus.ACTIVE,
           createdById: professionalId,
           managedProfessionals: {
             connect: { id: professionalId }
@@ -367,6 +324,7 @@ export class UsersService {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        include: { subscription: true }
       });
 
       this.logger.log(`Agenda Manager created: ${user.email} by Professional ${professionalId}`);
@@ -390,10 +348,11 @@ export class UsersService {
             some: { id: professionalId }
           }
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        include: { subscription: true }
       });
 
-      return managers.map(this.mapToResponseDto);
+      return managers.map(m => this.mapToResponseDto(m));
     } catch (error) {
       this.logger.error(`Error fetching agenda managers: ${error.message}`);
       throw error;
@@ -405,20 +364,13 @@ export class UsersService {
    */
   async deleteAgendaManager(professionalId: string, managerId: string): Promise<void> {
     try {
-      // Verify manager exists and is linked to this professional
-      // Or if createdBy this professional. The constraint is "ese usuario creado estara vinculado al profesional que tambien lo podra borarr"
-      // So only the creator can delete? Or any professional they manage?
-      // Strict interpretation: "vinculado al profesional que tambien lo podra borarr".
-      // Let's check ownership (createdById) OR management link.
-      // But typically only admins or creators should delete users.
-
       const manager = await this.prisma.user.findFirst({
         where: {
           id: managerId,
           role: UserRole.AGENDA_MANAGER,
           OR: [
             { createdById: professionalId },
-            { managedProfessionals: { some: { id: professionalId } } } // Allow managed pro to delete? Maybe just unlink?
+            { managedProfessionals: { some: { id: professionalId } } }
           ]
         }
       });
@@ -426,9 +378,6 @@ export class UsersService {
       if (!manager) {
         throw new NotFoundException('Agenda Manager no encontrado o no autorizado');
       }
-
-      // If the professional created it, we might soft delete the user entirely if it's not managing others?
-      // Simplified: Just soft delete for now as per "lo podra borrar".
 
       await this.prisma.user.update({
         where: { id: managerId },
@@ -455,14 +404,14 @@ export class UsersService {
         include: {
           managedProfessionals: {
             where: { status: { not: 'INACTIVE' } },
-            include: { groupMembers: true }
+            include: { groupMembers: true, subscription: true }
           }
         }
       });
 
       if (!user) throw new NotFoundException('Usuario no encontrado');
 
-      return user.managedProfessionals.map(this.mapToResponseDto);
+      return user.managedProfessionals.map(m => this.mapToResponseDto(m));
     } catch (error) {
       this.logger.error(`Error fetching linked professionals: ${error.message}`);
       throw error;
@@ -512,16 +461,15 @@ export class UsersService {
    */
   async createProfessionalGroup(managerId: string, name: string, memberIds: string[]): Promise<UserResponseDto> {
     try {
-      // Create a virtual email for the group to satisfy unique constraint
       const email = `group-${Date.now()}@system.local`;
 
       const group = await this.prisma.user.create({
         data: {
           email,
-          passwordHash: '', // No login
+          passwordHash: '',
           firstName: name,
           lastName: '(Grupo)',
-          role: UserRole.PROFESSIONAL_GROUP, // Requires Schema Update to be applied
+          role: UserRole.PROFESSIONAL_GROUP,
           status: UserStatus.ACTIVE,
           createdById: managerId,
           agendaManagers: {
@@ -534,7 +482,8 @@ export class UsersService {
           updatedAt: new Date(),
         },
         include: {
-          groupMembers: true
+          groupMembers: true,
+          subscription: true
         }
       });
 
@@ -552,18 +501,12 @@ export class UsersService {
         where: {
           id: groupId,
           role: UserRole.PROFESSIONAL_GROUP,
-          // Check ownership or management rights
-          // Simplify: if you are an agenda manager managing this group (connected via agendaManagers?)
-          // or createdById.
           agendaManagers: { some: { id: managerId } }
         }
       });
 
       if (!group) throw new NotFoundException('Grupo no encontrado o no tienes permisos.');
 
-      // Hard delete or Soft delete?
-      // Since it's a "virtual" user, hard delete might be easier to clean up if no sessions?
-      // But let's stick to consistent Soft Delete (Status INACTIVE)
       await this.prisma.user.update({
         where: { id: groupId },
         data: { status: UserStatus.INACTIVE }
@@ -601,12 +544,20 @@ export class UsersService {
       hourlyRate: user.hourlyRate,
       googleImportCalendar: user.googleImportCalendar,
       brandingConfig: user.brandingConfig,
+      // Map subscription deeply or flat
+      // Frontend User type has subscription object.
+      subscription: user.subscription ? {
+        planType: user.subscription.planType,
+        status: user.subscription.status,
+        currentPeriodEnd: user.subscription.currentPeriodEnd
+      } : undefined,
       // Include group members if available
       groupMembers: user.groupMembers ? user.groupMembers.map(m => ({
         id: m.id,
         firstName: m.firstName,
         lastName: m.lastName
-      })) : undefined
+      })) : undefined,
+      simulatorUsageCount: user.simulatorUsageCount,
     };
   }
 }

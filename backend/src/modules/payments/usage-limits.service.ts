@@ -27,7 +27,7 @@ export class UsageLimitsService {
       throw new ForbiddenException('Active subscription required');
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType];
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -59,7 +59,7 @@ export class UsageLimitsService {
       throw new ForbiddenException('Active subscription required');
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType];
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -124,7 +124,7 @@ export class UsageLimitsService {
       throw new ForbiddenException('Active subscription required');
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType];
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -158,7 +158,7 @@ export class UsageLimitsService {
       throw new ForbiddenException('Active subscription required');
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType];
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -199,7 +199,7 @@ export class UsageLimitsService {
 
     if (!user?.subscription || user.subscription.status !== 'active') return; // Should probably throw, but let's be safe
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType];
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
     if (!planFeatures) return;
 
     if (planFeatures.simulatorMinutes !== PlanLimits.UNLIMITED) {
@@ -262,7 +262,7 @@ export class UsageLimitsService {
     const totalMinutes = user.sessions.reduce((acc, session) => acc + (session.duration || 0), 0);
     const totalHours = Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType];
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
     if (!planFeatures) {
       return null;
     }

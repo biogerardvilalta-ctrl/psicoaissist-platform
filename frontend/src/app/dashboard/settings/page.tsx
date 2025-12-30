@@ -124,7 +124,7 @@ export default function SettingsPage() {
     { id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon },
     { id: 'billing', label: 'Facturación y Tarifas', icon: Euro },
     // Solo mostrar Marca Personal si es PREMIUM
-    ...((user as any)?.plan === 'PREMIUM' ? [{ id: 'branding', label: 'Marca Personal', icon: Palette }] : []),
+    ...((user?.subscription?.planType === 'PREMIUM' || user?.role === 'ADMIN') ? [{ id: 'branding', label: 'Marca Personal', icon: Palette }] : []),
     { id: 'managers', label: 'Gestores de Agenda', icon: Users },
     { id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },

@@ -94,4 +94,17 @@ export const PLAN_FEATURES: Record<string, PlanFeatures> = {
     ssoIntegration: true,
     prioritySupport: true,
   },
+  premium: {
+    maxClients: PlanLimits.UNLIMITED,
+    transcriptionHours: PlanLimits.UNLIMITED,
+    reportsPerMonth: PlanLimits.UNLIMITED,
+    simulatorCases: PlanLimits.UNLIMITED,
+    simulatorMinutes: PlanLimits.PREMIUM_PLUS_SIMULATOR_MINUTES,
+    supportLevel: 'priority',
+    advancedAnalytics: true,
+    apiAccess: true,
+    customBranding: true,
+    ssoIntegration: true,
+    prioritySupport: true,
+  },
 };

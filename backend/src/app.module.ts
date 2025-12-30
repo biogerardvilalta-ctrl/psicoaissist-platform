@@ -5,6 +5,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 // Configuration
 import { DatabaseConfig } from './config/database.config';
@@ -99,6 +101,12 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     GoogleModule,
     SimulatorModule, // Clinical Simulator
     // HealthModule,
+
+    // Static Files
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
   ],
   controllers: [],
   providers: [],

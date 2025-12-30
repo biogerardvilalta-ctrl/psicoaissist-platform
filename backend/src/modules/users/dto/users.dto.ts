@@ -178,6 +178,13 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   simulatorUsageCount?: number;
+
+  @ApiProperty({ required: false })
+  subscription?: {
+    planType: string;
+    status: string;
+    currentPeriodEnd?: Date;
+  };
 }
 
 // ... existing code ...

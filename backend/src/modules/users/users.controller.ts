@@ -11,6 +11,9 @@ import {
   ParseIntPipe,
   Logger,
   Req,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UsersService } from './users.service';
@@ -19,11 +22,14 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateUserDto, UpdateUserDto, UserResponseDto, ChangeRoleDto, CreateAgendaManagerDto, LinkProfessionalDto } from './dto/users.dto';
 import { UserRole } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @ApiTags('Users')
+@ApiBearerAuth()
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@ApiBearerAuth()
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
 
@@ -197,4 +203,34 @@ export class UsersController {
     return this.usersService.deleteProfessionalGroup(req.user.id, id);
   }
 
+
+  @ApiOperation({ summary: 'Subir logo de empresa' })
+  @ApiResponse({ status: 201, description: 'Logo subido existosamente' })
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @Post('upload-logo')
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, './uploads/logos');
+      },
+      filename: (req, file, cb) => {
+        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
+        return cb(null, `${randomName}${extname(file.originalname)}`);
+      }
+    }),
+    fileFilter: (req, file, cb) => {
+      if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+        return cb(new BadRequestException('Solo se permiten archivos de imagen (jpg, jpeg, png, gif)'), false);
+      }
+      cb(null, true);
+    },
+    limits: { fileSize: 2 * 1024 * 1024 } // 2MB
+  }))
+  async uploadLogo(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No se ha subido ningún archivo');
+    }
+    // Return relative path for storage
+    return { url: `/uploads/logos/${file.filename}` };
+  }
 }

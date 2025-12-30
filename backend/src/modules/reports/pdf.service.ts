@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as PDFDocument from 'pdfkit';
 import { Response } from 'express';
+import { join } from 'path';
+import { existsSync } from 'fs';
 
 @Injectable()
 export class PdfService {
@@ -127,11 +129,30 @@ export class PdfService {
     }
 
     private drawHeader(doc: PDFKit.PDFDocument, primary: string, secondary: string, branding: any = {}) {
-        // Logo Placeholder
-        if (branding.showLogo === false) {
-            // Do nothing if explicitly hidden? Or just hide the icon?
-            // Let's keep the text at least
-        } else {
+        // Logo Rendering
+        let logoDrawn = false;
+
+        if (branding.showLogo !== false && branding.logoUrl) {
+            try {
+                // Determine file path. branding.logoUrl is likely '/uploads/logos/filename.ext'
+                // We need to strip the leading slash or map URL to file system
+
+                // Assuming logoUrl starts with /uploads/logos/
+                const relativePath = branding.logoUrl.startsWith('/') ? branding.logoUrl.substring(1) : branding.logoUrl;
+                const logoPath = join(process.cwd(), relativePath);
+
+                if (existsSync(logoPath)) {
+                    // Draw image
+                    doc.image(logoPath, 50, 45, { width: 50 }); // Adjust position and size
+                    logoDrawn = true;
+                }
+            } catch (e) {
+                console.error("Failed to load logo image:", e);
+            }
+        }
+
+        if (!logoDrawn && branding.showLogo !== false) {
+            // Fallback to circle placeholder
             doc.circle(70, 60, 20).fill(primary);
             const letter = (branding.companyName || 'P').charAt(0).toUpperCase();
             doc.font('Helvetica-Bold').fontSize(20).fillColor('white').text(letter, 63, 53);
@@ -140,8 +161,12 @@ export class PdfService {
         const title = branding.companyName || 'PsicoAIssist';
         const subtitle = branding.companyName ? 'Informe Clínico Personalizado' : 'Asistente Clínico Inteligente';
 
-        doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text(title, 100, 45);
-        doc.font('Helvetica').fontSize(10).fillColor('#64748B').text(subtitle, 100, 68);
+        // Adjust text position based on logo presence? 
+        // Current placeholder is at x=70 (center). Image is at x=50, width 50. Center roughly same.
+        // Title starts at x=100.
+
+        doc.font('Helvetica-Bold').fontSize(20).fillColor(secondary).text(title, 110, 45);
+        doc.font('Helvetica').fontSize(10).fillColor('#64748B').text(subtitle, 110, 68);
 
         doc.moveTo(350, 60).lineTo(545, 60).lineWidth(0.5).strokeColor('#E2E8F0').stroke();
     }

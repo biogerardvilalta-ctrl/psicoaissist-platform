@@ -91,4 +91,41 @@ export class AuthAPI {
       throw error;
     }
   }
+  static async uploadLogo(file: File): Promise<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // Bypass httpClient to handle FormData correctly via fetch
+    const token = typeof window !== 'undefined' ? localStorage.getItem('psychoai_access_token') : null;
+
+    // Determine base URL, handling if it already includes /api/v1 or not
+    let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+
+    // Remove trailing slash
+    baseUrl = baseUrl.replace(/\/$/, '');
+
+    // Ensure we don't duplicate /api/v1 if it's already in the base URL
+    const apiEndpoint = baseUrl.endsWith('/api/v1')
+      ? `${baseUrl}/users/upload-logo`
+      : `${baseUrl}/api/v1/users/upload-logo`;
+
+    try {
+      console.log('Uploading logo to:', apiEndpoint);
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
 }

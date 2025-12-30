@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
-import { Palette, Building, Image as ImageIcon } from 'lucide-react';
+import { Palette, Building, Image as ImageIcon, X } from 'lucide-react';
 
 export function BrandingSettings() {
     const { user, updateUser } = useAuth();
@@ -111,21 +111,64 @@ export function BrandingSettings() {
                         </div>
                     </div>
 
-                    {/* Future Logo implementation. For now just placeholder URL input logic if needed, but keeping it simple for text branding first as per PDF service */}
-                    {/* 
                     <div className="space-y-2">
                         <Label className="flex items-center gap-2">
                             <ImageIcon className="w-4 h-4" />
-                            Logo URL (No implementado en PDF aún)
+                            Logo de la Empresa
                         </Label>
-                        <Input 
-                            placeholder="https://..." 
-                            value={logoUrl} 
-                            onChange={(e) => setLogoUrl(e.target.value)} 
-                            disabled
-                        />
-                    </div> 
-                    */}
+
+                        <div className="flex items-center gap-4">
+                            {logoUrl && (
+                                <div className="relative w-16 h-16 border rounded bg-slate-100 overflow-visible flex items-center justify-center group">
+                                    <button
+                                        type="button"
+                                        onClick={() => setLogoUrl('')}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-sm"
+                                        title="Eliminar logo"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                    {/* Backend implementation serves files at root/uploads, frontend proxy or direct URL needs mapping.
+                                        If local dev, full URL might be needed or relative path if served by Next/Backend.
+                                        Assuming backend is at same origin or proxied. If backend is 3001 and frontend 3000, we might need full path if not proxied.
+                                        Ideally, use a safe relative path or ensure backend serves cors. 
+                                        Since we use a proxy or env vars, let's treat it as relative path if starting with /uploads.
+                                    */}
+                                    <img
+                                        src={logoUrl.startsWith('http') ? logoUrl : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${logoUrl}`}
+                                        alt="Logo"
+                                        className="max-w-full max-h-full object-contain"
+                                    />
+                                </div>
+                            )}
+
+                            <div className="flex-1">
+                                <Input
+                                    type="file"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+
+                                        setLoading(true);
+                                        try {
+                                            const res = await AuthAPI.uploadLogo(file);
+                                            setLogoUrl(res.url);
+                                            toast({ title: 'Logo subido', description: 'El logo se ha cargado correctamente.' });
+                                        } catch (error) {
+                                            console.error(error);
+                                            toast({ title: 'Error', description: 'No se pudo subir el logo.', variant: 'destructive' });
+                                        } finally {
+                                            setLoading(false);
+                                        }
+                                    }}
+                                    disabled={loading}
+                                    className="h-auto py-2 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">Formatos: PNG, JPG. Máx 2MB. Recomendado fondo transparente.</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <div className="flex items-center gap-2 pt-2">
                         <Checkbox
@@ -133,7 +176,7 @@ export function BrandingSettings() {
                             checked={showLogo}
                             onCheckedChange={(c) => setShowLogo(!!c)}
                         />
-                        <Label htmlFor="showLogo">Mostrar icono en informes</Label>
+                        <Label htmlFor="showLogo">Mostrar icono/logo en informes</Label>
                     </div>
 
                 </div>

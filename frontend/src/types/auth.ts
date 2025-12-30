@@ -29,6 +29,13 @@ export interface User {
   referralCode?: string;
   referralsCount?: number;
   simulatorUsageCount?: number;
+  brandingConfig?: {
+    companyName?: string;
+    primaryColor?: string;
+    secondaryColor?: string;
+    logoUrl?: string;
+    showLogo?: boolean;
+  };
 }
 
 export interface AuthTokens {

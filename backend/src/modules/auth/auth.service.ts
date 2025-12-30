@@ -422,6 +422,11 @@ export class AuthService {
    */
   async updateProfile(userId: string, data: any): Promise<any> {
     try {
+      this.logger.log(`Updating profile for ${userId}. Data keys: ${Object.keys(data)}`);
+      if (data.brandingConfig) {
+        this.logger.log(`Branding Config to save: ${JSON.stringify(data.brandingConfig)}`);
+      }
+
       const user = await this.prisma.user.update({
         where: { id: userId },
         data: {
@@ -438,7 +443,7 @@ export class AuthService {
           preferredLanguage: data.preferredLanguage,
           hourlyRate: data.hourlyRate,
           googleImportCalendar: data.googleImportCalendar,
-          brandingConfig: data.brandingConfig,
+          brandingConfig: data.brandingConfig as any, // Cast to avoid stale Prisma type error
           updatedAt: new Date(),
         },
       });
