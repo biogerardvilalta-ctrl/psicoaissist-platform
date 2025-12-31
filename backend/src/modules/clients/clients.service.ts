@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService, EncryptedData } from '../encryption/encryption.service';
 import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto } from './dto/clients.dto';
-import { UserRole, AuditAction } from '@prisma/client';
+import { UserRole, AuditAction, ConsentType } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 
 interface ClientPersonalData {
@@ -139,6 +139,32 @@ export class ClientsService {
                 resourceId: client.id,
                 details: `Registrado nuevo paciente (ID: ${client.id})`
             });
+
+            // Handle Consents
+            if ('consents' in createClientDto && createClientDto.consents && Array.isArray(createClientDto.consents)) {
+                for (const consentDto of createClientDto.consents) {
+                    if (consentDto.granted) {
+                        await this.prisma.consent.create({
+                            data: {
+                                clientId: client.id,
+                                consentType: consentDto.consentType as ConsentType,
+                                granted: true,
+                                grantedAt: new Date(),
+                                ipAddress: 'SYSTEM', // Could be passed from controller if needed
+                                version: '1.0'
+                            }
+                        });
+
+                        await this.auditService.log({
+                            userId,
+                            action: AuditAction.CONSENT_GRANTED,
+                            resourceType: 'CLIENT',
+                            resourceId: client.id,
+                            details: `Consentimiento otorgado: ${consentDto.consentType}`
+                        });
+                    }
+                }
+            }
 
             // Build Response
             return {

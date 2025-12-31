@@ -31,6 +31,7 @@ export type CreateClientData = {
     tags?: string[];
     sendEmailReminders?: boolean;
     professionalId?: string;
+    consents?: Array<{ consentType: string; granted: boolean }>;
 };
 
 export type UpdateClientData = Partial<CreateClientData> & {
@@ -65,7 +66,8 @@ export class ClientsAPI {
                             tags: data.tags,
                             riskLevel: data.riskLevel,
                             sendEmailReminders: data.sendEmailReminders,
-                            professionalId: data.professionalId
+                            professionalId: data.professionalId,
+                            consents: data.consents
                         });
                     }
                 } catch (e) {

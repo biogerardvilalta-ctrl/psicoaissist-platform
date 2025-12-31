@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BookUser, Save, AlertCircle } from 'lucide-react';
+import { BookUser, Save, AlertCircle, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,6 +16,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
+    FormDescription,
 } from '@/components/ui/form';
 import {
     Select,
@@ -43,6 +44,12 @@ const formSchema = z.object({
     riskLevel: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
     notes: z.string().optional(),
     sendEmailReminders: z.boolean().default(true),
+    consentData: z.boolean().default(false).refine(val => val === true, {
+        message: "Debes obtener el consentimiento para el tratamiento de datos.",
+    }),
+    consentAI: z.boolean().default(false).refine(val => val === true, {
+        message: "Debes informar sobre el uso de sistemas de IA.",
+    }),
 });
 
 type ClientFormValues = z.infer<typeof formSchema>;
@@ -74,6 +81,8 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
             riskLevel: initialData?.riskLevel || "LOW",
             notes: initialData?.notes || "",
             sendEmailReminders: initialData?.sendEmailReminders ?? true,
+            consentData: false,
+            consentAI: false,
         },
     });
 
@@ -81,7 +90,15 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
         setIsSubmitting(true);
         setError(null);
         try {
-            await onSubmit(values);
+            // Transform form booleans to API consents structure
+            const apiValues = {
+                ...values,
+                consents: [
+                    { consentType: 'DATA_STORAGE', granted: values.consentData },
+                    { consentType: 'AI_PROCESSING', granted: values.consentAI }
+                ]
+            };
+            await onSubmit(apiValues as any);
         } catch (err: any) {
             console.error(err);
             setError(err.message || "Ocurrió un error al guardar el cliente.");
@@ -315,6 +332,70 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                             />
                                         </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border-blue-100 shadow-sm">
+                        <CardHeader className="bg-blue-50/50">
+                            <CardTitle className="flex items-center gap-2 text-blue-900">
+                                <ShieldCheck className="h-5 w-5 text-blue-600" />
+                                Consentimiento Informado (GDPR)
+                            </CardTitle>
+                            <CardDescription>
+                                Es obligatorio registrar el consentimiento explícito del paciente antes de procesar sus datos.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="grid gap-4 pt-6">
+                            <FormField
+                                control={form.control}
+                                name="consentData"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                        <FormControl>
+                                            <input
+                                                type="checkbox"
+                                                checked={field.value}
+                                                onChange={field.onChange}
+                                                className="h-4 w-4 mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel>
+                                                Tratamiento de Datos Personales
+                                            </FormLabel>
+                                            <FormDescription>
+                                                El paciente autoriza el almacenamiento y tratamiento de sus datos personales y de salud en la plataforma.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="consentAI"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                        <FormControl>
+                                            <input
+                                                type="checkbox"
+                                                checked={field.value}
+                                                onChange={field.onChange}
+                                                className="h-4 w-4 mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel>
+                                                Procesamiento mediante IA
+                                            </FormLabel>
+                                            <FormDescription>
+                                                El paciente ha sido informado de que se utilizarán sistemas de Inteligencia Artificial como soporte a la sesión.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </div>
                                     </FormItem>
                                 )}
                             />

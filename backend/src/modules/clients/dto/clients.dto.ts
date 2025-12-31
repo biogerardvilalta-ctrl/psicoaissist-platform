@@ -71,6 +71,23 @@ export class CreateClientDto {
     @IsString()
     @IsOptional()
     professionalId?: string;
+
+    @ApiPropertyOptional({ type: [Object], description: 'List of consents granted by the client' })
+    @IsArray()
+    @IsOptional()
+    consents?: ClientConsentDto[];
+}
+
+export class ClientConsentDto {
+    @ApiProperty({ enum: ['AUDIO_RECORDING', 'AI_PROCESSING', 'DATA_STORAGE', 'THIRD_PARTY_SHARING', 'MARKETING_COMMUNICATIONS'] })
+    @IsString()
+    @IsNotEmpty()
+    consentType: string;
+
+    @ApiProperty()
+    @IsBoolean()
+    @IsNotEmpty()
+    granted: boolean;
 }
 
 export class CreateClientEncryptedDto {
@@ -110,6 +127,11 @@ export class CreateClientEncryptedDto {
     @IsString()
     @IsOptional()
     professionalId?: string;
+
+    @ApiPropertyOptional({ type: [Object], description: 'List of consents granted by the client' })
+    @IsArray()
+    @IsOptional()
+    consents?: ClientConsentDto[];
 }
 
 import { PartialType } from '@nestjs/mapped-types';
