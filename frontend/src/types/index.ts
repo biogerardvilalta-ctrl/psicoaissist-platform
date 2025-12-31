@@ -84,7 +84,7 @@ export interface Session {
   userId: string
   startTime: string
   endTime?: string
-  duration?: number
+  duration?: number // in seconds
   transcription?: string
   notes?: string
   aiSuggestions?: AISuggestion[]

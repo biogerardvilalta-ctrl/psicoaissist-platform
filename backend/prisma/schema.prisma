@@ -202,7 +202,7 @@ model Session {
   // Session data
   startTime       DateTime      @map("start_time")
   endTime         DateTime?     @map("end_time")
-  duration        Int?          // in minutes
+  duration        Int?          // in seconds
   sessionType     SessionType   @map("session_type")
   status          SessionStatus
   isMinor         Boolean       @default(false) @map("is_minor")

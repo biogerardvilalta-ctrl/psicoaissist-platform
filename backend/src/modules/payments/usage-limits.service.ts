@@ -78,24 +78,24 @@ export class UsageLimitsService {
       }
     });
 
-    const usedMinutes = usage._sum.duration || 0;
-    const requestedMinutes = hoursToAdd * 60;
-    const totalProjectedMinutes = usedMinutes + requestedMinutes;
+    const usedSeconds = usage._sum.duration || 0;
+    const requestedSeconds = hoursToAdd * 3600; // Convert requested hours to seconds
+    const totalProjectedSeconds = usedSeconds + requestedSeconds;
 
     // Check transcription limit
     if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
-      const limitMinutes = planFeatures.transcriptionMinutes;
-      if (totalProjectedMinutes > limitMinutes) {
+      const limitSeconds = planFeatures.transcriptionMinutes * 60;
+      if (totalProjectedSeconds > limitSeconds) {
         throw new ForbiddenException(
-          `Monthly transcription limit reached. Used: ${Math.round(usedMinutes / 60)}h / ${Math.round(planFeatures.transcriptionMinutes / 60)}h.`
+          `Monthly transcription limit reached. Used: ${Math.round(usedSeconds / 60)}m / ${planFeatures.transcriptionMinutes}m.`
         );
       }
     } else {
       // Fair Use Check for Unlimited
-      const fairUseLimitMinutes = PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES;
-      if (totalProjectedMinutes > fairUseLimitMinutes) {
+      const fairUseLimitSeconds = PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES * 60;
+      if (totalProjectedSeconds > fairUseLimitSeconds) {
         throw new ForbiddenException(
-          `Fair Use Policy: Transcription usage excessive (${Math.round(usedMinutes / 60)}h used). Please contact commercial team.`
+          `Fair Use Policy: Transcription usage excessive (${Math.round(usedSeconds / 3600)}h used). Please contact commercial team.`
         );
       }
     }
@@ -259,7 +259,8 @@ export class UsageLimitsService {
     // The plan limit is in hours (e.g. 50, 200). 
     // Let's pass 'transcriptionMinutes' as well for precise tracking.
 
-    const totalMinutes = user.sessions.reduce((acc, session) => acc + (session.duration || 0), 0);
+    const totalSeconds = user.sessions.reduce((acc, session) => acc + (session.duration || 0), 0);
+    const totalMinutes = Math.round(totalSeconds / 60);
     const totalHours = Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal
 
     const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];

@@ -119,7 +119,7 @@ export class SessionsService {
                 clientId: createSessionDto.clientId,
                 startTime: startDate,
                 endTime: endDate,
-                duration: durationMinutes, // Save calculated duration
+                duration: durationMinutes * 60, // Save calculated duration in SECONDS
                 sessionType: createSessionDto.sessionType,
                 status: SessionStatus.SCHEDULED,
                 encryptedNotes: encryptedNotesBuffer,
