@@ -35,7 +35,7 @@ export function LegalJustificationContent() {
                         <CardHeader className="bg-slate-50 border-b border-slate-100">
                             <CardTitle className="text-xl flex items-center gap-2 text-slate-800">
                                 <FileText className="h-5 w-5 text-blue-600" />
-                                Sistema d’IA de suport orientatiu en context psicològic
+                                Sistema d’IA de suport orientatiu en context de salut mental
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 space-y-8">
@@ -172,7 +172,7 @@ export function LegalJustificationContent() {
                                     Objecte del document
                                 </h3>
                                 <p className="mb-4">
-                                    Aquest document té per objecte descriure i acreditar el compliment normatiu, tècnic i ètic del sistema d’intel·ligència artificial (d’ara endavant, <strong>el sistema</strong>) utilitzat exclusivament com a eina de suport a la redacció d’informes professionals en l’àmbit de la psicologia.
+                                    Aquest document té per objecte descriure i acreditar el compliment normatiu, tècnic i ètic del sistema d’intel·ligència artificial (d’ara endavant, <strong>el sistema</strong>) utilitzat exclusivament com a eina de suport a la redacció d’informes professionals en l’àmbit de la salut mental.
                                 </p>
                                 <p className="mb-2 text-sm text-slate-700 font-semibold">Els tipus d’informe coberts pel sistema són:</p>
                                 <ul className="list-disc pl-6 space-y-1 mb-4 text-slate-700">
@@ -208,7 +208,7 @@ export function LegalJustificationContent() {
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <ChevronRight className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                        <span>Normativa professional i deontològica aplicable a l’exercici de la psicologia.</span>
+                                        <span>Normativa professional i deontològica aplicable a l’exercici professional.</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <ChevronRight className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />

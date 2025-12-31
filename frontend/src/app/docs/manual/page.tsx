@@ -546,6 +546,45 @@ export default function ManualPage() {
                                 En <strong>Sesiones</strong>, use la vista de calendario para crear citas. Marque las sesiones como "Realizada" o "Cancelada" para mantener las estadísticas precisas.
                             </p>
 
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Análisis IA de Sesiones</h3>
+                            <p>
+                                La IA actúa como un "espejo" del contenido de la sesión, proporcionando 5 tipos de información para asistir al profesional, sin sustituir nunca su criterio:
+                            </p>
+                            <div className="space-y-4 text-slate-600 my-6 not-prose">
+                                <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                    <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                                        <span className="bg-slate-100 p-1 rounded">📝</span> Resumen Fáctico
+                                    </h4>
+                                    <p className="text-sm mt-1">Síntesis objetiva de lo hablado en la sesión, ideal para copiar a la historia clínica reduciendo el tiempo de redacción.</p>
+                                </div>
+                                <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                    <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                                        <span className="bg-slate-100 p-1 rounded">🎭</span> Elementos Emocionales y Narrativos
+                                    </h4>
+                                    <p className="text-sm mt-1">Detecta palabras clave (tristeza, rabia...) y patrones discursivos (absolutos tipo "siempre", rumiación) para alertar de posibles incongruencias.</p>
+                                </div>
+                                <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                    <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                                        <span className="bg-slate-100 p-1 rounded">🏷️</span> Temas Emergentes
+                                    </h4>
+                                    <p className="text-sm mt-1">Clasifica automáticamente el contenido en áreas temáticas (Ansiedad, Trauma, Autoestima) para no perder de vista ejes latentes.</p>
+                                </div>
+                                <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                    <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                                        <span className="bg-slate-100 p-1 rounded">💡</span> Sugerencias de Tests (Orientativo)
+                                    </h4>
+                                    <p className="text-sm mt-1">Si detecta indicadores de un tema (ej. Ansiedad), sugiere valorar instrumentos validados (BAI, STAI), sin "asignarlos" automáticamente.</p>
+                                </div>
+                                <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg shadow-sm">
+                                    <h4 className="font-bold text-amber-900 flex items-center gap-2">
+                                        <span className="bg-amber-100 p-1 rounded">🚩</span> Marcadores de Riesgo
+                                    </h4>
+                                    <p className="text-sm text-amber-800 mt-1">Identifica lenguaje de riesgo potencial (autolesión, ideación) para revisión prioritaria del profesional.</p>
+                                </div>
+                            </div>
+
+
+
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Simulador Clínico</h3>
                             <p>
                                 Acceda desde el menú "Simulador" para practicar con pacientes virtuales. La IA le dará feedback sobre su empatía y técnica al terminar la sesión simulada.

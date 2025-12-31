@@ -70,12 +70,12 @@ export default function RegisterPage() {
     }
 
     if (!formData.professionalNumber.trim()) {
-      setError('El número de colegiado es requerido');
+      setError('El número profesional es requerido');
       return false;
     }
 
     if (!legalLiabilityAccepted) {
-      setError('Debes certificar la veracidad de tu colegiación profesional');
+      setError('Debes certificar la veracidad de tu habilitación profesional');
       return false;
     }
 
@@ -226,7 +226,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="professionalNumber" className="block text-sm font-medium text-gray-700">
-                  Nº Colegiado
+                  Nº Profesional / Colegiado
                 </label>
                 <input
                   id="professionalNumber"
@@ -235,8 +235,8 @@ export default function RegisterPage() {
                   required
                   value={formData.professionalNumber}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Ej: 12345"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Ej: Colegiado / Asoc. / CIF"
                 />
               </div>
 
@@ -357,7 +357,7 @@ export default function RegisterPage() {
                   Certificación de Habilitación Profesional
                 </label>
                 <p className="text-gray-600 mt-1 text-xs text-justify">
-                  Certifico que el <strong>número de colegiado</strong> introducido es verídico y se encuentra vigente.
+                  Certifico que el <strong>número profesional/colegiado</strong> introducido es verídico y se encuentra vigente.
                   Entiendo que la falsedad en este dato constituye un delito de intrusismo profesional y falsedad documental, conllevando las <strong>responsabilidades penales</strong> correspondientes según la normativa vigente.
                 </p>
               </div>
@@ -380,7 +380,7 @@ export default function RegisterPage() {
                 <label htmlFor="termsAccepted" className="font-medium text-gray-700">
                   Acepto los <Link href="/terms" className="text-blue-600 hover:text-blue-500">Términos de Servicio</Link> y la <Link href="/privacy" className="text-blue-600 hover:text-blue-500">Política de Privacidad</Link>
                 </label>
-                <p className="text-gray-500 mt-1 text-xs">Aquesta eina ofereix suport clínic orientatiu exclusivament per a professionals de la psicologia. No realitza diagnòstics ni substitueix el criteri clínic.</p>
+                <p className="text-gray-500 mt-1 text-xs">Aquesta eina ofereix suport clínic orientatiu exclusivament per a professionals de la salut mental. No realitza diagnòstics ni substitueix el criteri clínic.</p>
               </div>
             </div>
           </div>

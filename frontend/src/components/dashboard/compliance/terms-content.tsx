@@ -9,7 +9,7 @@ export function TermsContent() {
                     <Scale className="h-16 w-16 text-blue-600" />
                 </div>
                 <h1 className="text-3xl font-bold tracking-tight text-blue-900">Termes i Condicions d'Ús</h1>
-                <p className="text-lg text-muted-foreground">Acord de servei per a professionals de la psicologia</p>
+                <p className="text-lg text-muted-foreground">Acord de servei per a professionals de la salut mental</p>
             </div>
 
             <Card className="border-blue-100 shadow-lg">
@@ -37,7 +37,7 @@ export function TermsContent() {
                     <section className="space-y-3">
                         <h2 className="text-lg font-bold text-blue-900">2. Responsabilitat del Professional</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            L'usuari (psicòleg/oga col·legiat/da) reconeix i accepta que:
+                            L'usuari (professional de la salut mental acreditat/da) reconeix i accepta que:
                         </p>
                         <ul className="list-disc pl-6 text-slate-700 space-y-2">
                             <li>És l'únic responsable de verificar la informació generada per la IA abans d'utilitzar-la o incloure-la a la història clínica.</li>
@@ -61,7 +61,36 @@ export function TermsContent() {
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">5. Política d'Ús Raonable (Fair Use Policy)</h2>
+                        <h2 className="text-lg font-bold text-blue-900">5. Límits Ètics i Professionals</h2>
+                        <div className="space-y-4">
+                            <p className="text-slate-700 leading-relaxed">
+                                L'ús de la plataforma està subjecte als següents límits ètics inquebrantables, alineats amb la normativa deontològica vigent:
+                            </p>
+                            <div className="grid gap-3">
+                                <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">PROHIBICIÓ DE DIAGNÒSTIC AUTOMATITZAT</h4>
+                                    <p className="text-sm text-slate-600">
+                                        Queda estrictament prohibit utilitzar les sortides de la IA com a diagnòstics clínics definitius. La IA és una eina de suport orientatiu; el diagnòstic és acte exclusiu del professional humà.
+                                    </p>
+                                </div>
+                                <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">DEURE D'EMERGÈNCIA</h4>
+                                    <p className="text-sm text-slate-600">
+                                        L'aplicació NO és un dispositiu d'emergència ni d'intervenció en crisi. En situacions de risc imminent de suïcidi o dany a tercers, el professional ha d'actuar segons els protocols d'emergència convencionals, sense dependre del processament de l'eina.
+                                    </p>
+                                </div>
+                                <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">TRANSPARÈNCIA AMB EL PACIENT</h4>
+                                    <p className="text-sm text-slate-600">
+                                        És obligació ètica del professional informar el pacient sobre l'ús d'eines tecnològiques de suport durant la sessió i garantir que aquest ús no interfereix en la qualitat de l'aliança terapèutica.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="space-y-3">
+                        <h2 className="text-lg font-bold text-blue-900">6. Política d'Ús Raonable (Fair Use Policy)</h2>
                         <p className="text-slate-700 leading-relaxed">
                             Per garantir l'estabilitat del sistema i la qualitat del servei per a tots els usuaris, els plans amb característiques "Ilimitades" estan subjectes als següents topalls de seguretat mensual:
                         </p>
@@ -93,7 +122,7 @@ export function TermsContent() {
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">6. Plans de Subscripció i Característiques</h2>
+                        <h2 className="text-lg font-bold text-blue-900">7. Plans de Subscripció i Característiques</h2>
                         <p className="text-slate-700 leading-relaxed">
                             A continuació es detallen els plans disponibles i les seves característiques contractuals. Els preus poden estar subjectes a impostos aplicables.
                         </p>
@@ -225,7 +254,7 @@ export function TermsContent() {
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">7. Limitació de Responsabilitat</h2>
+                        <h2 className="text-lg font-bold text-blue-900">8. Limitació de Responsabilitat</h2>
                         <p className="text-slate-700 leading-relaxed">
                             La plataforma no es fa responsable de possibles errors en la transcripció o en els suggeriments de la IA, atès que es tracta d'una tecnologia probabilística. La verificació humana és indispensable en tots els casos.
                         </p>
