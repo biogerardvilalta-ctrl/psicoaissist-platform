@@ -17,12 +17,7 @@ export enum PlanLimits {
   PRO_SIMULATOR_CASES = 5,
   PRO_SIMULATOR_MINUTES = 900,
 
-  BUSINESS_MAX_CLIENTS = -1,
-  BUSINESS_TRANSCRIPTION_MINUTES = 2000,
-  BUSINESS_REPORTS = -1,
-  BUSINESS_SIMULATOR_CASES = 15,
-  BUSINESS_SIMULATOR_MINUTES = 2000,
-  BUSINESS_MAX_PROFESSIONALS = 3,
+
 
   PREMIUM_MAX_CLIENTS = -1,
   PREMIUM_TRANSCRIPTION_MINUTES = 3000, // 50 hours
@@ -89,18 +84,7 @@ export const PLAN_FEATURES: Record<string, PlanFeatures> = {
     advancedAnalytics: true,
     apiAccess: true,
   },
-  business: {
-    maxClients: PlanLimits.UNLIMITED,
-    transcriptionMinutes: PlanLimits.BUSINESS_TRANSCRIPTION_MINUTES,
-    reportsPerMonth: PlanLimits.UNLIMITED,
-    simulatorCases: PlanLimits.BUSINESS_SIMULATOR_CASES,
-    simulatorMinutes: PlanLimits.BUSINESS_SIMULATOR_MINUTES,
-    maxProfessionals: PlanLimits.BUSINESS_MAX_PROFESSIONALS,
-    supportLevel: 'priority',
-    advancedAnalytics: true,
-    apiAccess: false,
-    isTeam: true,
-  },
+
   premium: {
     maxClients: PlanLimits.UNLIMITED,
     transcriptionMinutes: PlanLimits.PREMIUM_TRANSCRIPTION_MINUTES,

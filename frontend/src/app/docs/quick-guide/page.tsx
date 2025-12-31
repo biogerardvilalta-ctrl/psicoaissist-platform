@@ -93,7 +93,7 @@ export default function QuickGuidePage() {
                                     <Zap className="w-5 h-5" /> Trucos Configuración
                                 </h3>
                                 <ul className="space-y-3 text-sm text-amber-800">
-                                    <li><strong>Cambiar Plan/Tarifa:</strong> En <em>Ajustes &gt; Facturación</em>. Consulte si es Basic, Pro, Premium, Business o clínicas.</li>
+                                    <li><strong>Cambiar Plan/Tarifa:</strong> En <em>Ajustes &gt; Facturación</em>. Consulte si es Basic, Pro, Premium o clínicas.</li>
                                     <li><strong>Vacaciones:</strong> En <em>Ajustes &gt; Agenda &gt; Bloqueos</em>. Use "Bloquear Día Completo" en lugar de borrar sesiones.</li>
                                 </ul>
                             </div>

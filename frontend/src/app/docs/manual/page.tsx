@@ -374,62 +374,7 @@ export default function ManualPage() {
 
                             <h3 className="mt-8 mb-4 text-xl font-bold text-slate-800">2. Planes Grupales y Corporativos</h3>
                             <div className="space-y-6 mb-8 not-prose">
-                                {/* BUSINESS PLAN */}
-                                <div className="p-6 bg-indigo-50 rounded-xl border border-indigo-200">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <h4 className="text-lg font-bold text-indigo-800">👥 Business (Pequeños Equipos)</h4>
-                                            <p className="text-sm text-indigo-600">Gabinetes de 2 psicólogos + gestión</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-2xl font-bold text-indigo-900">129€<span className="text-xs text-indigo-500 font-normal">/mes</span></p>
-                                            <p className="text-xs text-indigo-600">1.290€/año (+40€/usuario extra)</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid md:grid-cols-2 gap-4 text-sm">
-                                        <div>
-                                            <h5 className="font-semibold text-indigo-800 mb-2">Capacidad Compartida</h5>
-                                            <ul className="space-y-1 text-indigo-700">
-                                                <li>• Incluye <strong>2 Profesionales</strong> + 1 Manager</li>
-                                                <li>• <strong>2.000</strong> Minutos IA Generativa (Análisis)/mes</li>
-                                                <li>• <strong>15</strong> Casos Simulador/mes (Global)</li>
-                                                <li>• <strong>100GB</strong> Almacenamiento</li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h5 className="font-semibold text-indigo-800 mb-2">Herramientas de Gestión</h5>
-                                            <ul className="space-y-1 text-indigo-700">
-                                                <li>• <strong>Panel de Agenda Manager</strong> (Gestión centralizada)</li>
-                                                <li>• Calendario Unificado de Grupo</li>
-                                                <li>• Roles y Permisos Avanzados</li>
-                                                <li>• Facturación Unificada</li>
-                                            </ul>
-                                        </div>
-                                    </div>
 
-                                    {/* DETAILED EXPLANATION BUSINESS */}
-                                    <div className="mt-6 pt-6 border-t border-indigo-200/50">
-                                        <h5 className="font-bold text-indigo-900 mb-3 text-sm">Detalle de Características:</h5>
-                                        <ul className="grid md:grid-cols-2 gap-x-8 gap-y-6 text-xs text-indigo-800/80 pl-4">
-                                            <li>
-                                                <strong className="block text-indigo-900 mb-1">Agenda Manager</strong>
-                                                Rol especial para secretariado. Permite gestionar las citas de todos los profesionales desde un único panel sin ver datos clínicos sensibles.
-                                            </li>
-                                            <li>
-                                                <strong className="block text-indigo-900">Pool Compartido (2.000 min)</strong>
-                                                Los minutos de IA se comparten entre todos los miembros del equipo, optimizando el uso en gabinetes donde la actividad varía.
-                                            </li>
-                                            <li>
-                                                <strong className="block text-indigo-900">Calendario Unificado</strong>
-                                                Vista global de la disponibilidad de todos los terapeutas para asignar pacientes eficientemente.
-                                            </li>
-                                            <li>
-                                                <strong className="block text-indigo-900">Usuarios Adicionales</strong>
-                                                Puedes añadir más profesionales al equipo por una cuota reducida (+40€/mes/usuario).
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
 
                                 {/* CLINICS PLAN */}
                                 <div className="p-6 bg-slate-100 rounded-xl border border-slate-300">
@@ -477,7 +422,20 @@ export default function ManualPage() {
                                             </li>
                                         </ul>
                                     </div>
+                                    {/* Simulator Pack */}
+                                    <div className="p-5 bg-white rounded-xl border border-violet-200 shadow-sm">
+                                        <h4 className="font-bold text-violet-900 mb-2">🎓 Pack Simulador</h4>
+                                        <p className="text-2xl font-bold text-violet-700 mb-1">15€<span className="text-sm font-normal text-slate-500">/pack</span></p>
+                                        <p className="text-xs text-slate-500 mb-4">Disponible para planes Pro+</p>
+                                        <p className="text-sm text-slate-600 mb-2 font-medium">Incluye:</p>
+                                        <ul className="text-xs text-slate-600 space-y-1">
+                                            <li>• <strong>10 Casos Clínicos</strong> adicionales</li>
+                                            <li>• Práctica ilimitada en esos casos</li>
+                                            <li>• Feedback detallado de IA</li>
+                                        </ul>
+                                    </div>
                                 </div>
+
                             </div>
 
                             <div className="mt-12 p-6 bg-red-50 rounded-xl border border-red-100">

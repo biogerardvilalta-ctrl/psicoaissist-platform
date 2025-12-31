@@ -49,6 +49,7 @@ export interface CreateCheckoutSessionRequest {
   interval?: 'month' | 'year';
   customerId?: string;
   metadata?: Record<string, string>;
+  addOns?: string[];
 }
 
 export interface SubscriptionStatus {

@@ -247,22 +247,8 @@ export function TermsContent() {
                                 </div>
                             </div>
 
-                            {/* BUSINESS & CLINICS */}
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="p-5 bg-indigo-50 rounded-lg border border-indigo-200">
-                                    <h3 className="font-bold text-indigo-900 mb-2">👥 Business (Grups)</h3>
-                                    <p className="text-sm font-semibold text-indigo-700 mb-3">129€ / mes</p>
-                                    <div className="text-xs space-y-2">
-                                        <div>
-                                            <span className="font-bold text-green-700">✅ Inclou:</span>
-                                            <ul className="list-disc pl-4 text-indigo-800 mt-1">
-                                                <li>2 Professionals + 1 Manager.</li>
-                                                <li>2.000 minuts IA compartits.</li>
-                                                <li>Facturació Unificada.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                            {/* CLINICS ONLY */}
+                            <div className="grid md:grid-cols-1 gap-4">
                                 <div className="p-5 bg-slate-100 rounded-lg border border-slate-300">
                                     <h3 className="font-bold text-slate-800 mb-2">🏥 Clinics</h3>
                                     <p className="text-sm font-semibold text-slate-700 mb-3">Consultar</p>
@@ -281,6 +267,32 @@ export function TermsContent() {
                         </div>
                     </section>
 
+                    <section className="space-y-4 pt-6">
+                        <h3 className="font-bold text-slate-800">Serveis Addicionals (Extras)</h3>
+                        <div className="grid md:grid-cols-3 gap-4">
+                            <div className="p-4 border border-slate-200 rounded-lg">
+                                <h4 className="font-bold text-sm text-slate-900">👤 Agenda Manager</h4>
+                                <p className="text-xs text-slate-500 mt-1">15€ / mes</p>
+                                <p className="text-xs text-slate-600 mt-2">Usuari administratiu addicional per a gestió de cites. Sense accés a històries clíniques.</p>
+                            </div>
+                            <div className="p-4 border border-slate-200 rounded-lg">
+                                <h4 className="font-bold text-sm text-slate-900">⚡ Pack Minutos IA</h4>
+                                <p className="text-xs text-slate-500 mt-1">15€ / pack</p>
+                                <p className="text-xs text-slate-600 mt-2">500 minuts addicionals de processament IA. Pagament únic, no caducan mentre la subscripció estigui activa.</p>
+                            </div>
+                            <div className="p-4 border border-slate-200 rounded-lg">
+                                <h4 className="font-bold text-sm text-slate-900">🚀 Onboarding Assistit</h4>
+                                <p className="text-xs text-slate-500 mt-1">50€ (pagament únic)</p>
+                                <p className="text-xs text-slate-600 mt-2">Sessió de 45 min amb un especialista per a configuració inicial i importació de dades.</p>
+                            </div>
+                            <div className="p-4 border border-slate-200 rounded-lg">
+                                <h4 className="font-bold text-sm text-slate-900">🎓 Pack Simulador</h4>
+                                <p className="text-xs text-slate-500 mt-1">15€ / pack</p>
+                                <p className="text-xs text-slate-600 mt-2">Pack de 10 casos clínics interactius addicionals per pràctica. Inclou feedback detallat de la IA.</p>
+                            </div>
+                        </div>
+                    </section>
+
                     <section className="space-y-3">
                         <h2 className="text-lg font-bold text-blue-900">8. Limitació de Responsabilitat</h2>
                         <p className="text-slate-700 leading-relaxed">
@@ -295,8 +307,8 @@ export function TermsContent() {
                         </div>
                     </section>
 
-                </CardContent>
-            </Card>
-        </div>
+                </CardContent >
+            </Card >
+        </div >
     );
 }

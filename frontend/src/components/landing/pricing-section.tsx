@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, X, Star, Loader2, Users, Building, Zap } from 'lucide-react';
+import { Check, X, Star, Loader2, Users, Building, Zap, Book } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -67,27 +67,7 @@ const plans = [
     color: 'border-purple-500',
     buttonColor: 'bg-purple-600 hover:bg-purple-700 text-white',
   },
-  {
-    id: 'business',
-    name: 'Business',
-    price: 129,
-    description: 'Pequeños gabinetes (2 profesionales + manager)',
-    features: [
-      'Incluye 2 Profesionales + 1 Manager',
-      'IA Compartida (2.000 min/mes)',
-      'Agenda Manager incluido',
-      'Calendario unificado de grupo',
-      'Almacenamiento 100GB',
-      '+40€ por profesional extra',
-    ],
-    limitations: [
-      'Sin API Access',
-    ],
-    cta: 'Contratar Business',
-    popular: false,
-    color: 'border-indigo-500',
-    buttonColor: 'bg-indigo-600 hover:bg-indigo-700 text-white',
-  },
+
   {
     id: 'clinics',
     name: 'Clínicas',
@@ -268,151 +248,160 @@ export default function PricingSection() {
             })}
           </div>
         </div>
+        <p className="text-xs text-gray-400 text-center mt-4">
+          * Política de Uso Razonable (Fair Use) aplica al almacenamiento ilimitado (hasta 1TB) para garantizar la estabilidad del servicio.
+        </p>
 
         {/* Team/Corporate Plans Section */}
         <div className="mt-16">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center justify-center gap-2">
-              <Building className="w-6 h-6 text-gray-400" />
-              Planes para Equipos y Organizaciones
-            </h3>
-          </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 max-w-4xl mx-auto">
-            {plans.filter(p => ['business', 'clinics'].includes(p.id)).map((plan) => {
-              // Logic for team plans rendering (same card structure essentially or slightly different?)
-              // Reusing same card structure for consistency but in 2 cols
-              const isAnnual = billingInterval === 'year';
-              const price = typeof plan.price === 'number'
-                ? (isAnnual ? Math.round(plan.price * 10 / 12) : plan.price)
-                : plan.price;
+          {/* Combined Section: Clinics & Extras */}
+          <div className="mt-20 lg:flex lg:gap-8 lg:items-start max-w-7xl mx-auto">
 
-              return (
-                <div
-                  key={plan.name}
-                  className={`relative bg-gray-50 rounded-2xl shadow-sm ${plan.color} border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col`}
-                >
-                  <div className="p-6 flex-1 flex flex-col">
-                    {/* Plan header */}
-                    <div className="text-center mb-6">
-                      <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-                      <p className="mt-2 text-xs text-gray-600 h-10">{plan.description}</p>
-                      <div className="mt-4 flex flex-col items-center justify-center h-16">
-                        <div className="flex items-baseline">
-                          <span className="text-3xl font-bold text-gray-900">{typeof price === 'number' ? `€${price}` : price}</span>
-                          {typeof price === 'number' && <span className="text-gray-600 text-sm">/mes</span>}
-                        </div>
-                        {isAnnual && typeof plan.price === 'number' && (
-                          <span className="text-xs text-green-600 font-medium mt-1">
-                            Facturado €{plan.price * 10}/año
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Features list */}
+            {/* Left Column: Clinics Plan (1/3) */}
+            <div className="w-full lg:w-1/3 mb-10 lg:mb-0">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <Building className="w-5 h-5 text-gray-500" />
+                Planes para Organizaciones
+              </h3>
+              {plans.filter(p => p.id === 'clinics').map((plan) => {
+                return (
+                  <div
+                    key={plan.id}
+                    className={`relative flex flex-col p-8 bg-white border rounded-2xl shadow-sm transition-all h-full ${'border-gray-200 hover:border-gray-300'
+                      }`}
+                  >
                     <div className="flex-1">
-                      <ul className="space-y-3 mb-6">
+                      <h3 className="text-xl font-semibold text-gray-900">{plan.name}</h3>
+                      <p className="mt-4 flex items-baseline text-gray-900">
+                        <span className="text-4xl font-extrabold tracking-tight">Custom</span>
+                      </p>
+                      <p className="mt-6 text-gray-500">{plan.description}</p>
+
+                      <ul role="list" className="mt-6 space-y-4">
                         {plan.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-start">
-                            <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5" />
-                            <span className="ml-3 text-xs text-gray-600">{feature}</span>
-                          </li>
-                        ))}
-                        {plan.limitations.map((limitation, limitationIndex) => (
-                          <li key={`limitation-${limitationIndex}`} className="flex items-start">
-                            <X className="flex-shrink-0 h-4 w-4 text-gray-400 mt-0.5" />
-                            <span className="ml-3 text-xs text-gray-400">{limitation}</span>
+                          <li key={featureIndex} className="flex">
+                            <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-1" />
+                            <span className="ml-3 text-sm text-gray-500">{feature}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
-
-                    {/* CTA button */}
-                    <div className="mt-auto">
-                      <button
-                        onClick={() => handleSelectPlan(plan.id)}
-                        disabled={loading}
-                        className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.buttonColor}`}
+                    <div className="mt-8">
+                      <a
+                        href="mailto:ventas@psycoai.com"
+                        className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors bg-slate-900 hover:bg-slate-800 text-white`}
                       >
-                        {loading ? (
-                          <>
-                            <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                            ...
-                          </>
-                        ) : (
-                          plan.cta
-                        )}
-                      </button>
+                        Contactar Ventas
+                      </a>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Add-ons Section */}
-        <div className="mt-16 max-w-4xl mx-auto">
-          <h3 className="text-xl font-bold text-gray-900 text-center mb-8">Extras y Servicios Adicionales</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Minute Pack Card */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-300 transition-colors">
-              <div className="flex items-center gap-4 mb-3">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Zap className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-900">Pack Minutos IA</h4>
-                  <p className="text-sm text-gray-500">Solo para planes Pro+</p>
-                </div>
-                <div className="ml-auto text-right">
-                  <span className="block text-xl font-bold text-gray-900">15€</span>
-                  <span className="text-xs text-gray-500">/500 min</span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600">
-                ¿Un mes con muchos pacientes? No te quedes sin IA. Añade minutos extra a tu plan cuando lo necesites para cubrir picos de trabajo.
-              </p>
+                );
+              })}
             </div>
 
-            {/* Onboarding Card */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-purple-300 transition-colors">
-              <div className="flex items-center gap-4 mb-3">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <Users className="w-6 h-6 text-purple-600" />
+            {/* Right Column: Extras (2/3) */}
+            <div className="w-full lg:w-2/3">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Extras y Servicios Adicionales</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Agenda Manager Add-on */}
+                <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-indigo-300 transition-colors">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="p-3 bg-indigo-100 rounded-lg">
+                      <Book className="w-6 h-6 text-indigo-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900">Agenda Manager</h4>
+                      <p className="text-sm text-gray-500">Solo para planes Pro+</p>
+                    </div>
+                    <div className="ml-auto text-right">
+                      <span className="block text-xl font-bold text-gray-900">15€</span>
+                      <span className="text-xs text-gray-500">/mes</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Delega la gestión de tus citas. Añade un usuario administrativo (secretario/a) que puede ver y gestionar tu calendario sin acceso a datos clínicos sensibles.
+                  </p>
                 </div>
-                <div>
-                  <h4 className="font-bold text-gray-900">Sesión Onboarding</h4>
-                  <p className="text-sm text-gray-500">Puesta en marcha</p>
+
+                {/* Minute Pack Card */}
+                <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-300 transition-colors">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="p-3 bg-blue-100 rounded-lg">
+                      <Zap className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900">Pack Minutos IA</h4>
+                      <p className="text-sm text-gray-500">Solo para planes Pro+</p>
+                    </div>
+                    <div className="ml-auto text-right">
+                      <span className="block text-xl font-bold text-gray-900">15€</span>
+                      <span className="text-xs text-gray-500">/500 min</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    ¿Un mes con muchos pacientes? No te quedes sin IA. Añade minutos extra a tu plan cuando lo necesites para cubrir picos de trabajo.
+                  </p>
                 </div>
-                <div className="ml-auto text-right">
-                  <span className="block text-xl font-bold text-gray-900">50€</span>
-                  <span className="text-xs text-gray-500">pago único</span>
+
+                {/* Onboarding Card */}
+                <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-purple-300 transition-colors">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="p-3 bg-purple-100 rounded-lg">
+                      <Users className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900">Sesión Onboarding</h4>
+                      <p className="text-sm text-gray-500">Puesta en marcha</p>
+                    </div>
+                    <div className="ml-auto text-right">
+                      <span className="block text-xl font-bold text-gray-900">50€</span>
+                      <span className="text-xs text-gray-500">pago único</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Configuramos tu cuenta contigo en 45 min: importación de pacientes, enlace con Google Calendar y personalización. Garantía de funcionamiento.
+                  </p>
+                </div>
+
+                {/* Simulator Pack Card */}
+                <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-violet-300 transition-colors">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="p-3 bg-violet-100 rounded-lg">
+                      <Star className="w-6 h-6 text-violet-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900">Pack Simulador</h4>
+                      <p className="text-sm text-gray-500">Solo para planes Pro+</p>
+                    </div>
+                    <div className="ml-auto text-right">
+                      <span className="block text-xl font-bold text-gray-900">15€</span>
+                      <span className="text-xs text-gray-500">/10 casos</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Amplía tu formación práctica. Añade un pack de 10 casos clínicos interactivos extra para practicar diagnósticos y entrevistas sin límites.
+                  </p>
                 </div>
               </div>
-              <p className="text-sm text-gray-600">
-                Configuramos tu cuenta contigo en 45 min: importación de pacientes, enlace con Google Calendar y personalización. Garantía de funcionamiento.
-              </p>
-            </div>
-          </div>
-          <p className="text-xs text-gray-400 text-center mt-6">
-            * Política de Uso Razonable (Fair Use) aplica al almacenamiento ilimitado (hasta 1TB) para garantizar la estabilidad del servicio.
-          </p>
-        </div>
 
-        {/* Bottom note */}
-        <div className="mt-12 text-center">
-          <p className="text-base text-gray-600">
-            ¿Necesitas un plan a medida para una universidad u hospital?{' '}
-            <Link href="/contact" className="text-blue-600 hover:text-blue-700 font-medium">
-              Contáctanos
-            </Link>
-          </p>
-          <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-gray-500">
-            <span>✓ 14 días gratis en todos los planes</span>
-            <span>✓ Cancela cuando quieras</span>
-            <span>✓ Datos siempre tuyos</span>
+            </div>
+
+          </div>
+
+          {/* Bottom note */}
+          <div className="mt-12 text-center">
+            <p className="text-base text-gray-600">
+              ¿Necesitas un plan a medida para una universidad u hospital?{' '}
+              <Link href="/contact" className="text-blue-600 hover:text-blue-700 font-medium">
+                Contáctanos
+              </Link>
+            </p>
+            <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-gray-500">
+              <span>✓ 14 días gratis en todos los planes</span>
+              <span>✓ Cancela cuando quieras</span>
+              <span>✓ Datos siempre tuyos</span>
+            </div>
           </div>
         </div>
       </div>
