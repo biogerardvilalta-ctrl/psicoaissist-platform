@@ -477,7 +477,32 @@ export class AuthService {
       user.referralCode = newCode;
     }
 
+    // Get current usage stats
+    const clientsCount = await this.prisma.client.count({
+      where: {
+        userId: user.id,
+        isActive: true
+      }
+    });
+
+    // Get limits from Plan Features
+    const planType = user.subscription?.planType || 'demo';
+    // Import PLAN_FEATURES dynamically to avoid circular dependency issues if any, or just import at top
+    // For now assuming we can import. If not, we'll fix it.
+    // Actually, let's look at imports.
+    // We need to add import { PLAN_FEATURES } from '../payments/plan-features'; at the top.
+
+    const limits = (await import('../payments/plan-features')).PLAN_FEATURES[planType];
+
     const { passwordHash, ...result } = user;
-    return result;
+    return {
+      ...result,
+      usage: {
+        clientsCount
+      },
+      limits: {
+        maxClients: limits?.maxClients ?? 3 // Default fallback
+      }
+    };
   }
 }

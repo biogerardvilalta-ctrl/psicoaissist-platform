@@ -36,6 +36,12 @@ export interface User {
     logoUrl?: string;
     showLogo?: boolean;
   };
+  usage?: {
+    clientsCount: number;
+  };
+  limits?: {
+    maxClients: number;
+  };
 }
 
 export interface AuthTokens {

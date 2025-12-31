@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { AuthAPI } from '@/lib/auth-api';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { CreditCard, Calendar, CheckCircle2, AlertCircle, Activity } from 'lucide-react';
+import { CreditCard, Calendar, CheckCircle2, AlertCircle, Activity, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 // ... imports
@@ -249,6 +249,100 @@ export default function ProfilePage() {
                         </div>
                     )}
 
+                    {/* Consolidated Limits Display */}
+                    {user?.subscription && (
+                        <div className="pt-6 border-t space-y-6">
+                            <h3 className="text-sm font-medium mb-3">Límites y Uso del Plan</h3>
+
+                            {/* Active Patients */}
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-700">Pacientes Activos</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {user?.limits?.maxClients === -1
+                                                ? "Pacientes Ilimitados"
+                                                : `${user?.usage?.clientsCount ?? 0} de ${user?.limits?.maxClients ?? 3} pacientes`}
+                                        </p>
+                                    </div>
+                                    <Badge variant={user?.limits?.maxClients !== -1 && (user?.usage?.clientsCount ?? 0) >= (user?.limits?.maxClients ?? 1) ? "destructive" : "secondary"}>
+                                        {user?.usage?.clientsCount ?? 0} {user?.limits?.maxClients === -1 ? "Activos" : `/ ${user?.limits?.maxClients ?? 3}`}
+                                    </Badge>
+                                </div>
+                                {user?.limits?.maxClients !== -1 && (
+                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full rounded-full transition-all ${((user?.usage?.clientsCount ?? 0) >= (user?.limits?.maxClients ?? 1))
+                                                ? 'bg-red-500'
+                                                : 'bg-purple-600'
+                                                }`}
+                                            style={{ width: `${Math.min(100, Math.round(((user?.usage?.clientsCount ?? 0) / (user?.limits?.maxClients ?? 1)) * 100))}%` }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Simulator Stats (Merged) */}
+                            {stats?.usage && (
+                                <>
+                                    {/* Clinical Cases */}
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <p className="text-sm font-medium text-slate-700">Casos Clínicos</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} restantes de ${stats.usage.limit}`}
+                                                </p>
+                                            </div>
+                                            <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
+                                                {stats.usage.used} Usados
+                                            </Badge>
+                                        </div>
+                                        {stats.usage.limit < 1000 && (
+                                            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                <div
+                                                    className={`h-full rounded-full ${stats.usage.remaining === 0 ? 'bg-red-500' : 'bg-blue-600'}`}
+                                                    style={{ width: `${Math.min(100, (stats.usage.used / stats.usage.limit) * 100)}%` }}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Transcription Minutes */}
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <p className="text-sm font-medium text-slate-700">Minutos de Transcripción (IA)</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit === -1
+                                                        ? "Ilimitado"
+                                                        : stats.usage.transcriptionLimit !== undefined
+                                                            ? `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${stats.usage.transcriptionLimit}`
+                                                            : "Calculando..."}
+                                                </p>
+                                            </div>
+                                            <Badge variant={(stats.usage.transcriptionRemaining || 0) > 0 ? "outline" : "destructive"} className={(stats.usage.transcriptionRemaining || 0) > 0 ? "text-green-600 border-green-200 bg-green-50" : ""}>
+                                                {Math.round(stats.usage.transcriptionUsed || 0)} Min Usados
+                                            </Badge>
+                                        </div>
+                                        {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit !== -1 && (
+                                            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                <div
+                                                    className={`h-full rounded-full ${(stats.usage.transcriptionRemaining || 0) <= 0 ? 'bg-red-500' : 'bg-green-500'}`}
+                                                    style={{ width: `${Math.min(100, ((stats.usage.transcriptionUsed || 0) / stats.usage.transcriptionLimit) * 100)}%` }}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <p className="text-xs text-muted-foreground pt-2 border-t">
+                                        * Los límites mensuales se reinician el {new Date(stats.usage.nextReset).toLocaleDateString()}.
+                                    </p>
+                                </>
+                            )}
+                        </div>
+                    )}
+
                     {user?.subscription && (
                         <div className="pt-4 border-t flex justify-end">
                             <Button variant="outline" onClick={() => window.open('https://billing.stripe.com/p/login/test', '_blank')}>
@@ -259,105 +353,7 @@ export default function ProfilePage() {
                 </CardContent>
             </Card>
 
-            {/* Simulator Usage Card */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Activity className="w-5 h-5 text-blue-600" />
-                        Uso del Simulador
-                    </CardTitle>
-                    <CardDescription>Monitoriza tu uso mensual del simulador clínico.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    {!stats?.usage ? (
-                        <div className="text-center py-4 text-slate-500">Cargando estadísticas...</div>
-                    ) : (
-                        <>
-                            {/* Clients Usage */}
-                            {(stats.usage.clientsLimit !== undefined) && (
-                                <div className="space-y-2">
-                                    <div className="flex justify-between items-center">
-                                        <div>
-                                            <p className="text-sm font-medium text-slate-700">Pacientes Activos</p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {stats.usage.clientsLimit === -1
-                                                    ? "Pacientes Ilimitados"
-                                                    : `${stats.usage.clientsUsed || 0} de ${stats.usage.clientsLimit} pacientes`}
-                                            </p>
-                                        </div>
-                                        <Badge variant={stats.usage.clientsLimit !== -1 && (stats.usage.clientsUsed || 0) >= stats.usage.clientsLimit ? "destructive" : "secondary"}>
-                                            {stats.usage.clientsUsed || 0} {stats.usage.clientsLimit === -1 ? "Activos" : `/ ${stats.usage.clientsLimit}`}
-                                        </Badge>
-                                    </div>
-                                    {stats.usage.clientsLimit !== -1 && (
-                                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full rounded-full ${(stats.usage.clientsUsed || 0) >= stats.usage.clientsLimit ? 'bg-red-500' : 'bg-purple-600'}`}
-                                                style={{ width: `${Math.min(100, ((stats.usage.clientsUsed || 0) / stats.usage.clientsLimit) * 100)}%` }}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            )}
 
-                            {/* Clinical Cases */}
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-700">Casos Clínicos</p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} restantes de ${stats.usage.limit}`}
-                                        </p>
-                                    </div>
-                                    <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
-                                        {stats.usage.used} Usados
-                                    </Badge>
-                                </div>
-                                {stats.usage.limit < 1000 && (
-                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                        <div
-                                            className={`h-full rounded-full ${stats.usage.remaining === 0 ? 'bg-red-500' : 'bg-blue-600'}`}
-                                            style={{ width: `${Math.min(100, (stats.usage.used / stats.usage.limit) * 100)}%` }}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Live Minutes (Moved from Simulator Page) */}
-                            {/* Transcription Minutes */}
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-700">Minutos de Transcripción</p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit === -1
-                                                ? "Ilimitado"
-                                                : stats.usage.transcriptionLimit !== undefined
-                                                    ? `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${stats.usage.transcriptionLimit}`
-                                                    : "Calculando..."}
-                                        </p>
-                                    </div>
-                                    <Badge variant={(stats.usage.transcriptionRemaining || 0) > 0 ? "outline" : "destructive"} className={(stats.usage.transcriptionRemaining || 0) > 0 ? "text-green-600 border-green-200 bg-green-50" : ""}>
-                                        {Math.round(stats.usage.transcriptionUsed || 0)} Min Usados
-                                    </Badge>
-                                </div>
-                                {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit !== -1 && (
-                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                        <div
-                                            className={`h-full rounded-full ${(stats.usage.transcriptionRemaining || 0) <= 0 ? 'bg-red-500' : 'bg-green-500'}`}
-                                            style={{ width: `${Math.min(100, ((stats.usage.transcriptionUsed || 0) / stats.usage.transcriptionLimit) * 100)}%` }}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-
-                            <p className="text-xs text-muted-foreground pt-2 border-t">
-                                * El límite se reinicia mensualmente (Próximo: {new Date(stats.usage.nextReset).toLocaleDateString()}).
-                            </p>
-                        </>
-                    )}
-                </CardContent>
-            </Card>
 
             {/* Security Card */}
             <Card>
