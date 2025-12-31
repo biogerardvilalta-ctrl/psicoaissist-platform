@@ -5,6 +5,12 @@ export enum PlanLimits {
   BASIC_SIMULATOR_CASES = 0,
   BASIC_SIMULATOR_MINUTES = 0,
 
+  FREE_MAX_CLIENTS = 3,
+  FREE_TRANSCRIPTION_MINUTES = 30, // 30 mins demo
+  FREE_REPORTS = 5,
+  FREE_SIMULATOR_CASES = 0,
+  FREE_SIMULATOR_MINUTES = 0,
+
   PRO_MAX_CLIENTS = -1,
   PRO_TRANSCRIPTION_MINUTES = 900, // 15 hours
   PRO_REPORTS = -1,
@@ -57,6 +63,14 @@ export interface PlanFeatures {
 }
 
 export const PLAN_FEATURES: Record<string, PlanFeatures> = {
+  demo: {
+    maxClients: PlanLimits.FREE_MAX_CLIENTS,
+    transcriptionMinutes: PlanLimits.FREE_TRANSCRIPTION_MINUTES,
+    reportsPerMonth: PlanLimits.FREE_REPORTS,
+    simulatorCases: PlanLimits.FREE_SIMULATOR_CASES,
+    simulatorMinutes: PlanLimits.FREE_SIMULATOR_MINUTES,
+    supportLevel: 'email',
+  },
   basic: {
     maxClients: PlanLimits.BASIC_MAX_CLIENTS,
     transcriptionMinutes: PlanLimits.BASIC_TRANSCRIPTION_MINUTES,

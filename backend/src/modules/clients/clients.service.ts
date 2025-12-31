@@ -4,6 +4,7 @@ import { EncryptionService, EncryptedData } from '../encryption/encryption.servi
 import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto } from './dto/clients.dto';
 import { UserRole, AuditAction, ConsentType } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
+import { UsageLimitsService } from '../payments/usage-limits.service';
 
 interface ClientPersonalData {
     firstName: string;
@@ -23,7 +24,9 @@ export class ClientsService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly encryptionService: EncryptionService,
+
         private readonly auditService: AuditService,
+        private readonly usageLimitsService: UsageLimitsService,
     ) { }
 
     /**
@@ -60,6 +63,8 @@ export class ClientsService {
     }
 
     async create(userId: string, createClientDto: CreateClientDto | CreateClientEncryptedDto): Promise<ClientResponseDto> {
+
+
         try {
             let packedData: Buffer;
             let keyId: string;
@@ -116,6 +121,9 @@ export class ClientsService {
                 targetUserId = createClientDto.professionalId;
             }
 
+            // Enforce Plan Limits for the TARGET user (the one who owns the client)
+            await this.usageLimitsService.checkClientLimit(targetUserId);
+
             // Save to DB
             const client = await this.prisma.client.create({
                 data: {
@@ -130,7 +138,7 @@ export class ClientsService {
                 },
             });
 
-            this.logger.log(`Client created for user ${userId}`);
+            this.logger.log(`Client created for user ${targetUserId} by ${userId}`);
 
             await this.auditService.log({
                 userId,

@@ -33,6 +33,7 @@ import { ClientsAPI, Client } from '@/lib/clients-api';
 import { UserAPI } from '@/lib/user-api';
 import { useRole } from '@/hooks/useRole';
 import { User } from '@/types/auth';
+import { UpgradeModal } from '@/components/shared/UpgradeModal';
 
 const formSchema = z.object({
     professionalId: z.string().optional(), // Required for Agenda Managers, will validate conditionally
@@ -187,6 +188,9 @@ export default function NewSessionPage() {
         fetchAvailability();
     }, [selectedDate, selectedProfessionalId, selectedGroupId, isAgendaManager]);
 
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [limitMessage, setLimitMessage] = useState('');
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Validate professional selection for Agenda Managers
         if (isAgendaManager() && !values.professionalId) {
@@ -221,6 +225,15 @@ export default function NewSessionPage() {
             router.refresh();
         } catch (error: any) {
             console.error("Failed to create session", error);
+
+            // Check for 403 Forbidden specifically for limits 
+            if (error?.response?.status === 403 || error?.status === 403 || error?.message?.includes('limit')) {
+                setLimitMessage(error.message || 'Límite de transcripción/sesiones alcanzado');
+                setShowUpgradeModal(true);
+                // Don't show toast if showing modal
+                return;
+            }
+
             toast({
                 variant: 'destructive',
                 title: 'Error al agendar',
@@ -248,6 +261,12 @@ export default function NewSessionPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    <UpgradeModal
+                        isOpen={showUpgradeModal}
+                        onClose={() => setShowUpgradeModal(false)}
+                        limitType="transcription"
+                        message={limitMessage}
+                    />
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 

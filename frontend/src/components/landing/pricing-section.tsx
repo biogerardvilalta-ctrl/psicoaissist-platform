@@ -24,7 +24,7 @@ const plans = [
       'Sin Simulador Clínico',
       'Sin Sincronización Google Calendar',
     ],
-    cta: 'Comenzar 14 días gratis',
+    cta: 'Contratar Basic',
     popular: false,
     color: 'border-slate-200',
     buttonColor: 'bg-white hover:bg-slate-50 text-slate-900 border border-slate-200',
@@ -43,7 +43,7 @@ const plans = [
       'Soporte Prioritario',
     ],
     limitations: [],
-    cta: 'Prueba Pro 14 días gratis',
+    cta: 'Contratar Pro',
     popular: true,
     color: 'border-blue-500 ring-2 ring-blue-500 relative',
     buttonColor: 'bg-blue-600 hover:bg-blue-700 text-white',
@@ -62,7 +62,7 @@ const plans = [
       'Branding Personalizado',
     ],
     limitations: [],
-    cta: 'Prueba Premium 14 días gratis',
+    cta: 'Contratar Premium',
     popular: false,
     color: 'border-purple-500',
     buttonColor: 'bg-purple-600 hover:bg-purple-700 text-white',
@@ -83,7 +83,7 @@ const plans = [
     limitations: [
       'Sin API Access',
     ],
-    cta: 'Prueba Business 14 días gratis',
+    cta: 'Contratar Business',
     popular: false,
     color: 'border-indigo-500',
     buttonColor: 'bg-indigo-600 hover:bg-indigo-700 text-white',
@@ -151,7 +151,7 @@ export default function PricingSection() {
             Planes diseñados para cada etapa profesional
           </p>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
-            Comienza con <strong>14 días gratis</strong> en todos los planes. Sin sorpresas.
+            Empieza gratis con nuestro Plan Demo. Suscríbete cuando necesites más.
           </p>
         </div>
 

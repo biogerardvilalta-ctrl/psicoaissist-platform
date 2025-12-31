@@ -202,9 +202,9 @@ export class AuthService {
             create: {
               stripeSubscriptionId: `sub_test_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
               status: 'active',
-              planType: 'pro',
+              planType: 'demo',
               currentPeriodStart: new Date(),
-              currentPeriodEnd: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 14)), // 14 days trial
             }
           }
         },

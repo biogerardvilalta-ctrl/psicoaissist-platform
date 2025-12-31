@@ -135,7 +135,35 @@ export function TermsContent() {
                         </div>
 
                         <div className="space-y-6 mt-4">
-                            {/* BASIC */}
+                            {/* DEMO PLAN - ADDED */}
+                            <div className="p-5 bg-slate-50 rounded-lg border border-slate-200">
+                                <h3 className="font-bold text-slate-800 text-lg flex justify-between items-center mb-3">
+                                    <span className="flex items-center gap-2">🌱 Demo (Gratuït / Limitada)</span>
+                                    <span className="text-base bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs">Prova 14 dies</span>
+                                </h3>
+                                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Inclou:</h4>
+                                        <ul className="space-y-1 text-slate-700 list-disc pl-4 text-xs">
+                                            <li><strong>3 Pacients Actius</strong> màxim.</li>
+                                            <li><strong>30 Minuts Transcripció + IA</strong> (Prova).</li>
+                                            <li><strong>5 Informes</strong> mensuals.</li>
+                                            <li>Accés bàsic a la plataforma.</li>
+                                        </ul>
+                                    </div>
+                                    <div className="bg-white/50 p-2 rounded border border-slate-100">
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> Limitacions:</h4>
+                                        <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
+                                            <li><strong>Sense Simulador Clínic</strong>.</li>
+                                            <li>Caducitat automàtica als 14 dies.</li>
+                                            <li>Sense sincronització de calendari.</li>
+                                            <li>Sense suport personalitzat.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* BASIC PLAN */}
                             <div className="p-5 bg-slate-50 rounded-lg border border-slate-200">
                                 <h3 className="font-bold text-slate-800 text-lg flex justify-between items-center mb-3">
                                     <span className="flex items-center gap-2">🥉 Basic</span>

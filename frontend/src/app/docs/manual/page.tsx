@@ -142,7 +142,43 @@ export default function ManualPage() {
 
                             <h3 className="mt-6 mb-4 text-xl font-bold text-slate-800">1. Planes Individuales</h3>
                             <div className="space-y-6 mb-8 not-prose">
-                                {/* BASIC PLAN */}
+                                {/* DEMO PLAN */}
+                                <div className="p-6 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-slate-800">🌱 Demo (Gratuito)</h4>
+                                            <p className="text-sm text-slate-500">Para probar la plataforma</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-2xl font-bold text-slate-900">0€<span className="text-xs text-slate-500 font-normal">/para siempre</span></p>
+                                            <p className="text-xs text-orange-600">Límite 14 días</p>
+                                        </div>
+                                    </div>
+                                    {/* DEMO PLAN - COMPARATIVE MATRIX */}
+                                    <div className="space-y-2 mt-4 text-sm text-slate-600">
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100">
+                                            <span>Pacientes Activos</span>
+                                            <span className="font-semibold">3</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100">
+                                            <span>Transcripción + IA</span>
+                                            <span className="font-semibold">30 Minutos</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100 opacity-50">
+                                            <span>Informes</span>
+                                            <span className="font-semibold">5/mes</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1 border-b border-slate-100 opacity-50">
+                                            <span>Simulador Clínico</span>
+                                            <span className="flex items-center text-red-400 font-medium"><span className="mr-1">✕</span> No</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-1">
+                                            <span>Soporte</span>
+                                            <span>Email</span>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className="p-6 bg-slate-50 rounded-xl border border-slate-200">
                                     <div className="flex justify-between items-start mb-4">
                                         <div>

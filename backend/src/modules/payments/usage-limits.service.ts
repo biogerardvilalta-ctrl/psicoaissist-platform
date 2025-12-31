@@ -23,8 +23,8 @@ export class UsageLimitsService {
       },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active') {
-      throw new ForbiddenException('Active subscription required');
+    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+      throw new ForbiddenException('Active subscription required or trial expired');
     }
 
     const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
@@ -55,8 +55,8 @@ export class UsageLimitsService {
       include: { subscription: true },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active') {
-      throw new ForbiddenException('Active subscription required');
+    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+      throw new ForbiddenException('Active subscription required or trial expired');
     }
 
     const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
@@ -120,8 +120,8 @@ export class UsageLimitsService {
       },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active') {
-      throw new ForbiddenException('Active subscription required');
+    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+      throw new ForbiddenException('Active subscription required or trial expired');
     }
 
     const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
@@ -154,8 +154,8 @@ export class UsageLimitsService {
       },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active') {
-      throw new ForbiddenException('Active subscription required');
+    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+      throw new ForbiddenException('Active subscription required or trial expired');
     }
 
     const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];

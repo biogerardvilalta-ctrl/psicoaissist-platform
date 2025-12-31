@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { UpgradeModal } from "@/components/shared/UpgradeModal";
 
 export default function NewReportPage() {
     const router = useRouter();
@@ -123,6 +124,9 @@ export default function NewReportPage() {
     const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
     // Handlers
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [limitMessage, setLimitMessage] = useState('');
+
     const handleGenerateDraft = async () => {
         if (selectedSessionIds.length === 0) {
             toast({ title: "Selecciona sesiones", description: "Debes seleccionar al menos una sesión para analizar.", variant: "destructive" });
@@ -139,8 +143,15 @@ export default function NewReportPage() {
             setDraftContent(result.content);
             setReportTitle(`Informe de ${reportType === ReportType.PROGRESS ? 'Evolución' : 'Alta'} - ${new Date().toLocaleDateString()}`);
             nextStep(); // Move to Edit step
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
+            // Check for 403 Forbidden specifically for limits (although generate draft usually doesn't have limit, but maybe AI limit)
+            if (error?.response?.status === 403 || error?.status === 403 || error?.message?.includes('limit')) {
+                setLimitMessage(error.message || 'Límite alcanzado');
+                setShowUpgradeModal(true);
+                return;
+            }
+
             toast({
                 title: "Error generando borrador",
                 description: "No se pudo conectar con el servicio de IA.",
@@ -176,8 +187,15 @@ export default function NewReportPage() {
                 setSavedReportStatus(ReportStatus.DRAFT);
                 nextStep();
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
+            // Check for 403 Forbidden
+            if (error?.response?.status === 403 || error?.status === 403 || error?.message?.includes('limit')) {
+                setLimitMessage(error.message || 'Límite de informes alcanzado');
+                setShowUpgradeModal(true);
+                return;
+            }
+
             toast({
                 title: "Error al guardar borrador",
                 description: "No se pudo guardar el borrador.",
@@ -216,8 +234,15 @@ export default function NewReportPage() {
                 setSavedReportStatus(ReportStatus.COMPLETED);
                 nextStep();
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
+            // Check for 403 Forbidden
+            if (error?.response?.status === 403 || error?.status === 403 || error?.message?.includes('limit')) {
+                setLimitMessage(error.message || 'Límite de informes alcanzado');
+                setShowUpgradeModal(true);
+                return;
+            }
+
             toast({
                 title: "Error al guardar",
                 description: "No se pudo guardar el informe.",
@@ -532,6 +557,12 @@ export default function NewReportPage() {
             </div>
 
             {/* VALIDATION MODAL */}
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
+                limitType="reports"
+                message={limitMessage}
+            />
             <Dialog open={showFinalizeModal} onOpenChange={setShowFinalizeModal}>
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>

@@ -55,7 +55,7 @@ export function HeroSection() {
             {/* CTAs */}
             <div className="mt-8 flex flex-col sm:flex-row sm:gap-4 items-center sm:items-start">
               <Link
-                href="/register"
+                href="/auth/register"
                 className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-3 text-base font-medium text-white shadow-lg transition-all hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto"
               >
                 Comenzar gratis

@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { UpgradeModal } from '@/components/shared/UpgradeModal';
 
 const formSchema = z.object({
     professionalId: z.string().optional(), // Required for Agenda Managers
@@ -86,6 +87,11 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
         },
     });
 
+
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [limitType, setLimitType] = useState<'clients' | 'reports' | 'transcription' | 'simulator'>('clients');
+    const [limitMessage, setLimitMessage] = useState('');
+
     const handleSubmit = async (values: ClientFormValues) => {
         setIsSubmitting(true);
         setError(null);
@@ -101,6 +107,15 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
             await onSubmit(apiValues as any);
         } catch (err: any) {
             console.error(err);
+            // Check for 403 Forbidden specifically for limits
+            if (err?.response?.status === 403 || err?.status === 403 || err?.message?.includes('limit') || err?.message?.includes('upgrade')) {
+                setLimitType('clients');
+                setLimitMessage(err.message || 'Límite de clientes alcanzado');
+                setShowUpgradeModal(true);
+                // Don't set generic error if we are showing the modal
+                return;
+            }
+
             setError(err.message || "Ocurrió un error al guardar el cliente.");
         } finally {
             setIsSubmitting(false);
@@ -109,6 +124,13 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
 
     return (
         <div className="space-y-6">
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
+                limitType={limitType}
+                message={limitMessage}
+            />
+
             {error && (
                 <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />

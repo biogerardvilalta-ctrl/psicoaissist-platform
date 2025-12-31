@@ -17,6 +17,7 @@ import { ApiError } from '@/lib/http-client';
 import Link from 'next/link';
 import { EvolutionChart } from './components/EvolutionChart';
 import { ReportsHistory } from './components/ReportsHistory';
+import { UpgradeModal } from '@/components/shared/UpgradeModal';
 
 // Simple hook mock if not available, or assume it exists. 
 // Given previous context, it likely exists or I should use standard web speech api. 
@@ -775,33 +776,12 @@ export default function SimulatorPage() {
             </Dialog>
 
             {/* Limit Reached Modal */}
-            <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
-                <DialogContent className="max-w-md">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 text-amber-600">
-                            <span className="text-2xl">⚠️</span> Límite Alcanzado
-                        </DialogTitle>
-                        <DialogDescription className="pt-2 text-base text-gray-600">
-                            {limitMessage || "Has alcanzado el límite de casos mensuales. Para continuar practicando, necesitas ampliar tu plan."}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex flex-col gap-3 mt-4">
-                        <Link href="/dashboard/settings" passHref>
-                            <Button className="w-full bg-amber-500 hover:bg-amber-600">
-                                🚀 Actualizar Plan (Ilimitado)
-                            </Button>
-                        </Link>
-                        <Link href="/dashboard/settings" passHref>
-                            <Button variant="outline" className="w-full">
-                                📩 Invitar Colegas (+5 casos/ref)
-                            </Button>
-                        </Link>
-                        <Button variant="ghost" onClick={() => setShowLimitModal(false)} className="text-gray-400">
-                            Cerrar
-                        </Button>
-                    </div>
-                </DialogContent>
-            </Dialog>
+            <UpgradeModal
+                isOpen={showLimitModal}
+                onClose={() => setShowLimitModal(false)}
+                limitType="simulator"
+                message={limitMessage}
+            />
         </div>
     );
 }

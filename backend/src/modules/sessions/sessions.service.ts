@@ -4,6 +4,7 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { CreateSessionDto, UpdateSessionDto, SessionStatus, SessionType } from './dto/sessions.dto';
 import { AiService } from '../ai/ai.service';
+import { UsageLimitsService } from '../payments/usage-limits.service';
 
 interface EncryptedSessionData {
     notes?: string;
@@ -22,6 +23,7 @@ export class SessionsService {
         private aiService: AiService,
         private auditService: AuditService,
         private googleService: GoogleService,
+        private usageLimitsService: UsageLimitsService,
     ) { }
 
     // ... (keep private methods)
@@ -84,6 +86,10 @@ export class SessionsService {
             select: { defaultDuration: true }
         });
         const durationMinutes = user?.defaultDuration || 60;
+
+        // Enforce Plan Limits (Transcription/Session Minutes)
+        // Convert minutes to hours for the check
+        await this.usageLimitsService.checkTranscriptionLimit(targetUserId, durationMinutes / 60);
 
         // 3. Create Session
         const startDate = new Date(createSessionDto.startTime);

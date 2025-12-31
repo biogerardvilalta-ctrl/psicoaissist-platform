@@ -9,6 +9,7 @@ import { PSYCHOLOGICAL_REPORTS } from '../../config/psychological-reports.config
 import { PdfService } from './pdf.service';
 import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '@prisma/client';
+import { UsageLimitsService } from '../payments/usage-limits.service';
 
 @Injectable()
 export class ReportsService {
@@ -18,9 +19,13 @@ export class ReportsService {
         private readonly aiService: AiService,
         private readonly pdfService: PdfService,
         private readonly auditService: AuditService,
+        private readonly usageLimitsService: UsageLimitsService,
     ) { }
 
     async create(userId: string, createReportDto: CreateReportDto) {
+        // Enforce Plan Limits
+        await this.usageLimitsService.checkReportsLimit(userId);
+
         console.log(`[ReportsService] Creating report for User: ${userId}`, createReportDto);
         // Prepare content for encryption
         const initialContent = createReportDto.content || '';
