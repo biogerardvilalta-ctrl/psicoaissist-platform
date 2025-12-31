@@ -422,20 +422,62 @@ export default function ManualPage() {
                                             </li>
                                         </ul>
                                     </div>
-                                    {/* Simulator Pack */}
-                                    <div className="p-5 bg-white rounded-xl border border-violet-200 shadow-sm">
-                                        <h4 className="font-bold text-violet-900 mb-2">🎓 Pack Simulador</h4>
-                                        <p className="text-2xl font-bold text-violet-700 mb-1">15€<span className="text-sm font-normal text-slate-500">/pack</span></p>
-                                        <p className="text-xs text-slate-500 mb-4">Disponible para planes Pro+</p>
-                                        <p className="text-sm text-slate-600 mb-2 font-medium">Incluye:</p>
-                                        <ul className="text-xs text-slate-600 space-y-1">
-                                            <li>• <strong>10 Casos Clínicos</strong> adicionales</li>
-                                            <li>• Práctica ilimitada en esos casos</li>
-                                            <li>• Feedback detallado de IA</li>
-                                        </ul>
-                                    </div>
+                                </div>
+                            </div>
+
+                            <h3 className="mt-8 mb-4 text-xl font-bold text-slate-800">3. Extras y Complementos</h3>
+                            <div className="grid md:grid-cols-2 gap-4 mb-8 not-prose">
+                                {/* Agenda Manager */}
+                                <div className="p-5 bg-white rounded-xl border border-indigo-200 shadow-sm">
+                                    <h4 className="font-bold text-indigo-900 mb-2">👤 Agenda Manager</h4>
+                                    <p className="text-2xl font-bold text-indigo-700 mb-1">15€<span className="text-sm font-normal text-slate-500">/mes</span></p>
+                                    <p className="text-xs text-slate-500 mb-4">Disponible para planes Pro+</p>
+                                    <p className="text-sm text-slate-600 mb-2 font-medium">Incluye:</p>
+                                    <ul className="text-xs text-slate-600 space-y-1">
+                                        <li>• <strong>1 Usuario Administrativo</strong> extra</li>
+                                        <li>• Gestión de citas y calendario</li>
+                                        <li>• Sin acceso a historias clínicas (Privacidad)</li>
+                                    </ul>
                                 </div>
 
+                                {/* Minute Pack */}
+                                <div className="p-5 bg-white rounded-xl border border-blue-200 shadow-sm">
+                                    <h4 className="font-bold text-blue-900 mb-2">⚡ Pack Minutos IA</h4>
+                                    <p className="text-2xl font-bold text-blue-700 mb-1">15€<span className="text-sm font-normal text-slate-500">/pack</span></p>
+                                    <p className="text-xs text-slate-500 mb-4">Disponible para planes Pro+</p>
+                                    <p className="text-sm text-slate-600 mb-2 font-medium">Incluye:</p>
+                                    <ul className="text-xs text-slate-600 space-y-1">
+                                        <li>• <strong>500 Minutos</strong> de IA extra</li>
+                                        <li>• No caducan (mientras suscripción activa)</li>
+                                        <li>• Para picos de trabajo puntuales</li>
+                                    </ul>
+                                </div>
+
+                                {/* Onboarding */}
+                                <div className="p-5 bg-white rounded-xl border border-purple-200 shadow-sm">
+                                    <h4 className="font-bold text-purple-900 mb-2">🚀 Onboarding Assistit</h4>
+                                    <p className="text-2xl font-bold text-purple-700 mb-1">50€<span className="text-sm font-normal text-slate-500">/único</span></p>
+                                    <p className="text-xs text-slate-500 mb-4">Servicio de Puesta en Marcha</p>
+                                    <p className="text-sm text-slate-600 mb-2 font-medium">Incluye:</p>
+                                    <ul className="text-xs text-slate-600 space-y-1">
+                                        <li>• Sesión 1:1 de 45 minutos</li>
+                                        <li>• Configuración inicial y migración de datos</li>
+                                        <li>• Formación básica de uso</li>
+                                    </ul>
+                                </div>
+
+                                {/* Simulator Pack */}
+                                <div className="p-5 bg-white rounded-xl border border-violet-200 shadow-sm">
+                                    <h4 className="font-bold text-violet-900 mb-2">🎓 Pack Simulador</h4>
+                                    <p className="text-2xl font-bold text-violet-700 mb-1">15€<span className="text-sm font-normal text-slate-500">/pack</span></p>
+                                    <p className="text-xs text-slate-500 mb-4">Disponible para planes Pro+</p>
+                                    <p className="text-sm text-slate-600 mb-2 font-medium">Incluye:</p>
+                                    <ul className="text-xs text-slate-600 space-y-1">
+                                        <li>• <strong>10 Casos Clínicos</strong> adicionales</li>
+                                        <li>• Práctica ilimitada en esos casos</li>
+                                        <li>• Feedback detallado de IA</li>
+                                    </ul>
+                                </div>
                             </div>
 
                             <div className="mt-12 p-6 bg-red-50 rounded-xl border border-red-100">
@@ -624,7 +666,7 @@ export default function ManualPage() {
                         </section>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
