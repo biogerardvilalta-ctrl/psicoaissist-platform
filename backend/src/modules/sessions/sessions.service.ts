@@ -5,6 +5,7 @@ import { EncryptionService } from '../encryption/encryption.service';
 import { CreateSessionDto, UpdateSessionDto, SessionStatus, SessionType } from './dto/sessions.dto';
 import { AiService } from '../ai/ai.service';
 import { UsageLimitsService } from '../payments/usage-limits.service';
+import { PLAN_FEATURES } from '../payments/plan-features';
 
 interface EncryptedSessionData {
     notes?: string;
@@ -432,7 +433,25 @@ export class SessionsService {
                 const transText = transcriptionToReturn || '';
 
                 // Fetch user language for analysis
-                const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { preferredLanguage: true } });
+                const user = await this.prisma.user.findUnique({
+                    where: { id: userId },
+                    select: {
+                        preferredLanguage: true,
+                        subscription: true // Fetch subscription to check plan features
+                    }
+                });
+
+                // Check if user has Advanced Analytics feature
+                const planFeatures = user?.subscription ? PLAN_FEATURES[user.subscription.planType] : null;
+                const hasAdvancedAnalytics = planFeatures?.advancedAnalytics || false;
+
+                if (!hasAdvancedAnalytics) {
+                    console.log(`[SessionsService] Skipping AI Analysis for user ${userId} (Plan: ${user?.subscription?.planType}) - feature missing.`);
+                    // We return early, skipping the AI update. 
+                    // Session is already updated with status COMPLETED above.
+                    return this.mapToDto(updatedSession, notesToReturn, transcriptionToReturn);
+                }
+
                 const userLang = user?.preferredLanguage || 'ca';
 
                 const analysis = await this.aiService.generateSessionAnalysis(id, notesText, transText, isMinor, userLang);

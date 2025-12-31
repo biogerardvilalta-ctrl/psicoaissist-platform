@@ -4,9 +4,10 @@ import { AiController } from './ai.controller';
 import { AiService } from './ai.service';
 import { TranscriptionService } from './transcription.service';
 import { GeminiProvider } from './providers/gemini.provider';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
-    imports: [ConfigModule],
+    imports: [ConfigModule, PaymentsModule],
     controllers: [AiController],
     providers: [
         AiService,

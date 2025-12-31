@@ -24,6 +24,10 @@ export interface User {
   preferredLanguage?: string
   hourlyRate?: number
   googleImportCalendar?: boolean
+  subscription?: {
+    planType: string
+    [key: string]: any
+  }
 }
 
 export enum UserRole {

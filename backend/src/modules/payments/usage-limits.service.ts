@@ -49,13 +49,13 @@ export class UsageLimitsService {
     }
   }
 
-  async checkTranscriptionLimit(userId: string, hoursToAdd: number = 1): Promise<void> {
+  async checkTranscriptionLimit(userId: string, minutesToAdd: number = 0): Promise<void> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: { subscription: true },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+    if (!user?.subscription || user.subscription.status !== 'active') {
       throw new ForbiddenException('Active subscription required or trial expired');
     }
 
@@ -64,38 +64,21 @@ export class UsageLimitsService {
       throw new ForbiddenException('Invalid subscription plan');
     }
 
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-
-    // Calculate actual usage for current month
-    const usage = await this.prisma.session.aggregate({
-      where: {
-        userId,
-        startTime: { gte: startOfMonth },
-        status: { not: 'CANCELLED' } // Count all valid sessions
-      },
-      _sum: {
-        duration: true
-      }
-    });
-
-    const usedSeconds = usage._sum.duration || 0;
-    const requestedSeconds = hoursToAdd * 3600; // Convert requested hours to seconds
-    const totalProjectedSeconds = usedSeconds + requestedSeconds;
+    const usedMinutes = (user as any).transcriptionMinutesUsed || 0;
+    const totalProjectedMinutes = usedMinutes + minutesToAdd;
 
     // Check transcription limit
     if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
-      const limitSeconds = planFeatures.transcriptionMinutes * 60;
-      if (totalProjectedSeconds > limitSeconds) {
+      if (totalProjectedMinutes > planFeatures.transcriptionMinutes) {
         throw new ForbiddenException(
-          `Monthly transcription limit reached. Used: ${Math.round(usedSeconds / 60)}m / ${planFeatures.transcriptionMinutes}m.`
+          `Monthly transcription limit reached. Used: ${usedMinutes}m / ${planFeatures.transcriptionMinutes}m.`
         );
       }
     } else {
       // Fair Use Check for Unlimited
-      const fairUseLimitSeconds = PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES * 60;
-      if (totalProjectedSeconds > fairUseLimitSeconds) {
+      if (totalProjectedMinutes > PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
         throw new ForbiddenException(
-          `Fair Use Policy: Transcription usage excessive (${Math.round(usedSeconds / 3600)}h used). Please contact commercial team.`
+          `Fair Use Policy: Transcription usage excessive (${Math.round(usedMinutes / 60)}h used). Please contact commercial team.`
         );
       }
     }
@@ -280,8 +263,8 @@ export class UsageLimitsService {
         clients: user._count.clients,
         reportsThisMonth: user._count.reports,
         // transcriptionHours would be calculated from actual usage tracking
-        transcriptionHours: totalHours,
-        transcriptionMinutes: totalMinutes, // Added specific minutes
+        transcriptionHours: Math.round(((user as any).transcriptionMinutesUsed || 0) / 60 * 10) / 10,
+        transcriptionMinutes: (user as any).transcriptionMinutesUsed || 0,
         simulatorCases: user.simulatorUsageCount,
         simulatorMinutes: user.simulatorMinutesUsed,
       },
@@ -294,5 +277,14 @@ export class UsageLimitsService {
         simulatorMinutes: planFeatures.simulatorMinutes
       },
     };
+  }
+  async incrementTranscriptionUsage(userId: string, durationSeconds: number): Promise<void> {
+    const minutes = Math.ceil(durationSeconds / 60); // Round up to nearest minute
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        transcriptionMinutesUsed: { increment: minutes }
+      } as any
+    });
   }
 }

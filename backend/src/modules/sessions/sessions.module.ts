@@ -6,11 +6,12 @@ import { EncryptionModule } from '../encryption/encryption.module';
 import { AiModule } from '../ai/ai.module';
 import { PrismaModule } from '../../common/prisma/prisma.module';
 import { PaymentsModule } from '../payments/payments.module';
+import { AuthModule } from '../auth/auth.module';
 
 import { GoogleModule } from '../google/google.module';
 
 @Module({
-    imports: [EncryptionModule, PrismaModule, AiModule, GoogleModule, PaymentsModule],
+    imports: [EncryptionModule, PrismaModule, AiModule, GoogleModule, PaymentsModule, AuthModule],
     controllers: [SessionsController],
     providers: [SessionsService, SessionsGateway],
     exports: [SessionsService],

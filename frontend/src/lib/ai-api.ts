@@ -103,9 +103,13 @@ export const AiAPI = {
         formData.append('audio', audioBlob, 'chunk.webm');
 
         // We use fetch directly here because httpClient might be configured for JSON
+        const token = localStorage.getItem('psychoai_access_token');
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1/ai/transcribe`, {
             method: 'POST',
             body: formData,
+            headers: {
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            }
         });
         return response.json();
     }

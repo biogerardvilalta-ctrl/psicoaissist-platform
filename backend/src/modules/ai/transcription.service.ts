@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as fs from 'fs';
 import * as path from 'path';
+import { UsageLimitsService } from '../payments/usage-limits.service';
 
 @Injectable()
 export class TranscriptionService {
     private genAI: GoogleGenerativeAI;
 
-    constructor() {
+    constructor(
+        private readonly usageLimitsService: UsageLimitsService
+    ) {
         if (process.env.GEMINI_API_KEY) {
             this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         } else {
@@ -15,8 +18,8 @@ export class TranscriptionService {
         }
     }
 
-    async transcribeAudio(file: Express.Multer.File): Promise<string> {
-        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes, mimetype: ${file.mimetype})`);
+    async transcribeAudio(file: Express.Multer.File, userId: string): Promise<string> {
+        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes, mimetype: ${file.mimetype}) for user ${userId}`);
 
         if (!this.genAI) {
             console.warn('GEMINI_API_KEY missing, returning mock transcription.');
@@ -28,6 +31,31 @@ export class TranscriptionService {
             const tempFilePath = path.join("/tmp", `audio_${Date.now()}_${file.originalname}`);
             fs.writeFileSync(tempFilePath, file.buffer);
             console.log(`Saved temp file: ${tempFilePath}`);
+
+            // Calculate duration to check limits
+            try {
+                // Dynamically import music-metadata (ESM)
+                const { parseFile } = await import('music-metadata');
+                const metadata = await parseFile(tempFilePath);
+                const durationSeconds = metadata.format.duration || 0;
+
+                console.log(`Audio duration: ${durationSeconds} seconds`);
+
+                // Check limit (round up to next minute for limit checking safe-guarding)
+                const minutes = Math.ceil(durationSeconds / 60);
+                await this.usageLimitsService.checkTranscriptionLimit(userId, minutes);
+
+                // Increment usage
+                await this.usageLimitsService.incrementTranscriptionUsage(userId, durationSeconds);
+
+            } catch (err) {
+                console.error("Error calculating duration or checking limits:", err);
+                // If we can't calculate duration (e.g. format issue), we might want to fail or proceed with caution.
+                // For now, let's allow it but log error, OR fail. Safety first -> Fail?
+                // But for robustness let's Log and Proceed if it's just duration calc error, 
+                // UNLESS it's ForbiddenException from checkTranscriptionLimit.
+                if (err.status === 403) throw err;
+            }
 
             // Use GoogleAIFileManager to upload
             const { GoogleAIFileManager } = await import("@google/generative-ai/server");

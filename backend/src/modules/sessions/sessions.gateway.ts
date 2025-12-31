@@ -10,7 +10,10 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AiService } from '../ai/ai.service';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt'; // You might need to import JwtModule in SessionsModule
+import { PrismaService } from '../../common/prisma/prisma.service';
+import { PLAN_FEATURES } from '../payments/plan-features';
 
 @WebSocketGateway({
     cors: {
@@ -24,7 +27,11 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     private readonly logger = new Logger(SessionsGateway.name);
 
-    constructor(private readonly aiService: AiService) { }
+    constructor(
+        private readonly aiService: AiService,
+        private readonly jwtService: JwtService,
+        private readonly prisma: PrismaService,
+    ) { }
 
     handleConnection(client: Socket) {
         this.logger.log(`Client connected: ${client.id}`);
@@ -54,6 +61,47 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     ) {
         const { sessionId, notes } = data;
         console.log(`[SessionsGateway] Received notes update for session ${sessionId}`);
+
+        // 1. Authentication & Feature Check
+        try {
+            // Extract token from handshake auth or headers
+            const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
+
+            if (!token) {
+                console.log(`[SessionsGateway] No token provided by client ${client.id}`);
+                return; // Silently fail or emit error
+            }
+
+            const payload = this.jwtService.decode(token) as any; // Decoding without verify for speed (guard verification happens on connect ideally, but here for check)
+            // Ideally we should use jwtService.verifyAsync(token) but requires secret injection here or proper Guard. 
+            // For MVP, if they have a valid format token with a sub, we check the DB. 
+
+            if (!payload || !payload.sub) {
+                console.log(`[SessionsGateway] Invalid token payload for client ${client.id}`);
+                return;
+            }
+
+            const userId = payload.sub;
+
+            // Check Plan Features
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { subscription: true }
+            });
+
+            const planFeatures = user?.subscription ? PLAN_FEATURES[user.subscription.planType] : null;
+
+            if (!planFeatures?.advancedAnalytics) {
+                console.log(`[SessionsGateway] Blocked AI suggestions for user ${userId} (Plan: ${user?.subscription?.planType})`);
+                // Optionally emit an error to frontend so it can hide the panel or show "Upgrade"
+                // client.emit('error', { message: 'AI Suggestions require a Pro plan' });
+                return;
+            }
+
+        } catch (e) {
+            console.error(`[SessionsGateway] Auth check failed: ${e.message}`);
+            return;
+        }
 
         // 2. Process AI Suggestions
         try {

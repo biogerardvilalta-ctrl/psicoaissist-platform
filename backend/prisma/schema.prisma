@@ -50,6 +50,10 @@ model User {
   simulatorMinutesUsed Int     @default(0) @map("simulator_minutes_used") // Track active minutes separately
   simulatorLastReset  DateTime? @map("simulator_last_reset")
 
+  // Transcription Limits (Precise)
+  transcriptionMinutesUsed Int @default(0) @map("transcription_minutes_used")
+
+
   // Growth & Referrals
   referralCode    String?  @unique @map("referral_code")
   referredBy      String?  @map("referred_by")

@@ -3,9 +3,10 @@ import { Response } from 'express';
 import { ReportsService } from './reports.service';
 import { CreateReportDto, UpdateReportDto } from './dto/reports.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { FeatureGuard, RequireFeature } from '../auth/guards/feature.guard';
 
 @Controller('reports')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, FeatureGuard)
 export class ReportsController {
     constructor(private readonly reportsService: ReportsService) { }
 
@@ -30,6 +31,7 @@ export class ReportsController {
     }
 
     @Post('generate-draft')
+    @RequireFeature('advancedAnalytics') // Only Pro/Premium can generate AI drafts
     generateDraft(@Request() req, @Body() generateReportDraftDto: any) { // Use valid DTO
         return this.reportsService.generateDraft(req.user.id, generateReportDraftDto);
     }

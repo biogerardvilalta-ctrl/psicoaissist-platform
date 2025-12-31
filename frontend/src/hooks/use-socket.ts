@@ -8,9 +8,13 @@ export const useSocket = (url: string = 'http://localhost:3001') => {
 
     useEffect(() => {
         // Init socket
+        const token = localStorage.getItem('psychoai_access_token');
         const socketIo = io(url, {
             transports: ['websocket'],
             autoConnect: true,
+            auth: {
+                token: token
+            }
         });
 
         socketIo.on('connect', () => {

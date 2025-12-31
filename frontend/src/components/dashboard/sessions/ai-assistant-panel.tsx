@@ -18,8 +18,24 @@ export interface AiAssistantPanelProps {
     isConnected?: boolean;
 }
 
+import { useAuthStore } from '@/store/auth-store';
+
+// ... imports
+
 export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestionClick, socket, isConnected }: AiAssistantPanelProps) {
     const { toast } = useToast();
+    const { user } = useAuthStore();
+
+    // Check for advancedAnalytics feature (Pro/Business/Premium)
+    // Basic plan does not have this feature in plan-features.ts
+    // Assuming the user object has subscription.planType or features
+    // Since we don't have PLAN_FEATURES on frontend easily, we check planType or specific feature flag if available
+    // Ideally user object should have a 'features' array or we deduce it.
+    // For now, let's assume 'basic' plan lacks it.
+
+    const planType = user?.subscription?.planType || 'basic';
+    const hasAdvancedAnalytics = planType !== 'basic' && planType !== 'demo';
+
     const [questions, setQuestions] = useState<string[]>([]);
     const [considerations, setConsiderations] = useState<string[]>([]);
     const [indicators, setIndicators] = useState<{ type: string; label: string }[]>([]);
@@ -99,17 +115,23 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                             <Sparkles className="h-4 w-4 text-indigo-600" />
                         </div>
                         Asistente IA
-                        {isLoading && <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse ml-2" />}
+                        {isLoading && hasAdvancedAnalytics && <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse ml-2" />}
                     </div>
-                    {isConnected ? (
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] px-1.5 py-0 h-5">
-                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-1" />
-                            Live
-                        </Badge>
+                    {hasAdvancedAnalytics ? (
+                        isConnected ? (
+                            <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] px-1.5 py-0 h-5">
+                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-1" />
+                                Live
+                            </Badge>
+                        ) : (
+                            <Badge variant="outline" className="bg-slate-50 text-slate-400 border-slate-200 text-[10px] px-1.5 py-0 h-5">
+                                <div className="h-1.5 w-1.5 rounded-full bg-slate-400 mr-1" />
+                                Offline
+                            </Badge>
+                        )
                     ) : (
-                        <Badge variant="outline" className="bg-slate-50 text-slate-400 border-slate-200 text-[10px] px-1.5 py-0 h-5">
-                            <div className="h-1.5 w-1.5 rounded-full bg-slate-400 mr-1" />
-                            Offline
+                        <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200 text-[10px] px-1.5 py-0 h-5">
+                            Plan Básico
                         </Badge>
                     )}
                 </CardTitle>

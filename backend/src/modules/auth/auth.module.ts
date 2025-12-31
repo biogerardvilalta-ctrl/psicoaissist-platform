@@ -35,6 +35,6 @@ import { ConfigModule } from '@nestjs/config';
     JwtAuthGuard,
     RolesGuard,
   ],
-  exports: [AuthService, JwtAuthGuard, RolesGuard, PassportModule],
+  exports: [AuthService, JwtAuthGuard, RolesGuard, PassportModule, JwtModule],
 })
-export class AuthModule {}
+export class AuthModule { }

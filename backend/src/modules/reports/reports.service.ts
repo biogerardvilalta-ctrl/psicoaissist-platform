@@ -240,6 +240,9 @@ export class ReportsService {
     }
 
     async generateDraft(userId: string, data: any) { // Type as GenerateReportDraftDto
+        // Enforce Plan Limits (Check for Reports Count or Fair Use)
+        await this.usageLimitsService.checkReportsLimit(userId);
+
         console.log(`[ReportsService] Generating Draft for User: ${userId}, Client: ${data.clientId}, Sessions:`, data.sessionIds);
 
         // 1. Fetch sessions
