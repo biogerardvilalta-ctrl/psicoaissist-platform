@@ -486,7 +486,7 @@ export class AuthService {
     });
 
     // Get limits from Plan Features
-    const planType = user.subscription?.planType || 'demo';
+    const planType = (user.subscription?.planType || 'demo').toLowerCase();
     // Import PLAN_FEATURES dynamically to avoid circular dependency issues if any, or just import at top
     // For now assuming we can import. If not, we'll fix it.
     // Actually, let's look at imports.
