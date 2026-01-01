@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     ArrowLeft,
@@ -57,8 +57,9 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('transcription');
     const [isEditing, setIsEditing] = useState(false);
+    const [isRecording, setIsRecording] = useState(false); // Validated: Lifted State
 
-    // START: WebSocket Integration
+    const transcriptionRef = useRef<HTMLTextAreaElement>(null); // New Ref for auto-scroll
     // Connect to 'sessions' namespace
     const socketUrl = (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001') + '/sessions';
     const { socket, isConnected } = useSocket(socketUrl);
@@ -126,6 +127,13 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     useEffect(() => {
         fetchSession();
     }, [fetchSession]);
+
+    // Auto-scroll effect
+    useEffect(() => {
+        if (transcriptionRef.current && isRecording) {
+            transcriptionRef.current.scrollTop = transcriptionRef.current.scrollHeight;
+        }
+    }, [transcription, isRecording]);
 
     const formatTime = (seconds: number) => {
         const h = Math.floor(seconds / 3600);
@@ -421,6 +429,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                         </label>
                                         {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) ? (
                                             <textarea
+                                                ref={transcriptionRef}
                                                 className="w-full h-full bg-transparent outline-none resize-none text-sm text-slate-700 leading-relaxed min-h-[250px]"
                                                 placeholder="La transcripción del audio aparecerá aquí automáticamente..."
                                                 value={transcription}
@@ -607,6 +616,18 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                 <div className="lg:col-span-6 flex flex-col h-[calc(100vh-140px)] sticky top-6 gap-4">
                     {session.status === SessionStatus.IN_PROGRESS && (
                         <AudioRecorder
+                            onRecordingStatusChange={(recording) => {
+                                setIsRecording(recording);
+                                if (socket && isConnected) {
+                                    if (recording) {
+                                        socket.emit('start_recording', { sessionId: session.id });
+                                        console.log('Emitted start_recording');
+                                    } else {
+                                        socket.emit('stop_recording', { sessionId: session.id });
+                                        console.log('Emitted stop_recording');
+                                    }
+                                }
+                            }}
                             onAudioData={async (blob) => {
                                 console.log('Final recording blob size:', blob.size);
                             }}
@@ -631,7 +652,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                     <div className="flex-1 min-h-0">
                         <AiAssistantPanel
                             sessionId={session.id}
-                            isActive={session.status === SessionStatus.IN_PROGRESS}
+                            isActive={session.status === SessionStatus.IN_PROGRESS && isRecording} // Details: AI only active when recording
                             liveContext={transcription + ' ' + notes} // Pass BOTH contexts to AI
                             socket={socket} // Pass socket
                             isConnected={isConnected} // Pass connection status

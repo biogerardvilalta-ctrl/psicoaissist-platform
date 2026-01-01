@@ -9,7 +9,7 @@ interface AudioRecorderProps {
     isProcessing?: boolean;
 }
 
-export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false }: AudioRecorderProps) {
+export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false, onRecordingStatusChange }: AudioRecorderProps & { onRecordingStatusChange?: (isRecording: boolean) => void }) {
     const [isRecording, setIsRecording] = useState(false);
 
     const [recordingTime, setRecordingTime] = useState(0);
@@ -71,6 +71,7 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false 
 
             mediaRecorder.start(); // No timeslice
             setIsRecording(true);
+            onRecordingStatusChange?.(true);
             setPermissionError(null);
 
             timerRef.current = setInterval(() => {
@@ -113,6 +114,7 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false 
 
             mediaRecorderRef.current.stop();
             setIsRecording(false);
+            onRecordingStatusChange?.(false);
 
             if (timerRef.current) {
                 clearInterval(timerRef.current);

@@ -278,13 +278,49 @@ export class UsageLimitsService {
       },
     };
   }
-  async incrementTranscriptionUsage(userId: string, durationSeconds: number): Promise<void> {
-    const minutes = Math.ceil(durationSeconds / 60); // Round up to nearest minute
+  async incrementTranscriptionUsage(userId: string, durationSeconds: number): Promise<{ limitExceeded: boolean }> {
+    const minutes = Math.ceil(durationSeconds / 60); // Round up to nearest minute? Or just accumulate seconds? 
+    // The previous implementation was robust for accumulated seconds if we assume this is called at end of session.
+    // But for incremental (every minute), we might want to just add 1 minute if called every minute?
+    // The argument is durationSeconds. If we call it with 60, it adds 1 minute.
+
+    // However, simply adding blindly doesn't check limit.
+    // We need to fetch user, check limit, update, and return.
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { subscription: true },
+    });
+
+    if (!user?.subscription || user.subscription.status !== 'active') {
+      return { limitExceeded: true };
+    }
+
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    if (!planFeatures) return { limitExceeded: true };
+
+    const currentUsed = (user as any).transcriptionMinutesUsed || 0;
+    const newUsed = currentUsed + minutes;
+
+    let limitExceeded = false;
+
+    if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
+      if (newUsed > planFeatures.transcriptionMinutes) {
+        limitExceeded = true;
+      }
+    } else {
+      if (newUsed > PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
+        limitExceeded = true;
+      }
+    }
+
     await this.prisma.user.update({
       where: { id: userId },
       data: {
         transcriptionMinutesUsed: { increment: minutes }
       } as any
     });
+
+    return { limitExceeded };
   }
 }

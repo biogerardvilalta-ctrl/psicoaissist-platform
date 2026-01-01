@@ -16,23 +16,18 @@ export interface AiAssistantPanelProps {
     onSuggestionClick?: (text: string) => void;
     socket?: Socket | null; // Added socket prop
     isConnected?: boolean;
+    isAiLimitReached?: boolean; // Added limit prop
 }
 
 import { useAuthStore } from '@/store/auth-store';
 
 // ... imports
 
-export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestionClick, socket, isConnected }: AiAssistantPanelProps) {
+export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestionClick, socket, isConnected, isAiLimitReached }: AiAssistantPanelProps) {
     const { toast } = useToast();
     const { user } = useAuthStore();
 
-    // Check for advancedAnalytics feature (Pro/Business/Premium)
-    // Basic plan does not have this feature in plan-features.ts
-    // Assuming the user object has subscription.planType or features
-    // Since we don't have PLAN_FEATURES on frontend easily, we check planType or specific feature flag if available
-    // Ideally user object should have a 'features' array or we deduce it.
-    // For now, let's assume 'basic' plan lacks it.
-
+    // ... plan type checks ...
     const planType = user?.subscription?.planType || 'basic';
     const hasAdvancedAnalytics = planType !== 'basic' && planType !== 'demo';
 
@@ -85,7 +80,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
     // Emit updates when context changes (Throttled)
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     useEffect(() => {
-        if (!liveContext || !socket || !isActive) return;
+        if (!liveContext || !socket || !isActive || isAiLimitReached) return; // Block updates if limit reached
 
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -99,7 +94,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-    }, [liveContext, socket, sessionId, isActive, isConnected]);
+    }, [liveContext, socket, sessionId, isActive, isConnected, isAiLimitReached]);
 
 
     if (!isActive) return null;
@@ -115,10 +110,15 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                             <Sparkles className="h-4 w-4 text-indigo-600" />
                         </div>
                         Asistente IA
-                        {isLoading && hasAdvancedAnalytics && <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse ml-2" />}
+                        {isLoading && hasAdvancedAnalytics && !isAiLimitReached && <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse ml-2" />}
                     </div>
                     {hasAdvancedAnalytics ? (
-                        isConnected ? (
+                        isAiLimitReached ? (
+                            <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200 text-[10px] px-1.5 py-0 h-5">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                Límite alcanzado
+                            </Badge>
+                        ) : isConnected ? (
                             <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] px-1.5 py-0 h-5">
                                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-1" />
                                 Live
@@ -138,6 +138,13 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                 <CardDescription className="text-slate-500 font-medium text-xs">
                     Anàlisi en temps real • 100% Privat
                 </CardDescription>
+
+                {isAiLimitReached && (
+                    <div className="mt-2 p-2 bg-red-50 border border-red-100 rounded-lg text-xs text-red-700 flex items-start gap-2">
+                        <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
+                        <p>Has consumido tus minutos de IA. La asistencia en vivo se ha detenido, pero puedes seguir tomando notas.</p>
+                    </div>
+                )}
             </CardHeader>
 
             <CardContent className="flex-1 min-h-0 flex flex-col pt-4 relative z-10 overflow-y-auto custom-scrollbar space-y-6">
