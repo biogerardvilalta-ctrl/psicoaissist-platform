@@ -301,9 +301,11 @@ export default function ProfilePage() {
                                                         {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} restantes de ${stats.usage.limit}`}
                                                     </p>
                                                 </div>
-                                                <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
-                                                    {stats.usage.used} Usados
-                                                </Badge>
+                                                {stats.usage.limit < 1000 && (
+                                                    <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
+                                                        {stats.usage.used} Usados
+                                                    </Badge>
+                                                )}
                                             </div>
                                             {stats.usage.limit < 1000 && (
                                                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">

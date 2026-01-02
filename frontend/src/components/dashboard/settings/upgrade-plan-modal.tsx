@@ -2,9 +2,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { Crown, ArrowRight } from 'lucide-react';
+import { Crown, ArrowRight, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { usePayments } from '@/hooks/usePayments';
+import { useAuth } from '@/contexts/auth-context';
 
 const upgradePlans = [
     {
@@ -14,6 +15,7 @@ const upgradePlans = [
         description: 'Ideal para profesionales activos',
         features: ['Pacientes ilimitados', '15h Transcripción + IA', 'Simulador (5 casos)'],
         popular: true,
+        planType: 'PRO'
     },
     {
         id: 'premium',
@@ -22,6 +24,16 @@ const upgradePlans = [
         description: 'Para especialistas con alto volumen',
         features: ['Todo lo de Pro', '50h Transcripción + IA', 'Simulador Ilimitado'],
         popular: false,
+        planType: 'PREMIUM'
+    },
+    {
+        id: 'minutes_pack',
+        name: 'Pack Minutos',
+        price: '15€',
+        description: '500 minutos extra de IA/Transcripción',
+        features: ['Añade 500 minutos', 'Acumulable', 'Un solo pago'],
+        popular: false,
+        planType: 'ADD_ON'
     }
 ];
 
@@ -33,6 +45,7 @@ interface UpgradePlanModalProps {
 export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
     const router = useRouter();
     const { createCheckoutSession, loading } = usePayments();
+    const { user } = useAuth();
     const [showPlans, setShowPlans] = useState(false);
 
     const handleUpgrade = async (planId: string) => {
@@ -40,7 +53,7 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
             await createCheckoutSession({
                 // @ts-ignore
                 plan: planId,
-                interval: 'month'
+                interval: planId === 'minutes_pack' ? undefined : 'month' // Pack is one-time
             });
         } catch (err) {
             console.error('Upgrade error', err);
@@ -48,9 +61,29 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
         }
     };
 
+    // Filter plans based on current user plan
+    const getVisiblePlans = () => {
+        const currentPlan = (user?.subscription?.planType || 'BASIC').toUpperCase();
+
+        switch (currentPlan) {
+            case 'PREMIUM':
+                return upgradePlans.filter(p => p.id === 'minutes_pack');
+            case 'PRO':
+                return upgradePlans.filter(p => ['premium', 'minutes_pack'].includes(p.id));
+            case 'BASIC':
+            default:
+                // Show everything including Pro, Premium and Pack
+                // Note: Assuming Basic users can buy packs too, though usually they upgrade first. 
+                // Request said: "en el plan basic ofrecer pro, premium i pack minutos"
+                return upgradePlans;
+        }
+    };
+
+    const visiblePlans = getVisiblePlans();
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[500px] p-8 flex flex-col items-center text-center gap-6">
+            <DialogContent className="sm:max-w-[600px] p-8 flex flex-col items-center text-center gap-6">
                 {!showPlans ? (
                     <>
                         <div className="h-16 w-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
@@ -63,7 +96,11 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
                             </DialogTitle>
                             <div className="text-slate-500 text-sm leading-relaxed max-w-[350px] mx-auto">
                                 <p>Has consumido los minutos de IA/Transcripción disponibles en tu ciclo actual.</p>
-                                <p className="mt-2 font-medium text-slate-700">Actualiza a <span className="text-slate-900 font-bold">Pro</span> o <span className="text-slate-900 font-bold">Premium</span> para eliminar límites.</p>
+                                <p className="mt-2 font-medium text-slate-700">
+                                    {visiblePlans.some(p => p.id === 'minutes_pack') ?
+                                        "Actualiza tu plan o compra un pack de minutos." :
+                                        "Actualiza a un plan superior para eliminar límites."}
+                                </p>
                             </div>
                         </DialogHeader>
 
@@ -72,7 +109,7 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
                                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-12 rounded-xl shadow-lg shadow-indigo-200 transition-all hover:scale-[1.02]"
                                 onClick={() => setShowPlans(true)}
                             >
-                                Ver Planes y Precios <ArrowRight className="ml-2 h-4 w-4" />
+                                Ver Opciones Disponibles <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                             <Button
                                 variant="ghost"
@@ -86,9 +123,9 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
                 ) : (
                     <>
                         <div className="w-full text-left">
-                            <h3 className="text-xl font-bold mb-4">Elige tu plan</h3>
+                            <h3 className="text-xl font-bold mb-4">Opciones Disponibles para Ti</h3>
                             <div className="grid grid-cols-1 gap-4">
-                                {upgradePlans.map((plan) => (
+                                {visiblePlans.map((plan) => (
                                     <div
                                         key={plan.id}
                                         className={`border rounded-xl p-4 flex flex-col ${plan.popular ? 'border-indigo-500 bg-indigo-50/30' : 'border-slate-200'} relative hover:shadow-md transition-shadow cursor-pointer`}
@@ -100,8 +137,16 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
                                             </div>
                                         )}
                                         <div className="flex justify-between items-center mb-1">
-                                            <h3 className="font-bold text-base text-slate-900">{plan.name}</h3>
-                                            <span className="font-bold text-lg text-slate-900">{plan.price}<span className="text-xs font-normal text-slate-500">/mes</span></span>
+                                            <div className="flex items-center gap-2">
+                                                {plan.id === 'minutes_pack' && <Zap className="h-4 w-4 text-amber-500 fill-amber-500" />}
+                                                <h3 className="font-bold text-base text-slate-900">{plan.name}</h3>
+                                            </div>
+                                            <span className="font-bold text-lg text-slate-900">
+                                                {plan.price}
+                                                <span className="text-xs font-normal text-slate-500">
+                                                    {plan.id === 'minutes_pack' ? '/pago único' : '/mes'}
+                                                </span>
+                                            </span>
                                         </div>
                                         <p className="text-xs text-slate-500 mb-3">{plan.description}</p>
                                         <Button
@@ -110,7 +155,7 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
                                             onClick={(e) => { e.stopPropagation(); handleUpgrade(plan.id); }}
                                             disabled={loading}
                                         >
-                                            {loading ? 'Procesando...' : `Mejorar a ${plan.name}`}
+                                            {loading ? 'Procesando...' : (plan.id === 'minutes_pack' ? 'Comprar Pack' : `Mejorar a ${plan.name}`)}
                                         </Button>
                                     </div>
                                 ))}
