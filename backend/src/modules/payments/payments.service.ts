@@ -355,6 +355,34 @@ export class PaymentsService {
   private async handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
     // Handle successful payment - could update payment history, send confirmation emails, etc.
     this.logger.log(`Payment succeeded for invoice ${invoice.id}`);
+
+    // Reset usage limits on successful payment (Subscription Renewal)
+    if (invoice.subscription) {
+      try {
+        const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
+
+        if (customerId) {
+          const user = await this.prisma.user.findFirst({
+            where: { stripeCustomerId: customerId }
+          });
+
+          if (user) {
+            await this.prisma.user.update({
+              where: { id: user.id },
+              data: {
+                transcriptionMinutesUsed: 0,
+                simulatorMinutesUsed: 0,
+                simulatorUsageCount: 0,
+                simulatorLastReset: new Date(),
+              }
+            });
+            this.logger.log(`Reset usage limits for user ${user.id} after successful payment.`);
+          }
+        }
+      } catch (error) {
+        this.logger.error(`Failed to reset usage limits for invoice ${invoice.id}:`, error);
+      }
+    }
   }
 
   private async handleInvoicePaymentFailed(invoice: Stripe.Invoice) {

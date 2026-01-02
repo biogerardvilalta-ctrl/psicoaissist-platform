@@ -11,7 +11,7 @@ async function listProUsersAndClients() {
             subscription: {
                 is: {
                     planType: {
-                        in: ['pro', 'PRO', 'Pro', 'premium', 'PREMIUM', 'premium_plus']
+                        in: ['pro', 'PRO', 'Pro', 'premium', 'PREMIUM', 'premium_plus', 'basic', 'BASIC']
                     }
                 }
             }

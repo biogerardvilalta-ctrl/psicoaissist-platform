@@ -85,242 +85,241 @@ export class UsageLimitsService {
   }
 
   async checkReportsLimit(userId: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        subscription: true,
-        _count: {
-          select: {
-            reports: {
-              where: {
-                createdAt: {
-                  gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // Current month
-                }
-              }
-            }
-          }
-        }
+    include: {
+      subscription: true,
       },
-    });
+  });
 
-    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
-      throw new ForbiddenException('Active subscription required or trial expired');
-    }
+  if(!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+  throw new ForbiddenException('Active subscription required or trial expired');
+}
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
-    if (!planFeatures) {
-      throw new ForbiddenException('Invalid subscription plan');
-    }
+// Use currentPeriodStart for billing cycle, fallback to 1st of month if missing for some reason
+const periodStart = user.subscription.currentPeriodStart || new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
-    // Check reports limit for current month
-    if (planFeatures.reportsPerMonth !== PlanLimits.UNLIMITED) {
-      if (user._count.reports >= planFeatures.reportsPerMonth) {
-        throw new ForbiddenException(
-          `Monthly report limit reached. Your ${user.subscription.planType} plan allows up to ${planFeatures.reportsPerMonth} reports per month.`
-        );
-      }
-    } else {
-      // Fair Use Check
-      if (user._count.reports >= PlanLimits.FAIR_USE_REPORTS) {
-        throw new ForbiddenException(
-          `Fair Use Policy: Report generation excessive (${PlanLimits.FAIR_USE_REPORTS} reports/month). System protection engaged.`
-        );
-      }
+const reportCount = await this.prisma.report.count({
+  where: {
+    userId: userId,
+    createdAt: {
+      gte: periodStart
     }
   }
+});
 
-  async checkSimulatorLimit(userId: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        subscription: true,
-      },
-    });
+const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+if (!planFeatures) {
+  throw new ForbiddenException('Invalid subscription plan');
+}
 
-    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
-      throw new ForbiddenException('Active subscription required or trial expired');
-    }
-
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
-    if (!planFeatures) {
-      throw new ForbiddenException('Invalid subscription plan');
-    }
-
-    // Check simulator cases limit
-    if (planFeatures.simulatorCases !== PlanLimits.UNLIMITED) {
-      // Calculate effective limit including referral bonuses
-      const referralBonus = (user.referralsCount || 0) * 5;
-      const totalLimit = planFeatures.simulatorCases + referralBonus;
-
-      // Reset logic should ideally be handled by a scheduled task or on-access check like here
-      // But we are reading from user.simulatorUsageCount which is reset manually or by logic in simulator service currently.
-      // We will assume simulatorService handles the monthly reset logic OR we move it here.
-      // For now, we trust simulatorUsageCount is accurate.
-
-      if (user.simulatorUsageCount >= totalLimit) {
-        throw new ForbiddenException(
-          `Simulator cases limit reached (${totalLimit} cases/month). Upgrade your plan or invite colleagues.`
-        );
-      }
-    } else {
-      // Fair Use Check for Unlimited
-      if (user.simulatorUsageCount >= PlanLimits.FAIR_USE_SIMULATOR_CASES) {
-        throw new ForbiddenException(
-          `Fair Use Policy: Simulator usage excessive (${PlanLimits.FAIR_USE_SIMULATOR_CASES} cases/month).`
-        );
-      }
-    }
+// Check reports limit for current month
+if (planFeatures.reportsPerMonth !== PlanLimits.UNLIMITED) {
+  if (user._count.reports >= planFeatures.reportsPerMonth) {
+    throw new ForbiddenException(
+      `Monthly report limit reached. Your ${user.subscription.planType} plan allows up to ${planFeatures.reportsPerMonth} reports per month.`
+    );
+  }
+} else {
+  // Fair Use Check
+  if (user._count.reports >= PlanLimits.FAIR_USE_REPORTS) {
+    throw new ForbiddenException(
+      `Fair Use Policy: Report generation excessive (${PlanLimits.FAIR_USE_REPORTS} reports/month). System protection engaged.`
+    );
+  }
+}
   }
 
-  async checkSimulatorMinutesLimit(userId: string, minutesToAdd: number): Promise<void> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        subscription: true,
-      },
-    });
+  async checkSimulatorLimit(userId: string): Promise < void> {
+  const user = await this.prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      subscription: true,
+    },
+  });
 
-    if (!user?.subscription || user.subscription.status !== 'active') return; // Should probably throw, but let's be safe
+  if(!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+  throw new ForbiddenException('Active subscription required or trial expired');
+}
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
-    if (!planFeatures) return;
+const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+if (!planFeatures) {
+  throw new ForbiddenException('Invalid subscription plan');
+}
 
-    if (planFeatures.simulatorMinutes !== PlanLimits.UNLIMITED) {
-      if (user.simulatorMinutesUsed + minutesToAdd > planFeatures.simulatorMinutes) {
-        throw new ForbiddenException(
-          `Simulator minutes limit reached (${planFeatures.simulatorMinutes} mins/month).`
-        );
-      }
-    }
+// Check simulator cases limit
+if (planFeatures.simulatorCases !== PlanLimits.UNLIMITED) {
+  // Calculate effective limit including referral bonuses
+  const referralBonus = (user.referralsCount || 0) * 5;
+  const totalLimit = planFeatures.simulatorCases + referralBonus;
+
+  // Reset logic should ideally be handled by a scheduled task or on-access check like here
+  // But we are reading from user.simulatorUsageCount which is reset manually or by logic in simulator service currently.
+  // We will assume simulatorService handles the monthly reset logic OR we move it here.
+  // For now, we trust simulatorUsageCount is accurate.
+
+  if (user.simulatorUsageCount >= totalLimit) {
+    throw new ForbiddenException(
+      `Simulator cases limit reached (${totalLimit} cases/month). Upgrade your plan or invite colleagues.`
+    );
+  }
+} else {
+  // Fair Use Check for Unlimited
+  if (user.simulatorUsageCount >= PlanLimits.FAIR_USE_SIMULATOR_CASES) {
+    throw new ForbiddenException(
+      `Fair Use Policy: Simulator usage excessive (${PlanLimits.FAIR_USE_SIMULATOR_CASES} cases/month).`
+    );
+  }
+}
+  }
+
+  async checkSimulatorMinutesLimit(userId: string, minutesToAdd: number): Promise < void> {
+  const user = await this.prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      subscription: true,
+    },
+  });
+
+  if(!user?.subscription || user.subscription.status !== 'active') return; // Should probably throw, but let's be safe
+
+const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+if (!planFeatures) return;
+
+if (planFeatures.simulatorMinutes !== PlanLimits.UNLIMITED) {
+  if (user.simulatorMinutesUsed + minutesToAdd > planFeatures.simulatorMinutes) {
+    throw new ForbiddenException(
+      `Simulator minutes limit reached (${planFeatures.simulatorMinutes} mins/month).`
+    );
+  }
+}
   }
 
   async getUserUsage(userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        subscription: true,
-        _count: {
-          select: {
-            clients: {
-              where: { isActive: true }
-            },
-            reports: {
-              where: {
-                createdAt: {
-                  gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-                }
-              }
-            },
-            sessions: { // Get count of sessions this month for stats
-              where: {
-                startTime: {
-                  gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-                },
-                status: { not: 'CANCELLED' }
+  const user = await this.prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      subscription: true,
+      _count: {
+        select: {
+          clients: {
+            where: { isActive: true }
+          },
+          reports: {
+            where: {
+              createdAt: {
+                gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
               }
             }
-          }
-        },
-        sessions: { // Fetch sessions for duration calc
-          where: {
-            startTime: {
-              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-            },
-            status: { not: 'CANCELLED' }
           },
-          select: { duration: true }
+          sessions: { // Get count of sessions this month for stats
+            where: {
+              startTime: {
+                gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+              },
+              status: { not: 'CANCELLED' }
+            }
+          }
         }
       },
-    });
+      sessions: { // Fetch sessions for duration calc
+        where: {
+          startTime: {
+            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          },
+          status: { not: 'CANCELLED' }
+        },
+        select: { duration: true }
+      }
+    },
+  });
 
-    if (!user?.subscription) {
-      return null;
-    }
-
-    // Calculate total duration in minutes then convert to hours for display, 
-    // OR keep as minutes if frontend handles display.
-    // The plan limit is in hours (e.g. 50, 200). 
-    // Let's pass 'transcriptionMinutes' as well for precise tracking.
-
-    const totalSeconds = user.sessions.reduce((acc, session) => acc + (session.duration || 0), 0);
-    const totalMinutes = Math.round(totalSeconds / 60);
-    const totalHours = Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal
-
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
-    if (!planFeatures) {
-      return null;
-    }
-
-    const referralBonus = (user.referralsCount || 0) * 5;
-    const simulatorCasesLimit = planFeatures.simulatorCases === PlanLimits.UNLIMITED
-      ? 9999
-      : planFeatures.simulatorCases + referralBonus;
-
-    return {
-      planType: user.subscription.planType,
-      planFeatures,
-      currentUsage: {
-        clients: user._count.clients,
-        reportsThisMonth: user._count.reports,
-        // transcriptionHours would be calculated from actual usage tracking
-        transcriptionHours: Math.round(((user as any).transcriptionMinutesUsed || 0) / 60 * 10) / 10,
-        transcriptionMinutes: (user as any).transcriptionMinutesUsed || 0,
-        simulatorCases: user.simulatorUsageCount,
-        simulatorMinutes: user.simulatorMinutesUsed,
-      },
-      limits: {
-        clients: planFeatures.maxClients,
-        reportsPerMonth: planFeatures.reportsPerMonth,
-        transcriptionHours: Math.round(planFeatures.transcriptionMinutes / 60),
-        transcriptionMinutes: planFeatures.transcriptionMinutes,
-        simulatorCases: simulatorCasesLimit,
-        simulatorMinutes: planFeatures.simulatorMinutes
-      },
-    };
+  if (!user?.subscription) {
+    return null;
   }
-  async incrementTranscriptionUsage(userId: string, durationSeconds: number): Promise<{ limitExceeded: boolean }> {
-    const minutes = Math.ceil(durationSeconds / 60); // Round up to nearest minute? Or just accumulate seconds? 
-    // The previous implementation was robust for accumulated seconds if we assume this is called at end of session.
-    // But for incremental (every minute), we might want to just add 1 minute if called every minute?
-    // The argument is durationSeconds. If we call it with 60, it adds 1 minute.
 
-    // However, simply adding blindly doesn't check limit.
-    // We need to fetch user, check limit, update, and return.
+  // Calculate total duration in minutes then convert to hours for display, 
+  // OR keep as minutes if frontend handles display.
+  // The plan limit is in hours (e.g. 50, 200). 
+  // Let's pass 'transcriptionMinutes' as well for precise tracking.
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: { subscription: true },
-    });
+  const totalSeconds = user.sessions.reduce((acc, session) => acc + (session.duration || 0), 0);
+  const totalMinutes = Math.round(totalSeconds / 60);
+  const totalHours = Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal
 
-    if (!user?.subscription || user.subscription.status !== 'active') {
-      return { limitExceeded: true };
-    }
+  const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+  if (!planFeatures) {
+    return null;
+  }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
-    if (!planFeatures) return { limitExceeded: true };
+  const referralBonus = (user.referralsCount || 0) * 5;
+  const simulatorCasesLimit = planFeatures.simulatorCases === PlanLimits.UNLIMITED
+    ? 9999
+    : planFeatures.simulatorCases + referralBonus;
 
-    const currentUsed = (user as any).transcriptionMinutesUsed || 0;
-    const newUsed = currentUsed + minutes;
+  return {
+    planType: user.subscription.planType,
+    planFeatures,
+    currentUsage: {
+      clients: user._count.clients,
+      reportsThisMonth: user._count.reports,
+      // transcriptionHours would be calculated from actual usage tracking
+      transcriptionHours: Math.round(((user as any).transcriptionMinutesUsed || 0) / 60 * 10) / 10,
+      transcriptionMinutes: (user as any).transcriptionMinutesUsed || 0,
+      simulatorCases: user.simulatorUsageCount,
+      simulatorMinutes: user.simulatorMinutesUsed,
+    },
+    limits: {
+      clients: planFeatures.maxClients,
+      reportsPerMonth: planFeatures.reportsPerMonth,
+      transcriptionHours: Math.round(planFeatures.transcriptionMinutes / 60),
+      transcriptionMinutes: planFeatures.transcriptionMinutes,
+      simulatorCases: simulatorCasesLimit,
+      simulatorMinutes: planFeatures.simulatorMinutes
+    },
+  };
+}
+  async incrementTranscriptionUsage(userId: string, durationSeconds: number): Promise < { limitExceeded: boolean } > {
+  const minutes = Math.ceil(durationSeconds / 60); // Round up to nearest minute? Or just accumulate seconds? 
+  // The previous implementation was robust for accumulated seconds if we assume this is called at end of session.
+  // But for incremental (every minute), we might want to just add 1 minute if called every minute?
+  // The argument is durationSeconds. If we call it with 60, it adds 1 minute.
 
-    let limitExceeded = false;
+  // However, simply adding blindly doesn't check limit.
+  // We need to fetch user, check limit, update, and return.
 
-    if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
-      if (newUsed >= planFeatures.transcriptionMinutes) {
-        limitExceeded = true;
-      }
-    } else {
-      if (newUsed >= PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
-        limitExceeded = true;
-      }
-    }
+  const user = await this.prisma.user.findUnique({
+    where: { id: userId },
+    include: { subscription: true },
+  });
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        transcriptionMinutesUsed: { increment: minutes }
-      } as any
-    });
+  if(!user?.subscription || user.subscription.status !== 'active') {
+  return { limitExceeded: true };
+}
 
-    return { limitExceeded };
+const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+if (!planFeatures) return { limitExceeded: true };
+
+const currentUsed = (user as any).transcriptionMinutesUsed || 0;
+const newUsed = currentUsed + minutes;
+
+let limitExceeded = false;
+
+if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
+  if (newUsed >= planFeatures.transcriptionMinutes) {
+    limitExceeded = true;
+  }
+} else {
+  if (newUsed >= PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
+    limitExceeded = true;
+  }
+}
+
+await this.prisma.user.update({
+  where: { id: userId },
+  data: {
+    transcriptionMinutesUsed: { increment: minutes }
+  } as any
+});
+
+return { limitExceeded };
   }
 }
