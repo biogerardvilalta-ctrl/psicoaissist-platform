@@ -9,6 +9,7 @@ import {
   Req,
   Patch,
   Logger,
+  Header,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Response, Request } from 'express';
@@ -173,6 +174,9 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('me')
+  @Header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+  @Header('Pragma', 'no-cache')
+  @Header('Expires', '0')
   async getProfile(@Req() req: Request & { user: any }) {
     return this.authService.getProfile(req.user.id);
   }

@@ -27,12 +27,13 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     server: Server;
 
     private readonly logger = new Logger(SessionsGateway.name);
-    // Track active sessions: socketId -> { sessionId, userId, startTime, lastDeductionTime, isLimitReached }
+    // Track active sessions: socketId -> { sessionId, userId, startTime, lastDeductionTime, isLimitReached, lastAiRequestTime }
     private activeSessions = new Map<string, {
         sessionId: string;
         userId: string;
         interval: NodeJS.Timeout;
         limitReached: boolean;
+        lastAiRequestTime?: number;
     }>();
 
     constructor(
@@ -176,8 +177,32 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         // 3. Process AI Suggestions
         try {
+            // Rate Limiting & Optimization
+            // a) Length Check: Ignore very short updates (e.g. "Ah") to save tokens and calls
+            if (!notes || notes.trim().length < 50) {
+                // console.log('[SessionsGateway] Skipping AI: Text too short');
+                return;
+            }
+
+            // b) Time Throttling: Max 1 call every 5 seconds per client
+            const now = Date.now();
+            if (sessionData && sessionData.lastAiRequestTime) {
+                const timeSinceLastCall = now - sessionData.lastAiRequestTime;
+                if (timeSinceLastCall < 5000) {
+                    // console.log('[SessionsGateway] Skipping AI: Throttled');
+                    return;
+                }
+            }
+
             const suggestions = await this.aiService.getLiveSuggestions(notes);
             client.emit('aiSuggestions', suggestions);
+
+            // Update throttle timestamp
+            if (sessionData) {
+                sessionData.lastAiRequestTime = now;
+                this.activeSessions.set(client.id, sessionData);
+            }
+
         } catch (error) {
             this.logger.error(`Error processing AI suggestions: ${error.message}`);
         }

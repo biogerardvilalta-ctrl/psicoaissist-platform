@@ -847,6 +847,15 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
      * Generates real-time suggestions during a session.
      */
     async getLiveSuggestions(context: string): Promise<{ questions: string[]; considerations: string[]; indicators: { type: string; label: string }[] }> {
+        // Redundant safety check (already in Gateway, but good for robustness)
+        if (!context || context.length < 20) {
+            return {
+                questions: [],
+                considerations: [],
+                indicators: []
+            };
+        }
+
         try {
             // Combine System Prompt + Context
             const combinedPrompt = `
@@ -858,10 +867,12 @@ CONTEXT ACTUAL (Text viu de la sessió):
 Genera suggeriments en temps real format JSON.
 `;
 
-            const parsed = await this.aiProvider.generateJSON<{ questions: string[]; considerations: string[]; indicators: { type: string; label: string }[] }>(
-                combinedPrompt,
-                { modelName: "gemini-2.0-flash", temperature: 0.7 }
-            );
+            const parsed = await this._retryWithBackoff(async () => {
+                return await this.aiProvider.generateJSON<{ questions: string[]; considerations: string[]; indicators: { type: string; label: string }[] }>(
+                    combinedPrompt,
+                    { modelName: "gemini-2.0-flash", temperature: 0.7 }
+                );
+            });
 
             return {
                 questions: parsed.questions || [],
@@ -955,6 +966,25 @@ Genera suggeriments en temps real format JSON.
         } catch (error) {
             console.error("Error generating report with AI:", error);
             throw new Error("Error en la generación del informe con IA. Por favor, inténtelo de nuevo.");
+        }
+    }
+
+    /**
+     * Retry helper with exponential backoff for 429/503 errors
+     */
+    private async _retryWithBackoff<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+        try {
+            return await fn();
+        } catch (error: any) {
+            const isRetryable = error?.status === 429 || error?.code === 429 || error?.message?.includes('429') ||
+                error?.status === 503 || error?.code === 503;
+
+            if (retries > 0 && isRetryable) {
+                console.warn(`[AiService] Rate limit hit. Retrying in ${delay}ms... (${retries} left)`);
+                await new Promise(res => setTimeout(res, delay));
+                return this._retryWithBackoff(fn, retries - 1, delay * 2);
+            }
+            throw error;
         }
     }
 }

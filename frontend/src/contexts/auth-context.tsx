@@ -27,6 +27,7 @@ interface AuthContextType extends AuthState {
   refreshToken: () => Promise<void>;
   clearError: () => void;
   updateUser: (user: User) => void;
+  reloadUser: () => Promise<void>;
 }
 
 // Initial State
@@ -324,6 +325,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     dispatch({ type: 'SET_USER', payload: user });
   }, []);
 
+  // Reload user function
+  const reloadUser = useCallback(async () => {
+    try {
+      const user = await AuthAPI.getCurrentUser();
+      if (user) {
+        // Update storage and state
+        storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+        dispatch({ type: 'SET_USER', payload: user });
+      }
+    } catch (error) {
+      console.error('Failed to reload user:', error);
+    }
+  }, []);
+
   // Clear error function
   const clearError = useCallback(() => {
     dispatch({ type: 'CLEAR_ERROR' });
@@ -354,6 +369,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     refreshToken,
     clearError,
     updateUser,
+    reloadUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

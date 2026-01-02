@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { simulatorService, StatsData } from '@/services/simulator.service';
 // ... inside component
 export default function ProfilePage() {
-    const { user, login } = useAuth();
+    const { user, login, reloadUser } = useAuth();
     const { toast } = useToast();
 
     // Simulator Stats
@@ -25,6 +25,9 @@ export default function ProfilePage() {
     useEffect(() => {
         const loadStats = async () => {
             try {
+                // Reload user to ensure limits are fresh and not cached
+                await reloadUser();
+
                 const data = await simulatorService.getStats('all');
                 setStats(data);
             } catch (err) {
@@ -32,7 +35,7 @@ export default function ProfilePage() {
             }
         };
         loadStats();
-    }, []);
+    }, [reloadUser]);
 
     // Edit Profile State
     const [isEditing, setIsEditing] = useState(false);
@@ -265,9 +268,11 @@ export default function ProfilePage() {
                                                 : `${user?.usage?.clientsCount ?? 0} de ${user?.limits?.maxClients ?? 3} pacientes`}
                                         </p>
                                     </div>
-                                    <Badge variant={user?.limits?.maxClients !== -1 && (user?.usage?.clientsCount ?? 0) >= (user?.limits?.maxClients ?? 1) ? "destructive" : "secondary"}>
-                                        {user?.usage?.clientsCount ?? 0} {user?.limits?.maxClients === -1 ? "Activos" : `/ ${user?.limits?.maxClients ?? 3}`}
-                                    </Badge>
+                                    {user?.limits?.maxClients !== -1 && (
+                                        <Badge variant={user?.limits?.maxClients !== -1 && (user?.usage?.clientsCount ?? 0) >= (user?.limits?.maxClients ?? 1) ? "destructive" : "secondary"}>
+                                            {user?.usage?.clientsCount ?? 0} {user?.limits?.maxClients === -1 ? "Activos" : `/ ${user?.limits?.maxClients ?? 3}`}
+                                        </Badge>
+                                    )}
                                 </div>
                                 {user?.limits?.maxClients !== -1 && (
                                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">

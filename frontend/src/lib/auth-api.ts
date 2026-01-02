@@ -65,7 +65,8 @@ export class AuthAPI {
 
   static async getCurrentUser(): Promise<User> {
     try {
-      const response = await httpClient.get(`${this.BASE_URL}/me`);
+      // Add timestamp to prevent browser caching
+      const response = await httpClient.get(`${this.BASE_URL}/me?_t=${Date.now()}`);
       return (response as any).data || response;
     } catch (error) {
       throw error;
