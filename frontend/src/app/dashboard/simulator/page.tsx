@@ -328,49 +328,7 @@ export default function SimulatorPage() {
                                 </div>
                                 <h2 className="text-2xl font-bold">Configura tu Simulación</h2>
 
-                                {/* Usage Display */}
-                                {!stats?.usage && <div className="p-4 text-center text-gray-400 text-sm">Cargando uso...</div>}
-                                {stats?.usage && (
-                                    <div className="bg-white p-4 rounded-lg border shadow-sm w-full mb-4 text-left space-y-4">
-
-                                        {/* Cases Limit */}
-                                        <div>
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-sm font-semibold text-gray-700">Casos Clínicos</span>
-                                                <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
-                                                    {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} Restantes`}
-                                                </Badge>
-                                            </div>
-                                            {stats.usage.limit < 1000 && (
-                                                <div className="space-y-1">
-                                                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                                                        <div
-                                                            className={`h-full rounded-full ${stats.usage.remaining === 0 ? 'bg-red-500' : 'bg-blue-500'}`}
-                                                            style={{ width: `${Math.min(100, (stats.usage.used / stats.usage.limit) * 100)}%` }}
-                                                        />
-                                                    </div>
-                                                    <p className="text-xs text-gray-400 text-right">
-                                                        {stats.usage.used} / {stats.usage.limit} Usados
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-
-
-
-                                        {/* Reset Info & Upsell */}
-                                        <div className="pt-2 border-t text-xs text-gray-400 flex justify-between items-center">
-                                            <span>Se reinicia el 1/{new Date(stats.usage.nextReset).getMonth() + 1}</span>
-                                            {(stats.usage.limit < 1000 || stats.usage.minutesLimit < 1000) && (
-                                                <div>
-                                                    <Link href="/dashboard/settings" className="text-blue-600 hover:underline font-medium">
-                                                        Mejorar Plan
-                                                    </Link>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
+                                {/* Usage Display removed by user request */}
 
                                 <p className="text-muted-foreground">
                                     Selecciona el nivel de dificultad. El sistema generará un paciente con una patología y personalidad aleatoria.

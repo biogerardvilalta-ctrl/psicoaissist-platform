@@ -286,27 +286,30 @@ export default function ProfilePage() {
                             {stats?.usage && (
                                 <>
                                     {/* Clinical Cases */}
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <p className="text-sm font-medium text-slate-700">Casos Clínicos</p>
-                                                <p className="text-xs text-muted-foreground">
-                                                    {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} restantes de ${stats.usage.limit}`}
-                                                </p>
+                                    {/* Clinical Cases */}
+                                    {user?.subscription?.planType.toLowerCase() !== 'basic' && (
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <p className="text-sm font-medium text-slate-700">Casos Clínicos</p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} restantes de ${stats.usage.limit}`}
+                                                    </p>
+                                                </div>
+                                                <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
+                                                    {stats.usage.used} Usados
+                                                </Badge>
                                             </div>
-                                            <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
-                                                {stats.usage.used} Usados
-                                            </Badge>
+                                            {stats.usage.limit < 1000 && (
+                                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                    <div
+                                                        className={`h-full rounded-full ${stats.usage.remaining === 0 ? 'bg-red-500' : 'bg-blue-600'}`}
+                                                        style={{ width: `${Math.min(100, (stats.usage.used / stats.usage.limit) * 100)}%` }}
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
-                                        {stats.usage.limit < 1000 && (
-                                            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                <div
-                                                    className={`h-full rounded-full ${stats.usage.remaining === 0 ? 'bg-red-500' : 'bg-blue-600'}`}
-                                                    style={{ width: `${Math.min(100, (stats.usage.used / stats.usage.limit) * 100)}%` }}
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
+                                    )}
 
                                     {/* Transcription Minutes */}
                                     <div className="space-y-2">
