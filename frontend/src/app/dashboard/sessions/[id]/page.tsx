@@ -38,6 +38,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 // ... (previous imports)
 import { useSocket } from '@/hooks/use-socket';
+import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
 
 export default function SessionDetailPage({ params }: { params: { id: string } }) {
     const router = useRouter();
@@ -58,11 +59,32 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const [activeTab, setActiveTab] = useState('transcription');
     const [isEditing, setIsEditing] = useState(false);
     const [isRecording, setIsRecording] = useState(false); // Validated: Lifted State
+    const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false); // New state for modal
 
     const transcriptionRef = useRef<HTMLTextAreaElement>(null); // New Ref for auto-scroll
     // Connect to 'sessions' namespace
+    // Connect to 'sessions' namespace
     const socketUrl = (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001') + '/sessions';
-    const { socket, isConnected } = useSocket(socketUrl);
+    const { socket, isConnected, isAiLimitReached } = useSocket(socketUrl); // Add isAiLimitReached
+
+    // Effect for AI Limit Notification
+    const showLimitToast = useCallback(() => {
+        console.log('[DEBUG] Showing AI limit toast and modal');
+        toast({
+            title: "Límite de IA alcanzado",
+            description: "Se han agotado tus minutos de IA. Actualiza tu plan para continuar.",
+            variant: "destructive",
+            duration: 5000,
+        });
+        setIsUpgradeModalOpen(true); // Open modal
+    }, [toast]);
+
+    useEffect(() => {
+        console.log('[DEBUG] isAiLimitReached changed:', isAiLimitReached);
+        if (isAiLimitReached) {
+            showLimitToast();
+        }
+    }, [isAiLimitReached, showLimitToast]);
 
     useEffect(() => {
         if (socket && isConnected && session?.id) {
@@ -616,6 +638,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                 <div className="lg:col-span-6 flex flex-col h-[calc(100vh-140px)] sticky top-6 gap-4">
                     {session.status === SessionStatus.IN_PROGRESS && (
                         <AudioRecorder
+                            isLimitReached={isAiLimitReached}
+                            onLimitReachedAction={showLimitToast}
                             onRecordingStatusChange={(recording) => {
                                 setIsRecording(recording);
                                 if (socket && isConnected) {
@@ -633,7 +657,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                             }}
                             onStreamData={async (chunk) => {
                                 try {
-                                    const { text } = await AiAPI.transcribe(chunk);
+                                    // Pass isLive: true to avoid double billing
+                                    const { text } = await AiAPI.transcribe(chunk, true);
                                     if (text) {
                                         // Update TRANSCRIPTION instead of notes
                                         setTranscription(prev => {
@@ -652,7 +677,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                     <div className="flex-1 min-h-0">
                         <AiAssistantPanel
                             sessionId={session.id}
-                            isActive={session.status === SessionStatus.IN_PROGRESS && isRecording} // Details: AI only active when recording
+                            isActive={session.status === SessionStatus.IN_PROGRESS && isRecording && !isAiLimitReached} // Details: AI only active when recording AND limit not reached
                             liveContext={transcription + ' ' + notes} // Pass BOTH contexts to AI
                             socket={socket} // Pass socket
                             isConnected={isConnected} // Pass connection status
@@ -674,6 +699,11 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                 onClose={() => setIsConsentModalOpen(false)}
                 onConfirm={handleConsentConfirmed}
                 clientName={client ? `${client.firstName} ${client.lastName}` : session.clientName || 'Paciente'}
+            />
+
+            <UpgradePlanModal
+                isOpen={isUpgradeModalOpen}
+                onClose={() => setIsUpgradeModalOpen(false)}
             />
         </div>
     );

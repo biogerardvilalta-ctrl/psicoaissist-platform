@@ -305,11 +305,11 @@ export class UsageLimitsService {
     let limitExceeded = false;
 
     if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
-      if (newUsed > planFeatures.transcriptionMinutes) {
+      if (newUsed >= planFeatures.transcriptionMinutes) {
         limitExceeded = true;
       }
     } else {
-      if (newUsed > PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
+      if (newUsed >= PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
         limitExceeded = true;
       }
     }

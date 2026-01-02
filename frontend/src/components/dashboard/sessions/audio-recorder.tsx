@@ -9,7 +9,7 @@ interface AudioRecorderProps {
     isProcessing?: boolean;
 }
 
-export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false, onRecordingStatusChange }: AudioRecorderProps & { onRecordingStatusChange?: (isRecording: boolean) => void }) {
+export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false, onRecordingStatusChange, isLimitReached = false, onLimitReachedAction }: AudioRecorderProps & { onRecordingStatusChange?: (isRecording: boolean) => void, isLimitReached?: boolean, onLimitReachedAction?: () => void }) {
     const [isRecording, setIsRecording] = useState(false);
 
     const [recordingTime, setRecordingTime] = useState(0);
@@ -20,6 +20,12 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
     const chunksRef = useRef<Blob[]>([]);
     const chunkIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const shouldRestartRef = useRef(true);
+    const isLimitReachedRef = useRef(isLimitReached);
+
+    // Sync ref
+    useEffect(() => {
+        isLimitReachedRef.current = isLimitReached;
+    }, [isLimitReached]);
 
     useEffect(() => {
         return () => {
@@ -29,8 +35,25 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
             }
         };
     }, []);
+
+    // Stop recording if limit reached
+    useEffect(() => {
+        if (isLimitReached && isRecording) {
+            console.log('%c[AudioRecorder] Stopping because isLimitReached became TRUE', 'color: orange');
+            stopRecording();
+            onLimitReachedAction?.();
+        }
+    }, [isLimitReached, isRecording]);
+
     // ...
     const startRecording = async () => {
+        console.log('startRecording called. isLimitReached:', isLimitReached);
+        if (isLimitReached) {
+            console.log('Triggering onLimitReachedAction');
+            onLimitReachedAction?.();
+            return;
+        }
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -49,7 +72,9 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     chunksRef.current.push(event.data);
-                    if (onStreamData) {
+
+                    // Prevention: Do not emit stream data if limit is reached
+                    if (onStreamData && !isLimitReachedRef.current) {
                         onStreamData(event.data);
                     }
                 }
@@ -63,6 +88,14 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
                     }
                 } else {
                     // Final stop -> Save full blob
+
+                    // Prevention: If limit reached, discard blob to avoid transcription error on empty/partial files
+                    if (isLimitReachedRef.current) {
+                        console.log('[AudioRecorder] Limit reached, discarding final blob to prevent transcription error.');
+                        stream.getTracks().forEach(track => track.stop());
+                        return;
+                    }
+
                     const blob = new Blob(chunksRef.current, { type: mimeType });
                     onAudioData(blob);
                     stream.getTracks().forEach(track => track.stop()); // Stop mic access
@@ -83,8 +116,6 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
             setPermissionError('No se pudo acceder al micrófono. Por favor verifica los permisos.');
         }
     };
-
-
 
     // Effect to manage the chunking interval when recording
     useEffect(() => {

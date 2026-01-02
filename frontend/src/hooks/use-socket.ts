@@ -29,7 +29,7 @@ export const useSocket = (url: string = 'http://localhost:3001') => {
 
         // Added event listener for 'ai_limit_reached'
         socketIo.on('ai_limit_reached', (data: { message: string }) => {
-            console.warn('AI Limit Reached:', data.message);
+            console.log('%c[SOCKET] AI Limit Reached Event Received:', 'color: red; font-weight: bold;', data);
             setIsAiLimitReached(true);
         });
 

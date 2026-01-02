@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, UseGuards, Req, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AiService } from './ai.service';
 import { TranscriptionService } from './transcription.service';
@@ -28,9 +28,13 @@ export class AiController {
 
     @Post('transcribe')
     @UseInterceptors(FileInterceptor('audio'))
-    async transcribeAudio(@UploadedFile() file: Express.Multer.File, @Req() req) {
+    async transcribeAudio(
+        @UploadedFile() file: Express.Multer.File,
+        @Req() req,
+        @Query('isLive') isLive: string, // Add query param
+    ) {
         return {
-            text: await this.transcriptionService.transcribeAudio(file, req.user.sub)
+            text: await this.transcriptionService.transcribeAudio(file, req.user.sub, isLive === 'true')
         };
     }
 

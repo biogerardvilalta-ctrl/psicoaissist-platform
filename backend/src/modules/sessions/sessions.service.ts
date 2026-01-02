@@ -89,8 +89,8 @@ export class SessionsService {
         const durationMinutes = user?.defaultDuration || 60;
 
         // Enforce Plan Limits (Transcription/Session Minutes)
-        // Convert minutes to hours for the check
-        await this.usageLimitsService.checkTranscriptionLimit(targetUserId, durationMinutes / 60);
+        // REMOVED: User can create sessions even if transcription limit is reached.
+        // await this.usageLimitsService.checkTranscriptionLimit(targetUserId, durationMinutes / 60);
 
         // 3. Create Session
         const startDate = new Date(createSessionDto.startTime);

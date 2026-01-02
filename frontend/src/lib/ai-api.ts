@@ -98,13 +98,18 @@ export const AiAPI = {
         return await httpClient.post('/api/v1/ai/suggestions', { context });
     },
 
-    transcribe: async (audioBlob: Blob): Promise<{ text: string }> => {
+    transcribe: async (audioBlob: Blob, isLive?: boolean): Promise<{ text: string }> => {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'chunk.webm');
 
         // We use fetch directly here because httpClient might be configured for JSON
         const token = localStorage.getItem('psychoai_access_token');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1/ai/transcribe`, {
+        const url = new URL(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1/ai/transcribe`);
+        if (isLive) {
+            url.searchParams.append('isLive', 'true');
+        }
+
+        const response = await fetch(url.toString(), {
             method: 'POST',
             body: formData,
             headers: {

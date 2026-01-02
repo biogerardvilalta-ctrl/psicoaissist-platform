@@ -80,7 +80,9 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
                     // Stop any existing tracking for this socket to be safe
                     this.stopTracking(client.id);
                     // Do NOT start interval here. Wait for start_recording.
-                    console.log(`[SessionsGateway] User ${userId} joined session ${sessionId}. Waiting for recording to start tracking.`);
+                    console.log(`[SessionsGateway] User ${userId} joined session ${sessionId}.`);
+
+                    // Removed: Do NOT check limit on join to avoid annoying modal. Check only on Record.
                 }
             }
         } catch (e) {
@@ -88,6 +90,18 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
 
         return { event: 'joined', sessionId };
+    }
+
+    private async checkAndNotifyLimit(client: Socket, userId: string) {
+        try {
+            // Check if user is already at or over limit (using 1 to be safe/strict, or 0 if we want to allow exactly at limit to start? 
+            // If at 600/600, we should block. So check(userId, 1) -> 601 > 600 throws.
+            await this.usageLimitsService.checkTranscriptionLimit(userId, 1);
+        } catch (e) {
+            client.emit('ai_limit_reached', { message: 'Tu límite de transcripción se ha agotado.' });
+            return true;
+        }
+        return false;
     }
 
     private async processMinuteDeduction(client: Socket, userId: string) {
@@ -168,6 +182,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             this.logger.error(`Error processing AI suggestions: ${error.message}`);
         }
     }
+
     @SubscribeMessage('start_recording')
     async handleStartRecording(
         @MessageBody() data: { sessionId: string },
@@ -184,6 +199,14 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
                 // Stop prior if any
                 this.stopTracking(client.id);
+
+                // Immediate check for existing limits (before starting interval)
+                // Use helper to check and notify
+                const isLimitReached = await this.checkAndNotifyLimit(client, userId);
+                if (isLimitReached) {
+                    console.warn(`[SessionsGateway] User ${userId} already at limit. Blocking recording start.`);
+                    return;
+                }
 
                 const interval = setInterval(async () => {
                     await this.processMinuteDeduction(client, userId);

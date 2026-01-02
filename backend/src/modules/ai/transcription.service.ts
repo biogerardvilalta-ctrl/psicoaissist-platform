@@ -18,8 +18,8 @@ export class TranscriptionService {
         }
     }
 
-    async transcribeAudio(file: Express.Multer.File, userId: string): Promise<string> {
-        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes, mimetype: ${file.mimetype}) for user ${userId}`);
+    async transcribeAudio(file: Express.Multer.File, userId: string, skipUsageTracking: boolean = false): Promise<string> {
+        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes, mimetype: ${file.mimetype}) for user ${userId}. SkipUsage: ${skipUsageTracking}`);
 
         if (!this.genAI) {
             console.warn('GEMINI_API_KEY missing, returning mock transcription.');
@@ -45,8 +45,12 @@ export class TranscriptionService {
                 const minutes = Math.ceil(durationSeconds / 60);
                 await this.usageLimitsService.checkTranscriptionLimit(userId, minutes);
 
-                // Increment usage
-                await this.usageLimitsService.incrementTranscriptionUsage(userId, durationSeconds);
+                // Increment usage ONLY if not skipping (e.g. live session)
+                if (!skipUsageTracking) {
+                    await this.usageLimitsService.incrementTranscriptionUsage(userId, durationSeconds);
+                } else {
+                    console.log(`[TranscriptionService] Skipping increment for user ${userId} (Live Session)`);
+                }
 
             } catch (err) {
                 console.error("Error calculating duration or checking limits:", err);
