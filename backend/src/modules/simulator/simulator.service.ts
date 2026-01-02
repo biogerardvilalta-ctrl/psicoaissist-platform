@@ -40,22 +40,6 @@ export class SimulatorService {
         const user = await this.prisma.user.findUnique({ where: { id: userId } });
         if (!user) throw new ForbiddenException("User not found");
 
-        const now = new Date();
-        const lastReset = user.simulatorLastReset || new Date(0);
-        const isNewMonth = now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear();
-
-        if (isNewMonth) {
-            await this.prisma.user.update({
-                where: { id: userId },
-                data: {
-                    simulatorUsageCount: 0, // Reset to 0
-                    simulatorMinutesUsed: 0,
-                    simulatorLastReset: now
-                }
-            });
-            // Re-fetch user to have updated counts (0)
-        }
-
         // Use centralized service to check limits
         await this.usageLimitsService.checkSimulatorLimit(userId);
         // Check if user has at least 1 minute available to start a session
@@ -380,9 +364,11 @@ export class SimulatorService {
         // Cases are already normalized to 9999 in UsageLimitsService if UNLIMITED
         const remainingCases = Math.max(0, limitCases - usedCases);
 
-        // Calculate next reset (1st of next month)
+        // Calculate next reset (Billing Cycle Date)
         const now = new Date();
-        const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const nextReset = usageData.currentUsage.limitResetDate
+            ? new Date(usageData.currentUsage.limitResetDate)
+            : new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
         // 2. Existing Stats Logic (Charts)
         const where: any = { userId };

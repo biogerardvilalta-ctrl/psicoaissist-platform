@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,341 +8,271 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  passwordHash    String   @map("password_hash")
-  role            UserRole
-  status          UserStatus @default(ACTIVE)
-  verified        Boolean  @default(false)
-  verificationToken String? @map("verification_token")
-  resetPasswordToken String? @map("reset_password_token")
-  resetPasswordExpires DateTime? @map("reset_password_expires")
-  
-  // Profile data (can be non-encrypted)
-  firstName       String?  @map("first_name")
-  lastName        String?  @map("last_name")
-  phone           String?
-  country         String?
-  professionalNumber String? @map("professional_number")
-  speciality      String?
-  enableReminders Boolean  @default(false) @map("enable_reminders")
-  
-  // Agenda Settings
-  defaultDuration Int      @default(60) @map("default_duration")
-  bufferTime      Int      @default(10) @map("buffer_time")
-  workStartHour   String   @default("09:00") @map("work_start_hour")
-  workEndHour     String   @default("18:00") @map("work_end_hour")
-  scheduleConfig  Json?    @map("schedule_config")
-  hourlyRate      Int      @default(60) @map("hourly_rate")
-  
-  // AI Settings
-  preferredLanguage String @default("ca") @map("preferred_language")
-  dashboardLayout   Json?    @map("dashboard_layout")
-  
-  // Branding
-  brandingConfig  Json?    @map("branding_config")
-  
-  // Simulator Limits
-  simulatorUsageCount Int      @default(0) @map("simulator_usage_count")
-  simulatorMinutesUsed Int     @default(0) @map("simulator_minutes_used") // Track active minutes separately
-  simulatorLastReset  DateTime? @map("simulator_last_reset")
+  id                       String             @id @default(cuid())
+  email                    String             @unique
+  passwordHash             String             @map("password_hash")
+  role                     UserRole
+  status                   UserStatus         @default(ACTIVE)
+  verified                 Boolean            @default(false)
+  verificationToken        String?            @map("verification_token")
+  resetPasswordToken       String?            @map("reset_password_token")
+  resetPasswordExpires     DateTime?          @map("reset_password_expires")
+  firstName                String?            @map("first_name")
+  lastName                 String?            @map("last_name")
+  phone                    String?
+  country                  String?
+  professionalNumber       String?            @map("professional_number")
+  speciality               String?
+  stripeCustomerId         String?            @unique @map("stripe_customer_id")
+  createdAt                DateTime           @default(now()) @map("created_at")
+  updatedAt                DateTime           @updatedAt @map("updated_at")
+  lastLogin                DateTime?          @map("last_login")
+  enableReminders          Boolean            @default(false) @map("enable_reminders")
+  bufferTime               Int                @default(10) @map("buffer_time")
+  defaultDuration          Int                @default(60) @map("default_duration")
+  workEndHour              String             @default("18:00") @map("work_end_hour")
+  workStartHour            String             @default("09:00") @map("work_start_hour")
+  preferredLanguage        String             @default("ca") @map("preferred_language")
+  scheduleConfig           Json?              @map("schedule_config")
+  dashboardLayout          Json?              @map("dashboard_layout")
+  hourlyRate               Int                @default(60) @map("hourly_rate")
+  createdById              String?            @map("created_by_id")
+  googleCalendarId         String?            @map("google_calendar_id")
+  googleRefreshToken       String?            @map("google_refresh_token")
+  googleWatchExpiration    BigInt?            @map("google_watch_expiration")
+  googleWatchId            String?            @map("google_watch_id")
+  googleWatchResourceId    String?            @map("google_watch_resource_id")
+  brandingConfig           Json?              @map("branding_config")
+  googleImportCalendar     Boolean            @default(true)
+  referralCode             String?            @unique @map("referral_code")
+  referralCredits          Int                @default(0) @map("referral_credits")
+  referralsCount           Int                @default(0) @map("referrals_count")
+  referredBy               String?            @map("referred_by")
+  simulatorLastReset       DateTime?          @map("simulator_last_reset")
+  simulatorMinutesUsed     Int                @default(0) @map("simulator_minutes_used")
+  simulatorUsageCount      Int                @default(0) @map("simulator_usage_count")
+  transcriptionMinutesUsed Float              @default(0) @map("transcription_minutes_used")
+  auditLogs                AuditLog[]
+  clients                  Client[]
+  encryptionKeys           EncryptionKey[]
+  reports                  Report[]
+  sessions                 Session[]
+  simulationReports        SimulationReport[]
+  subscription             Subscription?
+  createdBy                User?              @relation("UserCreator", fields: [createdById], references: [id])
+  createdUsers             User[]             @relation("UserCreator")
+  managedProfessionals User[]             @relation("AgendaManagement")
+  agendaManagers       User[]             @relation("AgendaManagement")
+  groupMembers         User[]             @relation("GroupMembers")
+  memberOfGroups       User[]             @relation("GroupMembers")
 
-  // Transcription Limits (Precise)
-  transcriptionMinutesUsed Int @default(0) @map("transcription_minutes_used")
-
-
-  // Growth & Referrals
-  referralCode    String?  @unique @map("referral_code")
-  referredBy      String?  @map("referred_by")
-  referralsCount  Int      @default(0) @map("referrals_count")
-  referralCredits Int      @default(0) @map("referral_credits") // Extra sessions earned via referrals
-
-  // Google Integration
-  googleRefreshToken String?  @map("google_refresh_token")
-  googleCalendarId   String?  @map("google_calendar_id")
-  googleWatchId      String?  @map("google_watch_id")
-  googleWatchResourceId String? @map("google_watch_resource_id")
-  googleWatchExpiration BigInt? @map("google_watch_expiration")
-  
-  // Google Calendar Configuration
-  googleImportCalendar Boolean @default(true)
-  
-  // Stripe integration
-  stripeCustomerId String? @unique @map("stripe_customer_id")
-  
-  // Timestamps
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  lastLogin       DateTime? @map("last_login")
-  
-  // Relations
-  clients         Client[]
-  sessions        Session[]
-  reports         Report[]
-  auditLogs       AuditLog[]
-  encryptionKeys  EncryptionKey[]
-  subscription    Subscription?
-  simulationReports SimulationReport[]
-
-  // Agenda Manager Relations
-  createdById          String?  @map("created_by_id")
-  createdBy            User?    @relation("UserCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  createdUsers         User[]   @relation("UserCreator")
-  
-  managedProfessionals User[]   @relation("AgendaManagement")
-  agendaManagers       User[]   @relation("AgendaManagement")
-
-  // Professional Groups
-  memberOfGroups       User[]   @relation("GroupMembers")
-  groupMembers         User[]   @relation("GroupMembers")
-  
   @@map("users")
 }
 
 model Subscription {
-  id                    String   @id @default(cuid())
-  userId                String   @unique @map("user_id")
-  stripeSubscriptionId  String   @unique @map("stripe_subscription_id")
-  status                String   // active, canceled, past_due, etc.
-  planType              String   @map("plan_type") // basic, pro, premium
-  currentPeriodStart    DateTime @map("current_period_start")
-  currentPeriodEnd      DateTime @map("current_period_end")
-  canceledAt            DateTime? @map("canceled_at")
-  
-  // Timestamps
-  createdAt             DateTime @default(now()) @map("created_at")
-  updatedAt             DateTime @updatedAt @map("updated_at")
-  
-  // Relations
-  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@map("subscriptions")
+  id                   String    @id @default(cuid())
+  userId               String    @unique @map("user_id")
+  stripeSubscriptionId String    @unique @map("stripe_subscription_id")
+  status               String
+  planType             String    @map("plan_type")
+  currentPeriodStart   DateTime  @map("current_period_start")
+  currentPeriodEnd     DateTime  @map("current_period_end")
+  canceledAt           DateTime? @map("canceled_at")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([status])
   @@index([planType])
+  @@map("subscriptions")
 }
 
 model EncryptionKey {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  keyValue  String   @map("key_value") // Base64 encoded key
-  algorithm String   @default("aes-256-gcm")
-  isActive  Boolean  @default(true) @map("is_active")
-  createdAt DateTime @default(now()) @map("created_at")
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  keyValue  String    @map("key_value")
+  algorithm String    @default("aes-256-gcm")
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
   expiresAt DateTime? @map("expires_at")
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@map("encryption_keys")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId, isActive])
+  @@map("encryption_keys")
 }
 
 model Client {
-  id              String   @id @default(cuid())
-  userId          String   @map("user_id")
-  
-  // Encrypted personal data
-  encryptedPersonalData Bytes  @map("encrypted_personal_data")
-  encryptedClinicalData Bytes? @map("encrypted_clinical_data")
-  encryptedSensitiveData Bytes? @map("encrypted_sensitive_data")
-  
-  // Non-sensitive metadata
-  tags            String[]
-  riskLevel       RiskLevel @default(LOW) @map("risk_level")
-  isActive        Boolean  @default(true) @map("is_active")
-  
-  // Encryption metadata
-  encryptionKeyId String   @map("encryption_key_id")
-  dataVersion     Int      @default(1) @map("data_version")
-  
-  // Reminder Preferences
-  sendEmailReminders    Boolean @default(true) @map("send_email_reminders")
-  sendWhatsappReminders Boolean @default(true) @map("send_whatsapp_reminders")
-  
-  // Dates and audit
-  firstSessionAt  DateTime? @map("first_session_at")
-  lastSessionAt   DateTime? @map("last_session_at")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  lastModifiedBy  String   @map("last_modified_by")
-  
-  // Relations
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sessions        Session[]
-  reports         Report[]
-  consents        Consent[]
-  
-  @@map("clients")
+  id                     String    @id @default(cuid())
+  userId                 String    @map("user_id")
+  encryptedPersonalData  Bytes     @map("encrypted_personal_data")
+  encryptedClinicalData  Bytes?    @map("encrypted_clinical_data")
+  encryptedSensitiveData Bytes?    @map("encrypted_sensitive_data")
+  tags                   String[]
+  riskLevel              RiskLevel @default(LOW) @map("risk_level")
+  isActive               Boolean   @default(true) @map("is_active")
+  encryptionKeyId        String    @map("encryption_key_id")
+  dataVersion            Int       @default(1) @map("data_version")
+  firstSessionAt         DateTime? @map("first_session_at")
+  lastSessionAt          DateTime? @map("last_session_at")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+  lastModifiedBy         String    @map("last_modified_by")
+  sendEmailReminders     Boolean   @default(true) @map("send_email_reminders")
+  sendWhatsappReminders  Boolean   @default(true) @map("send_whatsapp_reminders")
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consents               Consent[]
+  reports                Report[]
+  sessions               Session[]
+
   @@index([userId, isActive])
   @@index([tags])
   @@index([riskLevel])
+  @@map("clients")
 }
 
 model Consent {
-  id            String      @id @default(cuid())
-  clientId      String      @map("client_id")
-  consentType   ConsentType @map("consent_type")
-  granted       Boolean
-  grantedAt     DateTime    @map("granted_at")
-  revokedAt     DateTime?   @map("revoked_at")
-  version       String      @default("1.0")
-  notes         String?
-  ipAddress     String?     @map("ip_address")
-  userAgent     String?     @map("user_agent")
-  
-  client        Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  
-  @@map("consents")
+  id          String      @id @default(cuid())
+  clientId    String      @map("client_id")
+  consentType ConsentType @map("consent_type")
+  granted     Boolean
+  grantedAt   DateTime    @map("granted_at")
+  revokedAt   DateTime?   @map("revoked_at")
+  version     String      @default("1.0")
+  notes       String?
+  ipAddress   String?     @map("ip_address")
+  userAgent   String?     @map("user_agent")
+  client      Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
   @@index([clientId, consentType])
+  @@map("consents")
 }
 
 model Session {
-  id              String        @id @default(cuid())
-  clientId        String        @map("client_id")
-  userId          String        @map("user_id")
-  
-  // Session data
-  startTime       DateTime      @map("start_time")
-  endTime         DateTime?     @map("end_time")
-  duration        Int?          // in seconds
-  sessionType     SessionType   @map("session_type")
-  status          SessionStatus
-  isMinor         Boolean       @default(false) @map("is_minor")
-  reminderSent    Boolean       @default(false) @map("reminder_sent")
-  
-  // Encrypted content
-  encryptedTranscription Bytes? @map("encrypted_transcription")
-  encryptedNotes  Bytes?        @map("encrypted_notes")
-  encryptedAudioPath String?    @map("encrypted_audio_path")
-  
-  // AI data (can be encrypted or not based on sensitivity)
-  aiSuggestions   Json?         @map("ai_suggestions")
-  aiMetadata      Json?         @map("ai_metadata")
-  
-  // Metadata
-  encryptionKeyId String?       @map("encryption_key_id")
-  audioQuality    AudioQuality? @map("audio_quality")
-  recordingConsent Boolean      @default(false) @map("recording_consent")
-  consentSigned    Boolean      @default(false) @map("consent_signed")
-  consentTimestamp DateTime?    @map("consent_timestamp")
-  consentVersion   String?      @map("consent_version")
-  startedAt        DateTime?    @map("started_at")
+  id                     String        @id @default(cuid())
+  clientId               String        @map("client_id")
+  userId                 String        @map("user_id")
+  startTime              DateTime      @map("start_time")
+  endTime                DateTime?     @map("end_time")
+  duration               Int?
+  sessionType            SessionType   @map("session_type")
+  status                 SessionStatus
+  encryptedTranscription Bytes?        @map("encrypted_transcription")
+  encryptedNotes         Bytes?        @map("encrypted_notes")
+  encryptedAudioPath     String?       @map("encrypted_audio_path")
+  aiSuggestions          Json?         @map("ai_suggestions")
+  aiMetadata             Json?         @map("ai_metadata")
+  encryptionKeyId        String?       @map("encryption_key_id")
+  audioQuality           AudioQuality? @map("audio_quality")
+  recordingConsent       Boolean       @default(false) @map("recording_consent")
+  createdAt              DateTime      @default(now()) @map("created_at")
+  updatedAt              DateTime      @updatedAt @map("updated_at")
+  consentSigned          Boolean       @default(false) @map("consent_signed")
+  consentTimestamp       DateTime?     @map("consent_timestamp")
+  consentVersion         String?       @map("consent_version")
+  isMinor                Boolean       @default(false) @map("is_minor")
+  startedAt              DateTime?     @map("started_at")
+  reminderSent           Boolean       @default(false) @map("reminder_sent")
+  googleEventId          String?       @map("google_event_id")
+  reports                Report[]
+  client                 Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user                   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Google Integration
-  googleEventId    String?      @map("google_event_id")
-  
-  // Timestamps
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
-  
-  // Relations
-  client          Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reports         Report[]
-  
-  @@map("sessions")
   @@index([userId, status])
   @@index([clientId, startTime])
+  @@map("sessions")
 }
 
 model Report {
-  id              String       @id @default(cuid())
-  clientId        String       @map("client_id")
-  userId          String       @map("user_id")
-  sessionId       String?      @map("session_id")
-  
-  // Report metadata
-  title           String
-  reportType      ReportType   @map("report_type")
-  status          ReportStatus
-  version         Int          @default(1)
-  
-  // Encrypted content
-  encryptedContent Bytes       @map("encrypted_content")
-  encryptedMetadata Bytes?     @map("encrypted_metadata")
-  
-  // Template and AI data
-  templateId      String?      @map("template_id")
-  aiGenerated     Boolean      @default(false) @map("ai_generated")
-  aiConfidence    Float?       @map("ai_confidence")
-  
-  // Safeguards
-  professionalSignature String? @map("professional_signature")
-  humanReviewConfirmed Boolean @default(false) @map("human_review_confirmed")
-  logMetadata     Json?        @map("log_metadata")
-  
-  // Audit and timestamps
-  encryptionKeyId String       @map("encryption_key_id")
-  createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
-  completedAt     DateTime?    @map("completed_at")
-  
-  // Relations
-  client          Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  session         Session?     @relation(fields: [sessionId], references: [id], onDelete: SetNull)
-  
-  @@map("reports")
+  id                    String       @id @default(cuid())
+  clientId              String       @map("client_id")
+  userId                String       @map("user_id")
+  sessionId             String?      @map("session_id")
+  title                 String
+  reportType            ReportType   @map("report_type")
+  status                ReportStatus
+  version               Int          @default(1)
+  encryptedContent      Bytes        @map("encrypted_content")
+  encryptedMetadata     Bytes?       @map("encrypted_metadata")
+  templateId            String?      @map("template_id")
+  aiGenerated           Boolean      @default(false) @map("ai_generated")
+  aiConfidence          Float?       @map("ai_confidence")
+  encryptionKeyId       String       @map("encryption_key_id")
+  createdAt             DateTime     @default(now()) @map("created_at")
+  updatedAt             DateTime     @updatedAt @map("updated_at")
+  completedAt           DateTime?    @map("completed_at")
+  humanReviewConfirmed  Boolean      @default(false) @map("human_review_confirmed")
+  logMetadata           Json?        @map("log_metadata")
+  professionalSignature String?      @map("professional_signature")
+  client                Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  session               Session?     @relation(fields: [sessionId], references: [id])
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId, status])
   @@index([clientId, reportType])
+  @@map("reports")
 }
 
 model AuditLog {
-  id            String      @id @default(cuid())
-  userId        String?     @map("user_id")
-  action        AuditAction
-  resourceType  String      @map("resource_type")
-  resourceId    String?     @map("resource_id")
-  
-  // Request metadata
-  ipAddress     String      @map("ip_address")
-  userAgent     String?     @map("user_agent")
-  method        String?
-  url           String?
-  
-  // Change details
-  oldValues     Json?       @map("old_values")
-  newValues     Json?       @map("new_values")
-  metadata      Json?
-  
-  // Security
-  isSuccess     Boolean     @default(true) @map("is_success")
-  errorMessage  String?     @map("error_message")
-  riskScore     Int?        @map("risk_score") // 0-100
-  
-  // Timestamp
-  createdAt     DateTime    @default(now()) @map("created_at")
-  
-  // Relations
-  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  
-  @@map("audit_logs")
+  id           String      @id @default(cuid())
+  userId       String?     @map("user_id")
+  action       AuditAction
+  resourceType String      @map("resource_type")
+  resourceId   String?     @map("resource_id")
+  ipAddress    String      @map("ip_address")
+  userAgent    String?     @map("user_agent")
+  method       String?
+  url          String?
+  oldValues    Json?       @map("old_values")
+  newValues    Json?       @map("new_values")
+  metadata     Json?
+  isSuccess    Boolean     @default(true) @map("is_success")
+  errorMessage String?     @map("error_message")
+  riskScore    Int?        @map("risk_score")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  user         User?       @relation(fields: [userId], references: [id])
+
   @@index([userId, createdAt])
   @@index([action, createdAt])
   @@index([resourceType, resourceId])
+  @@map("audit_logs")
 }
 
-// Enums
+model SimulationReport {
+  id                   String   @id @default(uuid())
+  userId               String
+  createdAt            DateTime @default(now())
+  patientName          String
+  difficulty           String
+  scenario             String?
+  empathyScore         Int
+  effectivenessScore   Int
+  professionalismScore Int
+  feedbackMarkdown     String
+  user                 User     @relation(fields: [userId], references: [id])
+
+  @@map("simulation_reports")
+}
+
 enum UserRole {
   PSYCHOLOGIST_BASIC
   PSYCHOLOGIST_PRO
   PSYCHOLOGIST_PREMIUM
-  PSYCHOLOGIST  // Add a general psychologist role
+  PSYCHOLOGIST
   STUDENT
   ADMIN
-
   SUPER_ADMIN
   AGENDA_MANAGER
   PROFESSIONAL_GROUP
 }
 
 enum UserStatus {
-  PENDING_REVIEW
-  VALIDATED
-  REJECTED
   ACTIVE
   INACTIVE
   SUSPENDED
   DELETED
+  PENDING_REVIEW
+  VALIDATED
+  REJECTED
 }
 
 enum RiskLevel {
@@ -422,26 +349,4 @@ enum AuditAction {
   DATA_IMPORT
   CONSENT_GRANTED
   CONSENT_REVOKED
-}
-
-model SimulationReport {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-
-  // Metadata
-  patientName String
-  difficulty  String // easy, medium, hard
-  scenario    String?
-
-  // Metrics (0-100)
-  empathyScore      Int
-  effectivenessScore Int
-  professionalismScore Int
-
-  // Full Content
-  feedbackMarkdown String @db.Text // The full AI report
-  
-  @@map("simulation_reports")
 }
