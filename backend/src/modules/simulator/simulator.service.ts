@@ -46,12 +46,11 @@ export class SimulatorService {
         await this.usageLimitsService.checkSimulatorMinutesLimit(userId, 1);
 
         // Increment
-        await this.prisma.user.update({
-            where: { id: userId },
-            data: {
-                simulatorUsageCount: { increment: 1 }
-            }
-        });
+        // Increment via UsageLimitsService to handle extra packs logic
+        const result = await this.usageLimitsService.incrementSimulatorUsage(userId);
+        if (result.limitExceeded) {
+            throw new ForbiddenException("Simulator limit exceeded (including extra packs)");
+        }
     }
 
     /**
@@ -425,9 +424,10 @@ export class SimulatorService {
 
 
                 return {
-                    used: usedCases,
                     limit: limitCases,
+                    used: usedCases,
                     remaining: remainingCases,
+                    extraSimulatorCases: usageData.currentUsage.extraSimulatorCases, // Pass extra cases
                     // Minutes Logic
                     minutesUsed: usedMinutes, // Correctly uses the outer scope usedMinutes (simulator)
                     minutesLimit: displayLimitMinutes,

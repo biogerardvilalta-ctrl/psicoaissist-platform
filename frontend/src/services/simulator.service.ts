@@ -39,6 +39,7 @@ export interface StatsData {
         nextReset: string;
         clientsUsed?: number;
         clientsLimit?: number;
+        extraSimulatorCases?: number;
     };
 }
 

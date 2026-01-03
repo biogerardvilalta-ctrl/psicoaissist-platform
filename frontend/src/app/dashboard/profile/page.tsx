@@ -258,7 +258,7 @@ export default function ProfilePage() {
                             <h3 className="text-sm font-medium mb-3">Límites y Uso del Plan</h3>
 
                             {/* Active Patients */}
-                            <div className="space-y-2">
+                            <div className="bg-blue-50/50 rounded-lg p-4 space-y-2 border border-blue-100/50">
                                 <div className="flex justify-between items-center">
                                     <div>
                                         <p className="text-sm font-medium text-slate-700">Pacientes Activos</p>
@@ -287,18 +287,24 @@ export default function ProfilePage() {
                                 )}
                             </div>
 
+
                             {/* Simulator Stats (Merged) */}
                             {stats?.usage && (
                                 <>
                                     {/* Clinical Cases */}
                                     {/* Clinical Cases */}
                                     {user?.subscription?.planType.toLowerCase() !== 'basic' && (
-                                        <div className="space-y-2">
+                                        <div className="bg-indigo-50/50 rounded-lg p-4 space-y-3 border border-indigo-100/50">
                                             <div className="flex justify-between items-center">
                                                 <div>
                                                     <p className="text-sm font-medium text-slate-700">Casos Clínicos</p>
                                                     <p className="text-xs text-muted-foreground">
-                                                        {stats.usage.limit > 1000 ? "Ilimitado" : `${stats.usage.remaining} restantes de ${stats.usage.limit}`}
+                                                        {stats.usage.limit > 1000
+                                                            ? "Ilimitado"
+                                                            : (stats.usage.extraSimulatorCases && stats.usage.extraSimulatorCases > 0
+                                                                ? `${stats.usage.remaining} restantes de ${(stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)} + ${stats.usage.extraSimulatorCases} (Extra)`
+                                                                : `${stats.usage.remaining} restantes de ${stats.usage.limit}`)
+                                                        }
                                                     </p>
                                                 </div>
                                                 {stats.usage.limit < 1000 && (
@@ -307,19 +313,51 @@ export default function ProfilePage() {
                                                     </Badge>
                                                 )}
                                             </div>
+
+                                            {/* Base Plan Bar */}
                                             {stats.usage.limit < 1000 && (
-                                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div
-                                                        className={`h-full rounded-full ${stats.usage.remaining === 0 ? 'bg-red-500' : 'bg-blue-600'}`}
-                                                        style={{ width: `${Math.min(100, (stats.usage.used / stats.usage.limit) * 100)}%` }}
-                                                    />
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
+                                                        <span>Plan Base</span>
+                                                        <span>{Math.min(stats.usage.used || 0, (stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))} / {(stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)}</span>
+                                                    </div>
+                                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                        <div
+                                                            className={`h-full rounded-full ${(Math.min(stats.usage.used || 0, (stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)) >= ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))) ? 'bg-red-500' : 'bg-blue-600'}`}
+                                                            style={{ width: `${Math.min(100, (Math.min(stats.usage.used || 0, (stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)) / ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))) * 100)}%` }}
+                                                        />
+                                                    </div>
                                                 </div>
                                             )}
+
+                                            {/* Extra Pack Bar */}
+                                            {(
+                                                (stats.usage.extraSimulatorCases && stats.usage.extraSimulatorCases > 0) ||
+                                                ((stats.usage.used || 0) > ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)))
+                                            ) && stats.usage.limit < 1000 && (
+                                                    <div className="space-y-1">
+                                                        <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
+                                                            <span>Pack Extra</span>
+                                                            <span>
+                                                                {Math.max(0, (stats.usage.used || 0) - ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)))}
+                                                                /
+                                                                {(stats.usage.extraSimulatorCases || 0) + Math.max(0, (stats.usage.used || 0) - ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)))}
+                                                            </span>
+                                                        </div>
+                                                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                            <div
+                                                                className={`h-full rounded-full ${(stats.usage.extraSimulatorCases || 0) === 0 ? 'bg-red-500' : 'bg-purple-500'}`}
+                                                                style={{ width: `${Math.min(100, (Math.max(0, (stats.usage.used || 0) - ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))) / ((stats.usage.extraSimulatorCases || 0) + Math.max(0, (stats.usage.used || 0) - ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))))) * 100)}%` }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
                                         </div>
                                     )}
 
+
                                     {/* Transcription Minutes */}
-                                    <div className="space-y-3">
+                                    <div className="bg-purple-50/50 rounded-lg p-4 space-y-3 border border-purple-100/50">
                                         <div className="flex justify-between items-center">
                                             <div>
                                                 <p className="text-sm font-medium text-slate-700">Minutos de Transcripción (IA)</p>

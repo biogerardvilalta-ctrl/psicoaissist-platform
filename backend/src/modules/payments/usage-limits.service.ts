@@ -280,6 +280,7 @@ export class UsageLimitsService {
         transcriptionMinutes: (user as any).transcriptionMinutesUsed || 0,
         extraTranscriptionMinutes: extraTranscriptionMinutes, // Pass explicit extra for UI
         simulatorCases: user.simulatorUsageCount,
+        extraSimulatorCases: extraSimulatorCases, // Explicitly return extra cases
         simulatorMinutes: user.simulatorMinutesUsed,
         limitResetDate: user.subscription.currentPeriodEnd,
         subscriptionStatus: user.subscription.status,
@@ -294,7 +295,7 @@ export class UsageLimitsService {
       },
     };
   }
-  async incrementTranscriptionUsage(userId: string, durationSeconds: number): Promise<{ limitExceeded: boolean }> {
+  async incrementTranscriptionUsage(userId: string, durationSeconds: number): Promise<{ limitExceeded: boolean; remainingMinutes?: number }> {
     const minutes = Math.ceil(durationSeconds / 60);
 
     const user = await this.prisma.user.findUnique({
@@ -358,5 +359,75 @@ export class UsageLimitsService {
     const newAvailable = planLimit === PlanLimits.UNLIMITED ? 99999 : Math.max(0, planLimit - newUsed) + newExtra;
 
     return { limitExceeded: false, remainingMinutes: newAvailable };
+  }
+
+  async incrementSimulatorUsage(userId: string): Promise<{ limitExceeded: boolean }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { subscription: true },
+    });
+
+    if (!user?.subscription || user.subscription.status !== 'active') {
+      return { limitExceeded: true }; // Or throw ForbiddenException
+    }
+
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    if (!planFeatures) return { limitExceeded: true };
+
+    const currentUsed = user.simulatorUsageCount || 0;
+    const planLimit = planFeatures.simulatorCases;
+    const extraCases = (user as any).extraSimulatorCases || 0;
+    const referralBonus = (user.referralsCount || 0) * 5;
+
+    // Effective Plan Limit includes referral bonuses but NOT extra packs (which are separate bucket usually, 
+    // but in checkSimulatorLimit we treated them as one. 
+    // Here we split them to know when to deduct from extra).
+    // Actually, checkSimulatorLimit combined them: totalLimit = plan + referral + extra.
+    // So if usage >= totalLimit, it fails.
+
+    // For deduction logic:
+    // If usage < (plan + referral), we just increment usage.
+    // If usage >= (plan + referral), we increment usage AND decrement extra.
+
+    const baseLimit = planFeatures.simulatorCases === PlanLimits.UNLIMITED
+      ? 999999
+      : planFeatures.simulatorCases + referralBonus;
+
+    // Check strict global limit first
+    const totalLimit = planFeatures.simulatorCases === PlanLimits.UNLIMITED
+      ? 999999
+      : baseLimit + extraCases;
+
+    if (currentUsed >= totalLimit) {
+      return { limitExceeded: true };
+    }
+
+    // Determine if we are dipping into extras
+    // We increase usage first.
+    // If (currentUsed + 1) > baseLimit, we consume 1 extra.
+
+    let decrementExtra = 0;
+    if (planFeatures.simulatorCases !== PlanLimits.UNLIMITED) {
+      if (currentUsed >= baseLimit) {
+        decrementExtra = 1;
+      }
+    }
+
+    // Safety check
+    if (decrementExtra > extraCases) {
+      decrementExtra = 0; // Should not happen if totalLimit checked correctly, but safe keeping
+      // Or return limitExceeded?
+      if (extraCases === 0 && decrementExtra > 0) return { limitExceeded: true };
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        simulatorUsageCount: { increment: 1 },
+        ...(decrementExtra > 0 ? { extraSimulatorCases: { decrement: decrementExtra } } : {})
+      } as any
+    });
+
+    return { limitExceeded: false };
   }
 }
