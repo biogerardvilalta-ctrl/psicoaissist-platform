@@ -319,7 +319,7 @@ export default function ProfilePage() {
                                     )}
 
                                     {/* Transcription Minutes */}
-                                    <div className="space-y-2">
+                                    <div className="space-y-3">
                                         <div className="flex justify-between items-center">
                                             <div>
                                                 <p className="text-sm font-medium text-slate-700">Minutos de Transcripción (IA)</p>
@@ -327,7 +327,9 @@ export default function ProfilePage() {
                                                     {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit === -1
                                                         ? "Ilimitado"
                                                         : stats.usage.transcriptionLimit !== undefined
-                                                            ? `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${stats.usage.transcriptionLimit}`
+                                                            ? (stats.usage.extraTranscriptionMinutes && stats.usage.extraTranscriptionMinutes > 0
+                                                                ? `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${(stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)} + ${stats.usage.extraTranscriptionMinutes} (Extra)`
+                                                                : `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${stats.usage.transcriptionLimit}`)
                                                             : "Calculando..."}
                                                 </p>
                                             </div>
@@ -335,14 +337,46 @@ export default function ProfilePage() {
                                                 {Math.round(stats.usage.transcriptionUsed || 0)} Min Usados
                                             </Badge>
                                         </div>
+
+                                        {/* Base Plan Bar */}
                                         {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit !== -1 && (
-                                            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                <div
-                                                    className={`h-full rounded-full ${(stats.usage.transcriptionRemaining || 0) <= 0 ? 'bg-red-500' : 'bg-green-500'}`}
-                                                    style={{ width: `${Math.min(100, ((stats.usage.transcriptionUsed || 0) / stats.usage.transcriptionLimit) * 100)}%` }}
-                                                />
+                                            <div className="space-y-1">
+                                                <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
+                                                    <span>Plan Base</span>
+                                                    <span>{Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))} / {(stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)}</span>
+                                                </div>
+                                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                    <div
+                                                        className={`h-full rounded-full ${(Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)) >= ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) ? 'bg-red-500' : 'bg-green-500'}`}
+                                                        style={{ width: `${Math.min(100, (Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)) / ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) * 100)}%` }}
+                                                    />
+                                                </div>
                                             </div>
                                         )}
+
+                                        {/* Extra Pack Bar (Conditional) */}
+                                        {/* Extra Pack Bar (Conditional) */}
+                                        {(
+                                            (stats.usage.extraTranscriptionMinutes && stats.usage.extraTranscriptionMinutes > 0) ||
+                                            ((stats.usage.transcriptionUsed || 0) > ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))
+                                        ) && (
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
+                                                        <span>Pack Extra</span>
+                                                        <span>
+                                                            {Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))}
+                                                            /
+                                                            {(stats.usage.extraTranscriptionMinutes || 0) + Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))}
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                        <div
+                                                            className={`h-full rounded-full ${(stats.usage.extraTranscriptionMinutes || 0) === 0 ? 'bg-red-500' : 'bg-purple-500'}`}
+                                                            style={{ width: `${Math.min(100, (Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) / ((stats.usage.extraTranscriptionMinutes || 0) + Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))))) * 100)}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
                                     </div>
 
                                     <p className="text-xs text-muted-foreground pt-2 border-t">

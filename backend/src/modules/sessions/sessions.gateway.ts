@@ -111,9 +111,9 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         try {
             // Deduct 1 minute (60 seconds)
-            const result = await this.usageLimitsService.incrementTranscriptionUsage(userId, 60);
+            const result: any = await this.usageLimitsService.incrementTranscriptionUsage(userId, 60);
 
-            if (result.limitExceeded) {
+            if (result.limitExceeded || (result.remainingMinutes !== undefined && result.remainingMinutes <= 0)) {
                 sessionData.limitReached = true;
                 this.activeSessions.set(client.id, sessionData);
 

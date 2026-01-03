@@ -5,6 +5,7 @@ export enum PlanType {
   PRO = 'pro',
   BUSINESS = 'business',
   PREMIUM_PLUS = 'premium_plus',
+  MINUTES_PACK = 'minutes_pack',
 }
 
 export class CreateCheckoutSessionDto {

@@ -437,6 +437,7 @@ export class SimulatorService {
                     transcriptionUsed: transcriptionUsedMinutes,
                     transcriptionLimit: transcriptionLimitMinutes === -1 ? -1 : transcriptionLimitMinutes,
                     transcriptionRemaining: transcriptionLimitMinutes === -1 ? 99999 : Math.max(0, transcriptionLimitMinutes - transcriptionUsedMinutes),
+                    extraTranscriptionMinutes: usageData.currentUsage.extraTranscriptionMinutes,
 
                     plan: plan,
                     nextReset: nextReset,

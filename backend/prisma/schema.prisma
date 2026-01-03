@@ -52,6 +52,8 @@ model User {
   simulatorMinutesUsed     Int                @default(0) @map("simulator_minutes_used")
   simulatorUsageCount      Int                @default(0) @map("simulator_usage_count")
   transcriptionMinutesUsed Float              @default(0) @map("transcription_minutes_used")
+  extraTranscriptionMinutes Int               @default(0) @map("extra_transcription_minutes")
+  extraSimulatorCases      Int                @default(0) @map("extra_simulator_cases")
   auditLogs                AuditLog[]
   clients                  Client[]
   encryptionKeys           EncryptionKey[]

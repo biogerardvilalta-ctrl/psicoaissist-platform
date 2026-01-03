@@ -32,15 +32,64 @@ export class PaymentsService {
         throw new NotFoundException('User not found');
       }
 
-      // Check if user already has an active subscription
-      if (user.subscription?.status === 'active') {
-        throw new BadRequestException('User already has an active subscription');
+      // Check specific logic for Packs vs Subscriptions
+      const isPack = createCheckoutDto.plan === PlanType.MINUTES_PACK;
+
+      if (!isPack) {
+        // Check if user already has an active subscription (only for subs)
+        if (user.subscription?.status === 'active') {
+          // If trying to subscribe to same plan...
+          if (user.subscription.planType === createCheckoutDto.plan) {
+            throw new BadRequestException('User already has this subscription active');
+          }
+          // If upgrading, usually we handle via updateSubscription, but this endpoint might handle new checkouts.
+          // For now, let's allow checkout only if no active sub, OR upgrade logic handled elsewhere.
+          // This matches original logic:
+          // throw new BadRequestException('User already has an active subscription');
+          // We will keep original check strictly for subscriptions:
+          throw new BadRequestException('User already has an active subscription');
+        }
       }
 
-      const plan = this.stripeService.getPlan(createCheckoutDto.plan, createCheckoutDto.interval);
-      if (!plan) {
-        throw new BadRequestException('Invalid plan selected');
+      // Get Price ID
+      let priceId: string;
+      let planDetails: any;
+
+      if (isPack) {
+        // Pack logic
+        // We might not have this in stripeService.getPlan() if it returns subs only.
+        // We can hardcode or add to stripe service. For MVP, we can treat it here.
+        // Assuming we use 'stripeService.getPlan' but we need to ensure it handles one-time prices.
+        // Or we manually fetch price.
+        // Let's assume we use a hardcoded priceId for testing or retrieve from config
+
+        // For DEMO/DEV purposes, if no stripe configured for pack, we might fallback.
+        // But checking 'stripeService' methods...
+
+        // Let's assume we added PACK features in plan-features.ts.
+        // We'll trust the caller passes key 'minutes_pack'.
+        // We need to match this to a Stripe Price ID.
+        priceId = process.env.STRIPE_PRICE_MINUTES_PACK; // Config
+        planDetails = {
+          name: 'Pack 500 Minutos',
+          amount: 1500,
+          currency: 'eur',
+          interval: null
+        };
+
+        if (!priceId && process.env.NODE_ENV !== 'production') {
+          // Fake it for dev if not set
+          priceId = 'price_fake_pack_minutes';
+        }
+      } else {
+        const plan = this.stripeService.getPlan(createCheckoutDto.plan, createCheckoutDto.interval);
+        if (!plan) {
+          throw new BadRequestException('Invalid plan selected');
+        }
+        priceId = plan.priceId;
+        planDetails = plan;
       }
+
 
       // Create or get Stripe customer
       let stripeCustomerId = user.stripeCustomerId;
@@ -62,11 +111,12 @@ export class PaymentsService {
 
       // Create checkout session
       const session = await this.stripeService.createCheckoutSession(
-        plan.priceId,
+        priceId,
         stripeCustomerId,
         {
           userId: user.id,
           planType: createCheckoutDto.plan,
+          isOneTime: isPack ? 'true' : 'false', // Metadata to identify pack
           ...createCheckoutDto.metadata,
         }
       );
@@ -75,10 +125,10 @@ export class PaymentsService {
         sessionId: session.id,
         url: session.url,
         plan: {
-          name: plan.name,
-          amount: plan.amount,
-          currency: plan.currency,
-          interval: plan.interval,
+          name: planDetails.name,
+          amount: planDetails.amount,
+          currency: planDetails.currency,
+          interval: planDetails.interval,
         },
       };
     } catch (error) {
@@ -86,6 +136,113 @@ export class PaymentsService {
       throw error;
     }
   }
+
+  // ... (createCustomer, createPortalSession, etc remain same)
+
+  async addExtraPack(userId: string, packId: string) {
+    // Only minutes_pack supported for now
+    if (packId !== PlanType.MINUTES_PACK) return;
+
+    const MINUTES_IN_PACK = 500;
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        extraTranscriptionMinutes: { increment: MINUTES_IN_PACK }
+      }
+    });
+
+    this.logger.log(`Added ${MINUTES_IN_PACK} extra minutes to user ${userId}`);
+  }
+
+  // ... (rest of methods)
+
+  private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+    const userId = session.metadata?.userId;
+    const planType = session.metadata?.planType; // string
+    const isOneTime = session.metadata?.isOneTime === 'true';
+
+    if (!userId || !planType) {
+      this.logger.error('Missing metadata in checkout session');
+      return;
+    }
+
+    if (isOneTime) {
+      if (planType === PlanType.MINUTES_PACK) {
+        await this.addExtraPack(userId, planType);
+      }
+      return; // Done
+    }
+
+    // The subscription will be handled by the subscription.created webhook
+    this.logger.log(`Checkout session completed for user ${userId} with plan ${planType}`);
+  }
+
+  // ... (rest)
+
+  // Custom Demo update
+  async createCheckoutSessionDemo(createCheckoutDto: CreateCheckoutSessionDto, userId: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { subscription: true },
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const isPack = createCheckoutDto.plan === 'minutes_pack';
+
+      // Planes demo hardcoded sin llamar a Stripe
+      const demoPlans = {
+        basic: { name: 'Plan Básico', amount: 2900, currency: 'eur', interval: 'month' },
+        pro: { name: 'Plan Pro', amount: 5900, currency: 'eur', interval: 'month' },
+        business: { name: 'Plan Business', amount: 12900, currency: 'eur', interval: 'month' },
+        premium_plus: { name: 'Plan Premium Plus', amount: 9900, currency: 'eur', interval: 'month' },
+        minutes_pack: { name: 'Pack Minutos', amount: 1500, currency: 'eur', interval: 'one-time' }
+      };
+
+      const plan = demoPlans[createCheckoutDto.plan];
+      if (!plan) {
+        throw new BadRequestException('Invalid plan selected');
+      }
+
+      // Simular respuesta de Stripe para demo - usar URL local
+      const mockSessionId = `cs_demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      // If pack, we might want to trigger the "success" logic immediately or via a special endpoint
+      // For demo, we direct to success page which calls backend confirming payment?
+      // Usually backend webhook does the work.
+      // In demo mode, we might need a way to auto-apply via a "fake webhook" call.
+
+      const mockUrl = `http://localhost:3000/dashboard/settings/billing?success=true`;
+      // Note: In real production, stripe calls webhook. In Demo, we rely on manual triggering or just "it worked"
+
+      this.logger.log(`Demo checkout session created for user ${user.email} - plan ${createCheckoutDto.plan}`);
+
+      // AUTO-APPLY FOR DEMO ONLY (Immediate gratification)
+      if (isPack && process.env.NODE_ENV !== 'production') {
+        await this.addExtraPack(userId, 'minutes_pack');
+      }
+
+      return {
+        sessionId: mockSessionId,
+        url: mockUrl,
+        plan: {
+          name: plan.name,
+          amount: plan.amount,
+          currency: plan.currency,
+          interval: plan.interval,
+        },
+      };
+    } catch (error) {
+      this.logger.error('Error creating demo checkout session:', error);
+      throw error;
+    }
+  }
+
+  // ... (rest)
+
 
   async createCustomer(createCustomerDto: CreateCustomerDto) {
     try {
@@ -235,18 +392,7 @@ export class PaymentsService {
     }
   }
 
-  private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-    const userId = session.metadata?.userId;
-    const planType = session.metadata?.planType as PlanType;
 
-    if (!userId || !planType) {
-      this.logger.error('Missing metadata in checkout session');
-      return;
-    }
-
-    // The subscription will be handled by the subscription.created webhook
-    this.logger.log(`Checkout session completed for user ${userId} with plan ${planType}`);
-  }
 
   private async handleSubscriptionCreated(subscription: Stripe.Subscription) {
     const customer = subscription.customer as string;
@@ -457,52 +603,7 @@ export class PaymentsService {
     }));
   }
 
-  // Método demo para testing sin Stripe real
-  async createCheckoutSessionDemo(createCheckoutDto: CreateCheckoutSessionDto, userId: string) {
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: { id: userId },
-        include: { subscription: true },
-      });
 
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-
-      // Planes demo hardcoded sin llamar a Stripe
-      const demoPlans = {
-        basic: { name: 'Plan Básico', amount: 2900, currency: 'eur', interval: 'month' },
-        pro: { name: 'Plan Pro', amount: 5900, currency: 'eur', interval: 'month' },
-        business: { name: 'Plan Business', amount: 12900, currency: 'eur', interval: 'month' },
-        premium_plus: { name: 'Plan Premium Plus', amount: 9900, currency: 'eur', interval: 'month' }
-      };
-
-      const plan = demoPlans[createCheckoutDto.plan];
-      if (!plan) {
-        throw new BadRequestException('Invalid plan selected');
-      }
-
-      // Simular respuesta de Stripe para demo - usar URL local
-      const mockSessionId = `cs_demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const mockUrl = `http://localhost:3000/payment/success?session_id=${mockSessionId}&plan=${createCheckoutDto.plan}`;
-
-      this.logger.log(`Demo checkout session created for user ${user.email} - plan ${createCheckoutDto.plan}`);
-
-      return {
-        sessionId: mockSessionId,
-        url: mockUrl,
-        plan: {
-          name: plan.name,
-          amount: plan.amount,
-          currency: plan.currency,
-          interval: plan.interval,
-        },
-      };
-    } catch (error) {
-      this.logger.error('Error creating demo checkout session:', error);
-      throw error;
-    }
-  }
 
   private getPlanDisplayName(planType: PlanType): string {
     const plans = this.stripeService.getPlans();

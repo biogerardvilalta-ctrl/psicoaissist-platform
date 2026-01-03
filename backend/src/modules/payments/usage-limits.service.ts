@@ -65,17 +65,21 @@ export class UsageLimitsService {
     }
 
     const usedMinutes = (user as any).transcriptionMinutesUsed || 0;
-    const totalProjectedMinutes = usedMinutes + minutesToAdd;
+    const planLimit = planFeatures.transcriptionMinutes;
+    const extraMinutes = (user as any).extraTranscriptionMinutes || 0;
 
     // Check transcription limit
-    if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
-      if (totalProjectedMinutes > planFeatures.transcriptionMinutes) {
+    if (planLimit !== PlanLimits.UNLIMITED) {
+      const available = Math.max(0, planLimit - usedMinutes) + extraMinutes;
+
+      if (minutesToAdd > available) {
         throw new ForbiddenException(
-          `Monthly transcription limit reached. Used: ${usedMinutes}m / ${planFeatures.transcriptionMinutes}m.`
+          `Monthly transcription limit reached. Plan: ${planLimit}m. Extra: ${extraMinutes}m. Used: ${usedMinutes}m.`
         );
       }
     } else {
       // Fair Use Check for Unlimited
+      const totalProjectedMinutes = usedMinutes + minutesToAdd;
       if (totalProjectedMinutes > PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
         throw new ForbiddenException(
           `Fair Use Policy: Transcription usage excessive (${Math.round(usedMinutes / 60)}h used). Please contact commercial team.`
@@ -149,9 +153,10 @@ export class UsageLimitsService {
 
     // Check simulator cases limit
     if (planFeatures.simulatorCases !== PlanLimits.UNLIMITED) {
-      // Calculate effective limit including referral bonuses
+      // Calculate effective limit including referral bonuses AND extra packs
       const referralBonus = (user.referralsCount || 0) * 5;
-      const totalLimit = planFeatures.simulatorCases + referralBonus;
+      const extraCases = (user as any).extraSimulatorCases || 0;
+      const totalLimit = planFeatures.simulatorCases + referralBonus + extraCases;
 
       // Reset logic should ideally be handled by a scheduled task or on-access check like here
       // But we are reading from user.simulatorUsageCount which is reset manually or by logic in simulator service currently.
@@ -160,7 +165,7 @@ export class UsageLimitsService {
 
       if (user.simulatorUsageCount >= totalLimit) {
         throw new ForbiddenException(
-          `Simulator cases limit reached (${totalLimit} cases/month). Upgrade your plan or invite colleagues.`
+          `Simulator cases limit reached (${totalLimit} cases/month including extras). Upgrade your plan or buy a pack.`
         );
       }
     } else {
@@ -253,9 +258,16 @@ export class UsageLimitsService {
     }
 
     const referralBonus = (user.referralsCount || 0) * 5;
+    const extraSimulatorCases = (user as any).extraSimulatorCases || 0;
     const simulatorCasesLimit = planFeatures.simulatorCases === PlanLimits.UNLIMITED
       ? 9999
-      : planFeatures.simulatorCases + referralBonus;
+      : planFeatures.simulatorCases + referralBonus + extraSimulatorCases;
+
+    // Limits logic
+    const extraTranscriptionMinutes = (user as any).extraTranscriptionMinutes || 0;
+    const totalTranscriptionLimit = planFeatures.transcriptionMinutes === PlanLimits.UNLIMITED
+      ? PlanLimits.UNLIMITED
+      : planFeatures.transcriptionMinutes + extraTranscriptionMinutes;
 
     return {
       planType: user.subscription.planType,
@@ -266,6 +278,7 @@ export class UsageLimitsService {
         // transcriptionHours would be calculated from actual usage tracking
         transcriptionHours: Math.round(((user as any).transcriptionMinutesUsed || 0) / 60 * 10) / 10,
         transcriptionMinutes: (user as any).transcriptionMinutesUsed || 0,
+        extraTranscriptionMinutes: extraTranscriptionMinutes, // Pass explicit extra for UI
         simulatorCases: user.simulatorUsageCount,
         simulatorMinutes: user.simulatorMinutesUsed,
         limitResetDate: user.subscription.currentPeriodEnd,
@@ -274,21 +287,15 @@ export class UsageLimitsService {
       limits: {
         clients: planFeatures.maxClients,
         reportsPerMonth: planFeatures.reportsPerMonth,
-        transcriptionHours: Math.round(planFeatures.transcriptionMinutes / 60),
-        transcriptionMinutes: planFeatures.transcriptionMinutes,
+        transcriptionHours: Math.round(totalTranscriptionLimit / 60),
+        transcriptionMinutes: totalTranscriptionLimit, // This is Plan + Extra
         simulatorCases: simulatorCasesLimit,
         simulatorMinutes: planFeatures.simulatorMinutes
       },
     };
   }
   async incrementTranscriptionUsage(userId: string, durationSeconds: number): Promise<{ limitExceeded: boolean }> {
-    const minutes = Math.ceil(durationSeconds / 60); // Round up to nearest minute? Or just accumulate seconds? 
-    // The previous implementation was robust for accumulated seconds if we assume this is called at end of session.
-    // But for incremental (every minute), we might want to just add 1 minute if called every minute?
-    // The argument is durationSeconds. If we call it with 60, it adds 1 minute.
-
-    // However, simply adding blindly doesn't check limit.
-    // We need to fetch user, check limit, update, and return.
+    const minutes = Math.ceil(durationSeconds / 60);
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -303,27 +310,53 @@ export class UsageLimitsService {
     if (!planFeatures) return { limitExceeded: true };
 
     const currentUsed = (user as any).transcriptionMinutesUsed || 0;
-    const newUsed = currentUsed + minutes;
+    const planLimit = planFeatures.transcriptionMinutes;
+    const extraMinutes = (user as any).extraTranscriptionMinutes || 0;
 
-    let limitExceeded = false;
-
-    if (planFeatures.transcriptionMinutes !== PlanLimits.UNLIMITED) {
-      if (newUsed >= planFeatures.transcriptionMinutes) {
-        limitExceeded = true;
+    // Check limit before update
+    if (planLimit !== PlanLimits.UNLIMITED) {
+      const available = Math.max(0, planLimit - currentUsed) + extraMinutes;
+      if (minutes > available) {
+        return { limitExceeded: true };
       }
     } else {
-      if (newUsed >= PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
-        limitExceeded = true;
+      if (currentUsed + minutes >= PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES) {
+        return { limitExceeded: true };
       }
+    }
+
+    // Determine how much to deduct from Extra vs Count as Normal Usage
+    // Actually, we ALWAYS increment 'transcriptionMinutesUsed' for stats.
+    // But we need to decrement 'extraTranscriptionMinutes' ONLY if we are dipping into them.
+    // Dip amount = max(0, (currentUsed + minutes) - planLimit) - max(0, currentUsed - planLimit)
+    // Basically: newOverdraft - oldOverdraft.
+
+    let decrementExtra = 0;
+    if (planLimit !== PlanLimits.UNLIMITED) {
+      const oldOverdraft = Math.max(0, currentUsed - planLimit);
+      const newOverdraft = Math.max(0, (currentUsed + minutes) - planLimit);
+      decrementExtra = newOverdraft - oldOverdraft;
+    }
+
+    // Safety check just in case
+    if (decrementExtra > extraMinutes) {
+      // This shouldn't happen due to the check above, but purely for robustness:
+      decrementExtra = extraMinutes; // drain what's left
     }
 
     await this.prisma.user.update({
       where: { id: userId },
       data: {
-        transcriptionMinutesUsed: { increment: minutes }
+        transcriptionMinutesUsed: { increment: minutes },
+        ...(decrementExtra > 0 ? { extraTranscriptionMinutes: { decrement: decrementExtra } } : {})
       } as any
     });
 
-    return { limitExceeded };
+    // Calculate remaining (after update) to return strict status
+    const newUsed = currentUsed + minutes;
+    const newExtra = Math.max(0, extraMinutes - decrementExtra);
+    const newAvailable = planLimit === PlanLimits.UNLIMITED ? 99999 : Math.max(0, planLimit - newUsed) + newExtra;
+
+    return { limitExceeded: false, remainingMinutes: newAvailable };
   }
 }

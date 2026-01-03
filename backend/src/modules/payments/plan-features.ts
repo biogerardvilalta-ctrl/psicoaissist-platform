@@ -125,3 +125,12 @@ export const PLAN_FEATURES: Record<string, PlanFeatures> = {
     prioritySupport: true,
   },
 };
+
+export const EXTRA_PACKS = {
+  MINUTES_PACK: {
+    id: 'minutes_pack',
+    minutes: 500,
+    price: 1500, // in cents? Frontend says 15 eur.
+    name: 'Pack 500 Minutos'
+  }
+};
