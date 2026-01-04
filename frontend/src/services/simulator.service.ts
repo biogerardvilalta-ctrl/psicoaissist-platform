@@ -7,6 +7,8 @@ export interface PatientProfile {
     traits: string[];
     difficulty: 'easy' | 'medium' | 'hard';
     scenario: string;
+    sessionStart?: number;
+    signature?: string;
 }
 
 export interface SimulationReport {

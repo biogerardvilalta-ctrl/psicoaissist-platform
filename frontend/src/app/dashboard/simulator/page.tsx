@@ -17,7 +17,7 @@ import { ApiError } from '@/lib/http-client';
 import Link from 'next/link';
 import { EvolutionChart } from './components/EvolutionChart';
 import { ReportsHistory } from './components/ReportsHistory';
-import { UpgradeModal } from '@/components/shared/UpgradeModal';
+import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
 
 // Simple hook mock if not available, or assume it exists. 
 // Given previous context, it likely exists or I should use standard web speech api. 
@@ -120,6 +120,30 @@ export default function SimulatorPage() {
         period: 'all',
         date: ''
     });
+
+    // Timer Ticker & Auto-End
+    const [now, setNow] = useState(Date.now());
+    useEffect(() => {
+        if (status === 'active' && startTime) {
+            const interval = setInterval(() => {
+                const currentNow = Date.now();
+                setNow(currentNow);
+
+                // Frontend Auto-End
+                const elapsed = (currentNow - startTime) / 1000;
+                if (elapsed >= 45 * 60) {
+                    toast({
+                        variant: "destructive",
+                        title: "Tiempo Agotado",
+                        description: "La sesión ha finalizado automáticamente (45 min)."
+                    });
+                    handleEndSession();
+                    clearInterval(interval);
+                }
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [status, startTime]);
 
     // TTS Settings
     const [ttsRate, setTtsRate] = useState(1);
@@ -249,8 +273,19 @@ export default function SimulatorPage() {
             // Text to Speech
             speak(response.response);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
+            // Handle Session Time Expired specific case
+            if (error instanceof ApiError && error.status === 403 && error.message.includes('expired')) {
+                toast({
+                    variant: "destructive",
+                    title: "Sesión Finalizada",
+                    description: "Has alcanzado el límite de 45 minutos para esta sesión."
+                });
+                handleEndSession();
+                return;
+            }
+
             toast({
                 variant: "destructive",
                 title: "Error",
@@ -302,12 +337,28 @@ export default function SimulatorPage() {
                     <h1 className="text-3xl font-bold text-gray-900">Simulador Clínico</h1>
                     <p className="text-gray-500">Practica tus habilidades con pacientes generados por IA.</p>
                 </div>
-                {status === 'active' && (
-                    <Button variant="destructive" onClick={handleEndSession}>
-                        <Square className="w-4 h-4 mr-2" />
-                        Finalizar Sesión
-                    </Button>
-                )}
+                <div className="flex items-center gap-4">
+                    {status === 'active' && startTime && (
+                        <div className="bg-slate-100 px-4 py-2 rounded-lg font-mono text-sm font-medium flex items-center gap-2 border border-slate-200">
+                            <History className="w-4 h-4 text-slate-500" />
+                            <span id="session-timer">
+                                {(() => {
+                                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                                    const remaining = Math.max(0, (45 * 60) - elapsed);
+                                    const mins = Math.floor(remaining / 60);
+                                    const secs = remaining % 60;
+                                    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                                })()}
+                            </span>
+                        </div>
+                    )}
+                    {status === 'active' && (
+                        <Button variant="destructive" onClick={handleEndSession}>
+                            <Square className="w-4 h-4 mr-2" />
+                            Finalizar Sesión
+                        </Button>
+                    )}
+                </div>
             </div>
 
             <Tabs defaultValue="simulator" className="flex-1 flex flex-col min-h-0" onValueChange={handleTabChange}>
@@ -734,11 +785,10 @@ export default function SimulatorPage() {
             </Dialog>
 
             {/* Limit Reached Modal */}
-            <UpgradeModal
+            <UpgradePlanModal
                 isOpen={showLimitModal}
                 onClose={() => setShowLimitModal(false)}
                 limitType="simulator"
-                message={limitMessage}
             />
         </div>
     );

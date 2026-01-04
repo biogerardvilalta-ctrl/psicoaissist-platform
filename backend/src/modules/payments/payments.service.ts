@@ -33,7 +33,7 @@ export class PaymentsService {
       }
 
       // Check specific logic for Packs vs Subscriptions
-      const isPack = createCheckoutDto.plan === PlanType.MINUTES_PACK;
+      const isPack = createCheckoutDto.plan === PlanType.MINUTES_PACK || createCheckoutDto.plan === PlanType.SIMULATOR_PACK;
 
       if (!isPack) {
         // Check if user already has an active subscription (only for subs)
@@ -69,17 +69,31 @@ export class PaymentsService {
         // Let's assume we added PACK features in plan-features.ts.
         // We'll trust the caller passes key 'minutes_pack'.
         // We need to match this to a Stripe Price ID.
-        priceId = process.env.STRIPE_PRICE_MINUTES_PACK; // Config
-        planDetails = {
-          name: 'Pack 500 Minutos',
-          amount: 1500,
-          currency: 'eur',
-          interval: null
-        };
 
-        if (!priceId && process.env.NODE_ENV !== 'production') {
-          // Fake it for dev if not set
-          priceId = 'price_fake_pack_minutes';
+        if (createCheckoutDto.plan === PlanType.MINUTES_PACK) {
+          priceId = process.env.STRIPE_PRICE_MINUTES_PACK; // Config
+          planDetails = {
+            name: 'Pack 500 Minutos',
+            amount: 1500,
+            currency: 'eur',
+            interval: null
+          };
+
+          if (!priceId && process.env.NODE_ENV !== 'production') {
+            priceId = 'price_fake_pack_minutes';
+          }
+        } else if (createCheckoutDto.plan === PlanType.SIMULATOR_PACK) {
+          priceId = process.env.STRIPE_PRICE_SIMULATOR_PACK; // Config
+          planDetails = {
+            name: 'Pack 10 Casos Clínicos',
+            amount: 1500, // Example price, same as minutes pack for now
+            currency: 'eur',
+            interval: null
+          };
+
+          if (!priceId && process.env.NODE_ENV !== 'production') {
+            priceId = 'price_fake_pack_simulator';
+          }
         }
       } else {
         const plan = this.stripeService.getPlan(createCheckoutDto.plan, createCheckoutDto.interval);
@@ -140,19 +154,25 @@ export class PaymentsService {
   // ... (createCustomer, createPortalSession, etc remain same)
 
   async addExtraPack(userId: string, packId: string) {
-    // Only minutes_pack supported for now
-    if (packId !== PlanType.MINUTES_PACK) return;
-
-    const MINUTES_IN_PACK = 500;
-
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        extraTranscriptionMinutes: { increment: MINUTES_IN_PACK }
-      }
-    });
-
-    this.logger.log(`Added ${MINUTES_IN_PACK} extra minutes to user ${userId}`);
+    if (packId === PlanType.MINUTES_PACK) {
+      const MINUTES_IN_PACK = 500;
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          extraTranscriptionMinutes: { increment: MINUTES_IN_PACK }
+        }
+      });
+      this.logger.log(`Added ${MINUTES_IN_PACK} extra minutes to user ${userId}`);
+    } else if (packId === PlanType.SIMULATOR_PACK) {
+      const CASES_IN_PACK = 10;
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          extraSimulatorCases: { increment: CASES_IN_PACK }
+        }
+      });
+      this.logger.log(`Added ${CASES_IN_PACK} extra simulator cases to user ${userId}`);
+    }
   }
 
   // ... (rest of methods)
@@ -168,7 +188,7 @@ export class PaymentsService {
     }
 
     if (isOneTime) {
-      if (planType === PlanType.MINUTES_PACK) {
+      if (planType === PlanType.MINUTES_PACK || planType === PlanType.SIMULATOR_PACK) {
         await this.addExtraPack(userId, planType);
       }
       return; // Done
@@ -192,7 +212,7 @@ export class PaymentsService {
         throw new NotFoundException('User not found');
       }
 
-      const isPack = createCheckoutDto.plan === 'minutes_pack';
+      const isPack = createCheckoutDto.plan === 'minutes_pack' || createCheckoutDto.plan === 'simulator_pack';
 
       // Planes demo hardcoded sin llamar a Stripe
       const demoPlans = {
@@ -200,7 +220,8 @@ export class PaymentsService {
         pro: { name: 'Plan Pro', amount: 5900, currency: 'eur', interval: 'month' },
         business: { name: 'Plan Business', amount: 12900, currency: 'eur', interval: 'month' },
         premium_plus: { name: 'Plan Premium Plus', amount: 9900, currency: 'eur', interval: 'month' },
-        minutes_pack: { name: 'Pack Minutos', amount: 1500, currency: 'eur', interval: 'one-time' }
+        minutes_pack: { name: 'Pack Minutos', amount: 1500, currency: 'eur', interval: 'one-time' },
+        simulator_pack: { name: 'Pack 10 Casos Clínicos', amount: 1500, currency: 'eur', interval: 'one-time' }
       };
 
       const plan = demoPlans[createCheckoutDto.plan];
@@ -222,7 +243,8 @@ export class PaymentsService {
 
       // AUTO-APPLY FOR DEMO ONLY (Immediate gratification)
       if (isPack && process.env.NODE_ENV !== 'production') {
-        await this.addExtraPack(userId, 'minutes_pack');
+        const packId = createCheckoutDto.plan === 'minutes_pack' ? 'minutes_pack' : 'simulator_pack';
+        await this.addExtraPack(userId, packId);
       }
 
       return {

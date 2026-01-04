@@ -34,26 +34,42 @@ const upgradePlans = [
         features: ['Añade 500 minutos', 'Acumulable', 'Un solo pago'],
         popular: false,
         planType: 'ADD_ON'
+    },
+    {
+        id: 'simulator_pack',
+        name: 'Pack 10 Casos',
+        price: '15€',
+        description: '10 casos clínicos extra para el simulador',
+        features: ['10 casos extra', 'Sin caducidad', 'Acumulable'],
+        popular: false,
+        planType: 'ADD_ON'
     }
 ];
 
 interface UpgradePlanModalProps {
     isOpen: boolean;
     onClose: () => void;
+    limitType?: 'transcription' | 'simulator';
 }
 
-export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
+export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription' }: UpgradePlanModalProps) {
     const router = useRouter();
     const { createCheckoutSession, loading } = usePayments();
     const { user } = useAuth();
     const [showPlans, setShowPlans] = useState(false);
+
+    const isSimulator = limitType === 'simulator';
+    const title = isSimulator ? "Límite de Casos Alcanzado" : "Límite de Transcripción Alcanzado";
+    const description = isSimulator
+        ? "Has agotado los casos clínicos disponibles en tu ciclo actual o pack."
+        : "Has consumido los minutos de IA/Transcripción disponibles en tu ciclo actual.";
 
     const handleUpgrade = async (planId: string) => {
         try {
             await createCheckoutSession({
                 // @ts-ignore
                 plan: planId,
-                interval: planId === 'minutes_pack' ? undefined : 'month' // Pack is one-time
+                interval: (planId === 'minutes_pack' || planId === 'simulator_pack') ? undefined : 'month' // Packs are one-time
             });
         } catch (err) {
             console.error('Upgrade error', err);
@@ -67,14 +83,12 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
 
         switch (currentPlan) {
             case 'PREMIUM':
-                return upgradePlans.filter(p => p.id === 'minutes_pack');
+                return upgradePlans.filter(p => ['minutes_pack', 'simulator_pack'].includes(p.id));
             case 'PRO':
-                return upgradePlans.filter(p => ['premium', 'minutes_pack'].includes(p.id));
+                return upgradePlans.filter(p => ['premium', 'minutes_pack', 'simulator_pack'].includes(p.id));
             case 'BASIC':
             default:
-                // Show everything including Pro, Premium and Pack
-                // Note: Assuming Basic users can buy packs too, though usually they upgrade first. 
-                // Request said: "en el plan basic ofrecer pro, premium i pack minutos"
+                // Show everything including Pro, Premium and Packs
                 return upgradePlans;
         }
     };
@@ -92,14 +106,15 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
 
                         <DialogHeader className="space-y-4">
                             <DialogTitle className="text-2xl font-extrabold text-slate-900 leading-tight">
-                                Límite de Transcripción Alcanzado
+                                {title}
                             </DialogTitle>
                             <div className="text-slate-500 text-sm leading-relaxed max-w-[350px] mx-auto">
-                                <p>Has consumido los minutos de IA/Transcripción disponibles en tu ciclo actual.</p>
+                                <p>{description}</p>
                                 <p className="mt-2 font-medium text-slate-700">
-                                    {visiblePlans.some(p => p.id === 'minutes_pack') ?
-                                        "Actualiza tu plan o compra un pack de minutos." :
-                                        "Actualiza a un plan superior para eliminar límites."}
+                                    {(isSimulator && visiblePlans.some(p => p.id === 'simulator_pack')) ? "Compra un pack de casos para continuar." :
+                                        (visiblePlans.some(p => p.id === 'minutes_pack') ?
+                                            "Actualiza tu plan o compra un pack de minutos." :
+                                            "Actualiza a un plan superior para eliminar límites.")}
                                 </p>
                             </div>
                         </DialogHeader>
@@ -139,6 +154,7 @@ export function UpgradePlanModal({ isOpen, onClose }: UpgradePlanModalProps) {
                                         <div className="flex justify-between items-center mb-1">
                                             <div className="flex items-center gap-2">
                                                 {plan.id === 'minutes_pack' && <Zap className="h-4 w-4 text-amber-500 fill-amber-500" />}
+                                                {plan.id === 'simulator_pack' && <Crown className="h-4 w-4 text-blue-500 fill-blue-500" />}
                                                 <h3 className="font-bold text-base text-slate-900">{plan.name}</h3>
                                             </div>
                                             <span className="font-bold text-lg text-slate-900">
