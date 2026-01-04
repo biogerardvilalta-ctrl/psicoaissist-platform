@@ -70,12 +70,13 @@ const plans = [
 
   {
     id: 'clinics',
-    name: 'Clínicas',
+    name: 'Para Centros de Salud, Universidades y Hospitales',
     price: 'Custom',
     description: 'Centros que priorizan formación y control',
     features: [
       'Usuarios ilimitados (a medida)',
       'IA Corporativa (5.000+ min/mes)',
+      'Simulador Clínico (casos/mes a medida)',
       'API Access (HIS integration)',
       'Compliance Avanzado (Auditoría RGPD) y SSO',
       'Onboarding dedicado',

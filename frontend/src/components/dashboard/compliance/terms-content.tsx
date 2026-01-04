@@ -250,13 +250,14 @@ export function TermsContent() {
                             {/* CLINICS ONLY */}
                             <div className="grid md:grid-cols-1 gap-4">
                                 <div className="p-5 bg-slate-100 rounded-lg border border-slate-300">
-                                    <h3 className="font-bold text-slate-800 mb-2">🏥 Clinics</h3>
+                                    <h3 className="font-bold text-slate-800 mb-2">🏥 Para Centros de Salud, Universidades y Hospitales</h3>
                                     <p className="text-sm font-semibold text-slate-700 mb-3">Consultar</p>
                                     <div className="text-xs space-y-2">
                                         <div>
                                             <span className="font-bold text-green-700">✅ Inclou:</span>
                                             <ul className="list-disc pl-4 text-slate-700 mt-1">
                                                 <li>Usuaris il·limitats.</li>
+                                                <li>Simulador Clínico (casos/mes a medida).</li>
                                                 <li>API / HIS & Compliance.</li>
                                                 <li>SLA Garantitzat.</li>
                                             </ul>

@@ -33,14 +33,13 @@ export default function ClinicsPage() {
                 </div>
             </section>
 
-            {/* Trust Badges (Placeholders) */}
+            {/* Trust Badges (Placeholders) - HIDDEN to avoid misleading advertising
             <section className="py-10 bg-slate-50 border-b border-gray-200">
                 <div className="mx-auto max-w-7xl px-6 text-center">
                     <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-6">
                         Potenciando equipos clínicos en
                     </p>
                     <div className="flex justify-center gap-12 opacity-50 grayscale">
-                        {/* Logos ficticios para demo */}
                         <div className="text-xl font-bold text-slate-700">HealthCorp</div>
                         <div className="text-xl font-bold text-slate-700">UniClinic</div>
                         <div className="text-xl font-bold text-slate-700">MentalCare Grp</div>
@@ -48,6 +47,7 @@ export default function ClinicsPage() {
                     </div>
                 </div>
             </section>
+            */}
 
             {/* Main Value Props */}
             <section id="features" className="py-24 sm:py-32">
@@ -150,7 +150,7 @@ export default function ClinicsPage() {
                                     <div>
                                         <h3 className="font-semibold text-gray-900 text-lg">Grupos de Profesionales</h3>
                                         <p className="text-gray-600 mt-2">
-                                            ¿Tienes sedes en Madrid y BCN? ¿Equipo de Infantil y Adultos?
+                                            ¿Tienes múltiples sedes? ¿Equipo de Infantil y Adultos?
                                             Crea "Grupos" para que cada manager filtre y vea solo las agendas relevantes con un solo clic.
                                         </p>
                                     </div>

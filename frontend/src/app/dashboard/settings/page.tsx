@@ -52,8 +52,14 @@ export default function SettingsPage() {
       setWorkStartHour(user.workStartHour || "09:00");
       setWorkEndHour(user.workEndHour || "18:00");
       setPreferredLanguage(user.preferredLanguage || "ca");
+
+      // Redirect if on Basic plan and trying to access blocked section
+      const isBasic = user.subscription?.planType?.toUpperCase() === 'BASIC';
+      if (isBasic && (activeSection === 'agenda' || activeSection === 'ai')) {
+        setActiveSection('billing');
+      }
     }
-  }, [user]);
+  }, [user, activeSection]);
 
   // Update Handler
   const handleUpdateProfile = async (data: any) => {
@@ -121,12 +127,14 @@ export default function SettingsPage() {
   };
 
   const menuItems = [
-    { id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon },
+    // Hide Agenda for Basic
+    ...(user?.subscription?.planType?.toUpperCase() !== 'BASIC' ? [{ id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon }] : []),
     { id: 'billing', label: 'Facturación y Tarifas', icon: Euro },
     // Solo mostrar Marca Personal si es PREMIUM
     ...((user?.subscription?.planType === 'PREMIUM' || user?.role === 'ADMIN') ? [{ id: 'branding', label: 'Marca Personal', icon: Palette }] : []),
     // { id: 'managers', label: 'Gestores de Agenda', icon: Users },
-    { id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit },
+    // Hide AI for Basic
+    ...(user?.subscription?.planType?.toUpperCase() !== 'BASIC' ? [{ id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit }] : []),
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
   ];
 

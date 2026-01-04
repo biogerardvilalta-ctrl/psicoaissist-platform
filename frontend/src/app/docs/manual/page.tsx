@@ -380,7 +380,7 @@ export default function ManualPage() {
                                 <div className="p-6 bg-slate-100 rounded-xl border border-slate-300">
                                     <div className="flex justify-between items-center mb-4">
                                         <div>
-                                            <h4 className="text-lg font-bold text-slate-800">🏥 Clínicas y Hospitales</h4>
+                                            <h4 className="text-lg font-bold text-slate-800">🏥 Para Centros de Salud, Universidades y Hospitales</h4>
                                             <p className="text-sm text-slate-600">Para organizaciones de más de 3 profesionales</p>
                                         </div>
                                         <div className="text-right">
@@ -392,6 +392,7 @@ export default function ManualPage() {
                                             <ul className="space-y-1 text-slate-700">
                                                 <li>• Usuarios Ilimitados (Precio por asiento)</li>
                                                 <li>• <strong>5.000+</strong> Minutos IA Generativa (Análisis)</li>
+                                                <li>• Simulador Clínico (casos a medida)</li>
                                                 <li>• Integración HIS/EHR vía API</li>
                                             </ul>
                                         </div>
