@@ -624,7 +624,7 @@ export default function ManualPage() {
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Simulador Clínico</h3>
                             <p>
-                                Acceda desde el menú "Simulador" para practicar con pacientes virtuales. La IA le dará feedback sobre su empatía y técnica al terminar la sesión simulada.
+                                Acceda desde el menú "Simulador" para practicar con pacientes virtuales. La IA le dará feedback sobre su empatía y técnica al terminar la sesión simulada. Las sesiones tienen una duración máxima de 45 minutos.
                             </p>
                         </section>
 

@@ -114,6 +114,7 @@ export function TermsContent() {
                                 <span className="block text-xs text-red-600 font-bold uppercase">Simulador Clínico</span>
                                 <span className="text-lg font-bold text-slate-800">500</span>
                                 <span className="text-xs text-slate-500 ml-1">casos/mes</span>
+                                <span className="block text-[10px] text-slate-400 mt-1">Máx 45 min/sesión</span>
                             </div>
                         </div>
                         <p className="text-xs text-red-700 mt-2 italic">

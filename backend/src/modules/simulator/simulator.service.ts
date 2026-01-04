@@ -275,6 +275,14 @@ export class SimulatorService {
             }
         }
 
+        // Check for empty or too short history to avoid "template" hallucinations
+        if (!history || history.length < 2) {
+            return {
+                metrics: { empathy: 0, intervention_effectiveness: 0, professionalism: 0 },
+                feedback: "# ⚠️ Sesión Insuficiente\n\nNo se ha detectado suficiente interacción para generar un informe clínico válido.\n\nPor favor, realiza una sesión más extensa (mínimo 2 intercambios) para que la IA pueda evaluar tus competencias."
+            };
+        }
+
         // Format history into a readable transcript
         const transcript = (history || []).map(msg => {
             const speaker = msg.role === 'user' ? 'Psicólogo (Usuario)' : 'Paciente (IA)';
@@ -283,24 +291,28 @@ export class SimulatorService {
         }).join('\n\n');
 
         const prompt = `
-        ACTÚA COMO UN SUPERVISOR CLÍNICO EXPERTO(MODELO CBT / Humanista).
-        Analiza la siguiente transcripción de una sesión simulada.
+        ACTÚA COMO UN SUPERVISOR CLÍNICO EXPERTO (MODELO CBT / Humanista).
+        Analiza la siguiente transcripción de una sesión simulada entre un Terapeuta (Usuario) y un Paciente (IA).
         
         === TRANSCRIPCIÓN ===
-            ${transcript}
+        ${transcript}
         ====================
 
-            Analiza la sesión y retorna un objeto JSON con el siguiente formato EXACTO:
+        TU TAREA:
+        1. Evalúa la empatía, eficacia y profesionalidad del terapeuta (0-100).
+        2. Escribe un informe detallado en Markdown (feedback). NO COPIES LA ESTRUCTURA DE EJEMPLO LITERALMENTE, RELLÉNALA CON CONTENIDO ESPECÍFICO DE LA SESIÓN.
+
+        Responde con un objeto JSON válido con este formato:
         {
             "metrics": {
-                "empathy": (0 - 100),
-                    "intervention_effectiveness": (0 - 100),
-                        "professionalism": (0 - 100)
+                "empathy": (0-100),
+                "intervention_effectiveness": (0-100),
+                "professionalism": (0-100)
             },
-            "feedback": "Informe completo en formato Markdown. Estructura: \n## 📊 Resumen Ejecutivo\n\n## 🔑 Momentos Clave\n(Identifica 2-3 intercambios donde el terapeuta lo hizo bien o mal)\n\n## ✅ Puntos Fuertes\n\n## ⚠️ Áreas de Mejora\n\n## 💡 Recomendación Clínica"
+            "feedback": "# 📊 Resumen Ejecutivo\n[Escribe aquí un resumen de 3 líneas sobre el desempeño global]\n\n## 🔑 Momentos Clave\n[Cita textualmente 2 o 3 intervenciones específicas y analízalas]\n\n## ✅ Puntos Fuertes\n- [Punto 1]\n- [Punto 2]\n\n## ⚠️ Áreas de Mejora\n- [Area 1]\n- [Area 2]\n\n## 💡 Recomendación Clínica\n[Consejo práctico para la próxima sesión]"
         }
 
-        Importante: Retorna SOLO el JSON RAW(sin \`\`\`).
+        IMPORTANTE: El campo 'feedback' debe ser una cadena de texto (string) que contenga el Markdown formateado. Asegúrate de escapar los saltos de línea correctamente en el JSON.
         `;
 
         try {
