@@ -56,7 +56,7 @@ const faqs = [
   {
     id: 10,
     question: '¿Hay período de prueba gratuito?',
-    answer: 'Sí, ofrecemos 14 días gratis sin necesidad de tarjeta de crédito. Puedes probar todas las funciones del plan Pro durante este período. Si no estás satisfecho, simplemente no activas la suscripción.',
+    answer: 'Disponemos de un Plan Demo de prueba de 14 días. Puedes probar las funcionalidades principales sin coste antes de elegir tu plan profesional.',
     category: 'Facturación'
   }
 ];

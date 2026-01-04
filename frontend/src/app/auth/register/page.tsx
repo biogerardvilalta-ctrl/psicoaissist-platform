@@ -322,22 +322,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Referral Code */}
-            <div>
-              <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700 flex items-center">
-                <Gift className="w-4 h-4 mr-1 text-purple-600" />
-                Código de invitación (Opcional)
-              </label>
-              <input
-                id="referralCode"
-                name="referralCode"
-                type="text"
-                value={formData.referralCode}
-                onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-purple-50/50"
-                placeholder="Si tienes uno, ingrésalo aquí"
-              />
-              <p className="mt-1 text-xs text-gray-500">¿Tus colegas ya usan PsicoAIssist? Pídeles su código.</p>
-            </div>
+            {/* Referral Code Removed as per request */}
 
             {/* Liability Checkbox */}
             <div className="flex items-start p-3 bg-red-50 rounded-md border border-red-100">
@@ -378,7 +363,7 @@ export default function RegisterPage() {
               </div>
               <div className="ml-3 text-sm">
                 <label htmlFor="termsAccepted" className="font-medium text-gray-700">
-                  Acepto los <Link href="/terms" className="text-blue-600 hover:text-blue-500">Términos de Servicio</Link> y la <Link href="/privacy" className="text-blue-600 hover:text-blue-500">Política de Privacidad</Link>
+                  Acepto los <Link href="/dashboard/compliance?tab=terms" target="_blank" className="text-blue-600 hover:text-blue-500">Términos de Servicio</Link> y la <Link href="/dashboard/compliance?tab=gdpr" target="_blank" className="text-blue-600 hover:text-blue-500">Política de Privacidad</Link>
                 </label>
                 <p className="text-gray-500 mt-1 text-xs">Aquesta eina ofereix suport clínic orientatiu exclusivament per a professionals de la salut mental. No realitza diagnòstics ni substitueix el criteri clínic.</p>
               </div>
@@ -417,11 +402,11 @@ export default function RegisterPage() {
           {/* Terms */}
           <p className="text-xs text-center text-gray-500">
             Al registrarte, aceptas nuestros{' '}
-            <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+            <Link href="/dashboard/compliance?tab=terms" target="_blank" className="text-blue-600 hover:text-blue-500">
               Términos de Servicio
             </Link>{' '}
             y{' '}
-            <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
+            <Link href="/dashboard/compliance?tab=gdpr" target="_blank" className="text-blue-600 hover:text-blue-500">
               Política de Privacidad
             </Link>
           </p>

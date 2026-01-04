@@ -108,16 +108,8 @@ export default function PricingSection() {
       return;
     }
 
-    try {
-      await createCheckoutSession({
-        // @ts-ignore - IDs updated in frontend, backend type might need update
-        plan: planId,
-        interval: billingInterval,
-      });
-    } catch (err) {
-      console.error('Error al crear la sesión de checkout:', err);
-      alert(`Error al procesar el plan ${planId}: ${err instanceof Error ? err.message : 'Error desconocido'}`);
-    }
+    // Redirect to register for all plans as per request
+    router.push(`/auth/register?plan=${planId}`);
   };
 
   return (
@@ -399,7 +391,7 @@ export default function PricingSection() {
               </Link>
             </p>
             <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-gray-500">
-              <span>✓ 14 días gratis en todos los planes</span>
+              {/* <span>✓ 14 días gratis en todos los planes</span> */}
               <span>✓ Cancela cuando quieras</span>
               <span>✓ Datos siempre tuyos</span>
             </div>

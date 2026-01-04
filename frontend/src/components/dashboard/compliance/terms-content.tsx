@@ -8,81 +8,81 @@ export function TermsContent() {
                 <div className="flex justify-center">
                     <Scale className="h-16 w-16 text-blue-600" />
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight text-blue-900">Termes i Condicions d'Ús</h1>
-                <p className="text-lg text-muted-foreground">Acord de servei per a professionals de la salut mental</p>
+                <h1 className="text-3xl font-bold tracking-tight text-blue-900">Términos y Condiciones de Uso</h1>
+                <p className="text-lg text-muted-foreground">Acuerdo de servicio para profesionales de la salud mental</p>
             </div>
 
             <Card className="border-blue-100 shadow-lg">
                 <CardHeader className="bg-slate-50 border-b border-slate-100">
                     <CardTitle className="text-xl flex items-center gap-2 text-slate-800">
                         <Users className="h-5 w-5 text-blue-600" />
-                        Relació Contractual
+                        Relación Contractual
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">1. Naturalesa del Servei</h2>
+                        <h2 className="text-lg font-bold text-blue-900">1. Naturaleza del Servicio</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            Aquesta aplicació és una <strong>eina de suport a la decisió clínica</strong> basada en Intel·ligència Artificial. El seu objectiu és assistir al professional en la gestió de sessions i la generació d'esborranys documentals.
+                            Esta aplicación es una <strong>herramienta de apoyo a la decisión clínica</strong> basada en Inteligencia Artificial. Su objetivo es asistir al profesional en la gestión de sesiones y la generación de borradores documentales.
                         </p>
                         <div className="bg-amber-50 p-4 rounded-lg border border-amber-100 flex gap-3">
                             <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                             <p className="text-sm text-amber-800 font-medium">
-                                L'eina NO substitueix el criteri professional, ni realitza diagnòstics automàtics, ni prescriu tractaments mèdics o farmacològics.
+                                La herramienta NO sustituye el criterio profesional, ni realiza diagnósticos automáticos, ni prescribe tratamientos médicos o farmacológicos.
                             </p>
                         </div>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">2. Responsabilitat del Professional</h2>
+                        <h2 className="text-lg font-bold text-blue-900">2. Responsabilidad del Profesional</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            L'usuari (professional de la salut mental acreditat/da) reconeix i accepta que:
+                            El usuario (profesional de la salud mental acreditado/a) reconoce y acepta que:
                         </p>
                         <ul className="list-disc pl-6 text-slate-700 space-y-2">
-                            <li>És l'únic responsable de verificar la informació generada per la IA abans d'utilitzar-la o incloure-la a la història clínica.</li>
-                            <li>És responsable d'obtenir el consentiment informat dels pacients per a l'ús d'eines de suport a la sessió.</li>
-                            <li>Manté la responsabilitat final sobre qualsevol decisió clínica presa respecte als seus pacients.</li>
+                            <li>Es el único responsable de verificar la información generada por la IA antes de utilizarla o incluirla en la historia clínica.</li>
+                            <li>Es responsable de obtener el consentimiento informado de los pacientes para el uso de herramientas de apoyo a la sesión.</li>
+                            <li>Mantiene la responsabilidad final sobre cualquier decisión clínica tomada respecto a sus pacientes.</li>
                         </ul>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">3. Propietat de les Dades</h2>
+                        <h2 className="text-lg font-bold text-blue-900">3. Propiedad de los Datos</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            Totes les dades clíniques, notes de sessió i informació dels pacients introduïda a la plataforma són <strong>propietat exclusiva del professional i/o del pacient</strong>, segons correspongui. La plataforma actua com a encarregada del tractament, limitant-se a custodiar i processar la informació segons les instruccions de l'usuari.
+                            Todos los datos clínicos, notas de sesión e información de los pacientes introducida en la plataforma son <strong>propiedad exclusiva del profesional y/o del paciente</strong>, según corresponda. La plataforma actúa como encargada del tratamiento, limitándose a custodiar y procesar la información según las instrucciones del usuario.
                         </p>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">4. Ús Acceptable</h2>
+                        <h2 className="text-lg font-bold text-blue-900">4. Uso Aceptable</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            L'usuari es compromet a fer un ús ètic de la plataforma, respectant el Codi Deontològic de la professió i la normativa vigent. Queda prohibit utilitzar el sistema per a finalitats il·lícites, discriminatòries o que atemptin contra la dignitat de les persones.
+                            El usuario se compromete a hacer un uso ético de la plataforma, respetando el Código Deontológico de la profesión y la normativa vigente. Queda prohibido utilizar el sistema para fines ilícitos, discriminatorios o que atenten contra la dignidad de las personas.
                         </p>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">5. Límits Ètics i Professionals</h2>
+                        <h2 className="text-lg font-bold text-blue-900">5. Límites Éticos y Profesionales</h2>
                         <div className="space-y-4">
                             <p className="text-slate-700 leading-relaxed">
-                                L'ús de la plataforma està subjecte als següents límits ètics inquebrantables, alineats amb la normativa deontològica vigent:
+                                El uso de la plataforma está sujeto a los siguientes límites éticos inquebrantables, alineados con la normativa deontológica vigente:
                             </p>
                             <div className="grid gap-3">
                                 <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                    <h4 className="font-bold text-slate-900 text-sm mb-1">PROHIBICIÓ DE DIAGNÒSTIC AUTOMATITZAT</h4>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">PROHIBICIÓN DE DIAGNÓSTICO AUTOMATIZADO</h4>
                                     <p className="text-sm text-slate-600">
-                                        Queda estrictament prohibit utilitzar les sortides de la IA com a diagnòstics clínics definitius. La IA és una eina de suport orientatiu; el diagnòstic és acte exclusiu del professional humà.
+                                        Queda estrictamente prohibido utilizar las salidas de la IA como diagnósticos clínicos definitivos. La IA es una herramienta de apoyo orientativo; el diagnóstico es acto exclusivo del profesional humano.
                                     </p>
                                 </div>
                                 <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                    <h4 className="font-bold text-slate-900 text-sm mb-1">DEURE D'EMERGÈNCIA</h4>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">DEBER DE EMERGENCIA</h4>
                                     <p className="text-sm text-slate-600">
-                                        L'aplicació NO és un dispositiu d'emergència ni d'intervenció en crisi. En situacions de risc imminent de suïcidi o dany a tercers, el professional ha d'actuar segons els protocols d'emergència convencionals, sense dependre del processament de l'eina.
+                                        La aplicación NO es un dispositivo de emergencia ni de intervención en crisis. En situaciones de riesgo inminente de suicidio o daño a terceros, el profesional debe actuar según los protocolos de emergencia convencionales, sin depender del procesamiento de la herramienta.
                                     </p>
                                 </div>
                                 <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                    <h4 className="font-bold text-slate-900 text-sm mb-1">TRANSPARÈNCIA AMB EL PACIENT</h4>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">TRANSPARENCIA CON EL PACIENTE</h4>
                                     <p className="text-sm text-slate-600">
-                                        És obligació ètica del professional informar el pacient sobre l'ús d'eines tecnològiques de suport durant la sessió i garantir que aquest ús no interfereix en la qualitat de l'aliança terapèutica.
+                                        Es obligación ética del profesional informar al paciente sobre el uso de herramientas tecnológicas de apoyo durante la sesión y garantizar que este uso no interfiere en la calidad de la alianza terapéutica.
                                     </p>
                                 </div>
                             </div>
@@ -90,47 +90,47 @@ export function TermsContent() {
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">6. Política d'Ús Raonable (Fair Use Policy)</h2>
+                        <h2 className="text-lg font-bold text-blue-900">6. Política de Uso Razonable (Fair Use Policy)</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            Per garantir l'estabilitat del sistema i la qualitat del servei per a tots els usuaris, els plans amb característiques "Ilimitades" estan subjectes als següents topalls de seguretat mensual:
+                            Para garantizar la estabilidad del sistema y la calidad del servicio para todos los usuarios, los planes con características "Ilimitadas" están sujetos a los siguientes topes de seguridad mensual:
                         </p>
                         <div className="grid sm:grid-cols-2 gap-4 mt-4">
                             <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                <span className="block text-xs text-red-600 font-bold uppercase">Pacients Actius</span>
+                                <span className="block text-xs text-red-600 font-bold uppercase">Pacientes Activos</span>
                                 <span className="text-lg font-bold text-slate-800">5.000</span>
-                                <span className="text-xs text-slate-500 ml-1">expedients</span>
+                                <span className="text-xs text-slate-500 ml-1">expedientes</span>
                             </div>
                             <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                <span className="block text-xs text-red-600 font-bold uppercase">Transcripció IA</span>
+                                <span className="block text-xs text-red-600 font-bold uppercase">Transcripción IA</span>
                                 <span className="text-lg font-bold text-slate-800">300</span>
-                                <span className="text-xs text-slate-500 ml-1">hores/mes</span>
+                                <span className="text-xs text-slate-500 ml-1">horas/mes</span>
                             </div>
                             <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                <span className="block text-xs text-red-600 font-bold uppercase">Generació Informes</span>
+                                <span className="block text-xs text-red-600 font-bold uppercase">Generación Informes</span>
                                 <span className="text-lg font-bold text-slate-800">3.000</span>
                                 <span className="text-xs text-slate-500 ml-1">informes/mes</span>
                             </div>
                             <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                <span className="block text-xs text-red-600 font-bold uppercase">Simulador Clínic</span>
+                                <span className="block text-xs text-red-600 font-bold uppercase">Simulador Clínico</span>
                                 <span className="text-lg font-bold text-slate-800">500</span>
                                 <span className="text-xs text-slate-500 ml-1">casos/mes</span>
                             </div>
                         </div>
                         <p className="text-xs text-red-700 mt-2 italic">
-                            * L'ús per sobre d'aquests límits es considera abusiu i pot comportar la suspensió temporal del compte o contacte per part de suport.
+                            * El uso por encima de estos límites se considera abusivo y puede conllevar la suspensión temporal de la cuenta o contacto por parte de soporte.
                         </p>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">7. Plans de Subscripció i Característiques</h2>
+                        <h2 className="text-lg font-bold text-blue-900">7. Planes de Suscripción y Características</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            A continuació es detallen els plans disponibles i les seves característiques contractuals. Els preus poden estar subjectes a impostos aplicables.
+                            A continuación se detallan los planes disponibles y sus características contractuales. Los precios pueden estar sujetos a impuestos aplicables.
                         </p>
 
                         <div className="bg-amber-50 p-4 rounded-lg border border-amber-100 flex gap-3 text-sm my-4">
                             <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                             <p className="text-amber-800">
-                                <strong>Política de Reinici Mensual:</strong> Totes les quotes incloses en els plans (minuts de transcripció, casos de simulador, etc.) es reinicien automàticament a l'inici de cada cicle de facturació mensual. <u>Els recursos no utilitzats durant el mes en curs no són acumulables per al mes següent.</u>
+                                <strong>Política de Reinicio Mensual:</strong> Todas las cuotas incluidas en los planes (minutos de transcripción, casos de simulador, etc.) se reinician automáticamente al inicio de cada ciclo de facturación mensual. <u>Los recursos no utilizados durante el mes en curso no son acumulables para el mes siguiente.</u>
                             </p>
                         </div>
 
@@ -138,26 +138,26 @@ export function TermsContent() {
                             {/* DEMO PLAN - ADDED */}
                             <div className="p-5 bg-slate-50 rounded-lg border border-slate-200">
                                 <h3 className="font-bold text-slate-800 text-lg flex justify-between items-center mb-3">
-                                    <span className="flex items-center gap-2">🌱 Demo (Gratuït / Limitada)</span>
-                                    <span className="text-base bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs">Prova 14 dies</span>
+                                    <span className="flex items-center gap-2">🌱 Demo (Gratuito / Limitada)</span>
+                                    <span className="text-base bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs">Prueba 14 días</span>
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Inclou:</h4>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Incluye:</h4>
                                         <ul className="space-y-1 text-slate-700 list-disc pl-4 text-xs">
-                                            <li><strong>3 Pacients Actius</strong> màxim.</li>
-                                            <li><strong>30 Minuts Transcripció + IA</strong> (Prova).</li>
-                                            <li><strong>5 Informes</strong> mensuals.</li>
-                                            <li>Accés bàsic a la plataforma.</li>
+                                            <li><strong>3 Pacientes Activos</strong> máximo.</li>
+                                            <li><strong>30 Minutos Transcripción + IA</strong> (Prueba).</li>
+                                            <li><strong>5 Informes</strong> mensuales.</li>
+                                            <li>Acceso básico a la plataforma.</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/50 p-2 rounded border border-slate-100">
-                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> Limitacions:</h4>
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> Limitaciones:</h4>
                                         <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
-                                            <li><strong>Sense Simulador Clínic</strong>.</li>
-                                            <li>Caducitat automàtica als 14 dies.</li>
-                                            <li>Sense sincronització de calendari.</li>
-                                            <li>Sense suport personalitzat.</li>
+                                            <li><strong>Sin Simulador Clínico</strong>.</li>
+                                            <li>Caducidad automática a los 14 días.</li>
+                                            <li>Sin sincronización de calendario.</li>
+                                            <li>Sin soporte personalizado.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -171,21 +171,21 @@ export function TermsContent() {
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Inclou:</h4>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Incluye:</h4>
                                         <ul className="space-y-1 text-slate-700 list-disc pl-4 text-xs">
-                                            <li><strong>25 Pacients Actius</strong> totals.</li>
-                                            <li><strong>10 Hores Transcripció</strong> (Literal).</li>
-                                            <li><strong>Emmagatzematge 5GB</strong>.</li>
-                                            <li>Gestió de Cites Bàsica.</li>
+                                            <li><strong>25 Pacientes Activos</strong> totales.</li>
+                                            <li><strong>10 Horas Transcripción</strong> (Literal).</li>
+                                            <li><strong>Almacenamiento 5GB</strong>.</li>
+                                            <li>Gestión de Citas Básica.</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/50 p-2 rounded border border-slate-100">
-                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Inclou:</h4>
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Incluye:</h4>
                                         <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
-                                            <li>Anàlisi IA Avançada (Resums, Emojis).</li>
-                                            <li>Simulador Clínic.</li>
+                                            <li>Análisis IA Avanzado (Resúmenes, Emojis).</li>
+                                            <li>Simulador Clínico.</li>
                                             <li>Google Calendar Sync.</li>
-                                            <li>Suport Prioritari.</li>
+                                            <li>Soporte Prioritario.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -199,22 +199,22 @@ export function TermsContent() {
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Inclou:</h4>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Incluye:</h4>
                                         <ul className="space-y-1 text-blue-900 list-disc pl-4 text-xs">
-                                            <li><strong>Pacients Il·limitats</strong>.</li>
-                                            <li><strong>15 Hores (900 min) IA Total</strong>.</li>
+                                            <li><strong>Pacientes Ilimitados</strong>.</li>
+                                            <li><strong>15 Horas (900 min) IA Total</strong>.</li>
                                             <li><strong>Google Calendar Sync</strong> (Bidireccional).</li>
-                                            <li><strong>Anàlisi IA Avançada</strong> (Insights).</li>
-                                            <li>Emmagatzematge 50GB.</li>
+                                            <li><strong>Análisis IA Avanzado</strong> (Insights).</li>
+                                            <li>Almacenamiento 50GB.</li>
                                             <li>Simulador (5 casos/mes).</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/50 p-2 rounded border border-blue-100">
-                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Inclou:</h4>
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Incluye:</h4>
                                         <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
-                                            <li>Simulador Il·limitat.</li>
-                                            <li>Branding Personalitzat (Logo).</li>
-                                            <li>Videotrucada de Suport.</li>
+                                            <li>Simulador Ilimitado.</li>
+                                            <li>Branding Personalizado (Logo).</li>
+                                            <li>Videollamada de Soporte.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -228,20 +228,20 @@ export function TermsContent() {
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Inclou:</h4>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Incluye:</h4>
                                         <ul className="space-y-1 text-purple-900 list-disc pl-4 text-xs">
-                                            <li><strong>50 Hores (3.000 min) IA</strong>.</li>
-                                            <li><strong>Simulador Il·limitat</strong>.</li>
-                                            <li><strong>Branding Personalitzat</strong>.</li>
-                                            <li><strong>Suport Prioritari + Videotrucada</strong>.</li>
-                                            <li>Emmagatzematge 1TB.</li>
+                                            <li><strong>50 Horas (3.000 min) IA</strong>.</li>
+                                            <li><strong>Simulador Ilimitado</strong>.</li>
+                                            <li><strong>Branding Personalizado</strong>.</li>
+                                            <li><strong>Soporte Prioritario + Videollamada</strong>.</li>
+                                            <li>Almacenamiento 1TB.</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/50 p-2 rounded border border-purple-100">
-                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Inclou:</h4>
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Incluye:</h4>
                                         <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
-                                            <li>Gestió d'Equips (Multi-usuari).</li>
-                                            <li>API / Integració HIS.</li>
+                                            <li>Gestión de Equipos (Multi-usuario).</li>
+                                            <li>API / Integración HIS.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -254,12 +254,12 @@ export function TermsContent() {
                                     <p className="text-sm font-semibold text-slate-700 mb-3">Consultar</p>
                                     <div className="text-xs space-y-2">
                                         <div>
-                                            <span className="font-bold text-green-700">✅ Inclou:</span>
+                                            <span className="font-bold text-green-700">✅ Incluye:</span>
                                             <ul className="list-disc pl-4 text-slate-700 mt-1">
-                                                <li>Usuaris il·limitats.</li>
+                                                <li>Usuarios ilimitados.</li>
                                                 <li>Simulador Clínico (casos/mes a medida).</li>
                                                 <li>API / HIS & Compliance.</li>
-                                                <li>SLA Garantitzat.</li>
+                                                <li>SLA Garantizado.</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -269,42 +269,42 @@ export function TermsContent() {
                     </section>
 
                     <section className="space-y-4 pt-6">
-                        <h3 className="font-bold text-slate-800">Serveis Addicionals (Extras)</h3>
+                        <h3 className="font-bold text-slate-800">Servicios Adicionales (Extras)</h3>
                         <div className="grid md:grid-cols-3 gap-4">
                             <div className="p-4 border border-slate-200 rounded-lg">
                                 <h4 className="font-bold text-sm text-slate-900">👤 Agenda Manager</h4>
                                 <p className="text-xs text-slate-500 mt-1">15€ / mes</p>
-                                <p className="text-xs text-slate-600 mt-2">Usuari administratiu addicional per a gestió de cites. Sense accés a històries clíniques.</p>
+                                <p className="text-xs text-slate-600 mt-2">Usuario administrativo adicional para gestión de citas. Sin acceso a historias clínicas.</p>
                             </div>
                             <div className="p-4 border border-slate-200 rounded-lg">
                                 <h4 className="font-bold text-sm text-slate-900">⚡ Pack Minutos IA</h4>
                                 <p className="text-xs text-slate-500 mt-1">15€ / pack</p>
-                                <p className="text-xs text-slate-600 mt-2">500 minuts addicionals de processament IA. Pagament únic, no caducan mentre la subscripció estigui activa.</p>
+                                <p className="text-xs text-slate-600 mt-2">500 minutos adicionales de procesamiento IA. Pago único, no caducan mientras la suscripción esté activa.</p>
                             </div>
                             <div className="p-4 border border-slate-200 rounded-lg">
-                                <h4 className="font-bold text-sm text-slate-900">🚀 Onboarding Assistit</h4>
-                                <p className="text-xs text-slate-500 mt-1">50€ (pagament únic)</p>
-                                <p className="text-xs text-slate-600 mt-2">Sessió de 45 min amb un especialista per a configuració inicial i importació de dades.</p>
+                                <h4 className="font-bold text-sm text-slate-900">🚀 Onboarding Asistido</h4>
+                                <p className="text-xs text-slate-500 mt-1">50€ (pago único)</p>
+                                <p className="text-xs text-slate-600 mt-2">Sesión de 45 min con un especialista para configuración inicial e importación de datos.</p>
                             </div>
                             <div className="p-4 border border-slate-200 rounded-lg">
                                 <h4 className="font-bold text-sm text-slate-900">🎓 Pack Simulador</h4>
                                 <p className="text-xs text-slate-500 mt-1">15€ / pack</p>
-                                <p className="text-xs text-slate-600 mt-2">Pack de 10 casos clínics interactius addicionals per pràctica. Inclou feedback detallat de la IA.</p>
+                                <p className="text-xs text-slate-600 mt-2">Pack de 10 casos clínicos interactivos adicionales para práctica. Incluye feedback detallado de la IA.</p>
                             </div>
                         </div>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">8. Limitació de Responsabilitat</h2>
+                        <h2 className="text-lg font-bold text-blue-900">8. Limitación de Responsabilidad</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            La plataforma no es fa responsable de possibles errors en la transcripció o en els suggeriments de la IA, atès que es tracta d'una tecnologia probabilística. La verificació humana és indispensable en tots els casos.
+                            La plataforma no se hace responsable de posibles errores en la transcripción o en las sugerencias de la IA, dado que se trata de una tecnología probabilística. La verificación humana es indispensable en todos los casos.
                         </p>
                     </section>
 
                     <section className="space-y-3 pt-6 border-t font-medium text-slate-500 text-sm">
                         <div className="flex items-center gap-2">
                             <Gavel className="h-4 w-4" />
-                            <span>Darrera actualització: Desembre 2025</span>
+                            <span>Última actualización: Diciembre 2025</span>
                         </div>
                     </section>
 

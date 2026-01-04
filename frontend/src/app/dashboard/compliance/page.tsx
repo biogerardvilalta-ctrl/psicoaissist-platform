@@ -27,7 +27,7 @@ export default function CompliancePage() {
             <div className="flex items-center justify-between mb-8">
                 <Button variant="ghost" className="gap-2" onClick={() => router.back()}>
                     <ArrowLeft className="h-4 w-4" />
-                    Tornar
+                    Volver
                 </Button>
                 <Button variant="outline" className="gap-2" onClick={() => window.print()}>
                     <Printer className="h-4 w-4" />
@@ -39,11 +39,11 @@ export default function CompliancePage() {
                 <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto mb-8">
                     <TabsTrigger value="legal-justification" className="gap-2">
                         <Shield className="h-4 w-4" />
-                        Justificació IA
+                        Justificación IA
                     </TabsTrigger>
                     <TabsTrigger value="gdpr" className="gap-2">
                         <Lock className="h-4 w-4" />
-                        Política de Privacitat/GDPR
+                        Política de Privacidad/GDPR
                     </TabsTrigger>
                     <TabsTrigger value="cookies" className="gap-2">
                         <Cookie className="h-4 w-4" />
@@ -51,7 +51,7 @@ export default function CompliancePage() {
                     </TabsTrigger>
                     <TabsTrigger value="terms" className="gap-2">
                         <Scale className="h-4 w-4" />
-                        Termes
+                        Términos
                     </TabsTrigger>
                 </TabsList>
 
@@ -73,7 +73,7 @@ export default function CompliancePage() {
             </Tabs>
 
             <div className="text-center text-sm text-muted-foreground pt-8 pb-4 border-t border-slate-100 mt-8">
-                <p>Document informatiu generat per PsicoAIssist Platform • Compliment Normatiu 2024
+                <p>Documento informativo generado por PsicoAIssist Platform • Cumplimiento Normativo 2024
                     -2025</p>
             </div>
         </div>

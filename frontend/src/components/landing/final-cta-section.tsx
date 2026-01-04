@@ -14,7 +14,7 @@ export function FinalCTASection() {
         {/* Urgency indicator */}
         <div className="inline-flex items-center px-4 py-2 bg-yellow-500/20 border border-yellow-500/30 rounded-full text-yellow-300 text-sm font-medium mb-8">
           <Clock className="w-4 h-4 mr-2" />
-          Oferta limitada: 14 días gratis + 50% descuento primer mes
+          Oferta limitada: 50% descuento primer mes
         </div>
 
         {/* Main headline */}
@@ -68,7 +68,7 @@ export function FinalCTASection() {
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <a
-            href="/register"
+            href="/auth/register"
             className="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-bold text-lg rounded-xl hover:from-yellow-300 hover:to-orange-400 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-yellow-500/25"
           >
             Empezar gratis ahora

@@ -148,7 +148,7 @@ export function TestimonialsSection() {
           </p>
           <div className="inline-flex flex-col sm:flex-row gap-4">
             <a
-              href="/register"
+              href="/auth/register"
               className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
             >
               Prueba gratis 14 días
