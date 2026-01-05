@@ -1,6 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { PLAN_FEATURES, PlanLimits } from './plan-features';
+import { addMonths, isBefore, isAfter } from 'date-fns';
 
 @Injectable()
 export class UsageLimitsService {
@@ -282,7 +283,7 @@ export class UsageLimitsService {
         simulatorCases: user.simulatorUsageCount,
         extraSimulatorCases: extraSimulatorCases, // Explicitly return extra cases
         simulatorMinutes: user.simulatorMinutesUsed,
-        limitResetDate: user.subscription.currentPeriodEnd,
+        limitResetDate: this.getNextMonthlyResetDate(user.subscription.currentPeriodStart),
         subscriptionStatus: user.subscription.status,
       },
       limits: {
@@ -429,5 +430,27 @@ export class UsageLimitsService {
     });
 
     return { limitExceeded: false };
+  }
+
+  getNextMonthlyResetDate(periodStart: Date): Date {
+    const now = new Date();
+    let nextReset = new Date(periodStart);
+
+    // If periodStart is invalid, return now
+    if (isNaN(nextReset.getTime())) {
+      return now;
+    }
+
+    // If periodStart is in the future (e.g. just subscribed?), return it.
+    if (isAfter(nextReset, now)) {
+      return nextReset;
+    }
+
+    // Advance by months until we pass 'now'
+    while (isBefore(nextReset, now) || nextReset.getTime() === now.getTime()) {
+      nextReset = addMonths(nextReset, 1);
+    }
+
+    return nextReset;
   }
 }

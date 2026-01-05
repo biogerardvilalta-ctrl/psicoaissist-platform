@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { EvolutionChart } from './components/EvolutionChart';
 import { ReportsHistory } from './components/ReportsHistory';
 import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
+import { SimulatorUsageBar } from '@/components/dashboard/usage/SimulatorUsageBar';
 
 // Simple hook mock if not available, or assume it exists. 
 // Given previous context, it likely exists or I should use standard web speech api. 
@@ -379,7 +380,7 @@ export default function SimulatorPage() {
                                 </div>
                                 <h2 className="text-2xl font-bold">Configura tu Simulación</h2>
 
-                                {/* Usage Display removed by user request */}
+
 
                                 <p className="text-muted-foreground">
                                     Selecciona el nivel de dificultad. El sistema generará un paciente con una patología y personalidad aleatoria.
