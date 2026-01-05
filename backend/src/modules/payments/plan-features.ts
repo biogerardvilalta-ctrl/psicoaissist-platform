@@ -132,5 +132,10 @@ export const EXTRA_PACKS = {
     minutes: 500,
     price: 1500, // in cents? Frontend says 15 eur.
     name: 'Pack 500 Minutos'
+  },
+  AGENDA_MANAGER_PACK: {
+    id: 'agenda_manager_pack',
+    price: 900, // Example: 9 EUR
+    name: 'Pack Agenda Manager'
   }
 };

@@ -33,7 +33,7 @@ export class PaymentsService {
       }
 
       // Check specific logic for Packs vs Subscriptions
-      const isPack = createCheckoutDto.plan === PlanType.MINUTES_PACK || createCheckoutDto.plan === PlanType.SIMULATOR_PACK;
+      const isPack = createCheckoutDto.plan === PlanType.MINUTES_PACK || createCheckoutDto.plan === PlanType.SIMULATOR_PACK || createCheckoutDto.plan === PlanType.AGENDA_MANAGER_PACK;
 
       if (!isPack) {
         // Check if user already has an active subscription (only for subs)
@@ -93,6 +93,20 @@ export class PaymentsService {
 
           if (!priceId && process.env.NODE_ENV !== 'production') {
             priceId = 'price_fake_pack_simulator';
+          }
+        } else if (createCheckoutDto.plan === PlanType.AGENDA_MANAGER_PACK) {
+          priceId = process.env.STRIPE_PRICE_AGENDA_MANAGER_PACK; // Config
+          planDetails = {
+            name: 'Pack Agenda Manager',
+            amount: 900,
+            currency: 'eur',
+            interval: null, // Depending on if it's subscription or OT. For now assuming OneTime or Manual Sub Add-on.
+            // If it is a subscription add-on, we might need different logic.
+            // But per task, we are "simulating" it for now or handling it as pack.
+          };
+
+          if (!priceId && process.env.NODE_ENV !== 'production') {
+            priceId = 'price_fake_agenda_manager';
           }
         }
       } else {
@@ -172,6 +186,15 @@ export class PaymentsService {
         }
       });
       this.logger.log(`Added ${CASES_IN_PACK} extra simulator cases to user ${userId}`);
+    } else if (packId === PlanType.AGENDA_MANAGER_PACK) {
+      // Enable Agenda Manager pack
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          agendaManagerEnabled: true
+        }
+      });
+      this.logger.log(`Enabled Agenda Manager for user ${userId}`);
     }
   }
 
@@ -188,7 +211,7 @@ export class PaymentsService {
     }
 
     if (isOneTime) {
-      if (planType === PlanType.MINUTES_PACK || planType === PlanType.SIMULATOR_PACK) {
+      if (planType === PlanType.MINUTES_PACK || planType === PlanType.SIMULATOR_PACK || planType === PlanType.AGENDA_MANAGER_PACK) {
         await this.addExtraPack(userId, planType);
       }
       return; // Done
@@ -212,7 +235,7 @@ export class PaymentsService {
         throw new NotFoundException('User not found');
       }
 
-      const isPack = createCheckoutDto.plan === 'minutes_pack' || createCheckoutDto.plan === 'simulator_pack';
+      const isPack = createCheckoutDto.plan === 'minutes_pack' || createCheckoutDto.plan === 'simulator_pack' || createCheckoutDto.plan === 'agenda_manager_pack';
 
       // Planes demo hardcoded sin llamar a Stripe
       const demoPlans = {
@@ -221,7 +244,8 @@ export class PaymentsService {
         business: { name: 'Plan Business', amount: 12900, currency: 'eur', interval: 'month' },
         premium_plus: { name: 'Plan Premium Plus', amount: 9900, currency: 'eur', interval: 'month' },
         minutes_pack: { name: 'Pack Minutos', amount: 1500, currency: 'eur', interval: 'one-time' },
-        simulator_pack: { name: 'Pack 10 Casos Clínicos', amount: 1500, currency: 'eur', interval: 'one-time' }
+        simulator_pack: { name: 'Pack 10 Casos Clínicos', amount: 1500, currency: 'eur', interval: 'one-time' },
+        agenda_manager_pack: { name: 'Pack Agenda Manager', amount: 900, currency: 'eur', interval: 'one-time' }
       };
 
       const plan = demoPlans[createCheckoutDto.plan];
@@ -243,7 +267,7 @@ export class PaymentsService {
 
       // AUTO-APPLY FOR DEMO ONLY (Immediate gratification)
       if (isPack && process.env.NODE_ENV !== 'production') {
-        const packId = createCheckoutDto.plan === 'minutes_pack' ? 'minutes_pack' : 'simulator_pack';
+        let packId = createCheckoutDto.plan;
         await this.addExtraPack(userId, packId);
       }
 

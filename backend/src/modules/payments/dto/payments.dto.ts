@@ -7,6 +7,7 @@ export enum PlanType {
   PREMIUM_PLUS = 'premium_plus',
   MINUTES_PACK = 'minutes_pack',
   SIMULATOR_PACK = 'simulator_pack',
+  AGENDA_MANAGER_PACK = 'agenda_manager_pack',
 }
 
 export class CreateCheckoutSessionDto {

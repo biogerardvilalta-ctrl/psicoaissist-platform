@@ -29,6 +29,7 @@ export interface User {
   referralCode?: string;
   referralsCount?: number;
   simulatorUsageCount?: number;
+  agendaManagerEnabled?: boolean;
   brandingConfig?: {
     companyName?: string;
     primaryColor?: string;

@@ -54,6 +54,7 @@ model User {
   transcriptionMinutesUsed Float              @default(0) @map("transcription_minutes_used")
   extraTranscriptionMinutes Int               @default(0) @map("extra_transcription_minutes")
   extraSimulatorCases      Int                @default(0) @map("extra_simulator_cases")
+  agendaManagerEnabled     Boolean            @default(false) @map("agenda_manager_enabled")
   auditLogs                AuditLog[]
   clients                  Client[]
   encryptionKeys           EncryptionKey[]

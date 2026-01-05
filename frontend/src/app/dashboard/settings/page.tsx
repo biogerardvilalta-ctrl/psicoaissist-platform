@@ -132,7 +132,8 @@ export default function SettingsPage() {
     { id: 'billing', label: 'Facturación y Tarifas', icon: Euro },
     // Solo mostrar Marca Personal si es PREMIUM
     ...((user?.subscription?.planType === 'PREMIUM' || user?.role === 'ADMIN') ? [{ id: 'branding', label: 'Marca Personal', icon: Palette }] : []),
-    // { id: 'managers', label: 'Gestores de Agenda', icon: Users },
+    // Solo mostrar Gestores de Agenda si tiene el pack activado con agendaManagerEnabled o es ADMIN
+    ...((user?.agendaManagerEnabled === true || user?.role === 'ADMIN') ? [{ id: 'managers', label: 'Gestores de Agenda', icon: Users }] : []),
     // Hide AI for Basic
     ...(user?.subscription?.planType?.toUpperCase() !== 'BASIC' ? [{ id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit }] : []),
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
