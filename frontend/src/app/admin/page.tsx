@@ -3,7 +3,7 @@
 import { useAdminStats } from '@/hooks/useAdmin';
 import { AdminAPI, AdminUser } from '@/lib/admin-api';
 import { useState, useEffect } from 'react';
-import { Users, CreditCard, Shield, AlertCircle, RefreshCw, LogOut, DollarSign, TrendingUp } from 'lucide-react';
+import { Users, CreditCard, Shield, AlertCircle, RefreshCw, LogOut, DollarSign, TrendingUp, MessageSquare, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
 import { AdminStatsCard, RecentUsers, AdminActivityFeed, AdminCharts } from '@/components/admin';
@@ -26,94 +26,20 @@ export default function AdminDashboard() {
       setUsersError(null);
       console.log('🔄 Loading users data...');
 
-      // Intentar cargar datos reales primero
-      try {
-        const usersData = await AdminAPI.getUsers({ limit: 5 });
-        console.log('📝 Users data received:', usersData);
+      const usersData = await AdminAPI.getUsers({ limit: 5 });
+      console.log('📝 Users data received:', usersData);
 
-        if (usersData && Array.isArray(usersData.users)) {
-          setUsers(usersData.users);
-          console.log('✅ Users set successfully:', usersData.users.length, 'users');
-        } else {
-          throw new Error('Estructura de datos inválida');
-        }
-      } catch (apiError) {
-        console.warn('API admin/users no disponible, usando datos demo:', apiError);
-
-        // Datos demo cuando la API falle
-        const demoUsers: AdminUser[] = [
-          {
-            id: '1',
-            firstName: 'Ana',
-            lastName: 'García',
-            email: 'ana.garcia@psicoaissist.com',
-            role: 'PSYCHOLOGIST',
-            status: 'ACTIVE',
-            createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-            updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-            lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-            subscription: { planType: 'PRO', status: 'ACTIVE' }
-          },
-          {
-            id: '2',
-            firstName: 'Carlos',
-            lastName: 'Mendoza',
-            email: 'carlos.mendoza@email.com',
-            role: 'PSYCHOLOGIST',
-            status: 'ACTIVE',
-            createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-            updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-            lastLogin: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-            subscription: { planType: 'PREMIUM', status: 'ACTIVE' }
-          },
-          {
-            id: '3',
-            firstName: 'María',
-            lastName: 'López',
-            email: 'maria.lopez@email.com',
-            role: 'PSYCHOLOGIST',
-            status: 'ACTIVE',
-            createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
-            updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-            lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-            subscription: { planType: 'BASIC', status: 'ACTIVE' }
-          },
-          {
-            id: '4',
-            firstName: 'Jorge',
-            lastName: 'Ramírez',
-            email: 'jorge.ramirez@email.com',
-            role: 'PSYCHOLOGIST',
-            status: 'ACTIVE',
-            createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-            updatedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-            lastLogin: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-          },
-          {
-            id: '5',
-            firstName: 'Laura',
-            lastName: 'Fernández',
-            email: 'laura.fernandez@email.com',
-            role: 'ADMIN',
-            status: 'ACTIVE',
-            createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-            updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-            lastLogin: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-            subscription: { planType: 'PREMIUM', status: 'ACTIVE' }
-          }
-        ];
-
-        setTimeout(() => {
-          setUsers(demoUsers);
-          console.log('✅ Demo users loaded successfully');
-        }, 500);
+      if (usersData && Array.isArray(usersData.users)) {
+        setUsers(usersData.users);
+      } else {
+        throw new Error('Estructura de datos inválida');
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al cargar usuarios';
       setUsersError(message);
       console.error('Error loading users:', err);
     } finally {
-      setTimeout(() => setUsersLoading(false), 600);
+      setUsersLoading(false);
     }
   };
 
@@ -161,14 +87,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* Enhanced Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
           <AdminStatsCard
             title="Total Usuarios"
             value={stats?.totalUsers || 0}
             icon={Users}
             iconColor="text-blue-600"
             subtitle="Registrados en la plataforma"
-            trend={{ value: "12%", isPositive: true, period: "este mes" }}
             action={{ label: "Ver usuarios", onClick: () => router.push('/admin/users') }}
           />
 
@@ -178,28 +103,32 @@ export default function AdminDashboard() {
             icon={CreditCard}
             iconColor="text-green-600"
             subtitle="Planes premium activos"
-            trend={{ value: "8%", isPositive: true, period: "este mes" }}
             action={{ label: "Ver suscripciones", onClick: () => console.log('Ver suscripciones') }}
           />
 
           <AdminStatsCard
-            title="Ingresos Mensuales"
-            value="€6,100"
+            title="Ingresos Estimados"
+            value={`€${stats?.totalRevenue || 0}`}
             icon={DollarSign}
             iconColor="text-purple-600"
-            subtitle="Facturación actual"
-            trend={{ value: "15%", isPositive: true, period: "vs mes anterior" }}
-            action={{ label: "Ver reportes", onClick: () => console.log('Ver reportes') }}
+            subtitle="Facturación mensual recurrente"
+            action={{ label: "Ver facturación", onClick: () => router.push('/admin/billing') }}
           />
 
           <AdminStatsCard
-            title="Tasa de Conversión"
-            value="24.5%"
-            icon={TrendingUp}
+            title="Sesiones Totales"
+            value={stats?.totalSessions || 0}
+            icon={MessageSquare}
+            iconColor="text-indigo-600"
+            subtitle="Sesiones realizadas"
+          />
+
+          <AdminStatsCard
+            title="Reportes Generados"
+            value={stats?.totalReports || 0}
+            icon={FileText}
             iconColor="text-orange-600"
-            subtitle="Free a Premium"
-            trend={{ value: "3%", isPositive: true, period: "este mes" }}
-            action={{ label: "Analizar", onClick: () => console.log('Analizar conversión') }}
+            subtitle="Informes generados por AI"
           />
         </div>
 

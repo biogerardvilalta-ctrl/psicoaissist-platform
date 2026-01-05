@@ -12,7 +12,14 @@ const demoStats: AdminStats = {
   activeSubscriptions: 89,
   pendingIssues: 2,
   newUsersThisMonth: 23,
-  revenueThisMonth: 6100
+  revenueThisMonth: 6100,
+  totalSessions: 1250,
+  totalReports: 850,
+  subscriptionStats: {
+    BASIC: { ACTIVE: 45, CANCELLED: 5 },
+    PRO: { ACTIVE: 30, CANCELLED: 2 },
+    PREMIUM: { ACTIVE: 14, CANCELLED: 1 }
+  }
 };
 
 const demoUsers: AdminUser[] = [
@@ -217,11 +224,11 @@ export function useAdminUsers(filters?: UserFilters) {
         const data = await AdminAPI.getUsers(newFilters || filters);
         setUsers(data.users);
         setPagination({
-          total: data.total,
-          page: data.page,
-          totalPages: data.totalPages,
-          hasNext: data.hasNext,
-          hasPrev: data.hasPrev
+          total: data.pagination.total,
+          page: data.pagination.page,
+          totalPages: data.pagination.pages,
+          hasNext: data.pagination.page < data.pagination.pages,
+          hasPrev: data.pagination.page > 1
         });
       } catch (apiError) {
         console.warn('API admin/users no disponible, usando datos demo:', apiError);

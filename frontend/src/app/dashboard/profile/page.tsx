@@ -15,10 +15,12 @@ import { Badge } from '@/components/ui/badge';
 // ... imports
 import { simulatorService, StatsData } from '@/services/simulator.service';
 import { SimulatorUsageBar } from '@/components/dashboard/usage/SimulatorUsageBar';
+import { usePayments } from '@/hooks/usePayments';
 // ... inside component
 export default function ProfilePage() {
     const { user, login, reloadUser } = useAuth();
     const { toast } = useToast();
+    const { openCustomerPortal, loading: paymentsLoading } = usePayments();
 
     // Simulator Stats
     const [stats, setStats] = useState<StatsData | null>(null);
@@ -401,8 +403,8 @@ export default function ProfilePage() {
 
                     {user?.subscription && (
                         <div className="pt-4 border-t flex justify-end">
-                            <Button variant="outline" onClick={() => window.open('https://billing.stripe.com/p/login/test', '_blank')}>
-                                Gestionar Suscripción
+                            <Button variant="outline" onClick={() => openCustomerPortal()} disabled={paymentsLoading}>
+                                {paymentsLoading ? "Cargando..." : "Gestionar Suscripción"}
                             </Button>
                         </div>
                     )}

@@ -70,7 +70,7 @@ export class PaymentsController {
   ) {
     return this.paymentsService.createCheckoutSession(
       createCheckoutDto,
-      req.user.sub,
+      req.user.id,
     );
   }
 
@@ -84,7 +84,7 @@ export class PaymentsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   async createPortalSession(@Req() req: any) {
-    return this.paymentsService.createPortalSession(req.user.sub);
+    return this.paymentsService.createPortalSession(req.user.id);
   }
 
   @Patch('subscription')
@@ -96,7 +96,7 @@ export class PaymentsController {
   ) {
     return this.paymentsService.updateSubscription(
       updateSubscriptionDto,
-      req.user.sub,
+      req.user.id,
     );
   }
 
@@ -104,19 +104,19 @@ export class PaymentsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   async cancelSubscription(@Req() req: any) {
-    return this.paymentsService.cancelSubscription(req.user.sub);
+    return this.paymentsService.cancelSubscription(req.user.id);
   }
 
   @Get('subscription-status')
   @UseGuards(JwtAuthGuard)
   async getSubscriptionStatus(@Req() req: any) {
-    return this.paymentsService.getSubscriptionStatus(req.user.sub);
+    return this.paymentsService.getSubscriptionStatus(req.user.id);
   }
 
   @Get('usage')
   @UseGuards(JwtAuthGuard)
   async getUserUsage(@Req() req: any) {
-    return this.usageLimitsService.getUserUsage(req.user.sub);
+    return this.usageLimitsService.getUserUsage(req.user.id);
   }
 
   // Example of feature-gated endpoint
@@ -125,7 +125,7 @@ export class PaymentsController {
   @RequireFeature('advancedAnalytics')
   async getAdvancedAnalytics(@Req() req: any) {
     // This endpoint is only accessible to Pro and Premium users
-    return { message: 'Advanced analytics data', userId: req.user.sub };
+    return { message: 'Advanced analytics data', userId: req.user.id };
   }
 
   @Post('webhook')

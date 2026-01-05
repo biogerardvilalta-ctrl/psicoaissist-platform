@@ -6,8 +6,8 @@ export default registerAs('stripe', () => ({
   secretKey: process.env.STRIPE_SECRET_KEY || 'sk_test_...',
   publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_...',
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || 'whsec_...',
-  successUrl: process.env.FRONTEND_URL + '/payment/success' || 'http://localhost:3000/payment/success',
-  cancelUrl: process.env.FRONTEND_URL + '/payment/cancel' || 'http://localhost:3000/payment/cancel',
+  successUrl: (process.env.FRONTEND_URL || 'http://localhost:3000') + '/payment/success',
+  cancelUrl: (process.env.FRONTEND_URL || 'http://localhost:3000') + '/payment/cancel',
   plans: {
     basic: {
       priceId: process.env.STRIPE_BASIC_PRICE_ID || 'price_basic',
@@ -39,6 +39,16 @@ export default registerAs('stripe', () => ({
       name: 'Plan Business',
       features: PLAN_FEATURES.business
     },
+    premium: {
+      priceId: process.env.STRIPE_PREMIUM_PRICE_ID || 'price_premium',
+      priceIdAnnual: process.env.STRIPE_PREMIUM_ANNUAL_PRICE_ID || 'price_premium_annual',
+      amount: 9900, // €99.00
+      amountAnnual: 99000, // €990.00
+      currency: 'eur',
+      interval: 'month',
+      name: 'Plan Premium',
+      features: PLAN_FEATURES.premium
+    },
     premium_plus: {
       priceId: process.env.STRIPE_PREMIUM_PLUS_PRICE_ID || 'price_premium_plus',
       priceIdAnnual: process.env.STRIPE_PREMIUM_PLUS_ANNUAL_PRICE_ID || 'price_premium_plus_annual',
@@ -46,13 +56,32 @@ export default registerAs('stripe', () => ({
       amountAnnual: 99000, // €990.00
       currency: 'eur',
       interval: 'month',
-      name: 'Plan Premium',
+      name: 'Plan Premium Plus',
       features: PLAN_FEATURES.premium_plus
     },
-    // New Business plan (Business 129€/mo) would map to 'team' internally or new key? 
-    // Assuming 'business' maps to 'team' for now or need a new key? 
-    // The user created 'business' in frontend plan id. Backend dto has 'TEAM'. 
-    // I should probably alias 'business' to 'team' in service or add 'business' here.
-    // For now I'll stick to updating existing keys.
+    minutes_pack: {
+      priceId: process.env.STRIPE_PRICE_MINUTES_PACK || 'price_minutes_pack',
+      amount: 1500,
+      currency: 'eur',
+      interval: null, // One-time
+      name: 'Pack 500 Minutos',
+      features: null
+    },
+    simulator_pack: {
+      priceId: process.env.STRIPE_PRICE_SIMULATOR_PACK || 'price_simulator_pack',
+      amount: 1500,
+      currency: 'eur',
+      interval: null, // One-time
+      name: 'Pack 10 Casos Clínicos',
+      features: null
+    },
+    agenda_manager_pack: {
+      priceId: process.env.STRIPE_PRICE_AGENDA_MANAGER_PACK || 'price_agenda_manager_pack',
+      amount: 1500,
+      currency: 'eur',
+      interval: 'month', // Recurring Add-on
+      name: 'Pack Agenda Manager',
+      features: null
+    }
   }
 }));

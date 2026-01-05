@@ -1,9 +1,9 @@
 import { httpClient } from './http-client';
-import type { 
-  Plan, 
-  CheckoutSession, 
-  CreateCheckoutSessionRequest, 
-  SubscriptionStatus 
+import type {
+  Plan,
+  CheckoutSession,
+  CreateCheckoutSessionRequest,
+  SubscriptionStatus
 } from '@/types/payments';
 
 export class PaymentsAPI {
@@ -17,18 +17,13 @@ export class PaymentsAPI {
   static async createCheckoutSession(
     request: CreateCheckoutSessionRequest
   ): Promise<CheckoutSession> {
-    console.log('📡 PaymentsAPI.createCheckoutSession llamado con:', request);
-    
-    // Usar endpoint demo temporalmente hasta que tengamos auth real
-    const endpoint = `${this.BASE_URL}/create-checkout-session-demo`;
-    console.log('🌐 URL destino:', endpoint);
-    
+    const endpoint = `${this.BASE_URL}/create-checkout-session`;
+
     try {
       const response = await httpClient.post(endpoint, request);
-      console.log('✅ Respuesta recibida:', response);
       return response as CheckoutSession;
     } catch (error) {
-      console.error('❌ Error en PaymentsAPI.createCheckoutSession:', error);
+      console.error('Error in PaymentsAPI.createCheckoutSession:', error);
       throw error;
     }
   }
@@ -40,7 +35,7 @@ export class PaymentsAPI {
 
   static async createPortalSession(): Promise<{ url: string }> {
     const response = await httpClient.post(`${this.BASE_URL}/create-portal-session`);
-    return (response as any).data;
+    return response as { url: string };
   }
 
   static async cancelSubscription(): Promise<void> {

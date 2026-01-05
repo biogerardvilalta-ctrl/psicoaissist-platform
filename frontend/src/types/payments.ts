@@ -34,9 +34,11 @@ export interface Subscription {
 }
 
 export interface CheckoutSession {
-  sessionId: string;
-  url: string;
-  plan: {
+  sessionId?: string;
+  url?: string;
+  success?: boolean;
+  message?: string;
+  plan?: {
     name: string;
     amount: number;
     currency: string;
@@ -45,7 +47,7 @@ export interface CheckoutSession {
 }
 
 export interface CreateCheckoutSessionRequest {
-  plan: 'basic' | 'pro' | 'team' | 'premium';
+  plan: 'basic' | 'pro' | 'team' | 'premium' | 'minutes_pack' | 'simulator_pack' | 'agenda_manager_pack';
   interval?: 'month' | 'year';
   customerId?: string;
   metadata?: Record<string, string>;

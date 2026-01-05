@@ -6,6 +6,7 @@ export interface User {
   role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP';
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   subscription?: {
+    id: string;
     planType: 'BASIC' | 'PRO' | 'PREMIUM';
     status: string;
     currentPeriodEnd?: string;

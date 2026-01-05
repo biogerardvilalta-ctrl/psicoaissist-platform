@@ -1,12 +1,12 @@
-import { 
-  Controller, 
-  Get, 
-  Patch, 
-  Delete, 
-  Param, 
-  Body, 
-  UseGuards, 
-  Query 
+import {
+  Controller,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+  Query
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -24,7 +24,7 @@ export class AdminController {
     private readonly usersService: UsersService,
     private readonly paymentsService: PaymentsService,
     private readonly prisma: PrismaService,
-  ) {}
+  ) { }
 
   @Get('dashboard')
   async getDashboardStats() {
@@ -32,7 +32,9 @@ export class AdminController {
       totalUsers,
       activeSubscriptions,
       totalRevenue,
-      recentSignups
+      recentSignups,
+      totalSessions,
+      totalReports
     ] = await Promise.all([
       this.prisma.user.count(),
       this.prisma.subscription.count({ where: { status: 'active' } }),
@@ -43,7 +45,9 @@ export class AdminController {
             gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
           }
         }
-      })
+      }),
+      this.prisma.session.count(),
+      this.prisma.report.count()
     ]);
 
     const subscriptionStats = await this.getSubscriptionStats();
@@ -53,7 +57,96 @@ export class AdminController {
       activeSubscriptions,
       totalRevenue,
       recentSignups,
+      totalSessions,
+      totalReports,
       subscriptionStats,
+    };
+  }
+
+  @Get('logs')
+  async getLogs(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '20',
+    @Query('userId') userId?: string,
+    @Query('errorOnly') errorOnly?: string,
+  ) {
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    const where: any = {};
+
+    if (userId) {
+      where.userId = userId;
+    }
+
+    if (errorOnly === 'true') {
+      where.OR = [
+        { isSuccess: false },
+        { errorMessage: { not: null } }
+      ];
+    }
+
+    const [logs, total] = await Promise.all([
+      this.prisma.auditLog.findMany({
+        where,
+        skip,
+        take: limitNum,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              email: true,
+              firstName: true,
+              lastName: true,
+            }
+          }
+        }
+      }),
+      this.prisma.auditLog.count({ where }),
+    ]);
+
+    return {
+      logs,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        pages: Math.ceil(total / limitNum),
+      },
+    };
+  }
+
+  @Get('plans')
+  getPlans() {
+    // Return hardcoded plan details for now
+    return {
+      plans: [
+        {
+          id: 'basic',
+          name: 'Basic',
+          price: 29,
+          currency: 'EUR',
+          interval: 'month',
+          features: ['3 Clients', 'Basic Reports', 'Community Access']
+        },
+        {
+          id: 'pro',
+          name: 'Pro',
+          price: 59,
+          currency: 'EUR',
+          interval: 'month',
+          features: ['Unlimited Clients', 'Advanced Reports', 'Priority Support']
+        },
+        {
+          id: 'premium',
+          name: 'Premium',
+          price: 99,
+          currency: 'EUR',
+          interval: 'month',
+          features: ['All Pro features', 'White Labeling', 'API Access']
+        }
+      ]
     };
   }
 
@@ -70,7 +163,7 @@ export class AdminController {
     const skip = (pageNum - 1) * limitNum;
 
     const where: any = {};
-    
+
     if (search) {
       where.OR = [
         { email: { contains: search, mode: 'insensitive' } },
@@ -167,8 +260,8 @@ export class AdminController {
     @Param('id') id: string,
     @Body() body: { status: string; reason?: string }
   ) {
-    const user = await this.usersService.update(id, { 
-      status: body.status as any 
+    const user = await this.usersService.update(id, {
+      status: body.status as any
     });
 
     // Log admin action
@@ -206,7 +299,7 @@ export class AdminController {
     const skip = (pageNum - 1) * limitNum;
 
     const where: any = {};
-    
+
     if (status) {
       where.status = status;
     }

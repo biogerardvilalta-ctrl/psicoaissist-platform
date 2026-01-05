@@ -11,7 +11,7 @@ export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<UserFilters['status']>('ALL');
   const [roleFilter, setRoleFilter] = useState<UserFilters['role']>('ALL');
-  
+
   // Memoizar los filtros para evitar recreación en cada render
   const filters = useMemo<UserFilters>(() => ({
     search: searchQuery || undefined,
@@ -19,7 +19,7 @@ export default function UsersPage() {
     role: roleFilter,
     limit: 50
   }), [searchQuery, statusFilter, roleFilter]);
-  
+
   const { users, loading, error, refetch } = useAdminUsers(filters);
 
   // Cerrar dropdowns cuando se hace click fuera
@@ -111,7 +111,7 @@ export default function UsersPage() {
       INACTIVE: 'bg-gray-100 text-gray-800',
       SUSPENDED: 'bg-red-100 text-red-800'
     };
-    
+
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}>
         {status === 'ACTIVE' ? 'Activo' : status === 'INACTIVE' ? 'Inactivo' : 'Suspendido'}
@@ -125,7 +125,7 @@ export default function UsersPage() {
       PRO: 'bg-purple-100 text-purple-800',
       PREMIUM: 'bg-orange-100 text-orange-800'
     };
-    
+
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[planType as keyof typeof styles]}`}>
         {planType}
@@ -143,7 +143,7 @@ export default function UsersPage() {
               <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
               <p className="text-gray-600 mt-2">Administra los usuarios registrados en la plataforma</p>
             </div>
-            <button 
+            <button
               onClick={() => alert('Funcionalidad de invitar usuario próximamente')}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
@@ -184,7 +184,7 @@ export default function UsersPage() {
                   <option value="INACTIVE">Inactivos</option>
                   <option value="SUSPENDED">Suspendidos</option>
                 </select>
-                
+
                 {/* Role Filter */}
                 <select
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
@@ -253,6 +253,9 @@ export default function UsersPage() {
                     Usuario
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Uso (Ses/Rep)
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -287,6 +290,12 @@ export default function UsersPage() {
                         </div>
                       </div>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div className="flex flex-col">
+                        <span>{user._count?.sessions || 0} sesiones</span>
+                        <span className="text-xs text-gray-400">{user._count?.reports || 0} reportes</span>
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(user.status)}
                     </td>
@@ -301,7 +310,7 @@ export default function UsersPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="relative inline-block text-left" data-dropdown>
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             const dropdown = e.currentTarget.nextElementSibling;
@@ -315,13 +324,19 @@ export default function UsersPage() {
                         </button>
                         <div className="hidden absolute right-0 z-10 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
                           <div className="py-1">
-                            <button 
+                            <a
+                              href={`/admin/users/${user.id}`}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            >
+                              Ver detalles y movimientos
+                            </a>
+                            <button
                               onClick={() => alert(`Editar usuario: ${user.firstName} ${user.lastName}`)}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                             >
                               Editar usuario
                             </button>
-                            <button 
+                            <button
                               onClick={() => {
                                 if (user.status === 'ACTIVE') {
                                   alert(`Usuario ${user.firstName} ${user.lastName} suspendido`);
@@ -333,13 +348,13 @@ export default function UsersPage() {
                             >
                               {user.status === 'ACTIVE' ? 'Suspender' : 'Activar'} usuario
                             </button>
-                            <button 
+                            <button
                               onClick={() => alert(`Enviar email a: ${user.email}`)}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                             >
                               Enviar email
                             </button>
-                            <button 
+                            <button
                               onClick={() => {
                                 if (confirm(`¿Estás seguro de eliminar al usuario ${user.firstName} ${user.lastName}?`)) {
                                   alert(`Usuario ${user.firstName} ${user.lastName} eliminado`);

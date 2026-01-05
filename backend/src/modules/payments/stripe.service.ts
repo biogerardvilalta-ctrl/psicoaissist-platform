@@ -76,13 +76,13 @@ export class StripeService {
     });
   }
 
-  async createCheckoutSession(priceId: string, customerId?: string, metadata?: Record<string, string>) {
+  async createCheckoutSession(priceId: string, customerId?: string, metadata?: Record<string, string>, mode: Stripe.Checkout.SessionCreateParams.Mode = 'subscription') {
     if (this.isDemoMode) {
       return {
         id: 'cs_demo_' + Date.now(),
         url: 'https://checkout.stripe.com/demo-session-url',
         object: 'checkout.session',
-        mode: 'subscription',
+        mode: mode,
         customer: customerId || null,
         metadata: metadata || {},
         success_url: this.config.successUrl,
@@ -91,7 +91,7 @@ export class StripeService {
     }
 
     const sessionData: Stripe.Checkout.SessionCreateParams = {
-      mode: 'subscription',
+      mode: mode,
       line_items: [
         {
           price: priceId,
@@ -159,6 +159,22 @@ export class StripeService {
           price: priceId,
         },
       ],
+      proration_behavior: 'create_prorations',
+    });
+  }
+
+  async addSubscriptionItem(subscriptionId: string, priceId: string) {
+    if (this.isDemoMode) {
+      return {
+        id: 'si_demo_' + Date.now(),
+        object: 'subscription_item',
+        subscription: subscriptionId,
+        price: { id: priceId },
+      };
+    }
+    return this.stripe.subscriptionItems.create({
+      subscription: subscriptionId,
+      price: priceId,
       proration_behavior: 'create_prorations',
     });
   }

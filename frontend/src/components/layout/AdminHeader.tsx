@@ -11,7 +11,9 @@ import {
   CogIcon,
   LogoutIcon,
   UserCircleIcon,
-  ArrowLeftIcon
+  ArrowLeftIcon,
+  CreditCardIcon,
+  ClipboardListIcon
 } from '@heroicons/react/outline';
 import {
   DropdownMenu,
@@ -35,8 +37,8 @@ export default function AdminHeader() {
   const navigationItems = [
     { name: 'Panel', href: '/admin', icon: HomeIcon },
     { name: 'Usuarios', href: '/admin/users', icon: UsersIcon },
-    { name: 'Estadísticas', href: '/admin/analytics', icon: ChartBarIcon },
-    { name: 'Configuración', href: '/admin/settings', icon: CogIcon },
+    { name: 'Facturación', href: '/admin/billing', icon: CreditCardIcon },
+    { name: 'Logs', href: '/admin/audit-logs', icon: ClipboardListIcon },
   ];
 
   return (

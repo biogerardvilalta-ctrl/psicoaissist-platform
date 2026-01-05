@@ -1,5 +1,5 @@
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Crown, ArrowRight, Zap } from 'lucide-react';
@@ -59,13 +59,14 @@ interface UpgradePlanModalProps {
     isOpen: boolean;
     onClose: () => void;
     limitType?: 'transcription' | 'simulator';
+    initialViewPlans?: boolean;
 }
 
-export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription' }: UpgradePlanModalProps) {
+export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription', initialViewPlans = false }: UpgradePlanModalProps) {
     const router = useRouter();
-    const { createCheckoutSession, loading } = usePayments();
+    const { createCheckoutSession, changePlan, loading } = usePayments();
     const { user } = useAuth();
-    const [showPlans, setShowPlans] = useState(false);
+    const [showPlans, setShowPlans] = useState(initialViewPlans);
 
     const isSimulator = limitType === 'simulator';
     const title = isSimulator ? "Límite de Casos Alcanzado" : "Límite de Transcripción Alcanzado";
@@ -75,14 +76,26 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription' 
 
     const handleUpgrade = async (planId: string) => {
         try {
-            await createCheckoutSession({
-                // @ts-ignore
-                plan: planId,
-                interval: (planId === 'minutes_pack' || planId === 'simulator_pack') ? undefined : 'month' // Packs are one-time
-            });
+            const isPack = ['minutes_pack', 'simulator_pack', 'agenda_manager_pack'].includes(planId);
+            const hasActiveSubscription = user?.subscription?.status === 'active';
+
+            // If it's a pack OR the user has no subscription, use Checkout Session
+            if (isPack || !hasActiveSubscription) {
+                await createCheckoutSession({
+                    // @ts-ignore
+                    plan: planId,
+                    interval: isPack ? undefined : 'month' // Packs are one-time
+                });
+            } else {
+                // If it's a plan upgrade (Pro/Premium) AND user has subscription, use Update
+                if (user?.subscription?.id) {
+                    await changePlan(planId.toLowerCase(), user.subscription.id);
+                }
+            }
         } catch (err) {
             console.error('Upgrade error', err);
-            router.push('/dashboard/settings/billing');
+            // On specific errors, redirect to billing status
+            // router.push('/dashboard/settings?section=billing');
         }
     };
 
@@ -146,8 +159,13 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription' 
                     </>
                 ) : (
                     <>
+                        <DialogHeader className="text-left w-full mb-4">
+                            <DialogTitle className="text-xl font-bold">Opciones Disponibles para Ti</DialogTitle>
+                            <DialogDescription>
+                                Selecciona el plan o pack que mejor se adapte a tus necesidades.
+                            </DialogDescription>
+                        </DialogHeader>
                         <div className="w-full text-left">
-                            <h3 className="text-xl font-bold mb-4">Opciones Disponibles para Ti</h3>
                             <div className="grid grid-cols-1 gap-4">
                                 {visiblePlans.map((plan) => (
                                     <div
