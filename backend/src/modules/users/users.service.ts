@@ -368,28 +368,26 @@ export class UsersService {
         where: {
           id: managerId,
           role: UserRole.AGENDA_MANAGER,
-          OR: [
-            { createdById: professionalId },
-            { managedProfessionals: { some: { id: professionalId } } }
-          ]
+          managedProfessionals: { some: { id: professionalId } }
         }
       });
 
       if (!manager) {
-        throw new NotFoundException('Agenda Manager no encontrado o no autorizado');
+        throw new NotFoundException('Agenda Manager no encontrado o no asignado');
       }
 
       await this.prisma.user.update({
         where: { id: managerId },
         data: {
-          status: UserStatus.INACTIVE,
-          updatedAt: new Date()
+          managedProfessionals: {
+            disconnect: { id: professionalId }
+          }
         }
       });
 
-      this.logger.log(`Agenda Manager deleted: ${managerId} by ${professionalId}`);
+      this.logger.log(`Agenda Manager unlinked: ${managerId} from ${professionalId}`);
     } catch (error) {
-      this.logger.error(`Error deleting agenda manager: ${error.message}`);
+      this.logger.error(`Error removing agenda manager: ${error.message}`);
       throw error;
     }
   }

@@ -43,19 +43,19 @@ export function AgendaManagersSettings() {
             // Si funciona, podría ser que se haya creado O vinculado. 
             // Podríamos comprobar si ya existía en la lista 'managers' antes de recargar,
             // pero lo más sencillo es mostrar un mensaje de éxito genérico.
-            alert('Gestor asignado correctamente.'); // Simple alert for now, strictly per component style
+            alert('Gestor asignado/vinculado correctamente.'); // Simple alert for now, strictly per component style
             setNewManager({ firstName: '', lastName: '', email: '', password: '' });
             await loadManagers();
         } catch (error: any) {
             console.error('Failed to create manager', error);
-            alert(error.message || 'Error al asignar gestor');
+            alert(error.message || 'Error al asignar/vincular gestor');
         } finally {
             setIsCreating(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('¿Estás seguro de que deseas eliminar este gestor?')) return;
+        if (!confirm('¿Estás seguro de que deseas desvincular a este gestor? No se eliminará su cuenta, solo perderá acceso a tu agenda.')) return;
         try {
             await UserAPI.deleteAgendaManager(id);
             setManagers(managers.filter(m => m.id !== id));
@@ -69,9 +69,7 @@ export function AgendaManagersSettings() {
             <div className="flex items-center justify-between">
                 <div>
                     <h3 className="text-lg font-medium">Gestores de Agenda</h3>
-                    <p className="text-sm text-gray-500">
-                        Permite que otras personas gestionen tu calendario y pacientes.
-                    </p>
+                    Permite que otras personas gestionen tu calendario y pacientes. Si introduces el email de un gestor existente, se vinculará a tu cuenta.
                 </div>
             </div>
 
@@ -107,8 +105,7 @@ export function AgendaManagersSettings() {
                         />
                         <input
                             type="password"
-                            placeholder="Contraseña Temporal"
-                            required
+                            placeholder="Contraseña (solo si es nuevo usuario)"
                             minLength={6}
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             value={newManager.password}
@@ -122,7 +119,7 @@ export function AgendaManagersSettings() {
                             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-black text-white hover:bg-black/90 h-10 px-4 py-2"
                         >
                             {isCreating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
-                            Crear Gestor
+                            Vincular / Crear Gestor
                         </button>
                     </div>
                 </form>
@@ -154,7 +151,7 @@ export function AgendaManagersSettings() {
                                 <button
                                     onClick={() => handleDelete(manager.id)}
                                     className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                                    title="Eliminar gestor"
+                                    title="Desvincular gestor"
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </button>
