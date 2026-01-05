@@ -290,30 +290,69 @@ export class SimulatorService {
             return `** ${speaker}**: ${text} `;
         }).join('\n\n');
 
-        const prompt = `
-        ACTÚA COMO UN SUPERVISOR CLÍNICO EXPERTO (MODELO CBT / Humanista).
-        Analiza la siguiente transcripción de una sesión simulada entre un Terapeuta (Usuario) y un Paciente (IA).
-        
-        === TRANSCRIPCIÓN ===
-        ${transcript}
-        ====================
+        // Fetch user language preference
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        const lang = user?.preferredLanguage || 'ca'; // Default to Catalan check
+        const langName = lang === 'es' ? 'ESPAÑOL' : lang === 'en' ? 'ENGLISH' : 'CATALÀ';
 
-        TU TAREA:
-        1. Evalúa la empatía, eficacia y profesionalidad del terapeuta (0-100).
-        2. Escribe un informe detallado en Markdown (feedback). NO COPIES LA ESTRUCTURA DE EJEMPLO LITERALMENTE, RELLÉNALA CON CONTENIDO ESPECÍFICO DE LA SESIÓN.
+        let prompt = '';
 
-        Responde con un objeto JSON válido con este formato:
-        {
-            "metrics": {
-                "empathy": (0-100),
-                "intervention_effectiveness": (0-100),
-                "professionalism": (0-100)
-            },
-            "feedback": "# 📊 Resumen Ejecutivo\n[Escribe aquí un resumen de 3 líneas sobre el desempeño global]\n\n## 🔑 Momentos Clave\n[Cita textualmente 2 o 3 intervenciones específicas y analízalas]\n\n## ✅ Puntos Fuertes\n- [Punto 1]\n- [Punto 2]\n\n## ⚠️ Áreas de Mejora\n- [Area 1]\n- [Area 2]\n\n## 💡 Recomendación Clínica\n[Consejo práctico para la próxima sesión]"
+        if (lang === 'ca') {
+            prompt = `
+            ACTUA COM UN SUPERVISOR CLÍNIC EXPERT (MODEL COGNITIU-CONDUCTUAL / Humanista).
+            Analitza la següent transcripció d'una sessió simulada entre un Terapeuta (Usuari) i un Pacient (IA).
+            
+            === TRANSCRIPCIÓ ===
+            ${transcript}
+            ====================
+
+            LA TEVA TASCA:
+            1. Avalua l'empatia, eficàcia i professionalitat del terapeuta (0-100).
+            2. Escriu un informe detallat en format Markdown (feedback). NO COPIIS L'ESTRUCTURA D'EXEMPLE LITERALMENT, OMPLE-LA AMB CONTINGUT ESPECÍFIC DE LA SESSIÓ.
+            
+            IDIOMA DE RESPOSTA: CATALÀ IMPERATIU.
+
+            Respon amb un objecte JSON vàlid amb aquest format:
+            {
+                "metrics": {
+                    "empathy": (0-100),
+                    "intervention_effectiveness": (0-100),
+                    "professionalism": (0-100)
+                },
+                "feedback": "# 📊 Resum Executiu\n[Escriu aquí un resum de 3 línies sobre l'acompliment global]\n\n## 🔑 Moments Clau\n[Cita textualment 2 o 3 intervencions específiques i analitza-les]\n\n## ✅ Punts Forts\n- [Punt 1]\n- [Punt 2]\n\n## ⚠️ Àrees de Millora\n- [Àrea 1]\n- [Àrea 2]\n\n## 💡 Recomendació Clínica\n[Consell pràctic per a la propera sessió]"
+            }
+
+            IMPORTANT: El camp 'feedback' ha de ser una cadena de text (string) que contingui el Markdown formatat. Assegura't d'escapar els salts de línia correctament en el JSON.
+            `;
+        } else {
+            // Default to Spanish
+            prompt = `
+            ACTÚA COMO UN SUPERVISOR CLÍNICO EXPERTO (MODELO CBT / Humanista).
+            Analiza la siguiente transcripción de una sesión simulada entre un Terapeuta (Usuario) y un Paciente (IA).
+            
+            === TRANSCRIPCIÓN ===
+            ${transcript}
+            ====================
+
+            TU TAREA:
+            1. Evalúa la empatía, eficacia y profesionalidad del terapeuta (0-100).
+            2. Escribe un informe detallado en Markdown (feedback). NO COPIES LA ESTRUCTURA DE EJEMPLO LITERALMENTE, RELLÉNALA CON CONTENIDO ESPECÍFICO DE LA SESIÓN.
+            
+            IDIOMA DE RESPUESTA: ESPAÑOL.
+
+            Responde con un objeto JSON válido con este formato:
+            {
+                "metrics": {
+                    "empathy": (0-100),
+                    "intervention_effectiveness": (0-100),
+                    "professionalism": (0-100)
+                },
+                "feedback": "# 📊 Resumen Ejecutivo\n[Escribe aquí un resumen de 3 líneas sobre el desempeño global]\n\n## 🔑 Momentos Clave\n[Cita textualmente 2 o 3 intervenciones específicas y analízalas]\n\n## ✅ Puntos Fuertes\n- [Punto 1]\n- [Punto 2]\n\n## ⚠️ Áreas de Mejora\n- [Area 1]\n- [Area 2]\n\n## 💡 Recomendación Clínica\n[Consejo práctico para la próxima sesión]"
+            }
+
+            IMPORTANTE: El campo 'feedback' debe ser una cadena de texto (string) que contenga el Markdown formateado. Asegúrate de escapar los saltos de línea correctamente en el JSON.
+            `;
         }
-
-        IMPORTANTE: El campo 'feedback' debe ser una cadena de texto (string) que contenga el Markdown formateado. Asegúrate de escapar los saltos de línea correctamente en el JSON.
-        `;
 
         try {
             const result = await this.aiProvider.generateJSON<{ feedback: string; metrics: any }>(prompt, {
