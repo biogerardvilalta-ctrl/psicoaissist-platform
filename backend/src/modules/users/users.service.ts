@@ -598,6 +598,7 @@ export class UsersService {
         lastName: m.lastName
       })) : undefined,
       simulatorUsageCount: user.simulatorUsageCount,
+      agendaManagerEnabled: user.agendaManagerEnabled,
     };
   }
 }

@@ -122,6 +122,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   simulatorUsageCount?: number;
+
+  @ApiProperty({ required: false })
+  agendaManagerEnabled?: boolean;
 }
 
 export class AuthResponseDto {

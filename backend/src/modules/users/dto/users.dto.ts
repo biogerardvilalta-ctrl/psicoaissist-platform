@@ -180,6 +180,9 @@ export class UserResponseDto {
   simulatorUsageCount?: number;
 
   @ApiProperty({ required: false })
+  agendaManagerEnabled?: boolean;
+
+  @ApiProperty({ required: false })
   subscription?: {
     planType: string;
     status: string;

@@ -136,6 +136,7 @@ export class AuthService {
         referralsCount: user.referralsCount,
         subscription: user.subscription,
         simulatorUsageCount: user.simulatorUsageCount,
+        agendaManagerEnabled: user.agendaManagerEnabled,
       },
       tokens,
       encryptionKey: {
@@ -248,6 +249,7 @@ export class AuthService {
           referralsCount: user.referralsCount,
           subscription: user.subscription,
           simulatorUsageCount: user.simulatorUsageCount,
+          agendaManagerEnabled: user.agendaManagerEnabled,
         },
         tokens,
         encryptionKey: {
