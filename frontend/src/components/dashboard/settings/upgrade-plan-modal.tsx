@@ -43,6 +43,15 @@ const upgradePlans = [
         features: ['10 casos extra', 'Sin caducidad', 'Acumulable'],
         popular: false,
         planType: 'ADD_ON'
+    },
+    {
+        id: 'agenda_manager_pack',
+        name: 'Pack Agenda Manager',
+        price: '15€', // 15 EUR
+        description: 'Gestión delegada de agenda y pacientes',
+        features: ['Gestión de agenda', 'Gestión de pacientes', 'Acceso delegado'],
+        popular: false,
+        planType: 'ADD_ON'
     }
 ];
 
@@ -83,9 +92,9 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription' 
 
         switch (currentPlan) {
             case 'PREMIUM':
-                return upgradePlans.filter(p => ['minutes_pack', 'simulator_pack'].includes(p.id));
+                return upgradePlans.filter(p => ['minutes_pack', 'simulator_pack', 'agenda_manager_pack'].includes(p.id));
             case 'PRO':
-                return upgradePlans.filter(p => ['premium', 'minutes_pack', 'simulator_pack'].includes(p.id));
+                return upgradePlans.filter(p => ['premium', 'minutes_pack', 'simulator_pack', 'agenda_manager_pack'].includes(p.id));
             case 'BASIC':
             default:
                 // Show everything including Pro, Premium and Packs
@@ -155,6 +164,7 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription' 
                                             <div className="flex items-center gap-2">
                                                 {plan.id === 'minutes_pack' && <Zap className="h-4 w-4 text-amber-500 fill-amber-500" />}
                                                 {plan.id === 'simulator_pack' && <Crown className="h-4 w-4 text-blue-500 fill-blue-500" />}
+                                                {plan.id === 'agenda_manager_pack' && <Crown className="h-4 w-4 text-emerald-500 fill-emerald-500" />}
                                                 <h3 className="font-bold text-base text-slate-900">{plan.name}</h3>
                                             </div>
                                             <span className="font-bold text-lg text-slate-900">

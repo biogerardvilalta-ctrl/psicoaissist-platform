@@ -135,7 +135,7 @@ export const EXTRA_PACKS = {
   },
   AGENDA_MANAGER_PACK: {
     id: 'agenda_manager_pack',
-    price: 900, // Example: 9 EUR
+    price: 1500, // 15 EUR
     name: 'Pack Agenda Manager'
   }
 };

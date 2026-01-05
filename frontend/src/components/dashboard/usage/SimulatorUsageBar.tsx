@@ -12,32 +12,12 @@ interface SimulatorUsageBarProps {
 }
 
 export function SimulatorUsageBar({ usage, limit, extra, planName }: SimulatorUsageBarProps) {
+    const effectiveLimit = Math.max(0, limit);
+    const baseLimit = Math.max(0, effectiveLimit - extra);
     const isUnlimited = limit === -1 || limit > 9000;
 
-    // effectiveLimit for progress bar calculation
-    // If unlimited, we show usage relative to a "Soft Cap" or just show a small bar
-    // Let's assume for unlimited we don't show a progress bar or show it full/empty.
-
-    // For limited plans:
-    // Total Capacity = Limit + Extra
-    // Usage fills the bar. 
-    // If Usage > Limit, it means we are dipping into Extra.
-
-    const totalCapacity = isUnlimited ? 100 : limit + extra;
-    const progressPercent = isUnlimited ? 0 : Math.min(100, (usage / totalCapacity) * 100);
-
-    // Calculate segments for visualization
-    // We want to differentiate Base Limit usage vs Extra usage if possible, 
-    // but a single bar is simpler.
-    // Let's try to show: 
-    // [ =========== | ----- ]
-    // Used | Remaining
-
-    const remainingBase = isUnlimited ? 999 : Math.max(0, limit - usage);
-    const usedFromExtra = isUnlimited ? 0 : Math.max(0, usage - limit);
-    const remainingExtra = Math.max(0, extra - usedFromExtra);
-
-    const totalRemaining = isUnlimited ? '∞' : (remainingBase + remainingExtra);
+    const baseUsage = Math.min(usage, baseLimit);
+    const extraUsage = Math.max(0, usage - baseLimit);
 
     if (isUnlimited) {
         return (
@@ -54,50 +34,63 @@ export function SimulatorUsageBar({ usage, limit, extra, planName }: SimulatorUs
     }
 
     return (
-        <div className="w-full space-y-2 p-4 bg-white rounded-lg border shadow-sm">
-            <div className="flex justify-between items-end mb-1">
-                <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-                        Créditos de Simulación
+        <div className="bg-indigo-50/50 rounded-lg p-4 space-y-3 border border-indigo-100/50">
+            <div className="flex justify-between items-center">
+                <div>
+                    <p className="text-sm font-medium text-slate-700">Casos Clínicos</p>
+                    <div className="flex items-center gap-1">
+                        <p className="text-xs text-muted-foreground">
+                            {extra > 0
+                                ? `${Math.max(0, baseLimit - baseUsage + Math.max(0, extra - extraUsage))} restantes de ${baseLimit} + ${extra} (Extra)`
+                                : `${Math.max(0, baseLimit - baseUsage)} restantes de ${baseLimit}`
+                            }
+                        </p>
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger>
-                                    <HelpCircle className="w-3 h-3 text-gray-400 cursor-help" />
+                                    <HelpCircle className="w-3 h-3 text-slate-400 cursor-help" />
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Incluye tu plan base + packs extra.</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
-                    </span>
-                    <span className="text-xs text-gray-500">
-                        {usage} / {totalCapacity} casos utilizados
-                    </span>
+                    </div>
                 </div>
-                <div className="text-right">
-                    <Badge variant={totalRemaining === 0 ? "destructive" : "secondary"} className="mb-0.5">
-                        Restan: {totalRemaining}
-                    </Badge>
+                <Badge variant={(baseLimit + extra) - usage > 0 ? "default" : "destructive"}>
+                    {usage} Usados
+                </Badge>
+            </div>
+
+            {/* Base Plan Bar */}
+            <div className="space-y-1">
+                <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
+                    <span>Plan Base</span>
+                    <span>{baseUsage} / {baseLimit}</span>
+                </div>
+                <div className="relative h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                    <div
+                        className={`h-full rounded-full transition-all duration-500 ${baseUsage >= baseLimit ? 'bg-red-500' : 'bg-blue-600'}`}
+                        style={{ width: `${(baseUsage / Math.max(1, baseLimit)) * 100}%` }}
+                    />
                 </div>
             </div>
 
-            {/* Progress Bar Container */}
-            <div className="relative h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                {/* Main Usage Bar */}
-                <div
-                    className={`h-full transition-all duration-500 rounded-full ${usedFromExtra > 0 ? 'bg-orange-500' : 'bg-blue-600'}`}
-                    style={{ width: `${progressPercent}%` }}
-                />
-            </div>
-
-            {/* Extra Pack Indicator */}
-            {extra > 0 && (
-                <div className="flex justify-between text-[10px] text-gray-400 mt-1">
-                    <span>Plan Base: {limit}</span>
-                    <span className="flex items-center text-orange-600 font-medium">
-                        <Zap className="w-3 h-3 mr-0.5" />
-                        Pack Extra: {remainingExtra} disponibles
-                    </span>
+            {/* Extra Pack Bar */}
+            {(extra > 0 || usage > baseLimit) && (
+                <div className="space-y-1">
+                    <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
+                        <span>Pack Extra</span>
+                        <span>
+                            {extraUsage} / {extra + Math.max(0, extraUsage - extra)}
+                        </span>
+                    </div>
+                    <div className="relative h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                        <div
+                            className={`h-full rounded-full transition-all duration-500 ${extra === 0 ? 'bg-red-500' : 'bg-purple-500'}`}
+                            style={{ width: `${(extraUsage / Math.max(1, extra + Math.max(0, extraUsage - extra))) * 100}%` }}
+                        />
+                    </div>
                 </div>
             )}
         </div>

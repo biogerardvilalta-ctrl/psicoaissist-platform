@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 
 // ... imports
 import { simulatorService, StatsData } from '@/services/simulator.service';
+import { SimulatorUsageBar } from '@/components/dashboard/usage/SimulatorUsageBar';
 // ... inside component
 export default function ProfilePage() {
     const { user, login, reloadUser } = useAuth();
@@ -294,65 +295,12 @@ export default function ProfilePage() {
                                     {/* Clinical Cases */}
                                     {/* Clinical Cases */}
                                     {user?.subscription?.planType.toLowerCase() !== 'basic' && (
-                                        <div className="bg-indigo-50/50 rounded-lg p-4 space-y-3 border border-indigo-100/50">
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <p className="text-sm font-medium text-slate-700">Casos Clínicos</p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        {stats.usage.limit > 1000
-                                                            ? "Ilimitado"
-                                                            : (stats.usage.extraSimulatorCases && stats.usage.extraSimulatorCases > 0
-                                                                ? `${stats.usage.remaining} restantes de ${(stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)} + ${stats.usage.extraSimulatorCases} (Extra)`
-                                                                : `${stats.usage.remaining} restantes de ${stats.usage.limit}`)
-                                                        }
-                                                    </p>
-                                                </div>
-                                                {stats.usage.limit < 1000 && (
-                                                    <Badge variant={stats.usage.remaining > 0 ? "default" : "destructive"}>
-                                                        {stats.usage.used} Usados
-                                                    </Badge>
-                                                )}
-                                            </div>
-
-                                            {/* Base Plan Bar */}
-                                            {stats.usage.limit < 1000 && (
-                                                <div className="space-y-1">
-                                                    <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
-                                                        <span>Plan Base</span>
-                                                        <span>{Math.min(stats.usage.used || 0, (stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))} / {(stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)}</span>
-                                                    </div>
-                                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                        <div
-                                                            className={`h-full rounded-full ${(Math.min(stats.usage.used || 0, (stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)) >= ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))) ? 'bg-red-500' : 'bg-blue-600'}`}
-                                                            style={{ width: `${Math.min(100, (Math.min(stats.usage.used || 0, (stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)) / ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))) * 100)}%` }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Extra Pack Bar */}
-                                            {(
-                                                (stats.usage.extraSimulatorCases && stats.usage.extraSimulatorCases > 0) ||
-                                                ((stats.usage.used || 0) > ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)))
-                                            ) && stats.usage.limit < 1000 && (
-                                                    <div className="space-y-1">
-                                                        <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
-                                                            <span>Pack Extra</span>
-                                                            <span>
-                                                                {Math.max(0, (stats.usage.used || 0) - ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)))}
-                                                                /
-                                                                {(stats.usage.extraSimulatorCases || 0) + Math.max(0, (stats.usage.used || 0) - ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0)))}
-                                                            </span>
-                                                        </div>
-                                                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                            <div
-                                                                className={`h-full rounded-full ${(stats.usage.extraSimulatorCases || 0) === 0 ? 'bg-red-500' : 'bg-purple-500'}`}
-                                                                style={{ width: `${Math.min(100, (Math.max(0, (stats.usage.used || 0) - ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))) / ((stats.usage.extraSimulatorCases || 0) + Math.max(0, (stats.usage.used || 0) - ((stats.usage.limit || 0) - (stats.usage.extraSimulatorCases || 0))))) * 100)}%` }}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                )}
-                                        </div>
+                                        <SimulatorUsageBar
+                                            usage={stats.usage.used || 0}
+                                            limit={stats.usage.limit || 0}
+                                            extra={stats.usage.extraSimulatorCases || 0}
+                                            planName={user.subscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
+                                        />
                                     )}
 
 

@@ -98,7 +98,7 @@ export class PaymentsService {
           priceId = process.env.STRIPE_PRICE_AGENDA_MANAGER_PACK; // Config
           planDetails = {
             name: 'Pack Agenda Manager',
-            amount: 900,
+            amount: 1500,
             currency: 'eur',
             interval: null, // Depending on if it's subscription or OT. For now assuming OneTime or Manual Sub Add-on.
             // If it is a subscription add-on, we might need different logic.
@@ -245,7 +245,7 @@ export class PaymentsService {
         premium_plus: { name: 'Plan Premium Plus', amount: 9900, currency: 'eur', interval: 'month' },
         minutes_pack: { name: 'Pack Minutos', amount: 1500, currency: 'eur', interval: 'one-time' },
         simulator_pack: { name: 'Pack 10 Casos Clínicos', amount: 1500, currency: 'eur', interval: 'one-time' },
-        agenda_manager_pack: { name: 'Pack Agenda Manager', amount: 900, currency: 'eur', interval: 'one-time' }
+        agenda_manager_pack: { name: 'Pack Agenda Manager', amount: 1500, currency: 'eur', interval: 'one-time' }
       };
 
       const plan = demoPlans[createCheckoutDto.plan];
