@@ -110,8 +110,8 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
                 return upgradePlans.filter(p => ['premium', 'minutes_pack', 'simulator_pack', 'agenda_manager_pack'].includes(p.id));
             case 'BASIC':
             default:
-                // Show everything including Pro, Premium and Packs
-                return upgradePlans;
+                // Hide Minutes Pack and Simulator Pack for Basic users
+                return upgradePlans.filter(p => !['minutes_pack', 'simulator_pack'].includes(p.id));
         }
     };
 

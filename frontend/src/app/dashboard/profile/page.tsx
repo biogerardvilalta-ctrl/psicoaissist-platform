@@ -16,6 +16,8 @@ import { Badge } from '@/components/ui/badge';
 import { simulatorService, StatsData } from '@/services/simulator.service';
 import { SimulatorUsageBar } from '@/components/dashboard/usage/SimulatorUsageBar';
 import { usePayments } from '@/hooks/usePayments';
+import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
+import { Zap } from 'lucide-react';
 // ... inside component
 export default function ProfilePage() {
     const { user, login, reloadUser } = useAuth();
@@ -39,6 +41,9 @@ export default function ProfilePage() {
         };
         loadStats();
     }, [reloadUser]);
+
+    // Upgrade Modal State
+    const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
     // Edit Profile State
     const [isEditing, setIsEditing] = useState(false);
@@ -194,222 +199,238 @@ export default function ProfilePage() {
             </Card>
 
             {/* Subscription Card */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <CreditCard className="w-5 h-5 text-purple-600" />
-                        Suscripción
-                    </CardTitle>
-                    <CardDescription>Detalles de tu plan actual y facturación.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    {user?.subscription ? (
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-100">
-                                <div className="space-y-1">
-                                    <p className="text-sm font-medium text-purple-900">Plan Actual</p>
-                                    <h3 className="text-2xl font-bold text-purple-700 capitalize">
-                                        {user.subscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
-                                    </h3>
+            {/* Subscription Section - Hidden for AGENDA_MANAGER */}
+            {user?.role !== 'AGENDA_MANAGER' && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <CreditCard className="w-5 h-5 text-purple-600" />
+                            Suscripción
+                        </CardTitle>
+                        <CardDescription>Detalles de tu plan actual y facturación.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        {user?.subscription ? (
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-100">
+                                    <div className="space-y-1">
+                                        <p className="text-sm font-medium text-purple-900">Plan Actual</p>
+                                        <h3 className="text-2xl font-bold text-purple-700 capitalize">
+                                            {user.subscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
+                                        </h3>
+                                    </div>
+                                    <Badge variant={user.subscription.status === 'active' ? 'default' : 'destructive'} className="capitalize">
+                                        {user.subscription.status === 'active' ? 'Activo' : user.subscription.status}
+                                    </Badge>
                                 </div>
-                                <Badge variant={user.subscription.status === 'active' ? 'default' : 'destructive'} className="capitalize">
-                                    {user.subscription.status === 'active' ? 'Activo' : user.subscription.status}
-                                </Badge>
-                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="flex items-start gap-3">
-                                    <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-700">Próxima Renovación</p>
-                                        <p className="text-sm text-slate-500">
-                                            {user.subscription.currentPeriodEnd
-                                                ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString()
-                                                : "No disponible"}
-                                        </p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="flex items-start gap-3">
+                                        <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
+                                        <div>
+                                            <p className="text-sm font-medium text-slate-700">Próxima Renovación</p>
+                                            <p className="text-sm text-slate-500">
+                                                {user.subscription.currentPeriodEnd
+                                                    ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString()
+                                                    : "No disponible"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        {user.subscription.status === 'active' ? (
+                                            <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" />
+                                        ) : (
+                                            <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5" />
+                                        )}
+                                        <div>
+                                            <p className="text-sm font-medium text-slate-700">Estado</p>
+                                            <p className="text-sm text-slate-500">
+                                                {user.subscription.status === 'active'
+                                                    ? "Tu suscripción está al corriente de pago."
+                                                    : "Hay un problema con tu suscripción."}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-3">
-                                    {user.subscription.status === 'active' ? (
-                                        <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" />
-                                    ) : (
-                                        <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5" />
-                                    )}
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-700">Estado</p>
-                                        <p className="text-sm text-slate-500">
-                                            {user.subscription.status === 'active'
-                                                ? "Tu suscripción está al corriente de pago."
-                                                : "Hay un problema con tu suscripción."}
-                                        </p>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <div className="text-center py-6 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                            <p className="text-slate-500 mb-4">No tienes una suscripción activa.</p>
-                            <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
-                                Ver Planes
-                            </Button>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="text-center py-6 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                                <p className="text-slate-500 mb-4">No tienes una suscripción activa.</p>
+                                <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
+                                    Ver Planes
+                                </Button>
+                            </div>
+                        )}
 
-                    {/* Consolidated Limits Display */}
-                    {user?.subscription && (
-                        <div className="pt-6 border-t space-y-6">
-                            <h3 className="text-sm font-medium mb-3">Límites y Uso del Plan</h3>
+                        {/* Consolidated Limits Display */}
+                        {user?.subscription && (
+                            <div className="pt-6 border-t space-y-6">
+                                <h3 className="text-sm font-medium mb-3">Límites y Uso del Plan</h3>
 
-                            {/* Active Patients */}
-                            <div className="bg-blue-50/50 rounded-lg p-4 space-y-2 border border-blue-100/50">
-                                <div className="flex justify-between items-center">
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-700">Pacientes Activos</p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {user?.limits?.maxClients === -1
-                                                ? "Pacientes Ilimitados"
-                                                : `${user?.usage?.clientsCount ?? 0} de ${user?.limits?.maxClients ?? 3} pacientes`}
-                                        </p>
+                                {/* Active Patients */}
+                                <div className="bg-blue-50/50 rounded-lg p-4 space-y-2 border border-blue-100/50">
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <p className="text-sm font-medium text-slate-700">Pacientes Activos</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {user?.limits?.maxClients === -1
+                                                    ? "Pacientes Ilimitados"
+                                                    : `${user?.usage?.clientsCount ?? 0} de ${user?.limits?.maxClients ?? 3} pacientes`}
+                                            </p>
+                                        </div>
+                                        {user?.limits?.maxClients !== -1 && (
+                                            <Badge variant={user?.limits?.maxClients !== -1 && (user?.usage?.clientsCount ?? 0) >= (user?.limits?.maxClients ?? 1) ? "destructive" : "secondary"}>
+                                                {user?.usage?.clientsCount ?? 0} {user?.limits?.maxClients === -1 ? "Activos" : `/ ${user?.limits?.maxClients ?? 3}`}
+                                            </Badge>
+                                        )}
                                     </div>
                                     {user?.limits?.maxClients !== -1 && (
-                                        <Badge variant={user?.limits?.maxClients !== -1 && (user?.usage?.clientsCount ?? 0) >= (user?.limits?.maxClients ?? 1) ? "destructive" : "secondary"}>
-                                            {user?.usage?.clientsCount ?? 0} {user?.limits?.maxClients === -1 ? "Activos" : `/ ${user?.limits?.maxClients ?? 3}`}
-                                        </Badge>
+                                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                            <div
+                                                className={`h-full rounded-full transition-all ${((user?.usage?.clientsCount ?? 0) >= (user?.limits?.maxClients ?? 1))
+                                                    ? 'bg-red-500'
+                                                    : 'bg-purple-600'
+                                                    }`}
+                                                style={{ width: `${Math.min(100, Math.round(((user?.usage?.clientsCount ?? 0) / (user?.limits?.maxClients ?? 1)) * 100))}%` }}
+                                            />
+                                        </div>
                                     )}
                                 </div>
-                                {user?.limits?.maxClients !== -1 && (
-                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                        <div
-                                            className={`h-full rounded-full transition-all ${((user?.usage?.clientsCount ?? 0) >= (user?.limits?.maxClients ?? 1))
-                                                ? 'bg-red-500'
-                                                : 'bg-purple-600'
-                                                }`}
-                                            style={{ width: `${Math.min(100, Math.round(((user?.usage?.clientsCount ?? 0) / (user?.limits?.maxClients ?? 1)) * 100))}%` }}
-                                        />
-                                    </div>
-                                )}
-                            </div>
 
 
-                            {/* Simulator Stats (Merged) */}
-                            {stats?.usage && (
-                                <>
-                                    {/* Clinical Cases */}
-                                    {/* Clinical Cases */}
-                                    {user?.subscription?.planType.toLowerCase() !== 'basic' && (
-                                        <SimulatorUsageBar
-                                            usage={stats.usage.used || 0}
-                                            limit={stats.usage.limit || 0}
-                                            extra={stats.usage.extraSimulatorCases || 0}
-                                            planName={user.subscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
-                                        />
-                                    )}
-
-
-                                    {/* Transcription Minutes */}
-                                    <div className="bg-purple-50/50 rounded-lg p-4 space-y-3 border border-purple-100/50">
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <p className="text-sm font-medium text-slate-700">Minutos de Transcripción (IA)</p>
-                                                <p className="text-xs text-muted-foreground">
-                                                    {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit === -1
-                                                        ? "Ilimitado"
-                                                        : stats.usage.transcriptionLimit !== undefined
-                                                            ? (stats.usage.extraTranscriptionMinutes && stats.usage.extraTranscriptionMinutes > 0
-                                                                ? `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${(stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)} + ${stats.usage.extraTranscriptionMinutes} (Extra)`
-                                                                : `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${stats.usage.transcriptionLimit}`)
-                                                            : "Calculando..."}
-                                                </p>
-                                            </div>
-                                            <Badge variant={(stats.usage.transcriptionRemaining || 0) > 0 ? "outline" : "destructive"} className={(stats.usage.transcriptionRemaining || 0) > 0 ? "text-green-600 border-green-200 bg-green-50" : ""}>
-                                                {Math.round(stats.usage.transcriptionUsed || 0)} Min Usados
-                                            </Badge>
-                                        </div>
-
-                                        {/* Base Plan Bar */}
-                                        {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit !== -1 && (
-                                            <div className="space-y-1">
-                                                <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
-                                                    <span>Plan Base</span>
-                                                    <span>{Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))} / {(stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)}</span>
-                                                </div>
-                                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div
-                                                        className={`h-full rounded-full ${(Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)) >= ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) ? 'bg-red-500' : 'bg-green-500'}`}
-                                                        style={{ width: `${Math.min(100, (Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)) / ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) * 100)}%` }}
-                                                    />
-                                                </div>
-                                            </div>
+                                {/* Simulator Stats (Merged) */}
+                                {stats?.usage && (
+                                    <>
+                                        {/* Clinical Cases */}
+                                        {/* Clinical Cases */}
+                                        {user?.subscription?.planType.toLowerCase() !== 'basic' && (
+                                            <SimulatorUsageBar
+                                                usage={stats.usage.used || 0}
+                                                limit={stats.usage.limit || 0}
+                                                extra={stats.usage.extraSimulatorCases || 0}
+                                                planName={user.subscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
+                                            />
                                         )}
 
-                                        {/* Extra Pack Bar (Conditional) */}
-                                        {/* Extra Pack Bar (Conditional) */}
-                                        {(
-                                            (stats.usage.extraTranscriptionMinutes && stats.usage.extraTranscriptionMinutes > 0) ||
-                                            ((stats.usage.transcriptionUsed || 0) > ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))
-                                        ) && (
+
+                                        {/* Transcription Minutes */}
+                                        <div className="bg-purple-50/50 rounded-lg p-4 space-y-3 border border-purple-100/50">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <p className="text-sm font-medium text-slate-700">Minutos de Transcripción (IA)</p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit === -1
+                                                            ? "Ilimitado"
+                                                            : stats.usage.transcriptionLimit !== undefined
+                                                                ? (stats.usage.extraTranscriptionMinutes && stats.usage.extraTranscriptionMinutes > 0
+                                                                    ? `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${(stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)} + ${stats.usage.extraTranscriptionMinutes} (Extra)`
+                                                                    : `${Math.round(stats.usage.transcriptionRemaining || 0)} min restantes de ${stats.usage.transcriptionLimit}`)
+                                                                : "Calculando..."}
+                                                    </p>
+                                                </div>
+                                                <Badge variant={(stats.usage.transcriptionRemaining || 0) > 0 ? "outline" : "destructive"} className={(stats.usage.transcriptionRemaining || 0) > 0 ? "text-green-600 border-green-200 bg-green-50" : ""}>
+                                                    {Math.round(stats.usage.transcriptionUsed || 0)} Min Usados
+                                                </Badge>
+                                            </div>
+
+                                            {/* Base Plan Bar */}
+                                            {stats.usage.transcriptionLimit && stats.usage.transcriptionLimit !== -1 && (
                                                 <div className="space-y-1">
                                                     <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
-                                                        <span>Pack Extra</span>
-                                                        <span>
-                                                            {Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))}
-                                                            /
-                                                            {(stats.usage.extraTranscriptionMinutes || 0) + Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))}
-                                                        </span>
+                                                        <span>Plan Base</span>
+                                                        <span>{Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))} / {(stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)}</span>
                                                     </div>
                                                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                                                         <div
-                                                            className={`h-full rounded-full ${(stats.usage.extraTranscriptionMinutes || 0) === 0 ? 'bg-red-500' : 'bg-purple-500'}`}
-                                                            style={{ width: `${Math.min(100, (Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) / ((stats.usage.extraTranscriptionMinutes || 0) + Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))))) * 100)}%` }}
+                                                            className={`h-full rounded-full ${(Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)) >= ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) ? 'bg-red-500' : 'bg-green-500'}`}
+                                                            style={{ width: `${Math.min(100, (Math.min(stats.usage.transcriptionUsed || 0, (stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)) / ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) * 100)}%` }}
                                                         />
                                                     </div>
                                                 </div>
                                             )}
-                                    </div>
 
-                                    <p className="text-xs text-muted-foreground pt-2 border-t">
-                                        * Los límites mensuales se reinician el {new Date(stats.usage.nextReset).toLocaleDateString()}.
-                                    </p>
-                                </>
-                            )}
-                        </div>
-                    )}
+                                            {/* Extra Pack Bar (Conditional) */}
+                                            {/* Extra Pack Bar (Conditional) */}
+                                            {(
+                                                (stats.usage.extraTranscriptionMinutes && stats.usage.extraTranscriptionMinutes > 0) ||
+                                                ((stats.usage.transcriptionUsed || 0) > ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))
+                                            ) && (
+                                                    <div className="space-y-1">
+                                                        <div className="flex justify-between text-[10px] text-slate-500 uppercase font-semibold">
+                                                            <span>Pack Extra</span>
+                                                            <span>
+                                                                {Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))}
+                                                                /
+                                                                {(stats.usage.extraTranscriptionMinutes || 0) + Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0)))}
+                                                            </span>
+                                                        </div>
+                                                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                            <div
+                                                                className={`h-full rounded-full ${(stats.usage.extraTranscriptionMinutes || 0) === 0 ? 'bg-red-500' : 'bg-purple-500'}`}
+                                                                style={{ width: `${Math.min(100, (Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))) / ((stats.usage.extraTranscriptionMinutes || 0) + Math.max(0, (stats.usage.transcriptionUsed || 0) - ((stats.usage.transcriptionLimit || 0) - (stats.usage.extraTranscriptionMinutes || 0))))) * 100)}%` }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                        </div>
 
-                    {/* Agenda Manager Add-on */}
-                    {user?.agendaManagerEnabled && user?.subscription && (
-                        <div className="pt-6 border-t space-y-4">
-                            <h3 className="text-sm font-medium mb-3">Complementos Activos</h3>
-                            <div className="bg-emerald-50/50 rounded-lg p-4 border border-emerald-100/50 flex flex-col md:flex-row justify-between items-center gap-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                        <Users className="h-5 w-5" />
+                                        <p className="text-xs text-muted-foreground pt-2 border-t">
+                                            * Los límites mensuales se reinician el {new Date(stats.usage.nextReset).toLocaleDateString()}.
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Agenda Manager Add-on */}
+                        {user?.agendaManagerEnabled && user?.subscription && (
+                            <div className="pt-6 border-t space-y-4">
+                                <h3 className="text-sm font-medium mb-3">Complementos Activos</h3>
+                                <div className="bg-emerald-50/50 rounded-lg p-4 border border-emerald-100/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                            <Users className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-emerald-900">Agenda Manager</p>
+                                            <p className="text-xs text-emerald-700">
+                                                Gestión delegada de agenda y pacientes
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-emerald-900">Agenda Manager</p>
-                                        <p className="text-xs text-emerald-700">
-                                            Gestión delegada de agenda y pacientes
+                                    <div className="text-right flex flex-col items-end gap-1">
+                                        <Badge className="bg-emerald-600 hover:bg-emerald-700 w-fit">Activado</Badge>
+                                        <p className="text-xs text-muted-foreground">
+                                            Renovación: {user.subscription.currentPeriodEnd ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString() : 'N/A'}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="text-right flex flex-col items-end gap-1">
-                                    <Badge className="bg-emerald-600 hover:bg-emerald-700 w-fit">Activado</Badge>
-                                    <p className="text-xs text-muted-foreground">
-                                        Renovación: {user.subscription.currentPeriodEnd ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString() : 'N/A'}
-                                    </p>
-                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {user?.subscription && (
-                        <div className="pt-4 border-t flex justify-end">
-                            <Button variant="outline" onClick={() => openCustomerPortal()} disabled={paymentsLoading}>
-                                {paymentsLoading ? "Cargando..." : "Gestionar Suscripción"}
-                            </Button>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                        {user?.subscription && (
+                            <div className="pt-4 border-t flex justify-end gap-3">
+                                <Button variant="outline" onClick={() => openCustomerPortal()} disabled={paymentsLoading}>
+                                    {paymentsLoading ? "Cargando..." : "Gestionar Pagos y Facturas"}
+                                </Button>
+                                <Button
+                                    onClick={() => setIsUpgradeModalOpen(true)}
+                                    className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+                                >
+                                    <Zap className="w-4 h-4 mr-2" />
+                                    Cambiar Plan / Comprar Pack
+                                </Button>
+                            </div>
+                        )}
+
+                        <UpgradePlanModal
+                            isOpen={isUpgradeModalOpen}
+                            onClose={() => setIsUpgradeModalOpen(false)}
+                            initialViewPlans={true}
+                        />
+                    </CardContent>
+                </Card>
+            )}
 
 
 

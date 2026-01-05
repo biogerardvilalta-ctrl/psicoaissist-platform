@@ -297,6 +297,15 @@ export class UsersService {
       if (existingUser) {
         if (existingUser.role === UserRole.AGENDA_MANAGER) {
           // Si ya existe como Agenda Manager, lo vinculamos al profesional actual
+          // Si estaba INACTIVO (borrado lógico), lo reactivamos
+          if (existingUser.status === UserStatus.INACTIVE) {
+            await this.prisma.user.update({
+              where: { id: existingUser.id },
+              data: { status: UserStatus.ACTIVE }
+            });
+            this.logger.log(`Agenda Manager reactivated: ${existingUser.email}`);
+          }
+
           await this.linkProfessional(existingUser.id, professionalId);
           this.logger.log(`Existing Agenda Manager linked: ${existingUser.email} to Professional ${professionalId}`);
           return this.mapToResponseDto(existingUser);
@@ -376,6 +385,7 @@ export class UsersService {
         throw new NotFoundException('Agenda Manager no encontrado o no asignado');
       }
 
+      // 1. Unlink from the current professional
       await this.prisma.user.update({
         where: { id: managerId },
         data: {
@@ -386,6 +396,38 @@ export class UsersService {
       });
 
       this.logger.log(`Agenda Manager unlinked: ${managerId} from ${professionalId}`);
+
+      // 2. Check if there are any other professionals linked (Robust Check)
+      const remainingLinksCount = await this.prisma.user.count({
+        where: {
+          role: UserRole.AGENDA_MANAGER,
+          id: managerId,
+          managedProfessionals: { some: {} } // Check if there are ANY managed professionals
+        }
+      });
+
+      this.logger.log(`Agenda Manager ${managerId} remaining links: ${remainingLinksCount}`);
+
+      // 3. If no other professionals are linked, delete the manager (Soft Delete)
+      if (remainingLinksCount === 0) {
+        // Double check with explicit relation count if needed, but the above filters for Managers who have SOME managedProfessionals.
+        // Actually, let's reverse it: Find the user and count their managedProfessionals directly to be safe.
+        const trueCount = await this.prisma.user.count({
+          where: {
+            id: managerId,
+            managedProfessionals: { some: {} }
+          }
+        });
+
+        if (trueCount === 0) {
+          await this.prisma.user.update({
+            where: { id: managerId },
+            data: { status: UserStatus.INACTIVE }
+          });
+          this.logger.log(`Agenda Manager has no more professionals. Set to INACTIVE: ${managerId}`);
+        }
+      }
+
     } catch (error) {
       this.logger.error(`Error removing agenda manager: ${error.message}`);
       throw error;

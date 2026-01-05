@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, UserPlus, Heart, AlertCircle, Gift } from 'lucide-react';
 
@@ -37,6 +37,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -322,7 +323,27 @@ export default function RegisterPage() {
             </div>
 
             {/* Referral Code */}
-            {/* Referral Code Removed as per request */}
+            {searchParams.get('plan') && searchParams.get('plan') !== 'basic' && (
+              <div>
+                <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700">
+                  Código de referido (Opcional)
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    id="referralCode"
+                    name="referralCode"
+                    type="text"
+                    value={formData.referralCode}
+                    onChange={handleInputChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+                    placeholder="Si tienes un código, introdúcelo aquí"
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <Gift className="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Liability Checkbox */}
             <div className="flex items-start p-3 bg-red-50 rounded-md border border-red-100">

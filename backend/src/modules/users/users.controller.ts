@@ -169,7 +169,8 @@ export class UsersController {
   @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   @Delete('agenda-managers/:id')
   async deleteAgendaManager(@Req() req: any, @Param('id') id: string) {
-    return this.usersService.deleteAgendaManager(req.user.id, id);
+    await this.usersService.deleteAgendaManager(req.user.id, id);
+    return { success: true };
   }
 
   @ApiOperation({ summary: 'Obtener profesionales gestionados (Para Agenda Manager)' })

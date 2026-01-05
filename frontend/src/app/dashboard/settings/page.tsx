@@ -21,10 +21,7 @@ import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro, Users, Palette
 import { AgendaManagersSettings } from '@/components/dashboard/settings/agenda-managers-settings';
 import { BrandingSettings } from '@/components/dashboard/settings/branding-settings';
 import { GoogleCalendarConnect } from "@/components/settings/GoogleCalendarConnect";
-import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
-import { usePayments } from '@/hooks/usePayments';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, CheckCircle2, AlertCircle, ExternalLink, Zap } from 'lucide-react';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -35,7 +32,7 @@ export default function SettingsPage() {
   const router = useRouter();
 
   // Navigation State
-  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'billing' | 'managers' | 'branding'>('agenda');
+  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'managers' | 'branding'>('agenda');
 
   // Form State
   // ... existing state ...
@@ -43,7 +40,7 @@ export default function SettingsPage() {
   // Sync URL with Active Section
   useEffect(() => {
     const section = searchParams.get('section');
-    if (section && ['agenda', 'ai', 'notifications', 'billing', 'managers', 'branding'].includes(section)) {
+    if (section && ['agenda', 'ai', 'notifications', 'managers', 'branding'].includes(section)) {
       setActiveSection(section as any);
     }
   }, [searchParams]);
@@ -67,9 +64,7 @@ export default function SettingsPage() {
   const [blockStartTime, setBlockStartTime] = useState<string>("");
   const [blockEndTime, setBlockEndTime] = useState<string>("");
 
-  // Billing State
-  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
-  const { openCustomerPortal, loading: paymentsLoading } = usePayments();
+
 
   // Initial Load
   useEffect(() => {
@@ -84,7 +79,7 @@ export default function SettingsPage() {
       // Redirect if on Basic plan and trying to access blocked section
       const isBasic = user.subscription?.planType?.toUpperCase() === 'BASIC';
       if (isBasic && (activeSection === 'agenda' || activeSection === 'ai')) {
-        setActiveSection('billing');
+        setActiveSection('notifications');
       }
     }
   }, [user, activeSection]);
@@ -157,7 +152,6 @@ export default function SettingsPage() {
   const menuItems = [
     // Hide Agenda for Basic
     ...(user?.subscription?.planType?.toUpperCase() !== 'BASIC' ? [{ id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon }] : []),
-    { id: 'billing', label: 'Facturación y Tarifas', icon: Euro },
     // Solo mostrar Marca Personal si es PREMIUM
     ...((user?.subscription?.planType === 'PREMIUM' || user?.role === 'ADMIN') ? [{ id: 'branding', label: 'Marca Personal', icon: Palette }] : []),
     // Solo mostrar Gestores de Agenda si tiene el pack activado con agendaManagerEnabled o es ADMIN
@@ -235,6 +229,19 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label>Precio Sesión/Hora (€)</Label>
+                <Input
+                  type="number"
+                  defaultValue={user?.hourlyRate || 60}
+                  onBlur={(e) => handleUpdateProfile({ hourlyRate: parseInt(e.target.value) })}
+                  disabled={loading}
+                />
+                <p className="text-xs text-muted-foreground pt-1">
+                  Utilizado para calcular ingresos estimados.
+                </p>
+              </div>
+
 
 
               <div className="space-y-4 pt-4 border-t">
@@ -391,123 +398,7 @@ export default function SettingsPage() {
           </Card>
         )}
 
-        {/* BILLING SECTION */}
-        {activeSection === 'billing' && (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Suscripción y Plan</CardTitle>
-                <CardDescription>Detalles de tu plan actual y gestión de pagos.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {user?.subscription ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-100">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-purple-900">Plan Actual</p>
-                        <h3 className="text-2xl font-bold text-purple-700 capitalize">
-                          {user.subscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
-                        </h3>
-                      </div>
-                      <Badge variant={user.subscription.status === 'active' ? 'default' : 'destructive'} className="capitalize">
-                        {user.subscription.status === 'active' ? 'Activo' : user.subscription.status}
-                      </Badge>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-start gap-3">
-                        <CalendarIcon className="w-5 h-5 text-slate-400 mt-0.5" />
-                        <div>
-                          <p className="text-sm font-medium text-slate-700">Próxima Renovación</p>
-                          <p className="text-sm text-slate-500">
-                            {user.subscription.currentPeriodEnd
-                              ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString()
-                              : "No disponible"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        {user.subscription.status === 'active' ? (
-                          <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" />
-                        ) : (
-                          <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5" />
-                        )}
-                        <div>
-                          <p className="text-sm font-medium text-slate-700">Estado</p>
-                          <p className="text-sm text-slate-500">
-                            {user.subscription.status === 'active'
-                              ? "Tu suscripción está al corriente de pago."
-                              : "Hay un problema con tu suscripción."}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 flex flex-col sm:flex-row gap-3">
-                      <Button
-                        onClick={() => openCustomerPortal()}
-                        disabled={paymentsLoading}
-                        variant="outline"
-                        className="flex-1"
-                      >
-                        <CreditCard className="w-4 h-4 mr-2" />
-                        Gestionar Pagos y Facturas
-                        {paymentsLoading && <span className="ml-2 animate-spin">...</span>}
-                      </Button>
-                      <Button
-                        onClick={() => setIsUpgradeModalOpen(true)}
-                        className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
-                      >
-                        <Zap className="w-4 h-4 mr-2" />
-                        Cambiar Plan / Comprar Pack
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                    <p className="text-slate-500 mb-4">No tienes una suscripción activa.</p>
-                    <Button
-                      onClick={() => setIsUpgradeModalOpen(true)}
-                      className="bg-gradient-to-r from-purple-600 to-indigo-600"
-                    >
-                      Ver Planes Disponibles
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Configuración de Facturación</CardTitle>
-                <CardDescription>Ajustes adicionales para tus facturas y contabilidad.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Precio Sesión/Hora (€)</Label>
-                    <Input
-                      type="number"
-                      defaultValue={user?.hourlyRate || 60}
-                      onBlur={(e) => handleUpdateProfile({ hourlyRate: parseInt(e.target.value) })}
-                      disabled={loading}
-                      className="max-w-xs"
-                    />
-                    <p className="text-sm text-gray-500">
-                      Este valor se utiliza para calcular los ingresos estimados en el dashboard.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <UpgradePlanModal
-              isOpen={isUpgradeModalOpen}
-              onClose={() => setIsUpgradeModalOpen(false)}
-              initialViewPlans={true}
-            />
-          </div>
-        )}
 
         {/* AI SECTION */}
         {activeSection === 'ai' && (
