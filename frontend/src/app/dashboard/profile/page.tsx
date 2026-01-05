@@ -425,6 +425,32 @@ export default function ProfilePage() {
                         </div>
                     )}
 
+                    {/* Agenda Manager Add-on */}
+                    {user?.agendaManagerEnabled && user?.subscription && (
+                        <div className="pt-6 border-t space-y-4">
+                            <h3 className="text-sm font-medium mb-3">Complementos Activos</h3>
+                            <div className="bg-emerald-50/50 rounded-lg p-4 border border-emerald-100/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                        <Users className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-emerald-900">Agenda Manager</p>
+                                        <p className="text-xs text-emerald-700">
+                                            Gestión delegada de agenda y pacientes
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="text-right flex flex-col items-end gap-1">
+                                    <Badge className="bg-emerald-600 hover:bg-emerald-700 w-fit">Activado</Badge>
+                                    <p className="text-xs text-muted-foreground">
+                                        Renovación: {user.subscription.currentPeriodEnd ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString() : 'N/A'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {user?.subscription && (
                         <div className="pt-4 border-t flex justify-end">
                             <Button variant="outline" onClick={() => window.open('https://billing.stripe.com/p/login/test', '_blank')}>
