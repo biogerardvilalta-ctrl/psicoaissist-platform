@@ -8,66 +8,67 @@ datasource db {
 }
 
 model User {
-  id                       String             @id @default(cuid())
-  email                    String             @unique
-  passwordHash             String             @map("password_hash")
-  role                     UserRole
-  status                   UserStatus         @default(ACTIVE)
-  verified                 Boolean            @default(false)
-  verificationToken        String?            @map("verification_token")
-  resetPasswordToken       String?            @map("reset_password_token")
-  resetPasswordExpires     DateTime?          @map("reset_password_expires")
-  firstName                String?            @map("first_name")
-  lastName                 String?            @map("last_name")
-  phone                    String?
-  country                  String?
-  professionalNumber       String?            @map("professional_number")
-  speciality               String?
-  stripeCustomerId         String?            @unique @map("stripe_customer_id")
-  createdAt                DateTime           @default(now()) @map("created_at")
-  updatedAt                DateTime           @updatedAt @map("updated_at")
-  lastLogin                DateTime?          @map("last_login")
-  enableReminders          Boolean            @default(false) @map("enable_reminders")
-  bufferTime               Int                @default(10) @map("buffer_time")
-  defaultDuration          Int                @default(60) @map("default_duration")
-  workEndHour              String             @default("18:00") @map("work_end_hour")
-  workStartHour            String             @default("09:00") @map("work_start_hour")
-  preferredLanguage        String             @default("ca") @map("preferred_language")
-  scheduleConfig           Json?              @map("schedule_config")
-  dashboardLayout          Json?              @map("dashboard_layout")
-  hourlyRate               Int                @default(60) @map("hourly_rate")
-  createdById              String?            @map("created_by_id")
-  googleCalendarId         String?            @map("google_calendar_id")
-  googleRefreshToken       String?            @map("google_refresh_token")
-  googleWatchExpiration    BigInt?            @map("google_watch_expiration")
-  googleWatchId            String?            @map("google_watch_id")
-  googleWatchResourceId    String?            @map("google_watch_resource_id")
-  brandingConfig           Json?              @map("branding_config")
-  googleImportCalendar     Boolean            @default(true)
-  referralCode             String?            @unique @map("referral_code")
-  referralCredits          Int                @default(0) @map("referral_credits")
-  referralsCount           Int                @default(0) @map("referrals_count")
-  referredBy               String?            @map("referred_by")
-  simulatorLastReset       DateTime?          @map("simulator_last_reset")
-  simulatorMinutesUsed     Int                @default(0) @map("simulator_minutes_used")
-  simulatorUsageCount      Int                @default(0) @map("simulator_usage_count")
-  transcriptionMinutesUsed Float              @default(0) @map("transcription_minutes_used")
-  extraTranscriptionMinutes Int               @default(0) @map("extra_transcription_minutes")
-  extraSimulatorCases      Int                @default(0) @map("extra_simulator_cases")
-  agendaManagerEnabled     Boolean            @default(false) @map("agenda_manager_enabled")
-  auditLogs                AuditLog[]
-  clients                  Client[]
-  encryptionKeys           EncryptionKey[]
-  reports                  Report[]
-  sessions                 Session[]
-  simulationReports        SimulationReport[]
-  subscription             Subscription?
-  createdBy                User?              @relation("UserCreator", fields: [createdById], references: [id])
-  createdUsers             User[]             @relation("UserCreator")
-  managedProfessionals User[]             @relation("AgendaManagement")
-  agendaManagers       User[]             @relation("AgendaManagement")
-  groupMembers         User[]             @relation("GroupMembers")
-  memberOfGroups       User[]             @relation("GroupMembers")
+  id                        String             @id @default(cuid())
+  email                     String             @unique
+  passwordHash              String             @map("password_hash")
+  role                      UserRole
+  status                    UserStatus         @default(ACTIVE)
+  verified                  Boolean            @default(false)
+  verificationToken         String?            @map("verification_token")
+  resetPasswordToken        String?            @map("reset_password_token")
+  resetPasswordExpires      DateTime?          @map("reset_password_expires")
+  firstName                 String?            @map("first_name")
+  lastName                  String?            @map("last_name")
+  phone                     String?
+  country                   String?
+  professionalNumber        String?            @map("professional_number")
+  speciality                String?
+  stripeCustomerId          String?            @unique @map("stripe_customer_id")
+  createdAt                 DateTime           @default(now()) @map("created_at")
+  updatedAt                 DateTime           @updatedAt @map("updated_at")
+  lastLogin                 DateTime?          @map("last_login")
+  enableReminders           Boolean            @default(false) @map("enable_reminders")
+  bufferTime                Int                @default(10) @map("buffer_time")
+  defaultDuration           Int                @default(60) @map("default_duration")
+  workEndHour               String             @default("18:00") @map("work_end_hour")
+  workStartHour             String             @default("09:00") @map("work_start_hour")
+  preferredLanguage         String             @default("ca") @map("preferred_language")
+  scheduleConfig            Json?              @map("schedule_config")
+  dashboardLayout           Json?              @map("dashboard_layout")
+  hourlyRate                Int                @default(60) @map("hourly_rate")
+  createdById               String?            @map("created_by_id")
+  googleCalendarId          String?            @map("google_calendar_id")
+  googleRefreshToken        String?            @map("google_refresh_token")
+  googleWatchExpiration     BigInt?            @map("google_watch_expiration")
+  googleWatchId             String?            @map("google_watch_id")
+  googleWatchResourceId     String?            @map("google_watch_resource_id")
+  brandingConfig            Json?              @map("branding_config")
+  googleImportCalendar      Boolean            @default(true)
+  referralCode              String?            @unique @map("referral_code")
+  referralCredits           Int                @default(0) @map("referral_credits")
+  referralsCount            Int                @default(0) @map("referrals_count")
+  referredBy                String?            @map("referred_by")
+  simulatorLastReset        DateTime?          @map("simulator_last_reset")
+  simulatorMinutesUsed      Int                @default(0) @map("simulator_minutes_used")
+  simulatorUsageCount       Int                @default(0) @map("simulator_usage_count")
+  transcriptionMinutesUsed  Float              @default(0) @map("transcription_minutes_used")
+  extraTranscriptionMinutes Int                @default(0) @map("extra_transcription_minutes")
+  extraSimulatorCases       Int                @default(0) @map("extra_simulator_cases")
+  agendaManagerEnabled      Boolean            @default(false) @map("agenda_manager_enabled")
+  auditLogs                 AuditLog[]
+  clients                   Client[]
+  encryptionKeys            EncryptionKey[]
+  reports                   Report[]
+  sessions                  Session[]
+  simulationReports         SimulationReport[]
+  subscription              Subscription?
+  createdBy                 User?              @relation("UserCreator", fields: [createdById], references: [id])
+  createdUsers              User[]             @relation("UserCreator")
+  managedProfessionals      User[]             @relation("AgendaManagement")
+  agendaManagers            User[]             @relation("AgendaManagement")
+  groupMembers              User[]             @relation("GroupMembers")
+  memberOfGroups            User[]             @relation("GroupMembers")
+  notifications             Notification[]
 
   @@map("users")
 }
@@ -352,4 +353,27 @@ enum AuditAction {
   DATA_IMPORT
   CONSENT_GRANTED
   CONSENT_REVOKED
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String           @map("user_id")
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false) @map("is_read")
+  data      Json?
+  createdAt DateTime         @default(now()) @map("created_at")
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
 }

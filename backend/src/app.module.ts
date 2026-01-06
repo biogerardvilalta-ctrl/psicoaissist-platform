@@ -27,6 +27,7 @@ import { AuditModule } from './modules/audit/audit.module';
 import { RemindersModule } from './modules/reminders/reminders.module';
 import { GoogleModule } from './modules/google/google.module';
 import { SimulatorModule } from './modules/simulator/simulator.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 // import { HealthModule } from './modules/health/health.module';
 
 // Shared services
@@ -100,6 +101,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     RemindersModule,
     GoogleModule,
     SimulatorModule, // Clinical Simulator
+    NotificationsModule,
     // HealthModule,
 
     // Static Files
