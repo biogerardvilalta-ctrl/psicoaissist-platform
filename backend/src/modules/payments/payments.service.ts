@@ -294,7 +294,7 @@ export class PaymentsService {
         throw new NotFoundException('No subscription found for user');
       }
 
-      const newPlan = this.stripeService.getPlan(updateSubscriptionDto.newPlan);
+      const newPlan = this.stripeService.getPlan(updateSubscriptionDto.newPlan, updateSubscriptionDto.interval);
       if (!newPlan) {
         throw new BadRequestException('Invalid plan selected');
       }
@@ -315,11 +315,29 @@ export class PaymentsService {
         };
       }
 
+      // Calculate new dates if available from Stripe, otherwise manual calculation for fallback
+      let newPeriodStart = updatedSubscription.current_period_start
+        ? new Date(updatedSubscription.current_period_start * 1000)
+        : new Date();
+
+      let newPeriodEnd = updatedSubscription.current_period_end
+        ? new Date(updatedSubscription.current_period_end * 1000)
+        : undefined;
+
+      if (!newPeriodEnd) {
+        // Fallback calculation
+        const duration = updateSubscriptionDto.interval === 'year' ? 365 : 30;
+        newPeriodEnd = new Date(newPeriodStart);
+        newPeriodEnd.setDate(newPeriodEnd.getDate() + duration);
+      }
+
       // Update subscription in database
       await this.prisma.subscription.update({
         where: { id: user.subscription.id },
         data: {
           planType: updateSubscriptionDto.newPlan,
+          currentPeriodStart: newPeriodStart,
+          currentPeriodEnd: newPeriodEnd,
           updatedAt: new Date(),
         },
       });

@@ -42,10 +42,11 @@ export class PaymentsAPI {
     await httpClient.delete(`${this.BASE_URL}/subscription`);
   }
 
-  static async updateSubscription(newPlan: string, subscriptionId: string): Promise<void> {
+  static async updateSubscription(newPlan: string, subscriptionId: string, interval?: 'month' | 'year'): Promise<void> {
     await httpClient.patch(`${this.BASE_URL}/subscription`, {
       newPlan,
       subscriptionId,
+      interval,
     });
   }
 }

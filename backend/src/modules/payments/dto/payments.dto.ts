@@ -54,6 +54,10 @@ export class UpdateSubscriptionDto {
 
   @IsEnum(PlanType)
   newPlan: PlanType;
+
+  @IsOptional()
+  @IsEnum(['month', 'year'])
+  interval?: 'month' | 'year';
 }
 
 export class WebhookDto {

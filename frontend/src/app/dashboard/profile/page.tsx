@@ -219,9 +219,17 @@ export default function ProfilePage() {
                                             {user.subscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
                                         </h3>
                                     </div>
-                                    <Badge variant={user.subscription.status === 'active' ? 'default' : 'destructive'} className="capitalize">
-                                        {user.subscription.status === 'active' ? 'Activo' : user.subscription.status}
-                                    </Badge>
+                                    <div className="flex gap-2">
+                                        <Badge variant="outline" className="bg-white">
+                                            {user.subscription.currentPeriodEnd && user.subscription.currentPeriodStart &&
+                                                (new Date(user.subscription.currentPeriodEnd).getTime() - new Date(user.subscription.currentPeriodStart).getTime() > 32 * 24 * 60 * 60 * 1000)
+                                                ? 'Pago Anual'
+                                                : 'Pago Mensual'}
+                                        </Badge>
+                                        <Badge variant={user.subscription.status === 'active' ? 'default' : 'destructive'} className="capitalize">
+                                            {user.subscription.status === 'active' ? 'Activo' : user.subscription.status}
+                                        </Badge>
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

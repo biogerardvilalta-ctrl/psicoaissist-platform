@@ -9,6 +9,7 @@ export interface User {
     id: string;
     planType: 'BASIC' | 'PRO' | 'PREMIUM';
     status: string;
+    currentPeriodStart?: string;
     currentPeriodEnd?: string;
   };
   enableReminders: boolean;

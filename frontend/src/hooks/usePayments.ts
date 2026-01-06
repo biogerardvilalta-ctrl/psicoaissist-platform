@@ -80,46 +80,15 @@ export function usePayments() {
     } finally {
       setLoading(false);
     }
-    const changePlan = useCallback(async (newPlanId: string, subscriptionId: string) => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        console.log(`🔄 Actualizando plan a ${newPlanId} para suscripción ${subscriptionId}...`);
-        await PaymentsAPI.updateSubscription(newPlanId, subscriptionId);
-
-        toast({
-          title: "Plan Actualizado",
-          description: "Tu suscripción ha sido mejorada correctamente.",
-          duration: 5000,
-        });
-
-        // Refresh page to update permissions
-        setTimeout(() => window.location.reload(), 1500);
-
-      } catch (err) {
-        console.error('❌ Error actualizando plan:', err);
-        const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-        setError(errorMessage);
-        toast({
-          title: "Error de Actualización",
-          description: errorMessage,
-          variant: "destructive"
-        });
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    }, [toast]);
   }, []);
 
-  const changePlan = useCallback(async (newPlanId: string, subscriptionId: string) => {
+  const changePlan = useCallback(async (newPlanId: string, subscriptionId: string, interval?: 'month' | 'year') => {
     setLoading(true);
     setError(null);
 
     try {
-      console.log(`🔄 Actualizando plan a ${newPlanId} para suscripción ${subscriptionId}...`);
-      await PaymentsAPI.updateSubscription(newPlanId, subscriptionId);
+      console.log(`🔄 Actualizando plan a ${newPlanId} (${interval || 'default'}) para suscripción ${subscriptionId}...`);
+      await PaymentsAPI.updateSubscription(newPlanId, subscriptionId, interval);
 
       toast({
         title: "Plan Actualizado",
