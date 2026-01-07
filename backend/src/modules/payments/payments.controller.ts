@@ -44,6 +44,12 @@ export class PaymentsController {
     return { message: 'Payments controller working!', timestamp: new Date().toISOString() };
   }
 
+  @Post('simulate-success')
+  @UseGuards(JwtAuthGuard)
+  async simulateSuccess(@Body() body: { userId: string }) {
+    return this.paymentsService.simulatePaymentSuccess(body.userId);
+  }
+
   @Post('create-checkout-session-demo')
   async createCheckoutSessionDemo(
     @Body() createCheckoutDto: CreateCheckoutSessionDto,

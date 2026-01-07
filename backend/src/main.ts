@@ -99,7 +99,8 @@ async function bootstrap() {
 
   console.log(`🚀 Server running on http://localhost:${port}`);
   console.log(`✅ Transcription Limits Logic Updated.`);
+  console.log(`🔄 Force Restart Triggered.`);
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 
-bootstrap();
+bootstrap();// restart trigger mié 07 ene 2026 17:12:19 CET

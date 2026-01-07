@@ -15,6 +15,7 @@ import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '@prisma/client';
 
 import { GoogleService } from '../google/google.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class SessionsService {
@@ -25,6 +26,7 @@ export class SessionsService {
         private auditService: AuditService,
         private googleService: GoogleService,
         private usageLimitsService: UsageLimitsService,
+        private notificationsService: NotificationsService,
     ) { }
 
     // ... (keep private methods)
@@ -173,6 +175,22 @@ export class SessionsService {
             console.error('[SessionsService] Failed to sync new session to Google Calendar', error);
         }
 
+        try {
+            if (userId !== targetUserId) {
+                // It's a manager acting
+                const manager = await this.prisma.user.findUnique({ where: { id: userId } });
+                const managerName = manager ? `${manager.firstName} ${manager.lastName}` : 'Tu gestor';
+
+                await this.notificationsService.create({
+                    userId: targetUserId,
+                    title: '📅 Nueva Sesión Agendada',
+                    message: `${managerName} ha agendado una nueva sesión para el ${session.startTime.toLocaleString()}`,
+                    type: 'INFO',
+                    data: { sessionId: session.id }
+                });
+            }
+        } catch (e) { console.error('Failed to send session notification', e); }
+
         return this.mapToDto(session, createSessionDto.notes);
     }
 
@@ -277,8 +295,21 @@ export class SessionsService {
             include: { client: true },
         });
 
-        if (!session || session.userId !== userId) {
+        if (!session) {
             throw new NotFoundException('Session not found');
+        }
+
+        if (session.userId !== userId) {
+            // Check if manager
+            const manager = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { managedProfessionals: true }
+            });
+            const isManaged = manager?.managedProfessionals.some(p => p.id === session.userId);
+
+            if (!isManaged) {
+                throw new NotFoundException('Session not found');
+            }
         }
 
         let decryptedNotes: string | undefined;
@@ -313,8 +344,38 @@ export class SessionsService {
 
     async update(id: string, userId: string, updateSessionDto: UpdateSessionDto) {
         const session = await this.prisma.session.findUnique({ where: { id } });
-        if (!session || session.userId !== userId) {
-            throw new NotFoundException('Session not found');
+
+        let targetUserId = userId;
+        let isManagerAction = false;
+
+        if (!session) {
+            throw new NotFoundException(`Session with ID ${id} not found in database (DEBUG PROBE)`);
+        }
+
+        if (session.userId !== userId) {
+            console.log(`[DEBUG] Update: User ${userId} is not owner. Checking manager status for owner ${session.userId}...`);
+
+            // Check if manager using direct DB query
+            const isManagedCount = await this.prisma.user.count({
+                where: {
+                    id: userId,
+                    managedProfessionals: { some: { id: session.userId } }
+                }
+            });
+
+            console.log(`[DEBUG] Update: isManagedCount: ${isManagedCount}`);
+
+            if (isManagedCount === 0) {
+                throw new ForbiddenException(`Access Denied: User ${userId} is not manager of ${session.userId}`);
+            }
+
+            // Constraint: Manager cannot edit COMPLETED session
+            if (session.status === SessionStatus.COMPLETED) {
+                throw new ForbiddenException('Los gestores no pueden editar sesiones completadas.');
+            }
+
+            isManagerAction = true;
+            targetUserId = session.userId;
         }
 
         let encryptedNotesBuffer = session.encryptedNotes;
@@ -330,7 +391,7 @@ export class SessionsService {
                 encryptedNotesBuffer = null;
                 // Don't null keyId yet if transcription exists
             } else {
-                const encrypted = await this.encryption.encryptData({ notes: updateSessionDto.notes }, userId);
+                const encrypted = await this.encryption.encryptData({ notes: updateSessionDto.notes }, targetUserId);
                 encryptedNotesBuffer = this.packEncryptedData(encrypted);
                 keyId = encrypted.keyId; // Update keyId
             }
@@ -347,7 +408,7 @@ export class SessionsService {
             if (!updateSessionDto.transcription) {
                 encryptedTranscriptionBuffer = null;
             } else {
-                const encrypted = await this.encryption.encryptData({ transcription: updateSessionDto.transcription }, userId);
+                const encrypted = await this.encryption.encryptData({ transcription: updateSessionDto.transcription }, targetUserId);
                 encryptedTranscriptionBuffer = this.packEncryptedData(encrypted);
                 keyId = encrypted.keyId; // Update keyId
             }
@@ -516,14 +577,57 @@ export class SessionsService {
             } catch (e) { console.error('Failed to update Google Event', e); }
         }
 
+        if (isManagerAction) {
+            try {
+                const manager = await this.prisma.user.findUnique({ where: { id: userId } });
+                const managerName = manager ? `${manager.firstName} ${manager.lastName}` : 'Tu gestor';
+
+                let message = `${managerName} ha actualizado una de tus sesiones.`;
+                if (updateSessionDto.status === SessionStatus.CANCELLED) {
+                    message = `${managerName} ha cancelado una de tus sesiones.`;
+                }
+
+                await this.notificationsService.create({
+                    userId: session.userId,
+                    title: '✏️ Sesión Actualizada',
+                    message: message,
+                    type: 'INFO',
+                    data: { sessionId: id }
+                });
+            } catch (e) { console.error('Failed to send session update notification', e); }
+        }
+
+
         return this.mapToDto(updatedSession, notesToReturn, transcriptionToReturn);
     }
 
     async remove(id: string, userId: string) {
         // Standard remove
         const session = await this.prisma.session.findUnique({ where: { id } });
-        if (!session || session.userId !== userId) {
+
+        let isManagerAction = false;
+
+        if (!session) {
             throw new NotFoundException('Session not found');
+        }
+
+        if (session.userId !== userId) {
+            // Check if manager
+            const manager = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { managedProfessionals: true }
+            });
+            const isManaged = manager?.managedProfessionals.some(p => p.id === session.userId);
+
+            if (!isManaged) {
+                throw new NotFoundException('Session not found');
+            }
+
+            // Constraint: Manager cannot delete COMPLETED session
+            if (session.status === SessionStatus.COMPLETED) {
+                throw new ForbiddenException('Los gestores no pueden eliminar sesiones completadas.');
+            }
+            isManagerAction = true;
         }
 
         // Sync Google Calendar Delete
@@ -544,6 +648,21 @@ export class SessionsService {
             resourceId: id,
             details: `Eliminada sesión (ID: ${id})`
         });
+
+        if (isManagerAction) {
+            try {
+                const manager = await this.prisma.user.findUnique({ where: { id: userId } });
+                const managerName = manager ? `${manager.firstName} ${manager.lastName}` : 'Tu gestor';
+
+                await this.notificationsService.create({
+                    userId: session.userId,
+                    title: '🗑️ Sesión Eliminada',
+                    message: `${managerName} ha eliminado una de tus sesiones.`,
+                    type: 'WARNING',
+                    data: { sessionId: id }
+                });
+            } catch (e) { console.error('Failed to send session delete notification', e); }
+        }
 
         return { success: true };
     }

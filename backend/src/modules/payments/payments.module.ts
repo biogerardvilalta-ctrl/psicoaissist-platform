@@ -6,16 +6,19 @@ import { StripeService } from './stripe.service';
 import { UsageLimitsService } from './usage-limits.service';
 import { PrismaModule } from '../../common/prisma/prisma.module';
 import { EmailModule } from '../email/email.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import stripeConfig from '../../config/stripe.config';
 
 @Module({
   imports: [
     ConfigModule.forFeature(stripeConfig),
     PrismaModule,
+    PrismaModule,
     EmailModule,
+    NotificationsModule,
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService, StripeService, UsageLimitsService],
   exports: [PaymentsService, StripeService, UsageLimitsService],
 })
-export class PaymentsModule {}
+export class PaymentsModule { }

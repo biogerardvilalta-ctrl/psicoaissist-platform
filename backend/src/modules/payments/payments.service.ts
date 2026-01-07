@@ -9,6 +9,7 @@ import {
   UpdateSubscriptionDto,
   PlanType
 } from './dto/payments.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 import Stripe from 'stripe';
 
 @Injectable()
@@ -19,6 +20,7 @@ export class PaymentsService {
     private prisma: PrismaService,
     private stripeService: StripeService,
     private emailService: EmailService,
+    private notificationsService: NotificationsService,
   ) { }
 
   async createCheckoutSession(createCheckoutDto: CreateCheckoutSessionDto, userId: string) {
@@ -557,6 +559,18 @@ export class PaymentsService {
               }
             });
             this.logger.log(`Reset usage limits for user ${user.id} after successful payment.`);
+
+            // Send Real-time Notification
+            try {
+              await this.notificationsService.create({
+                userId: user.id,
+                title: 'Pago Recibido 💳',
+                message: `Tu suscripción se ha renovado correctamente.`,
+                type: 'SUCCESS'
+              });
+            } catch (notifyError) {
+              this.logger.warn(`Failed to send payment notification: ${notifyError.message}`);
+            }
           }
         }
       } catch (error) {
@@ -568,6 +582,28 @@ export class PaymentsService {
   private async handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     // Handle failed payment - could notify user, update subscription status, etc.
     this.logger.log(`Payment failed for invoice ${invoice.id}`);
+
+    try {
+      const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
+
+      if (customerId) {
+        const user = await this.prisma.user.findFirst({
+          where: { stripeCustomerId: customerId }
+        });
+
+        if (user) {
+          // Send Real-time Notification
+          await this.notificationsService.create({
+            userId: user.id,
+            title: 'Error en el Pago ⚠️',
+            message: `No pudimos renovar tu suscripción. Por favor revisa tu método de pago para evitar perder acceso.`,
+            type: 'ERROR'
+          });
+        }
+      }
+    } catch (error) {
+      this.logger.error(`Failed to handle invoice payment failure notification: ${error.message}`);
+    }
   }
 
   private getPlanTypeFromSubscription(subscription: Stripe.Subscription): PlanType {
@@ -642,5 +678,34 @@ export class PaymentsService {
   private getPlanDisplayName(planType: PlanType): string {
     const plans = this.stripeService.getPlans();
     return plans[planType]?.name || planType;
+  }
+
+  async simulatePaymentSuccess(userId: string) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new BadRequestException('Simulation only available in dev mode');
+    }
+
+    this.logger.log(`Simulating payment success for user ${userId}`);
+
+    // Reset usage limits
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        transcriptionMinutesUsed: 0,
+        simulatorMinutesUsed: 0,
+        simulatorUsageCount: 0,
+        simulatorLastReset: new Date(),
+      }
+    });
+
+    // Send Notification
+    await this.notificationsService.create({
+      userId: userId,
+      title: 'Pago Recibido (Simulado) 💳',
+      message: `Tu suscripción se ha renovado correctamente.`,
+      type: 'SUCCESS'
+    });
+
+    return { success: true, message: 'Payment simulation triggered' };
   }
 }
