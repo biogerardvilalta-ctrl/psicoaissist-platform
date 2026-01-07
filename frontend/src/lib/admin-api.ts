@@ -23,6 +23,7 @@ export interface AdminUser {
 
 export interface AdminStats {
   totalUsers: number;
+  activeUsers: number; // Added missing property
   activeSubscriptions: number;
   totalRevenue: number;
   recentSignups: number;

@@ -12,6 +12,17 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { httpClient } from '@/lib/http-client';
+import { useRole } from '@/hooks/useRole';
+import { useToast } from '@/hooks/use-toast';
+import { SessionsAPI } from '@/lib/sessions-api';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 const locales = {
     'es': es,
@@ -36,7 +47,38 @@ interface CalendarViewProps {
 export function CalendarView({ sessions, onNavigate, currentDate, view, onViewChange }: CalendarViewProps) {
     const router = useRouter();
     const { user } = useAuth();
+    const { isAgendaManager } = useRole();
+    const { toast } = useToast();
     const [googleEvents, setGoogleEvents] = useState<any[]>([]);
+
+    const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+    const [isActionDialogOpen, setIsActionDialogOpen] = useState(false);
+
+    const handleCancelSession = async () => {
+        if (!selectedSession) return;
+        if (!confirm('¿Cancelar esta sesión?')) return;
+        try {
+            await SessionsAPI.update(selectedSession.id, { status: SessionStatus.CANCELLED });
+            toast({ title: 'Sesión cancelada', description: 'Se ha notificado al profesional.' });
+            setIsActionDialogOpen(false);
+            window.location.reload(); // Simple reload to refresh data
+        } catch (error) {
+            toast({ title: 'Error', description: 'No se pudo cancelar.', variant: 'destructive' });
+        }
+    };
+
+    const handleDeleteSession = async () => {
+        if (!selectedSession) return;
+        if (!confirm('¿Eliminar esta sesión permanentemente?')) return;
+        try {
+            await SessionsAPI.delete(selectedSession.id);
+            toast({ title: 'Sesión eliminada', description: 'Se ha notificado al profesional.' });
+            setIsActionDialogOpen(false);
+            window.location.reload();
+        } catch (error) {
+            toast({ title: 'Error', description: 'No se pudo eliminar.', variant: 'destructive' });
+        }
+    };
 
     useEffect(() => {
         // Fetch Google Events when valid
@@ -157,6 +199,21 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
             window.open(event.resource.htmlLink, '_blank');
             return;
         }
+
+        const session = event.resource as Session;
+
+        if (isAgendaManager()) {
+            // Manager Constraints
+            if (session.status === SessionStatus.COMPLETED) {
+                // Do nothing for completed sessions
+                return;
+            }
+            // Open Action Menu for others
+            setSelectedSession(session);
+            setIsActionDialogOpen(true);
+            return;
+        }
+
         router.push(`/dashboard/sessions/${event.id}`);
     };
 
@@ -209,6 +266,39 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
                     }}
                 />
             </CardContent>
+
+            <Dialog open={isActionDialogOpen} onOpenChange={setIsActionDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Acciones de Sesión</DialogTitle>
+                        <DialogDescription>
+                            Como gestor, puedes cancelar o eliminar esta sesión.
+                            {selectedSession && (
+                                <div className="mt-2 text-sm font-medium text-slate-700">
+                                    {selectedSession.clientName} - {format(new Date(selectedSession.startTime), 'PP p', { locale: es })}
+                                </div>
+                            )}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-3 py-4">
+                        <Button
+                            variant="secondary"
+                            className="w-full justify-start text-orange-600 bg-orange-50 hover:bg-orange-100 border border-orange-200"
+                            onClick={handleCancelSession}
+                            disabled={selectedSession?.status === SessionStatus.CANCELLED}
+                        >
+                            <span className="mr-2">🚫</span> Cancelar Sesión
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            className="w-full justify-start"
+                            onClick={handleDeleteSession}
+                        >
+                            <span className="mr-2">🗑️</span> Eliminar Sesión
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </Card>
     );
 }

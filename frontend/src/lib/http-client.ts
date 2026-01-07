@@ -37,6 +37,7 @@ class HttpClient {
         ...options.headers,
       },
       credentials: 'include', // Include cookies for JWT
+      cache: 'no-store', // Disable caching for all API requests to ensure fresh data
       ...options,
     }
 

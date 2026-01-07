@@ -175,6 +175,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             }
             const updatedSession = await SessionsAPI.update(session.id, payload);
             setSession(updatedSession);
+            router.refresh(); // Invalidate client cache to ensure list view updates
             toast({
                 title: 'Estado actualizado',
                 description: `La sesión ha sido marcada como ${newStatus === SessionStatus.COMPLETED ? 'completada' : newStatus === SessionStatus.IN_PROGRESS ? 'iniciada' : 'cancelada'}.`,
@@ -230,6 +231,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             });
             const now = new Date();
             setLastSavedAt(now);
+            router.refresh(); // Invalidate client cache
             toast({
                 title: 'Datos guardados',
                 description: 'Información de sesión guardada correctamente.',
@@ -390,7 +392,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                             {client.firstName[0]}{client.lastName[0]}
                                         </div>
                                         <div>
-                                            <p className="font-medium flex items-center gap-2">
+                                            <div className="font-medium flex items-center gap-2">
                                                 {client.firstName} {client.lastName}
                                                 {session.status === SessionStatus.COMPLETED && session.duration !== undefined && (
                                                     <Badge variant="secondary" className="text-[10px] font-normal h-5 px-1.5 bg-green-50 text-green-700 hover:bg-green-100 border-green-100">
@@ -404,7 +406,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                                         })()}
                                                     </Badge>
                                                 )}
-                                            </p>
+                                            </div>
                                             <p className="text-xs text-muted-foreground">Paciente Activo</p>
                                         </div>
                                     </div>
