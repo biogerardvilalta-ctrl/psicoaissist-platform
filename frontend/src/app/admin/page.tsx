@@ -89,21 +89,12 @@ export default function AdminDashboard() {
         {/* Enhanced Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
           <AdminStatsCard
-            title="Total Usuarios"
-            value={stats?.totalUsers || 0}
+            title="Usuarios Activos"
+            value={stats?.activeUsers || 0}
             icon={Users}
             iconColor="text-blue-600"
-            subtitle="Registrados en la plataforma"
+            subtitle={`${stats?.activeSubscriptions || 0} Suscripciones + ${stats?.agendaManagersCount || 0} Gestores`}
             action={{ label: "Ver usuarios", onClick: () => router.push('/admin/users') }}
-          />
-
-          <AdminStatsCard
-            title="Suscripciones Activas"
-            value={stats?.activeSubscriptions || 0}
-            icon={CreditCard}
-            iconColor="text-green-600"
-            subtitle="Planes premium activos"
-            action={{ label: "Ver suscripciones", onClick: () => console.log('Ver suscripciones') }}
           />
 
           <AdminStatsCard
@@ -129,6 +120,18 @@ export default function AdminDashboard() {
             icon={FileText}
             iconColor="text-orange-600"
             subtitle="Informes generados por AI"
+          />
+          <AdminStatsCard
+            title="Uso de Recursos"
+            value="Consumo IA"
+            icon={TrendingUp}
+            iconColor="text-pink-600"
+            subtitle={
+              <div className="flex flex-col gap-1">
+                <span>{stats?.totalTranscriptionMinutes || 0} min transcritos</span>
+                <span>{stats?.totalSimulatorSessions || 0} sesiones simulador</span>
+              </div>
+            }
           />
         </div>
 

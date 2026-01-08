@@ -29,8 +29,11 @@ export interface AdminUser {
 
 export interface AdminStats {
   totalUsers: number;
-  activeUsers: number; // Added missing property
+  activeUsers: number;
   activeSubscriptions: number;
+  agendaManagersCount: number;
+  totalTranscriptionMinutes: number;
+  totalSimulatorSessions: number;
   totalRevenue: number;
   recentSignups: number;
   totalSessions: number;

@@ -8,7 +8,7 @@ interface AdminStatsCardProps {
   value: string | number;
   icon: LucideIcon;
   iconColor: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   trend?: {
     value: string;
     isPositive: boolean;
@@ -41,7 +41,7 @@ export default function AdminStatsCard({
             <p className="text-2xl font-bold text-gray-900">{value}</p>
           </div>
         </div>
-        
+
         {trend && (
           <div className={`text-right ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
             <p className="text-sm font-medium">
@@ -53,7 +53,7 @@ export default function AdminStatsCard({
       </div>
 
       {subtitle && (
-        <p className="text-sm text-gray-500 mb-3">{subtitle}</p>
+        <div className="text-sm text-gray-500 mb-3">{subtitle}</div>
       )}
 
       {action && (

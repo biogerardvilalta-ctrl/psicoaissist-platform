@@ -6,7 +6,8 @@ import {
   Param,
   Body,
   UseGuards,
-  Query
+  Query,
+  Post
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -34,23 +35,37 @@ export class AdminController {
       activeUsers,
       activeSubscriptions,
       totalRevenue,
+      agendaManagersCount,
+      usageStats,
       recentSignups,
       totalSessions,
       totalReports
     ] = await Promise.all([
-      this.prisma.user.count(),
+      this.prisma.user.count({
+        where: {
+          role: { notIn: [UserRole.ADMIN, UserRole.SUPER_ADMIN] }
+        }
+      }),
       this.prisma.user.count({
         where: {
           status: UserStatus.ACTIVE,
           role: { notIn: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
           OR: [
             { subscription: { status: 'active' } },
-            { agendaManagerEnabled: true }
+            { agendaManagerEnabled: true },
+            { role: UserRole.AGENDA_MANAGER }
           ]
         }
       }),
       this.prisma.subscription.count({ where: { status: 'active' } }),
       this.calculateTotalRevenue(),
+      this.prisma.user.count({ where: { role: UserRole.AGENDA_MANAGER } }),
+      this.prisma.user.aggregate({
+        _sum: {
+          transcriptionMinutesUsed: true,
+          simulatorUsageCount: true
+        }
+      }),
       this.prisma.user.count({
         where: {
           createdAt: {
@@ -70,6 +85,9 @@ export class AdminController {
       totalUsers,
       activeUsers,
       activeSubscriptions,
+      agendaManagersCount,
+      totalTranscriptionMinutes: usageStats?._sum?.transcriptionMinutesUsed ?? 0,
+      totalSimulatorSessions: usageStats?._sum?.simulatorUsageCount ?? 0,
       totalRevenue,
       recentSignups,
       totalSessions,
@@ -78,6 +96,8 @@ export class AdminController {
       revenueData,
       recentActivity
     };
+
+    return result;
   }
 
   private async getRevenueChartData() {

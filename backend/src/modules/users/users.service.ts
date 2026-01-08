@@ -592,6 +592,12 @@ export class UsersService {
     }
   }
 
+
+  /**
+   * Cambiar contraseña de usuario (Admin)
+   */
+
+
   /**
    * Mapear usuario a DTO de respuesta
    */

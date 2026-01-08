@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRole } from '@/hooks/useRole';
 import { useAdminUsers } from '@/hooks/useAdmin';
 import { UserFilters, AdminAPI } from '@/lib/admin-api';
-import { Users, Search, Filter, MoreHorizontal, UserCheck, UserX, Mail, RefreshCw } from 'lucide-react';
+import { Users, Search, Filter, MoreHorizontal, UserCheck, UserX, Mail, RefreshCw, CreditCard, Calendar } from 'lucide-react';
 
 const PLAN_LIMITS: Record<string, number> = {
   FREE: 30,
@@ -614,7 +614,7 @@ export default function UsersPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mt-6">
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -623,7 +623,16 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Usuarios Activos</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.status === 'ACTIVE').length}
+                  {users.filter(u =>
+                    u.status === 'ACTIVE' &&
+                    u.role !== 'ADMIN' &&
+                    u.role !== 'SUPER_ADMIN' &&
+                    (
+                      u.subscription?.status === 'active' ||
+                      u.agendaManagerEnabled === true ||
+                      u.role === 'AGENDA_MANAGER'
+                    )
+                  ).length}
                 </p>
               </div>
             </div>
@@ -631,12 +640,28 @@ export default function UsersPage() {
 
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Total Usuarios</p>
-                <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+                <p className="text-sm font-medium text-gray-500">Suscripciones Activas</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {users.filter(u => u.subscription?.status === 'active').length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-pink-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Gestores de Agenda</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {users.filter(u => u.role === 'AGENDA_MANAGER').length}
+                </p>
               </div>
             </div>
           </div>
@@ -651,6 +676,18 @@ export default function UsersPage() {
                 <p className="text-2xl font-bold text-gray-900">
                   {users.filter(u => u.status !== 'ACTIVE').length}
                 </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">Total Usuarios</p>
+                <p className="text-2xl font-bold text-gray-900">{users.length}</p>
               </div>
             </div>
           </div>
