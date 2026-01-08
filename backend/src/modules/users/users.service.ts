@@ -346,6 +346,38 @@ export class UsersService {
   }
 
   /**
+   * Cambiar contraseña por Admin (sin requerir la anterior)
+   */
+  async adminChangePassword(id: string, newPassword: string): Promise<UserResponseDto> {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      const passwordHash = await this.encryptionService.hashPassword(newPassword);
+
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: {
+          passwordHash,
+          updatedAt: new Date(),
+        },
+        include: {
+          subscription: true
+        }
+      });
+
+      this.logger.log(`Password changed by admin for user: ${user.email}`);
+
+      return this.mapToResponseDto(updatedUser);
+    } catch (error) {
+      this.logger.error(`Error changing password by admin: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Obtener Agenda Managers de un profesional
    */
   async getAgendaManagers(professionalId: string): Promise<UserResponseDto[]> {

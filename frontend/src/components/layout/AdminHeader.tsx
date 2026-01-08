@@ -39,6 +39,7 @@ export default function AdminHeader() {
     { name: 'Usuarios', href: '/admin/users', icon: UsersIcon },
     { name: 'Facturación', href: '/admin/billing', icon: CreditCardIcon },
     { name: 'Logs', href: '/admin/audit-logs', icon: ClipboardListIcon },
+    { name: 'Sistema', href: '/admin/system', icon: CogIcon },
   ];
 
   return (

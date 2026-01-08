@@ -5,10 +5,10 @@ export interface AdminUser {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'PSYCHOLOGIST_BASIC' | 'PSYCHOLOGIST_PRO' | 'PSYCHOLOGIST_PREMIUM' | 'STUDENT' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP';
+  role: string; // broadened from strict union to allow all cases
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'DELETED' | 'PENDING_REVIEW' | 'VALIDATED' | 'REJECTED';
   subscription?: {
-    planType: 'BASIC' | 'PRO' | 'PREMIUM';
+    planType: string;
     status: string;
     currentPeriodEnd?: string;
   };
@@ -18,7 +18,13 @@ export interface AdminUser {
   _count?: {
     sessions: number;
     reports: number;
+    clients?: number;
   };
+  transcriptionMinutesUsed?: number;
+  extraTranscriptionMinutes?: number;
+  simulatorUsageCount?: number;
+  extraSimulatorCases?: number;
+  agendaManagerEnabled?: boolean;
 }
 
 export interface AdminStats {
@@ -29,8 +35,9 @@ export interface AdminStats {
   recentSignups: number;
   totalSessions: number;
   totalReports: number;
-  recentActivity: any[]; // Type should ideally match AdminActivityItem
-  revenueData: any[];    // Type should ideally match RevenueData
+  recentActivity: any[];
+  revenueData: any[];
+  subscriptionStats: Record<string, Record<string, number>>;
 }
 
 export interface AuditLog {
@@ -74,6 +81,8 @@ export interface UserFilters {
   role?: 'ALL' | 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'PSYCHOLOGIST_BASIC' | 'PSYCHOLOGIST_PRO' | 'PSYCHOLOGIST_PREMIUM' | 'STUDENT' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP';
   page?: number;
   limit?: number;
+  plan?: string;
+  pack?: string;
 }
 
 export interface PaginatedUsers {
@@ -175,6 +184,8 @@ export class AdminAPI {
       if (filters?.search) params.append('search', filters.search);
       if (filters?.status && filters.status !== 'ALL') params.append('status', filters.status);
       if (filters?.role && filters.role !== 'ALL') params.append('role', filters.role);
+      if (filters?.plan && filters.plan !== 'ALL') params.append('plan', filters.plan);
+      if (filters?.pack && filters.pack !== 'ALL') params.append('pack', filters.pack);
       if (filters?.page) params.append('page', filters.page.toString());
       if (filters?.limit) params.append('limit', filters.limit.toString());
 
@@ -188,6 +199,27 @@ export class AdminAPI {
     } catch (error) {
       console.error('❌ Error fetching users from API:', error);
       throw error;
+    }
+  }
+
+  static async createUser(userData: any): Promise<AdminUser> {
+    try {
+      console.log('📝 Creating user:', userData);
+      const response = await httpClient.post(`${this.BASE_URL}/users`, userData);
+      return response as any;
+    } catch (error) {
+      console.error('❌ Error creating user:', error);
+      throw new Error('Error al crear el usuario');
+    }
+  }
+
+  static async changeUserPassword(id: string, password: string): Promise<void> {
+    try {
+      console.log('🔑 Changing password for user:', id);
+      await httpClient.patch(`${this.BASE_URL}/users/${id}/password`, { password });
+    } catch (error) {
+      console.error('❌ Error changing password:', error);
+      throw new Error('Error al cambiar la contraseña');
     }
   }
 

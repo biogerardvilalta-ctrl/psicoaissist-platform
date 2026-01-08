@@ -13,6 +13,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UsersService } from '../users/users.service';
 import { PaymentsService } from '../payments/payments.service';
+import { CreateUserDto, UpdateUserDto, AdminChangePasswordDto } from '../users/dto/users.dto';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { UserRole, UserStatus, AuditAction } from '@prisma/client';
 
@@ -38,7 +39,16 @@ export class AdminController {
       totalReports
     ] = await Promise.all([
       this.prisma.user.count(),
-      this.prisma.user.count({ where: { status: UserStatus.ACTIVE } }),
+      this.prisma.user.count({
+        where: {
+          status: UserStatus.ACTIVE,
+          role: { notIn: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+          OR: [
+            { subscription: { status: 'active' } },
+            { agendaManagerEnabled: true }
+          ]
+        }
+      }),
       this.prisma.subscription.count({ where: { status: 'active' } }),
       this.calculateTotalRevenue(),
       this.prisma.user.count({
@@ -330,6 +340,38 @@ export class AdminController {
           currency: 'EUR',
           interval: 'month',
           features: ['All Pro features', 'White Labeling', 'API Access']
+        },
+        {
+          id: 'agenda_manager',
+          name: 'Agenda Manager',
+          price: 15,
+          currency: 'EUR',
+          interval: 'month',
+          features: ['Gestión de Agenda', 'Sincronización', 'Multi-profesional']
+        },
+        {
+          id: 'pack_minutes',
+          name: 'Pack Minutos IA',
+          price: 15, // 1500 cents
+          currency: 'EUR',
+          interval: 'one-time',
+          features: ['500 Minutos Extra', 'Sin Caducidad', 'Uso en Transcripción']
+        },
+        {
+          id: 'pack_sessions',
+          name: 'Pack 10 Casos Clínicos',
+          price: 15, // 15 EUR
+          currency: 'EUR',
+          interval: 'one-time',
+          features: ['10 Casos Clínicos', 'Sin Caducidad', 'Análisis Avanzado']
+        },
+        {
+          id: 'pack_onboarding',
+          name: 'Pack Onboarding',
+          price: 50,
+          currency: 'EUR',
+          interval: 'one-time',
+          features: ['Configuración Inicial', 'Formación 1h', 'Soporte Prioritario']
         }
       ]
     };
@@ -341,6 +383,7 @@ export class AdminController {
     @Query('limit') limit: string = '10',
     @Query('search') search?: string,
     @Query('plan') plan?: string,
+    @Query('pack') pack?: string, // Added missing parameter
     @Query('status') status?: string,
     @Query('role') role?: string,
   ) {
@@ -363,15 +406,53 @@ export class AdminController {
     }
 
     if (role) {
-      where.role = role;
-    }
-
-    if (plan) {
-      where.subscription = {
-        planType: plan,
-        status: 'active',
+      if (role === 'PSYCHOLOGIST') {
+        where.role = {
+          in: ['PSYCHOLOGIST', 'PSYCHOLOGIST_BASIC', 'PSYCHOLOGIST_PRO', 'PSYCHOLOGIST_PREMIUM', 'CLINIC']
+        };
+      } else {
+        where.role = role;
+      }
+    } else {
+      // By default exclude admins if no role filter specified
+      where.role = {
+        notIn: ['ADMIN', 'SUPER_ADMIN']
       };
     }
+
+    console.log('🔍 Filtering Users:', { plan, pack, role });
+
+    if (plan) {
+      if (plan.toUpperCase() === 'FREE') {
+        where.OR = [
+          { subscription: null },
+          // Also check for explicit free subscription if it exists, ignoring status or requiring active?
+          { subscription: { planType: { equals: 'free', mode: 'insensitive' } } }
+        ];
+      } else {
+        where.subscription = {
+          planType: {
+            contains: plan, // Changed from equals to contains
+            mode: 'insensitive'
+          },
+          // status: 'active', // Removed status check to ensure all users with this plan history/status appear (or let user filter by Status separately if needed)
+        };
+      }
+    }
+
+    if (pack) {
+      if (pack === 'pack_minutes') {
+        where.extraTranscriptionMinutes = { gt: 0 };
+      } else if (pack === 'pack_sessions') {
+        where.extraSimulatorCases = { gt: 0 };
+      } else if (pack === 'agenda_manager') {
+        where.agendaManagerEnabled = true;
+      } else if (pack === 'pack_onboarding') {
+        // Future/current implementation for onboarding pack if tracked
+      }
+    }
+
+    console.log('🔍 Where Clause:', JSON.stringify(where, null, 2));
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
@@ -443,6 +524,35 @@ export class AdminController {
       ...user,
       passwordHash: undefined,
     };
+  }
+
+  @Post('users')
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    const user = await this.usersService.create(createUserDto);
+    await this.logAdminAction('USER_CREATE', {
+      createdUserId: user.id,
+      email: user.email
+    });
+    return user;
+  }
+
+  @Patch('users/:id')
+  async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.update(id, updateUserDto);
+    await this.logAdminAction('USER_UPDATE', {
+      updatedUserId: id,
+      updates: Object.keys(updateUserDto)
+    });
+    return user;
+  }
+
+  @Patch('users/:id/password')
+  async changeUserPassword(@Param('id') id: string, @Body() body: AdminChangePasswordDto) {
+    const user = await this.usersService.adminChangePassword(id, body.password);
+    await this.logAdminAction('USER_PASSWORD_RESET', {
+      targetUserId: id
+    });
+    return user;
   }
 
   @Patch('users/:id/status')
@@ -563,10 +673,11 @@ export class AdminController {
       basic: 29,
       pro: 59,
       premium: 99,
+      agenda_manager: 15,
     };
 
     return subscriptions.reduce((total, sub) => {
-      const price = planPrices[sub.planType as keyof typeof planPrices] || 0;
+      const price = planPrices[sub.planType?.toLowerCase() as keyof typeof planPrices] || 0;
       return total + price;
     }, 0);
   }
@@ -577,13 +688,30 @@ export class AdminController {
       _count: true,
     });
 
-    return stats.reduce((acc, stat) => {
-      if (!acc[stat.planType]) {
-        acc[stat.planType] = {};
+    // Count Pack Users (Active if they have > 0 balance)
+    const packMinutesCount = await this.prisma.user.count({
+      where: { extraTranscriptionMinutes: { gt: 0 } }
+    });
+
+    const packSessionsCount = await this.prisma.user.count({
+      where: { extraSimulatorCases: { gt: 0 } }
+    });
+
+    const result = stats.reduce((acc, stat) => {
+      const planKey = (stat.planType || 'UNKNOWN').toUpperCase();
+      if (!acc[planKey]) {
+        acc[planKey] = {};
       }
-      acc[stat.planType][stat.status] = stat._count;
+      acc[planKey][stat.status.toUpperCase()] = stat._count;
       return acc;
     }, {} as Record<string, Record<string, number>>);
+
+    // Add Packs
+    result['PACK_MINUTES'] = { 'ACTIVE': packMinutesCount };
+    result['PACK_SESSIONS'] = { 'ACTIVE': packSessionsCount };
+    result['PACK_ONBOARDING'] = { 'ACTIVE': 0 }; // Track if field added
+
+    return result;
   }
 
   private async logAdminAction(action: string, metadata: any) {

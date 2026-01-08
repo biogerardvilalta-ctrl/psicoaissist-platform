@@ -125,9 +125,12 @@ export default function AdminBillingPage() {
                                 </div>
                             </div>
                             <div className="bg-gray-50 px-6 py-3 border-t text-right">
-                                <button className="text-sm font-medium text-blue-600 hover:text-blue-800">
+                                <a
+                                    href={`/admin/users?plan=${plan.id}`}
+                                    className="text-sm font-medium text-blue-600 hover:text-blue-800 inline-flex items-center"
+                                >
                                     Ver usuarios {plan.name} →
-                                </button>
+                                </a>
                             </div>
                         </div>
                     ))}

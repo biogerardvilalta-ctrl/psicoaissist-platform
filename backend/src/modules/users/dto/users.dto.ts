@@ -221,3 +221,10 @@ export class LinkProfessionalDto {
   @IsString()
   managerId: string;
 }
+
+export class AdminChangePasswordDto {
+  @ApiProperty({ example: 'newpassword123' })
+  @IsString()
+  @MinLength(6)
+  password: string;
+}

@@ -31,11 +31,13 @@ export default function ProtectedRoute({
       }
 
       // Authenticated but wrong role - redirect based on user role
-      if (requiredRole && user?.role !== requiredRole) {
+      const hasPermission = user?.role === requiredRole || (requiredRole === 'ADMIN' && user?.role === 'SUPER_ADMIN');
+
+      if (requiredRole && !hasPermission) {
         console.log('🚫 Insufficient permissions. Required:', requiredRole, 'Current:', user?.role);
-        
+
         // Redirect based on user's actual role
-        if (user?.role === 'ADMIN') {
+        if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
           router.push('/admin');
         } else {
           router.push('/dashboard');
@@ -65,7 +67,8 @@ export default function ProtectedRoute({
   }
 
   // Wrong role
-  if (requiredRole && user?.role !== requiredRole) {
+  const hasPermission = user?.role === requiredRole || (requiredRole === 'ADMIN' && user?.role === 'SUPER_ADMIN');
+  if (requiredRole && !hasPermission) {
     return null; // Router push will handle redirect
   }
 

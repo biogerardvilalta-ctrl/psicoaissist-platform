@@ -250,11 +250,16 @@ export default function AdminLogsPage() {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {new Date(log.createdAt).toLocaleString()}
                                                 </td>
-                                                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                                                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" title={log.metadata?.details || ''}>
                                                     {log.errorMessage ? (
                                                         <span className="text-red-600 font-medium">{log.errorMessage}</span>
                                                     ) : (
-                                                        <span className="font-mono text-xs text-gray-400">Clic para ver detalles</span>
+                                                        <span className="text-gray-600">
+                                                            {log.metadata?.details
+                                                                ? (log.metadata.details.length > 50 ? log.metadata.details.substring(0, 50) + '...' : log.metadata.details)
+                                                                : <span className="text-gray-400 italic">Ver detalles</span>
+                                                            }
+                                                        </span>
                                                     )}
                                                 </td>
                                             </tr>
@@ -370,13 +375,31 @@ export default function AdminLogsPage() {
 
                             {/* Metadata */}
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                                    Metadatos / Payload
+                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+                                    Información Adicional
                                 </label>
-                                <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                                    <pre className="text-xs text-green-400 font-mono">
-                                        {JSON.stringify(selectedLog.metadata || {}, null, 2)}
-                                    </pre>
+                                <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                                    {selectedLog.metadata && Object.keys(selectedLog.metadata).length > 0 ? (
+                                        <div className="divide-y divide-gray-200">
+                                            {Object.entries(selectedLog.metadata).map(([key, value]) => (
+                                                <div key={key} className="p-4 flex flex-col sm:flex-row sm:items-start gap-2">
+                                                    <span className="text-xs font-semibold text-gray-500 uppercase w-32 shrink-0 pt-0.5">
+                                                        {key === 'details' ? 'Detalle' : key}
+                                                    </span>
+                                                    <div className="text-sm text-gray-800 font-mono whitespace-pre-wrap break-all">
+                                                        {typeof value === 'object'
+                                                            ? JSON.stringify(value, null, 2)
+                                                            : String(value)
+                                                        }
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="p-4 text-center text-gray-500 text-sm italic">
+                                            No hay metadatos adicionales disponibles.
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

@@ -1,24 +1,147 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+
+import { useSearchParams } from 'next/navigation';
 import { useRole } from '@/hooks/useRole';
 import { useAdminUsers } from '@/hooks/useAdmin';
-import { UserFilters } from '@/lib/admin-api';
+import { UserFilters, AdminAPI } from '@/lib/admin-api';
 import { Users, Search, Filter, MoreHorizontal, UserCheck, UserX, Mail, RefreshCw } from 'lucide-react';
+
+const PLAN_LIMITS: Record<string, number> = {
+  FREE: 30,
+  BASIC: 600,
+  PRO: 900,
+  PREMIUM: 3000,
+  PREMIUM_PLUS: 3000,
+  CLINICS: 30000
+};
+
+const PLAN_CASE_LIMITS: Record<string, number> = {
+  FREE: 0,
+  BASIC: 0,
+  PRO: 5,
+  PREMIUM: -1,
+  PREMIUM_PLUS: -1,
+  CLINICS: -1
+};
+
+const getCaseLimit = (user: any) => {
+  const plan = (user.subscription?.planType || 'FREE').toUpperCase();
+  const baseLimit = PLAN_CASE_LIMITS[plan] || 0;
+  if (baseLimit === -1) return -1;
+  const extra = user.extraSimulatorCases || 0;
+  return baseLimit + extra;
+};
+
+const getLimit = (user: any) => {
+  const plan = (user.subscription?.planType || 'FREE').toUpperCase();
+  const baseLimit = PLAN_LIMITS[plan] || 0;
+  const extra = user.extraTranscriptionMinutes || 0;
+  return baseLimit + extra;
+};
+
+// Simple Modal Component for User Creation
+function CreateUserModal({ isOpen, onClose, onSuccess }: { isOpen: boolean; onClose: () => void; onSuccess: () => void }) {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    role: 'PSYCHOLOGIST',
+    country: 'España',
+    professionalNumber: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      await AdminAPI.createUser(formData);
+      onSuccess();
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al crear usuario');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-xl font-bold mb-4">Crear Nuevo Usuario</h2>
+        {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Nombre</label>
+              <input type="text" required className="mt-1 block w-full border rounded-md p-2"
+                value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Apellidos</label>
+              <input type="text" required className="mt-1 block w-full border rounded-md p-2"
+                value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" required className="mt-1 block w-full border rounded-md p-2"
+              value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Contraseña</label>
+            <input type="password" required minLength={6} className="mt-1 block w-full border rounded-md p-2"
+              value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Rol</label>
+            <select className="mt-1 block w-full border rounded-md p-2"
+              value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })}>
+              <option value="PSYCHOLOGIST">Psicólogo</option>
+              <option value="ADMIN">Administrador</option>
+              <option value="AGENDA_MANAGER">Gestor de Agenda</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
+              {loading ? 'Creando...' : 'Crear Usuario'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 export default function UsersPage() {
   const { isAdmin } = useRole();
+  const searchParams = useSearchParams();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<UserFilters['status']>('ALL');
   const [roleFilter, setRoleFilter] = useState<UserFilters['role']>('ALL');
+  const [planFilter, setPlanFilter] = useState<string>(searchParams.get('plan') || 'ALL');
+  const [packFilter, setPackFilter] = useState<string>('ALL');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
 
   // Memoizar los filtros para evitar recreación en cada render
   const filters = useMemo<UserFilters>(() => ({
     search: searchQuery || undefined,
     status: statusFilter,
     role: roleFilter,
+    plan: planFilter !== 'ALL' ? planFilter : undefined,
+    pack: packFilter !== 'ALL' ? packFilter : undefined,
     limit: 50
-  }), [searchQuery, statusFilter, roleFilter]);
+  }), [searchQuery, statusFilter, roleFilter, planFilter, packFilter]);
 
   const { users, loading, error, refetch } = useAdminUsers(filters);
 
@@ -120,15 +243,24 @@ export default function UsersPage() {
   };
 
   const getPlanBadge = (planType: string) => {
-    const styles = {
-      BASIC: 'bg-blue-100 text-blue-800',
-      PRO: 'bg-purple-100 text-purple-800',
-      PREMIUM: 'bg-orange-100 text-orange-800'
-    };
+    // Check if user is Agenda Manager by role if plan is free/missing
+    // Note: This relies on where this function is called. We need user object.
+    // Since getPlanBadge only takes planType string, we should change call sites or handle it differently.
+    // However, looking at the code, we call it with `user.subscription?.planType || 'FREE'`.
+    // If we want to override, we should do it at the CALL SITE.
 
+    // Just returning badge styling here.
+    const colors: Record<string, string> = {
+      FREE: 'bg-gray-100 text-gray-800',
+      BASIC: 'bg-blue-100 text-blue-800',
+      PRO: 'bg-indigo-100 text-indigo-800',
+      PREMIUM: 'bg-purple-100 text-purple-800',
+      AGENDA_MANAGER: 'bg-pink-100 text-pink-800', // Added specific color
+      BUSINESS: 'bg-orange-100 text-orange-800'
+    };
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[planType as keyof typeof styles]}`}>
-        {planType}
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[planType.toUpperCase()] || colors.FREE}`}>
+        {planType.toUpperCase() === 'AGENDA_MANAGER' ? 'Agenda Manager' : planType.toUpperCase()}
       </span>
     );
   };
@@ -144,14 +276,22 @@ export default function UsersPage() {
               <p className="text-gray-600 mt-2">Administra los usuarios registrados en la plataforma</p>
             </div>
             <button
-              onClick={() => alert('Funcionalidad de invitar usuario próximamente')}
+              onClick={() => setIsCreateModalOpen(true)}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
               <Mail className="w-4 h-4 mr-2" />
-              Invitar Usuario
+              Crear Usuario
             </button>
           </div>
         </div>
+
+        <CreateUserModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={() => {
+            refetch();
+          }}
+        />
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border mb-6">
@@ -193,8 +333,35 @@ export default function UsersPage() {
                 >
                   <option value="ALL">Todos los roles</option>
                   <option value="PSYCHOLOGIST">Psicólogos</option>
+                  <option value="AGENDA_MANAGER">Gestor de Agenda</option>
                   <option value="ADMIN">Administradores</option>
-                  <option value="SUPER_ADMIN">Super Admins</option>
+                </select>
+
+                {/* Plan Filter */}
+                <select
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  value={planFilter}
+                  onChange={(e) => setPlanFilter(e.target.value)}
+                >
+                  <option value="ALL">Todos los planes</option>
+                  <option value="FREE">Gratuito</option>
+                  <option value="BASIC">Basic</option>
+                  <option value="PRO">Pro</option>
+                  <option value="PREMIUM">Premium</option>
+                  <option value="CLINICS">Clinics</option>
+                </select>
+
+                {/* Pack Filter */}
+                <select
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  value={packFilter}
+                  onChange={(e) => setPackFilter(e.target.value)}
+                >
+                  <option value="ALL">Todos los packs</option>
+                  <option value="agenda_manager">Agenda Manager</option>
+                  <option value="pack_minutes">Pack Minutos</option>
+                  <option value="pack_sessions">Pack Sesiones</option>
+                  <option value="pack_onboarding">Pack Onboarding</option>
                 </select>
               </div>
             </div>
@@ -212,12 +379,14 @@ export default function UsersPage() {
                   ({users?.length || 0} {users?.length === 1 ? 'usuario' : 'usuarios'})
                 </span>
               </h3>
-              {(searchQuery || statusFilter !== 'ALL' || roleFilter !== 'ALL') && (
+              {(searchQuery || statusFilter !== 'ALL' || roleFilter !== 'ALL' || planFilter !== 'ALL' || packFilter !== 'ALL') && (
                 <button
                   onClick={() => {
                     setSearchQuery('');
                     setStatusFilter('ALL');
                     setRoleFilter('ALL');
+                    setPlanFilter('ALL');
+                    setPackFilter('ALL');
                   }}
                   className="text-sm text-blue-600 hover:text-blue-800"
                 >
@@ -225,7 +394,7 @@ export default function UsersPage() {
                 </button>
               )}
             </div>
-            {(searchQuery || statusFilter !== 'ALL' || roleFilter !== 'ALL') && (
+            {(searchQuery || statusFilter !== 'ALL' || roleFilter !== 'ALL' || planFilter !== 'ALL' || packFilter !== 'ALL') && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {searchQuery && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -233,19 +402,29 @@ export default function UsersPage() {
                   </span>
                 )}
                 {statusFilter !== 'ALL' && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <span className="inline-flex items-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     Estado: {statusFilter === 'ACTIVE' ? 'Activos' : statusFilter === 'INACTIVE' ? 'Inactivos' : 'Suspendidos'}
                   </span>
                 )}
                 {roleFilter !== 'ALL' && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    Rol: {roleFilter === 'PSYCHOLOGIST' ? 'Psicólogos' : roleFilter === 'ADMIN' ? 'Administradores' : 'Super Admins'}
+                    Rol: {roleFilter === 'PSYCHOLOGIST' ? 'Psicólogos' : roleFilter === 'AGENDA_MANAGER' ? 'Gestor de Agenda' : roleFilter === 'ADMIN' ? 'Administradores' : roleFilter}
+                  </span>
+                )}
+                {planFilter !== 'ALL' && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                    Plan: {planFilter}
+                  </span>
+                )}
+                {packFilter !== 'ALL' && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
+                    Pack: {packFilter === 'agenda_manager' ? 'Agenda Manager' : packFilter === 'pack_minutes' ? 'Minutos' : packFilter === 'pack_sessions' ? 'Sesiones' : packFilter}
                   </span>
                 )}
               </div>
             )}
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto pb-40">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -253,13 +432,19 @@ export default function UsersPage() {
                     Usuario
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Uso (Ses/Rep)
+                    Uso (Ses/Rep/Packs)
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Rol
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Plan
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Packs Extra
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Último acceso
@@ -267,8 +452,8 @@ export default function UsersPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Registro
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
+                  <th scope="col" className="relative px-6 py-3">
+                    <span className="sr-only">Acciones</span>
                   </th>
                 </tr>
               </thead>
@@ -291,16 +476,69 @@ export default function UsersPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex flex-col">
-                        <span>{user._count?.sessions || 0} sesiones</span>
-                        <span className="text-xs text-gray-400">{user._count?.reports || 0} reportes</span>
-                      </div>
+                      {(user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'AGENDA_MANAGER' && user.subscription?.planType !== 'agenda_manager') ? (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-900">{user._count?.sessions || 0}</span>
+                            <span className="text-xs">sesiones</span>
+                            <span className="text-gray-300">|</span>
+                            <span className="font-medium text-gray-900">{user._count?.reports || 0}</span>
+                            <span className="text-xs">reportes</span>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Trans: {Math.round(user.transcriptionMinutesUsed || 0)} / {getLimit(user)} min
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Casos: {user.simulatorUsageCount || 0} / {getCaseLimit(user) === -1 ? '∞' : getCaseLimit(user)}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400">-</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(user.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getPlanBadge(user.subscription?.planType || 'FREE')}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'AGENDA_MANAGER' ? 'bg-pink-100 text-pink-800' :
+                        user.role.startsWith('PSYCHOLOGIST') ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                        {user.role === 'AGENDA_MANAGER' ? 'Gestor de Agenda' :
+                          user.role.startsWith('PSYCHOLOGIST') ? 'Psicólogo' :
+                            user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? 'Admin' : 'Usuario'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {(user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'AGENDA_MANAGER') ? (
+                        getPlanBadge(user.subscription?.planType || 'FREE')
+                      ) : (
+                        <span className="text-xs text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col gap-1 items-start">
+                        {/* Only show Agenda Manager pack for Psychologists, not for the Agenda Manager user themselves */}
+                        {(user.agendaManagerEnabled || user.subscription?.planType === 'agenda_manager') && user.role !== 'AGENDA_MANAGER' && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-800">
+                            Agenda Manager
+                          </span>
+                        )}
+                        {(user.extraTranscriptionMinutes || 0) > 0 && user.role !== 'AGENDA_MANAGER' && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                            Pack Minutos
+                          </span>
+                        )}
+                        {(user.extraSimulatorCases || 0) > 0 && user.role !== 'AGENDA_MANAGER' && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                            Pack Casos
+                          </span>
+                        )}
+                        {/* Note: Pack Onboarding detection is not yet available in user model */}
+                        {!((user.agendaManagerEnabled || user.subscription?.planType === 'agenda_manager') && user.role !== 'AGENDA_MANAGER' || (user.extraTranscriptionMinutes || 0) > 0 || (user.extraSimulatorCases || 0) > 0) && (
+                          <span className="text-xs text-gray-400">-</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(user.lastLogin || new Date().toISOString())}

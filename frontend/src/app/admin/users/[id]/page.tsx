@@ -6,6 +6,75 @@ import { useParams, useRouter } from 'next/navigation';
 import { User, Mail, Calendar, CreditCard, Activity, ArrowLeft, Clock, FileText, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 
+const PLAN_LIMITS: Record<string, number> = {
+    FREE: 30,
+    BASIC: 600,
+    PRO: 900,
+    PREMIUM: 3000,
+    PREMIUM_PLUS: 3000,
+    CLINICS: 30000
+};
+
+const getLimit = (user: any) => {
+    const plan = (user.subscription?.planType || 'FREE').toUpperCase();
+    const baseLimit = PLAN_LIMITS[plan] || 0;
+    const extra = user.extraTranscriptionMinutes || 0;
+    return baseLimit + extra;
+};
+
+function ChangePasswordModal({ userId, isOpen, onClose }: { userId: string; isOpen: boolean; onClose: () => void }) {
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+    if (!isOpen) return null;
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setMessage(null);
+        try {
+            await AdminAPI.changeUserPassword(userId, password);
+            setMessage({ type: 'success', text: 'Contraseña actualizada correctamente' });
+            setTimeout(onClose, 1500);
+        } catch (err) {
+            setMessage({ type: 'error', text: 'Error al actualizar contraseña' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-sm">
+                <h3 className="text-lg font-bold mb-4">Cambiar Contraseña</h3>
+                {message && (
+                    <div className={`p-2 rounded mb-3 text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                        {message.text}
+                    </div>
+                )}
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="password"
+                        placeholder="Nueva contraseña"
+                        className="w-full border rounded p-2 mb-4"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        required
+                        minLength={6}
+                    />
+                    <div className="flex justify-end gap-2">
+                        <button type="button" onClick={onClose} className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                        <button type="submit" disabled={loading} className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
+                            {loading ? 'Guardando...' : 'Guardar'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
 export default function AdminUserDetailPage() {
     const params = useParams();
     const router = useRouter();
@@ -13,6 +82,7 @@ export default function AdminUserDetailPage() {
     const [logs, setLogs] = useState<AuditLog[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
     useEffect(() => {
         if (params?.id) {
@@ -25,18 +95,11 @@ export default function AdminUserDetailPage() {
             setLoading(true);
             const [userData, logsData] = await Promise.all([
                 AdminAPI.getUser(userId),
-                AdminAPI.getLogs(1, 20, false, userId)
+                AdminAPI.getLogs({ page: 1, limit: 20, errorOnly: false, userId })
             ]);
 
-            // Since getLogs in AdminAPI wrapper currently exposes userId filter in the backend but I need to pass it
-            // Let's re-check AdminAPI wrapper. 
-            // It has: static async getLogs(page = 1, limit = 20, errorOnly = false)
-            // It is MISSING userId as argument! I should update AdminAPI wrapper to support userId filtering.
-
             setUser(userData);
-            // For now, let's assume logsData returns everything and we filter client side or just show what we got 
-            // Actually I should fix AdminAPI first. But to proceed, I'll allow this and fix AdminAPI in parallel or next step.
-            setLogs(logsData.logs);
+            setLogs(logsData.logs ? logsData.logs : []);
 
         } catch (err) {
             setError('Error al cargar datos del usuario');
@@ -44,6 +107,23 @@ export default function AdminUserDetailPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const PLAN_CASE_LIMITS: Record<string, number> = {
+        FREE: 0,
+        BASIC: 0,
+        PRO: 5,
+        PREMIUM: -1,
+        PREMIUM_PLUS: -1,
+        CLINICS: -1
+    };
+
+    const getCaseLimit = (user: any) => {
+        const plan = (user.subscription?.planType || 'FREE').toUpperCase();
+        const baseLimit = PLAN_CASE_LIMITS[plan] || 0;
+        if (baseLimit === -1) return -1;
+        const extra = user.extraSimulatorCases || 0;
+        return baseLimit + extra;
     };
 
     if (loading) return <div className="p-8 text-center">Cargando perfil...</div>;
@@ -105,32 +185,67 @@ export default function AdminUserDetailPage() {
                                         Plan
                                     </span>
                                     <span className="font-medium bg-purple-50 text-purple-700 px-2 py-0.5 rounded">
-                                        {user.subscription?.planType || 'FREE'}
+                                        {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN')
+                                            ? 'Admin'
+                                            : ((user.subscription?.planType === 'agenda_manager' || user.role === 'AGENDA_MANAGER')
+                                                ? 'Agenda Manager'
+                                                : (user.subscription?.planType || 'FREE'))
+                                        }
                                     </span>
+                                </div>
+                                <div className="mt-4 pt-4 border-t">
+                                    <button
+                                        onClick={() => setIsPasswordModalOpen(true)}
+                                        className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                    >
+                                        <div className="flex items-center">
+                                            <span className="mr-2">🔑</span> Cambiar Contraseña
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-lg shadow-sm border p-6">
-                            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-                                <Activity className="w-4 h-4 mr-2" />
-                                Estadísticas de Uso
-                            </h3>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-gray-50 p-3 rounded-lg text-center">
-                                    <p className="text-xs text-gray-500 uppercase">Sesiones</p>
-                                    <p className="text-xl font-bold text-blue-600">{user._count?.sessions || 0}</p>
-                                </div>
-                                <div className="bg-gray-50 p-3 rounded-lg text-center">
-                                    <p className="text-xs text-gray-500 uppercase">Reportes</p>
-                                    <p className="text-xl font-bold text-orange-600">{user._count?.reports || 0}</p>
-                                </div>
-                                <div className="bg-gray-50 p-3 rounded-lg text-center">
-                                    <p className="text-xs text-gray-500 uppercase">Clientes</p>
-                                    <p className="text-xl font-bold text-green-600">{user._count?.clients || 0}</p>
+                        {(user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'AGENDA_MANAGER' && user.subscription?.planType !== 'agenda_manager') && (
+                            <div className="bg-white rounded-lg shadow-sm border p-6">
+                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                                    <Activity className="w-4 h-4 mr-2" />
+                                    Estadísticas de Uso
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-gray-50 p-3 rounded-lg text-center">
+                                        <p className="text-xs text-gray-500 uppercase">Sesiones</p>
+                                        <p className="text-xl font-bold text-blue-600">{user._count?.sessions || 0}</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded-lg text-center">
+                                        <p className="text-xs text-gray-500 uppercase">Reportes</p>
+                                        <p className="text-xl font-bold text-orange-600">{user._count?.reports || 0}</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded-lg text-center">
+                                        <p className="text-xs text-gray-500 uppercase">Clientes</p>
+                                        <p className="text-xl font-bold text-green-600">{user._count?.clients || 0}</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded-lg text-center">
+                                        <p className="text-xs text-gray-500 uppercase">Transcripción</p>
+                                        <p className="text-xl font-bold text-indigo-600">
+                                            {Math.round(user.transcriptionMinutesUsed || 0)} / {getLimit(user)}m
+                                        </p>
+                                    </div>
+                                    {(user.extraTranscriptionMinutes || 0) > 0 && (
+                                        <div className="bg-blue-50 p-3 rounded-lg text-center col-span-2">
+                                            <p className="text-xs text-blue-800 uppercase">Pack Minutos</p>
+                                            <p className="text-lg font-bold text-blue-600">{user.extraTranscriptionMinutes} min extra</p>
+                                        </div>
+                                    )}
+                                    {(user.extraSimulatorCases || 0) > 0 && (
+                                        <div className="bg-purple-50 p-3 rounded-lg text-center col-span-2">
+                                            <p className="text-xs text-purple-800 uppercase">Pack Casos</p>
+                                            <p className="text-lg font-bold text-purple-600">{user.extraSimulatorCases} casos extra</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Activity Column */}

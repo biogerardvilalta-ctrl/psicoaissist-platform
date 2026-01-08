@@ -20,7 +20,7 @@ import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { CreateUserDto, UpdateUserDto, UserResponseDto, ChangeRoleDto, CreateAgendaManagerDto, LinkProfessionalDto } from './dto/users.dto';
+import { CreateUserDto, UpdateUserDto, UserResponseDto, ChangeRoleDto, CreateAgendaManagerDto, LinkProfessionalDto, AdminChangePasswordDto } from './dto/users.dto';
 import { UserRole } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -142,6 +142,21 @@ export class UsersController {
       return result;
     } catch (error) {
       this.logger.error(`Error changing user role: ${error.message}`);
+      throw error;
+    }
+  }
+
+  @ApiOperation({ summary: 'Cambiar contraseña de usuario (Admin)' })
+  @ApiResponse({ status: 200, description: 'Contraseña actualizada' })
+  @Roles(UserRole.ADMIN)
+  @Patch(':id/password')
+  async adminChangePassword(@Param('id') id: string, @Body() dto: AdminChangePasswordDto) {
+    try {
+      const result = await this.usersService.adminChangePassword(id, dto.password);
+      this.logger.log(`Password changed by admin for user: ${id}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Error changing password: ${error.message}`);
       throw error;
     }
   }
