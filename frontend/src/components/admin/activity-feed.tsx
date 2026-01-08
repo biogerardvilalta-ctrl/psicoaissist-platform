@@ -7,7 +7,7 @@ export interface AdminActivityItem {
   type: 'user_registered' | 'subscription_created' | 'payment_completed' | 'error' | 'login';
   title: string;
   description: string;
-  timestamp: Date;
+  timestamp: Date | string;
   metadata?: any;
 }
 
@@ -82,7 +82,8 @@ const defaultActivities: AdminActivityItem[] = [
   }
 ];
 
-function formatTimeAgo(date: Date): string {
+function formatTimeAgo(dateInput: Date | string): string {
+  const date = new Date(dateInput);
   const now = new Date();
   const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
 

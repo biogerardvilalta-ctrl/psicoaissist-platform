@@ -5,8 +5,8 @@ export interface AdminUser {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN';
-  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'PSYCHOLOGIST_BASIC' | 'PSYCHOLOGIST_PRO' | 'PSYCHOLOGIST_PREMIUM' | 'STUDENT' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP';
+  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'DELETED' | 'PENDING_REVIEW' | 'VALIDATED' | 'REJECTED';
   subscription?: {
     planType: 'BASIC' | 'PRO' | 'PREMIUM';
     status: string;
@@ -29,7 +29,8 @@ export interface AdminStats {
   recentSignups: number;
   totalSessions: number;
   totalReports: number;
-  subscriptionStats: Record<string, Record<string, number>>;
+  recentActivity: any[]; // Type should ideally match AdminActivityItem
+  revenueData: any[];    // Type should ideally match RevenueData
 }
 
 export interface AuditLog {
@@ -69,8 +70,8 @@ export interface AdminPlan {
 
 export interface UserFilters {
   search?: string;
-  status?: 'ALL' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
-  role?: 'ALL' | 'PSYCHOLOGIST' | 'ADMIN';
+  status?: 'ALL' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'DELETED' | 'PENDING_REVIEW' | 'VALIDATED' | 'REJECTED';
+  role?: 'ALL' | 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'PSYCHOLOGIST_BASIC' | 'PSYCHOLOGIST_PRO' | 'PSYCHOLOGIST_PREMIUM' | 'STUDENT' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP';
   page?: number;
   limit?: number;
 }
@@ -93,8 +94,8 @@ export class AdminAPI {
     try {
       console.log('📊 Fetching admin dashboard stats...');
       const response = await httpClient.get(`${this.BASE_URL}/dashboard`);
-      console.log('✅ Dashboard stats loaded:', (response as any).data);
-      return (response as any).data;
+      console.log('✅ Dashboard stats loaded:', response);
+      return response as any;
     } catch (error) {
       console.error('❌ Error fetching dashboard stats:', error);
       throw error;
@@ -102,8 +103,30 @@ export class AdminAPI {
   }
 
   // Logs
-  static async getLogs(page = 1, limit = 20, errorOnly = false, userId?: string): Promise<PaginatedLogs> {
+  static async getLogs(options: {
+    page?: number;
+    limit?: number;
+    errorOnly?: boolean;
+    userId?: string;
+    action?: string;
+    resource?: string;
+    search?: string;
+    startDate?: string;
+    endDate?: string;
+  } = {}): Promise<PaginatedLogs> {
     try {
+      const {
+        page = 1,
+        limit = 20,
+        errorOnly = false,
+        userId,
+        action,
+        resource,
+        search,
+        startDate,
+        endDate
+      } = options;
+
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
@@ -111,12 +134,20 @@ export class AdminAPI {
 
       if (errorOnly) params.append('errorOnly', 'true');
       if (userId) params.append('userId', userId);
+      if (action) params.append('action', action);
+      if (resource) params.append('resource', resource);
+      if (search) params.append('search', search);
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
 
       const queryString = params.toString();
       const url = `${this.BASE_URL}/logs${queryString ? `?${queryString}` : ''}`;
 
+      console.log('🔍 Fetching logs with params:', Object.fromEntries(params.entries()));
+      console.log('🌐 Request URL:', url);
+
       const response = await httpClient.get(url);
-      return (response as any).data;
+      return response as any;
     } catch (error) {
       console.error('❌ Error fetching logs:', error);
       throw error;
@@ -127,7 +158,7 @@ export class AdminAPI {
   static async getPlans(): Promise<{ plans: AdminPlan[] }> {
     try {
       const response = await httpClient.get(`${this.BASE_URL}/plans`);
-      return (response as any).data;
+      return response as any;
     } catch (error) {
       console.error('❌ Error fetching plans:', error);
       throw error; // Or return fallback
@@ -153,7 +184,7 @@ export class AdminAPI {
       console.log('🌐 Making request to:', url);
       const response = await httpClient.get(url);
 
-      return (response as any).data;
+      return response as any;
     } catch (error) {
       console.error('❌ Error fetching users from API:', error);
       throw error;
@@ -164,7 +195,7 @@ export class AdminAPI {
     try {
       console.log('👤 Fetching user by ID:', id);
       const response = await httpClient.get(`${this.BASE_URL}/users/${id}`);
-      return (response as any).data;
+      return response as any;
     } catch (error) {
       console.error('❌ Error fetching user:', error);
       throw new Error('Error al cargar el usuario');
@@ -175,7 +206,7 @@ export class AdminAPI {
     try {
       console.log('📝 Updating user:', id, userData);
       const response = await httpClient.patch(`${this.BASE_URL}/users/${id}`, userData);
-      return (response as any).data;
+      return response as any;
     } catch (error) {
       console.error('❌ Error updating user:', error);
       throw new Error('Error al actualizar el usuario');

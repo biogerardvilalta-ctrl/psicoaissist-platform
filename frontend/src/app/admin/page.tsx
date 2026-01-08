@@ -134,7 +134,10 @@ export default function AdminDashboard() {
 
         {/* Charts Section */}
         <div className="mb-8">
-          <AdminCharts loading={statsLoading} />
+          <AdminCharts
+            revenueData={stats?.revenueData}
+            loading={statsLoading}
+          />
         </div>
 
         {/* Main Dashboard Grid */}
@@ -152,7 +155,7 @@ export default function AdminDashboard() {
 
           {/* Activity Feed - 1 column */}
           <div className="lg:col-span-1">
-            <AdminActivityFeed />
+            <AdminActivityFeed activities={stats?.recentActivity} />
           </div>
         </div>
       </main>
