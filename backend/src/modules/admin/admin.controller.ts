@@ -105,6 +105,159 @@ export class AdminController {
     return this.getRevenueChartData(period);
   }
 
+  @Get('stats/usage-evolution')
+  async getUsageEvolutionStats(@Query('period') period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
+    return this.getUsageChartData(period);
+  }
+
+  private async getUsageChartData(period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
+    const now = new Date();
+    const data = [];
+
+    // Determine interval and iterations based on period
+    let intervalType: 'day' | 'week' | 'month' = 'day';
+    let iterations = 7;
+
+    switch (period) {
+      case '1w': // Last 7 days
+        intervalType = 'day';
+        iterations = 7;
+        break;
+      case '1m': // Last 30 days
+        intervalType = 'day';
+        iterations = 30;
+        break;
+      case '3m': // Last 3 months
+        intervalType = 'week';
+        iterations = 12;
+        break;
+      case '6m': // Last 6 months
+        intervalType = 'month';
+        iterations = 6;
+        break;
+      case '1y': // Last 12 months
+        intervalType = 'month';
+        iterations = 12;
+        break;
+      default:
+        intervalType = 'month';
+        iterations = 6;
+    }
+
+    // Pre-fetch relevant data
+    // We need:
+    // 1. Sessions with transcription for minutes usage
+    // 2. Simulator Reports for simulator usage
+
+    // Calculate max lookback date to optimize query
+    const lookbackDate = new Date(now);
+    if (intervalType === 'day') lookbackDate.setDate(lookbackDate.getDate() - iterations);
+    if (intervalType === 'week') lookbackDate.setDate(lookbackDate.getDate() - (iterations * 7));
+    if (intervalType === 'month') lookbackDate.setMonth(lookbackDate.getMonth() - iterations);
+
+
+    const [sessions, simReports] = await Promise.all([
+      this.prisma.session.findMany({
+        where: {
+          startTime: { gte: lookbackDate },
+          encryptedTranscription: { not: null }, // Only count transcribed sessions
+          status: { not: 'CANCELLED' }
+        },
+        select: {
+          startTime: true,
+          duration: true
+        }
+      }),
+      this.prisma.simulationReport.findMany({
+        where: {
+          createdAt: { gte: lookbackDate }
+        },
+        select: {
+          createdAt: true
+        }
+      })
+    ]);
+
+    for (let i = iterations - 1; i >= 0; i--) {
+      let startDate: Date;
+      let endDate: Date;
+      let label: string;
+
+      if (intervalType === 'day') {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        d.setHours(0, 0, 0, 0);
+        startDate = new Date(d);
+        endDate = new Date(startDate);
+        endDate.setHours(23, 59, 59, 999);
+        label = startDate.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+      } else if (intervalType === 'week') {
+        const d = new Date(now);
+        d.setDate(d.getDate() - (i * 7));
+        endDate = new Date(d);
+        endDate.setHours(23, 59, 59, 999);
+        startDate = new Date(endDate);
+        startDate.setDate(startDate.getDate() - 6);
+        startDate.setHours(0, 0, 0, 0);
+        label = `${startDate.getDate()}/${startDate.getMonth() + 1}`;
+      } else {
+        const d = new Date(now);
+        d.setMonth(d.getMonth() - i);
+        d.setDate(1);
+        d.setHours(0, 0, 0, 0);
+        startDate = new Date(d);
+        endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + 1);
+        endDate.setDate(0);
+        endDate.setHours(23, 59, 59, 999);
+        const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        label = monthNames[startDate.getMonth()];
+        if (period === '1y' && i > 0 && startDate.getMonth() === 0) {
+          label += ` '${startDate.getFullYear().toString().substring(2)}`;
+        }
+      }
+
+      // Filter data for this period
+      const periodSessions = sessions.filter(s => s.startTime >= startDate && s.startTime <= endDate);
+      const periodSims = simReports.filter(s => s.createdAt >= startDate && s.createdAt <= endDate);
+
+      // INCREMENTAL
+      const newMinutes = periodSessions.reduce((acc, s) => acc + (s.duration ? s.duration / 60 : 0), 0);
+      const newSimSessions = periodSims.length;
+
+      // CUMULATIVE (Total up to end of this period)
+      // Note: For CUMULATIVE in this context, it usually means "Year to Date" or "All time up to X". 
+      // EvolutionCharts logic does:
+      // Revenue Cumulative = Total Active MRR at that point.
+      // Here, "Total Cumulative Transcribed Minutes" might just be sum of all time up to that point?
+      // Or just sum of the chart so far?
+      // Standard "Cumulative" usually implies integral of the graph.
+      // Let's implement robust "All time up to endDate" but that requires querying ALL history which is heavy.
+      // OPTIMIZATION: Just do cumulative of the *displayed period* or query slightly more?
+      // Let's stick to the same logic as the Revenue Chart if possible.
+      // BUT Revenue uses "Active Subscriptions" (Snapshot).
+      // Usage is transactional. 
+      // So "Cumulative" for usage usually means "Total used in history up to date".
+      // To save performance, we will only sum what we fetched (which is bounded by lookbackDate).
+      // This means the first point of the chart will start at 0 (or low) even if history exists.
+      // Users usually want to see "growth during this period".
+      // Let's implement Cumulative as "Sum of previous points in this specific chart".
+
+      const previousTotalMinutes = data.length > 0 ? data[data.length - 1].totalMinutes : 0;
+      const previousTotalSims = data.length > 0 ? data[data.length - 1].totalSimSessions : 0;
+
+      data.push({
+        label: label,
+        totalMinutes: Math.round(previousTotalMinutes + newMinutes),
+        newMinutes: Math.round(newMinutes),
+        totalSimSessions: previousTotalSims + newSimSessions,
+        newSimSessions: newSimSessions
+      });
+    }
+
+    return data;
+  }
+
   private async getRevenueChartData(period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
     const now = new Date();
     const data = [];
@@ -779,6 +932,8 @@ export class AdminController {
 
     return { message: 'Subscription cancelled successfully' };
   }
+
+
 
   private async calculateTotalRevenue(): Promise<number> {
     // This is a simplified calculation
