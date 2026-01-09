@@ -62,6 +62,52 @@ export default function ProfilePage() {
         confirmPassword: ''
     });
 
+    // Delete Account State
+    const [isDeleteAccountDialogOpen, setIsDeleteAccountDialogOpen] = useState(false);
+    const [deleteConfirmation, setDeleteConfirmation] = useState('');
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    // Cancel Subscription State
+    const [isCancelSubscriptionDialogOpen, setIsCancelSubscriptionDialogOpen] = useState(false);
+    const { cancelSubscription } = usePayments();
+
+    const handleDeleteAccount = async () => {
+        if (deleteConfirmation !== 'BORRAR') return;
+
+        setIsDeleting(true);
+        try {
+            await AuthAPI.deleteAccount();
+            toast({
+                title: "Cuenta eliminada",
+                description: "Tu cuenta ha sido eliminada correctamente.",
+            });
+            // Force logout
+            window.location.href = '/auth/login';
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "No se pudo eliminar la cuenta.",
+                variant: "destructive"
+            });
+            setIsDeleting(false);
+        }
+    };
+
+    const handleCancelSubscription = async () => {
+        try {
+            await cancelSubscription();
+            setIsCancelSubscriptionDialogOpen(false);
+            toast({
+                title: "Suscripción cancelada",
+                description: "Tu suscripción ha sido cancelada correctamente.",
+            });
+            setTimeout(() => window.location.reload(), 1500);
+        } catch (error) {
+            // Error handling is already in usePayments
+            setIsCancelSubscriptionDialogOpen(false);
+        }
+    };
+
     // Initialize form data when user loads
     useEffect(() => {
         if (user) {
@@ -264,7 +310,10 @@ export default function ProfilePage() {
                         ) : (
                             <div className="text-center py-6 bg-slate-50 rounded-lg border border-dashed border-slate-200">
                                 <p className="text-slate-500 mb-4">No tienes una suscripción activa.</p>
-                                <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
+                                <Button
+                                    className="bg-gradient-to-r from-purple-600 to-blue-600"
+                                    onClick={() => setIsUpgradeModalOpen(true)}
+                                >
                                     Ver Planes
                                 </Button>
                             </div>
@@ -442,18 +491,102 @@ export default function ProfilePage() {
 
 
 
-            {/* Security Card */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>Seguridad</CardTitle>
-                    <CardDescription>Gestiona tu contraseña y sesiones.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Button variant="outline" onClick={() => setIsPasswordDialogOpen(true)}>
-                        Cambiar Contraseña
-                    </Button>
-                </CardContent>
-            </Card>
+
+
+            {/* Security and Danger Zone */}
+            <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Seguridad</CardTitle>
+                        <CardDescription>Gestiona tu contraseña y sesiones.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button variant="outline" onClick={() => setIsPasswordDialogOpen(true)} className="w-full">
+                            Cambiar Contraseña
+                        </Button>
+                    </CardContent>
+                </Card>
+
+                <Card className="border-red-100 bg-red-50/10">
+                    <CardHeader>
+                        <CardTitle className="text-red-600 flex items-center gap-2">
+                            <AlertCircle className="w-5 h-5" />
+                            Zona de Peligro
+                        </CardTitle>
+                        <CardDescription>Acciones irreversibles sobre tu cuenta.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        {user?.subscription && user.subscription.status === 'active' && (
+                            <Button
+                                variant="outline"
+                                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                                onClick={() => setIsCancelSubscriptionDialogOpen(true)}
+                            >
+                                Cancelar Suscripción
+                            </Button>
+                        )}
+                        <Button
+                            variant="destructive"
+                            className="w-full bg-red-600 hover:bg-red-700"
+                            onClick={() => setIsDeleteAccountDialogOpen(true)}
+                        >
+                            Eliminar Cuenta
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+
+
+            {/* Cancel Subscription Dialog */}
+            <Dialog open={isCancelSubscriptionDialogOpen} onOpenChange={setIsCancelSubscriptionDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>¿Cancelar Suscripción?</DialogTitle>
+                        <DialogDescription>
+                            Perderás acceso a las funciones de tu plan al final del periodo actual. Esta acción no elimina tu cuenta.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsCancelSubscriptionDialogOpen(false)}>Volver</Button>
+                        <Button variant="destructive" onClick={handleCancelSubscription}>
+                            Confirmar Cancelación
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete Account Dialog */}
+            <Dialog open={isDeleteAccountDialogOpen} onOpenChange={setIsDeleteAccountDialogOpen}>
+                <DialogContent className="border-red-200">
+                    <DialogHeader>
+                        <DialogTitle className="text-red-600">Eliminar Cuenta Permanentemente</DialogTitle>
+                        <DialogDescription>
+                            Esta acción es irreversible. Se eliminarán todos tus datos asociados, pacientes, y sesiones.
+                            <br /><br />
+                            Escribe <strong>BORRAR</strong> abajo para confirmar.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-2">
+                        <Input
+                            value={deleteConfirmation}
+                            onChange={(e) => setDeleteConfirmation(e.target.value)}
+                            placeholder="Escribe BORRAR para confirmar"
+                            className="border-red-200 focus-visible:ring-red-500"
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsDeleteAccountDialogOpen(false)}>Cancelar</Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDeleteAccount}
+                            disabled={deleteConfirmation !== 'BORRAR' || isDeleting}
+                            className="bg-red-600 hover:bg-red-700"
+                        >
+                            {isDeleting ? "Eliminando..." : "Eliminar Definitivamente"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Change Password Dialog */}
             <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>

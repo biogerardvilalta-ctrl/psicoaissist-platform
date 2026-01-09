@@ -23,7 +23,9 @@ const roleColors = {
   USER: 'bg-green-100 text-green-800',
   PSYCHOLOGIST: 'bg-blue-100 text-blue-800',
   ADMIN: 'bg-red-100 text-red-800',
-  SUPER_ADMIN: 'bg-purple-100 text-purple-800'
+  SUPER_ADMIN: 'bg-purple-100 text-purple-800',
+  AGENDA_MANAGER: 'bg-orange-100 text-orange-800',
+  PROFESSIONAL_GROUP: 'bg-teal-100 text-teal-800'
 };
 
 function formatDate(dateString: string): string {
@@ -31,14 +33,14 @@ function formatDate(dateString: string): string {
   const now = new Date();
   const diffTime = now.getTime() - date.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   if (diffDays === 0) return 'Hoy';
   if (diffDays === 1) return 'Ayer';
   if (diffDays < 7) return `Hace ${diffDays} días`;
-  
-  return date.toLocaleDateString('es-ES', { 
-    day: 'numeric', 
-    month: 'short' 
+
+  return date.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'short'
   });
 }
 
@@ -115,7 +117,7 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
                     <User className="w-5 h-5 text-blue-600" />
                   </div>
-                  
+
                   {/* User info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2">
@@ -131,15 +133,13 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                     </div>
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     <div className="flex items-center space-x-2 mt-1">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        roleColors[user.role] || 'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${roleColors[user.role as keyof typeof roleColors] || 'bg-gray-100 text-gray-800'
+                        }`}>
                         {user.role}
                       </span>
                       {user.subscription && (
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          planColors[user.subscription.planType] || 'bg-gray-100 text-gray-800'
-                        }`}>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${planColors[user.subscription.planType as keyof typeof planColors] || 'bg-gray-100 text-gray-800'
+                          }`}>
                           {user.subscription.planType}
                         </span>
                       )}
@@ -158,7 +158,7 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                       </p>
                     )}
                   </div>
-                  
+
                   <div className="relative">
                     <button
                       onClick={() => setShowDropdown(showDropdown === user.id ? null : user.id)}
@@ -166,7 +166,7 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                     >
                       <MoreVertical className="w-4 h-4 text-gray-400" />
                     </button>
-                    
+
                     {showDropdown === user.id && (
                       <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">
                         <div className="py-1">

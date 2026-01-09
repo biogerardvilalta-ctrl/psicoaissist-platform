@@ -69,9 +69,9 @@ export default function ReferencePage() {
                                 </p>
 
                                 <div className="bg-slate-900 rounded-xl p-6 overflow-x-auto text-sm text-slate-300 font-mono">
-                                    <p className="mb-2 text-slate-500">// Endpoint de ejemplo para obtener sesiones</p>
+                                    <p className="mb-2 text-slate-500">{/* Endpoint de ejemplo para obtener sesiones */}</p>
                                     <p><span className="text-purple-400">GET</span> /api/v1/sessions</p>
-                                    <p className="mt-2 text-slate-500">// Headers requeridos</p>
+                                    <p className="mt-2 text-slate-500">{/* Headers requeridos */}</p>
                                     <p>Authorization: Bearer &lt;YOUR_API_TOKEN&gt;</p>
                                     <p>Content-Type: application/json</p>
                                 </div>

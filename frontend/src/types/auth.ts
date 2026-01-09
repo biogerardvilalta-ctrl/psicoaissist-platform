@@ -77,6 +77,9 @@ export interface RegisterRequest {
   email: string;
   password: string;
   role?: 'PSYCHOLOGIST' | 'ADMIN';
+  professionalNumber: string;
+  country: string;
+  referralCode?: string;
 }
 
 export interface AuthResponse {

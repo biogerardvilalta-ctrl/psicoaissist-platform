@@ -129,4 +129,13 @@ export class AuthAPI {
       throw error;
     }
   }
+
+
+  static async deleteAccount(): Promise<void> {
+    try {
+      await httpClient.delete(`${this.BASE_URL.replace('/auth', '/users')}/me`);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

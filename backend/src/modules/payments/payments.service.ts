@@ -110,6 +110,32 @@ export class PaymentsService {
         mode
       );
 
+      if (process.env.NODE_ENV === 'development') {
+        this.logger.log('DEV MODE: Simulating subscription success immediately for testing.');
+        // We can't know the subscription ID yet (it's created on checkout completion),
+        // but we can create a placeholder one to allow the UI to show "Active".
+        // REAL logic relies on Webhook.
+        // For smoother dev experience without CLI:
+        await this.prisma.subscription.upsert({
+          where: { userId: user.id },
+          update: {
+            status: 'active',
+            planType: createCheckoutDto.plan,
+            stripeSubscriptionId: `sub_test_dev_${Date.now()}`,
+            currentPeriodStart: new Date(),
+            currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
+          },
+          create: {
+            userId: user.id,
+            status: 'active',
+            planType: createCheckoutDto.plan,
+            stripeSubscriptionId: `sub_test_dev_${Date.now()}`,
+            currentPeriodStart: new Date(),
+            currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
+          }
+        });
+      }
+
       return {
         sessionId: session.id,
         url: session.url,
@@ -365,9 +391,19 @@ export class PaymentsService {
         throw new NotFoundException('No subscription found for user');
       }
 
-      const canceledSubscription = await this.stripeService.cancelSubscription(
-        user.subscription.stripeSubscriptionId
-      );
+      let canceledSubscription;
+      if (user.subscription.stripeSubscriptionId.startsWith('sub_test_')) {
+        this.logger.log(`Canceling fake subscription locally: ${user.subscription.stripeSubscriptionId}`);
+        canceledSubscription = {
+          id: user.subscription.stripeSubscriptionId,
+          status: 'canceled',
+          // Mock other fields as needed
+        };
+      } else {
+        canceledSubscription = await this.stripeService.cancelSubscription(
+          user.subscription.stripeSubscriptionId
+        );
+      }
 
       // Update subscription status in database
       await this.prisma.subscription.update({

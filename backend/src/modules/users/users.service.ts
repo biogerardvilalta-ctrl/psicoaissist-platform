@@ -24,7 +24,16 @@ export class UsersService {
       });
 
       if (existingUser) {
-        throw new ConflictException('El email ya está registrado');
+        if (existingUser.status === UserStatus.INACTIVE || existingUser.status === UserStatus.DELETED) {
+          const newEmail = `archived_${Date.now()}_${existingUser.email}`;
+          this.logger.log(`Archiving old user ${existingUser.id} (${existingUser.email}) -> ${newEmail}`);
+          await this.prisma.user.update({
+            where: { id: existingUser.id },
+            data: { email: newEmail, status: UserStatus.DELETED },
+          });
+        } else {
+          throw new ConflictException('El email ya está registrado');
+        }
       }
 
       // Hashear la contraseña
@@ -214,7 +223,8 @@ export class UsersService {
       await this.prisma.user.update({
         where: { id },
         data: {
-          status: UserStatus.INACTIVE,
+          status: UserStatus.DELETED,
+          email: `deleted_${Date.now()}_${user.email}`,
           updatedAt: new Date(),
         },
       });

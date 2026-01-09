@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, UserPlus, Heart, AlertCircle, Gift } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, Heart, AlertCircle, Gift, Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
+import { usePayments } from '@/hooks/usePayments';
 
 interface RegisterFormData {
   firstName: string;
@@ -33,12 +35,14 @@ export default function RegisterPage() {
   const [legalLiabilityAccepted, setLegalLiabilityAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // We use local loading state for UI feedback, but actual logic relies on hooks
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const { register } = useAuth();
+  const { createCheckoutSession } = usePayments();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -51,53 +55,53 @@ export default function RegisterPage() {
     }));
 
     // Clear error when user starts typing
-    if (error) setError(null);
+    if (localError) setLocalError(null);
   };
 
   const validateForm = (): boolean => {
     if (!formData.firstName.trim()) {
-      setError('El nombre es requerido');
+      setLocalError('El nombre es requerido');
       return false;
     }
 
     if (!formData.lastName.trim()) {
-      setError('El apellido es requerido');
+      setLocalError('El apellido es requerido');
       return false;
     }
 
     if (!formData.email.trim()) {
-      setError('El email es requerido');
+      setLocalError('El email es requerido');
       return false;
     }
 
     if (!formData.professionalNumber.trim()) {
-      setError('El número profesional es requerido');
+      setLocalError('El número profesional es requerido');
       return false;
     }
 
     if (!legalLiabilityAccepted) {
-      setError('Debes certificar la veracidad de tu habilitación profesional');
+      setLocalError('Debes certificar la veracidad de tu habilitación profesional');
       return false;
     }
 
     if (!formData.termsAccepted) {
-      setError('Debes aceptar los términos y condiciones');
+      setLocalError('Debes aceptar los términos y condiciones');
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError('Formato de email inválido');
+      setLocalError('Formato de email inválido');
       return false;
     }
 
     if (formData.password.length < 8) {
-      setError('La contraseña debe tener al menos 8 caracteres');
+      setLocalError('La contraseña debe tener al menos 8 caracteres');
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setLocalError('Las contraseñas no coinciden');
       return false;
     }
 
@@ -109,42 +113,57 @@ export default function RegisterPage() {
 
     if (!validateForm()) return;
 
-    setLoading(true);
-    setError(null);
+    setIsSubmitting(true);
+    setLocalError(null);
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-          professionalNumber: formData.professionalNumber,
-          country: formData.country,
-          referralCode: formData.referralCode || undefined, // Send undefined if empty
-          role: 'PSYCHOLOGIST' // Default role
-        }),
+      // 1. Register User (this also handles Auto-Login in AuthContext)
+      await register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        professionalNumber: formData.professionalNumber,
+        country: formData.country,
+        referralCode: formData.referralCode || undefined,
+        role: 'PSYCHOLOGIST'
       });
 
-      const data = await response.json();
+      // 2. Check for Plan Selection
+      const selectedPlan = searchParams.get('plan');
+      const billingInterval = searchParams.get('interval') as 'month' | 'year' | undefined;
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Error en el registro');
+      // Check if a paid plan is selected (Basic is now paid, only 'demo' or null is free/trial)
+      if (selectedPlan && selectedPlan !== 'demo') {
+        // 3. Initiate Checkout for Paid Plans
+        try {
+          // Cast the string to the expected union type for safety after verification
+          // In a real scenario we'd validate against the allowed values list
+          await createCheckoutSession({
+            plan: selectedPlan as any,
+            interval: billingInterval || 'month'
+          });
+          // Note: createCheckoutSession handles redirection window.location.href
+          // We wait here to prevent unmounting/redirecting to dashboard prematurely
+          return;
+        } catch (paymentError) {
+          console.error('Error initiating payment redirect:', paymentError);
+          // If payment fails to init, we still have the user registered.
+          // Fallback to dashboard with a warning or let them correct it there.
+          router.push('/dashboard?payment_error=init_failed');
+          return;
+        }
       }
 
-      // Success!
-      // In a real app we might auto-login, but here we redirect to login with a message
-      router.push('/auth/login?message=registro-exitoso');
+      // 4. Fallback: Redirect to success/dashboard for Basic/Demo plans
+      // We use window.location to ensure a hard refresh of context if needed, 
+      // though router.push is usually fine with client-side context updates.
+      router.push('/dashboard');
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error en el registro';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+      setLocalError(errorMessage);
+      setIsSubmitting(false); // Only stop loading if we hit an error (otherwise we are redirecting)
     }
   };
 
@@ -389,13 +408,14 @@ export default function RegisterPage() {
                 <p className="text-gray-500 mt-1 text-xs">Aquesta eina ofereix suport clínic orientatiu exclusivament per a professionals de la salut mental. No realitza diagnòstics ni substitueix el criteri clínic.</p>
               </div>
             </div>
+
           </div>
 
           {/* Error message */}
-          {error && (
+          {localError && (
             <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm">{error}</span>
+              <span className="text-sm">{localError}</span>
             </div>
           )}
 
@@ -403,18 +423,18 @@ export default function RegisterPage() {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
-              {loading ? (
+              {isSubmitting ? (
                 <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Registrando...
+                  <Loader2 className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  {searchParams.get('plan') ? 'Preparando pago...' : 'Creando cuenta...'}
                 </div>
               ) : (
                 <div className="flex items-center">
                   <UserPlus className="h-4 w-4 mr-2" />
-                  Crear cuenta gratuita
+                  {searchParams.get('plan') ? 'Continuar al Pago' : 'Crear cuenta gratuita'}
                 </div>
               )}
             </button>

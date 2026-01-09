@@ -29,11 +29,26 @@ import { extname } from 'path';
 @ApiTags('Users')
 @ApiBearerAuth()
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
 
   constructor(private readonly usersService: UsersService) { }
+
+  @ApiOperation({ summary: 'Eliminar mi cuenta' })
+  @ApiResponse({ status: 200, description: 'Cuenta eliminada exitosamente' })
+  @Delete('me')
+  async deleteSelf(@Req() req: any) {
+    this.logger.log(`[DEBUG] deleteSelf called. User: ${req.user?.email}`);
+    try {
+      const result = await this.usersService.remove(req.user.id);
+      this.logger.log(`User deleted self: ${req.user.id}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Error deleting self: ${error.message}`);
+      throw error;
+    }
+  }
 
 
   @ApiOperation({ summary: 'Crear nuevo usuario (solo administradores)' })
@@ -41,6 +56,7 @@ export class UsersController {
   @ApiResponse({ status: 409, description: 'Email ya registrado' })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
   @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
@@ -58,6 +74,7 @@ export class UsersController {
   @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({ name: 'limit', required: false, description: 'Elementos por página' })
   @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @Get()
   async findAll(
     @Query('page', new ParseIntPipe({ optional: true })) page = 1,
@@ -75,6 +92,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuario encontrado', type: UserResponseDto })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @Roles(UserRole.ADMIN, UserRole.PSYCHOLOGIST)
+  @UseGuards(RolesGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {
@@ -89,6 +107,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente', type: UserResponseDto })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -105,6 +124,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuario eliminado exitosamente' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
@@ -120,6 +140,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Actualizar layout del dashboard' })
   @ApiResponse({ status: 200, description: 'Layout actualizado', type: UserResponseDto })
   @Roles(UserRole.ADMIN, UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @UseGuards(RolesGuard)
   @Patch(':id/dashboard-layout')
   async updateDashboardLayout(@Param('id') id: string, @Body() body: { layout: any }) {
     try {
@@ -134,6 +155,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Rol cambiado exitosamente', type: UserResponseDto })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @Patch(':id/role')
   async changeRole(@Param('id') id: string, @Body() changeRoleDto: ChangeRoleDto) {
     try {
@@ -149,6 +171,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Cambiar contraseña de usuario (Admin)' })
   @ApiResponse({ status: 200, description: 'Contraseña actualizada' })
   @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @Patch(':id/password')
   async adminChangePassword(@Param('id') id: string, @Body() dto: AdminChangePasswordDto) {
     try {
@@ -156,10 +179,13 @@ export class UsersController {
       this.logger.log(`Password changed by admin for user: ${id}`);
       return result;
     } catch (error) {
+
       this.logger.error(`Error changing password: ${error.message}`);
       throw error;
     }
   }
+
+
 
 
   // --- Agenda Manager Endpoints ---
@@ -167,6 +193,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Crear Agenda Manager (Solo Profesionales)' })
   @ApiResponse({ status: 201, type: UserResponseDto })
   @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @UseGuards(RolesGuard)
   @Post('agenda-managers')
   async createAgendaManager(@Req() req: any, @Body() dto: CreateAgendaManagerDto) {
     return this.usersService.createAgendaManager(req.user.id, dto);
@@ -175,6 +202,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Listar mis Agenda Managers' })
   @ApiResponse({ status: 200, type: [UserResponseDto] })
   @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @UseGuards(RolesGuard)
   @Get('me/agenda-managers')
   async getMyAgendaManagers(@Req() req: any) {
     return this.usersService.getAgendaManagers(req.user.id);
@@ -182,6 +210,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Eliminar Agenda Manager' })
   @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @UseGuards(RolesGuard)
   @Delete('agenda-managers/:id')
   async deleteAgendaManager(@Req() req: any, @Param('id') id: string) {
     await this.usersService.deleteAgendaManager(req.user.id, id);
@@ -190,6 +219,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Obtener profesionales gestionados (Para Agenda Manager)' })
   @Roles(UserRole.AGENDA_MANAGER)
+  @UseGuards(RolesGuard)
   @Get('me/managed-professionals')
   async getManagedProfessionals(@Req() req: any) {
     return this.usersService.getLinkedProfessionals(req.user.id);
@@ -197,6 +227,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Vincular profesional a Agenda Manager' })
   @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM) // Who can do this? The professional linking themselves? Or the owner? Assuming the professional wants to add themselves to a manager.
+  @UseGuards(RolesGuard)
   @Post('agenda-managers/:id/link')
   async linkProfessional(@Req() req: any, @Param('id') managerId: string) {
     // A professional links THEMSELVES to an existing manager (e.g. by invitation code in future, but for now direct link)
@@ -207,6 +238,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Crear Grupo de Profesionales' })
   @Roles(UserRole.AGENDA_MANAGER)
+  @UseGuards(RolesGuard)
   @Post('professional-groups')
   async createProfessionalGroup(@Req() req: any, @Body() body: { name: string, memberIds: string[] }) {
     return this.usersService.createProfessionalGroup(req.user.id, body.name, body.memberIds);
@@ -214,6 +246,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Eliminar Grupo de Profesionales' })
   @Roles(UserRole.AGENDA_MANAGER)
+  @UseGuards(RolesGuard)
   @Delete('professional-groups/:id')
   async deleteProfessionalGroup(@Req() req: any, @Param('id') id: string) {
     return this.usersService.deleteProfessionalGroup(req.user.id, id);
@@ -223,6 +256,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Subir logo de empresa' })
   @ApiResponse({ status: 201, description: 'Logo subido existosamente' })
   @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @UseGuards(RolesGuard)
   @Post('upload-logo')
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({

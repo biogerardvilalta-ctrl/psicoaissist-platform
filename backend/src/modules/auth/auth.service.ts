@@ -157,7 +157,21 @@ export class AuthService {
       });
 
       if (existingUser) {
-        throw new ConflictException('El email ya está registrado');
+        // Permitir re-registro si el usuario está marcado como eliminado o inactivo (soft delete previo)
+        if (existingUser.status === UserStatus.INACTIVE || existingUser.status === UserStatus.DELETED) {
+          const newEmail = `archived_${Date.now()}_${existingUser.email}`;
+          this.logger.log(`Archiving old inactive/deleted user to allow re-registration: ${existingUser.email} -> ${newEmail}`);
+          await this.prisma.user.update({
+            where: { id: existingUser.id },
+            data: {
+              email: newEmail,
+              status: UserStatus.DELETED
+            }
+          });
+          // Continue to create new user...
+        } else {
+          throw new ConflictException('El email ya está registrado');
+        }
       }
 
       // Referral Logic
@@ -199,15 +213,8 @@ export class AuthService {
           referralCode,
           referredBy: referredByUserId,
           // Developer Mode / Testing: Auto-assign Pro Plan to enable Simulator access
-          subscription: {
-            create: {
-              stripeSubscriptionId: `sub_test_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-              status: 'active',
-              planType: 'demo',
-              currentPeriodStart: new Date(),
-              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 14)), // 14 days trial
-            }
-          }
+          // Subscription will be created via Checkout flow or default empty
+
         },
         include: { subscription: true },
       });
