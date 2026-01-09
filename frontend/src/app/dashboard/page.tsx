@@ -14,7 +14,8 @@ import {
   CalendarDays,
   PlusCircle,
   Trash2,
-  ArrowRight
+  ArrowRight,
+  Shield
 } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { useRouter } from 'next/navigation';
@@ -109,8 +110,8 @@ export default function DashboardPage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
-  // Agenda Manager State
-  const { isAgendaManager } = useRole();
+  // Agenda Manager & Admin State
+  const { isAgendaManager, isAdmin } = useRole();
   const [managedProfessionals, setManagedProfessionals] = useState<User[]>([]);
   const [selectedProfessionalId, setSelectedProfessionalId] = useState<string>('all');
 
@@ -301,7 +302,36 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {isAgendaManager() ? (
+        {isAdmin() ? (
+          <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
+            <div className="p-6 bg-purple-50 rounded-full ring-1 ring-purple-100">
+              <Shield className="w-16 h-16 text-purple-600" />
+            </div>
+            <div className="space-y-4">
+              <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Panel de Administración</h2>
+              <p className="text-gray-500 max-w-lg mx-auto text-lg">
+                Bienvenido al área de gestión. Tienes acceso completo para administrar usuarios, facturación y configuraciones del sistema.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 min-w-[300px] justify-center pt-4">
+              <Button
+                onClick={() => router.push('/admin')}
+                className="gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all h-12 px-8 text-base"
+              >
+                <Shield className="w-5 h-5" />
+                Ir al Panel Admin
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => router.push('/dashboard/profile')}
+                className="gap-2 h-12 px-8 text-base border-gray-200 hover:bg-gray-50 hover:text-gray-900"
+              >
+                <UserIcon className="w-5 h-5" />
+                Mi Perfil
+              </Button>
+            </div>
+          </div>
+        ) : isAgendaManager() ? (
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-slate-800">Profesionales Asignados</h2>
             {managedProfessionals.filter(p => p.role !== 'PROFESSIONAL_GROUP').length === 0 ? (

@@ -327,6 +327,13 @@ export default function AdminUserDetailPage() {
                     </div>
                 </div>
             </div>
+            {user && (
+                <ChangePasswordModal
+                    userId={user.id}
+                    isOpen={isPasswordModalOpen}
+                    onClose={() => setIsPasswordModalOpen(false)}
+                />
+            )}
         </div>
     );
 }

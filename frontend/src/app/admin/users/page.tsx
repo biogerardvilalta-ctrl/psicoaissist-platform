@@ -41,8 +41,18 @@ const getLimit = (user: any) => {
   return baseLimit + extra;
 };
 
-// Simple Modal Component for User Creation
-function CreateUserModal({ isOpen, onClose, onSuccess }: { isOpen: boolean; onClose: () => void; onSuccess: () => void }) {
+// Unified Modal for Create and Edit
+function UserModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  userToEdit = null
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  userToEdit?: any | null;
+}) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -55,6 +65,31 @@ function CreateUserModal({ isOpen, onClose, onSuccess }: { isOpen: boolean; onCl
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Initialize form when userToEdit changes
+  useEffect(() => {
+    if (userToEdit) {
+      setFormData({
+        email: userToEdit.email || '',
+        password: '', // Password empty on edit unless changing
+        firstName: userToEdit.firstName || '',
+        lastName: userToEdit.lastName || '',
+        role: userToEdit.role || 'PSYCHOLOGIST',
+        country: userToEdit.country || 'España',
+        professionalNumber: userToEdit.professionalNumber || ''
+      });
+    } else {
+      setFormData({
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        role: 'PSYCHOLOGIST',
+        country: 'España',
+        professionalNumber: ''
+      });
+    }
+  }, [userToEdit, isOpen]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,11 +97,23 @@ function CreateUserModal({ isOpen, onClose, onSuccess }: { isOpen: boolean; onCl
     setLoading(true);
     setError(null);
     try {
-      await AdminAPI.createUser(formData);
+      if (userToEdit) {
+        // Update existing user
+        const updateData: any = { ...formData };
+        if (!updateData.password) delete updateData.password; // Don't send empty password
+
+        await AdminAPI.updateUser(userToEdit.id, updateData);
+        if (updateData.password) {
+          await AdminAPI.changeUserPassword(userToEdit.id, updateData.password);
+        }
+      } else {
+        // Create new user
+        await AdminAPI.createUser(formData);
+      }
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al crear usuario');
+      setError(err instanceof Error ? err.message : `Error al ${userToEdit ? 'actualizar' : 'crear'} usuario`);
     } finally {
       setLoading(false);
     }
@@ -75,7 +122,7 @@ function CreateUserModal({ isOpen, onClose, onSuccess }: { isOpen: boolean; onCl
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">Crear Nuevo Usuario</h2>
+        <h2 className="text-xl font-bold mb-4">{userToEdit ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
         {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -96,9 +143,17 @@ function CreateUserModal({ isOpen, onClose, onSuccess }: { isOpen: boolean; onCl
               value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-            <input type="password" required minLength={6} className="mt-1 block w-full border rounded-md p-2"
-              value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
+            <label className="block text-sm font-medium text-gray-700">
+              {userToEdit ? 'Nueva Contraseña (opcional)' : 'Contraseña'}
+            </label>
+            <input
+              type="password"
+              required={!userToEdit}
+              minLength={6}
+              className="mt-1 block w-full border rounded-md p-2"
+              placeholder={userToEdit ? 'Dejar en blanco para mantener actual' : ''}
+              value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Rol</label>
@@ -112,7 +167,7 @@ function CreateUserModal({ isOpen, onClose, onSuccess }: { isOpen: boolean; onCl
           <div className="flex justify-end gap-3 mt-6">
             <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
             <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
-              {loading ? 'Creando...' : 'Crear Usuario'}
+              {loading ? 'Guardando...' : (userToEdit ? 'Guardar Cambios' : 'Crear Usuario')}
             </button>
           </div>
         </form>
@@ -130,7 +185,8 @@ export default function UsersPage() {
   const [roleFilter, setRoleFilter] = useState<UserFilters['role']>('ALL');
   const [planFilter, setPlanFilter] = useState<string>(searchParams.get('plan') || 'ALL');
   const [packFilter, setPackFilter] = useState<string>('ALL');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<any | null>(null);
 
 
   // Memoizar los filtros para evitar recreación en cada render
@@ -164,6 +220,42 @@ export default function UsersPage() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleEditUser = (user: any) => {
+    setEditingUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleCreateUser = () => {
+    setEditingUser(null);
+    setIsModalOpen(true);
+  };
+
+  const handleToggleStatus = async (user: any) => {
+    const newStatus = user.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+    const actionName = user.status === 'ACTIVE' ? 'suspender' : 'activar';
+
+    if (confirm(`¿Estás seguro de que deseas ${actionName} al usuario ${user.firstName} ${user.lastName}?`)) {
+      try {
+        await AdminAPI.updateUser(user.id, { status: newStatus });
+        refetch();
+      } catch (err) {
+        alert('Error al cambiar el estado del usuario');
+      }
+    }
+  };
+
+  const handleDeleteUser = async (user: any) => {
+    if (confirm(`¿Estás SEGURO de eliminar al usuario ${user.firstName} ${user.lastName}? Esta acción no se puede deshacer.`)) {
+      try {
+        await AdminAPI.deleteUser(user.id);
+        refetch();
+      } catch (err) {
+        alert('Error al eliminar usuario');
+      }
+    }
+  };
+
 
   if (!isAdmin()) {
     return (
@@ -276,7 +368,7 @@ export default function UsersPage() {
               <p className="text-gray-600 mt-2">Administra los usuarios registrados en la plataforma</p>
             </div>
             <button
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={handleCreateUser}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
               <Mail className="w-4 h-4 mr-2" />
@@ -285,12 +377,13 @@ export default function UsersPage() {
           </div>
         </div>
 
-        <CreateUserModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
+        <UserModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
           onSuccess={() => {
             refetch();
           }}
+          userToEdit={editingUser}
         />
 
         {/* Filters */}
@@ -569,35 +662,25 @@ export default function UsersPage() {
                               Ver detalles y movimientos
                             </a>
                             <button
-                              onClick={() => alert(`Editar usuario: ${user.firstName} ${user.lastName}`)}
+                              onClick={() => handleEditUser(user)}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                             >
                               Editar usuario
                             </button>
                             <button
-                              onClick={() => {
-                                if (user.status === 'ACTIVE') {
-                                  alert(`Usuario ${user.firstName} ${user.lastName} suspendido`);
-                                } else {
-                                  alert(`Usuario ${user.firstName} ${user.lastName} activado`);
-                                }
-                              }}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                              onClick={() => handleToggleStatus(user)}
+                              className={`block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left ${user.status === 'ACTIVE' ? 'text-red-700' : 'text-green-700'}`}
                             >
                               {user.status === 'ACTIVE' ? 'Suspender' : 'Activar'} usuario
                             </button>
-                            <button
-                              onClick={() => alert(`Enviar email a: ${user.email}`)}
+                            <a
+                              href={`mailto:${user.email}`}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                             >
                               Enviar email
-                            </button>
+                            </a>
                             <button
-                              onClick={() => {
-                                if (confirm(`¿Estás seguro de eliminar al usuario ${user.firstName} ${user.lastName}?`)) {
-                                  alert(`Usuario ${user.firstName} ${user.lastName} eliminado`);
-                                }
-                              }}
+                              onClick={() => handleDeleteUser(user)}
                               className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
                             >
                               Eliminar usuario
