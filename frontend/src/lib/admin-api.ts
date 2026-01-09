@@ -177,6 +177,18 @@ export class AdminAPI {
     }
   }
 
+  // Evolution Stats
+  static async getEvolutionStats(period: '1w' | '1m' | '3m' | '6m' | '1y'): Promise<any[]> {
+    try {
+      console.log(`📈 Fetching evolution stats for period: ${period}`);
+      const response = await httpClient.get(`${this.BASE_URL}/stats/evolution?period=${period}`);
+      return response as any[];
+    } catch (error) {
+      console.error('❌ Error fetching evolution stats:', error);
+      throw error;
+    }
+  }
+
   // User Management
   static async getUsers(filters?: UserFilters): Promise<PaginatedUsers> {
     console.log('👥 Fetching users with filters:', filters);

@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { Users, CreditCard, Shield, AlertCircle, RefreshCw, LogOut, DollarSign, TrendingUp, MessageSquare, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
-import { AdminStatsCard, RecentUsers, AdminActivityFeed, AdminCharts } from '@/components/admin';
+import { AdminStatsCard, RecentUsers, AdminActivityFeed, AdminCharts, EvolutionCharts } from '@/components/admin';
 
 export default function AdminDashboard() {
   const { stats, loading: statsLoading, error: statsError, refetch: refetchStats } = useAdminStats();
@@ -136,11 +136,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* Charts Section */}
-        <div className="mb-8">
+        <div className="mb-8 space-y-8">
           <AdminCharts
             revenueData={stats?.revenueData}
             loading={statsLoading}
           />
+
+          <EvolutionCharts />
         </div>
 
         {/* Main Dashboard Grid */}

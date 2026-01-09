@@ -1,11 +1,13 @@
 'use client';
 
-import { BarChart3, TrendingUp, DollarSign, Calendar } from 'lucide-react';
+import { BarChart3, TrendingUp } from 'lucide-react';
 
 interface RevenueData {
-  month: string;
-  revenue: number;
-  subscriptions: number;
+  label: string;
+  totalRevenue: number;
+  newRevenue: number;
+  totalSubscriptions: number;
+  newSubscriptions: number;
 }
 
 interface AdminChartsProps {
@@ -13,23 +15,35 @@ interface AdminChartsProps {
   loading?: boolean;
 }
 
-// Demo data
+// Demo data fallback
 const defaultRevenueData: RevenueData[] = [
-  { month: 'Ene', revenue: 2400, subscriptions: 45 },
-  { month: 'Feb', revenue: 3200, subscriptions: 52 },
-  { month: 'Mar', revenue: 4100, subscriptions: 61 },
-  { month: 'Abr', revenue: 3800, subscriptions: 58 },
-  { month: 'May', revenue: 5200, subscriptions: 75 },
-  { month: 'Jun', revenue: 6100, subscriptions: 82 }
+  { label: 'Ene', totalRevenue: 2400, newRevenue: 200, totalSubscriptions: 45, newSubscriptions: 5 },
+  { label: 'Feb', totalRevenue: 3200, newRevenue: 300, totalSubscriptions: 52, newSubscriptions: 8 },
+  { label: 'Mar', totalRevenue: 4100, newRevenue: 400, totalSubscriptions: 61, newSubscriptions: 12 },
+  { label: 'Abr', totalRevenue: 3800, newRevenue: 150, totalSubscriptions: 58, newSubscriptions: 6 },
+  { label: 'May', totalRevenue: 5200, newRevenue: 600, totalSubscriptions: 75, newSubscriptions: 18 },
+  { label: 'Jun', totalRevenue: 6100, newRevenue: 500, totalSubscriptions: 82, newSubscriptions: 15 }
 ];
 
-export default function AdminCharts({ revenueData = defaultRevenueData, loading = false }: AdminChartsProps) {
-  const maxRevenue = Math.max(...revenueData.map(d => d.revenue));
-  const maxSubscriptions = Math.max(...revenueData.map(d => d.subscriptions));
-  
-  const totalRevenue = revenueData.reduce((sum, d) => sum + d.revenue, 0);
-  const totalSubscriptions = revenueData.reduce((sum, d) => sum + d.subscriptions, 0);
-  const avgRevenue = totalRevenue / revenueData.length;
+export default function AdminCharts({ revenueData, loading = false }: AdminChartsProps) {
+  // Use passed data or default, but limit to last 6 for overview
+  const data = (revenueData && revenueData.length > 0 ? revenueData : defaultRevenueData).slice(-6);
+
+  // Map to display values (Total Revenue = MRR, Subscriptions = New Subs)
+  const displayData = data.map(d => ({
+    label: d.label,
+    revenue: d.totalRevenue || 0,
+    subscriptions: d.newSubscriptions || 0
+  }));
+
+  const maxRevenue = Math.max(...displayData.map(d => d.revenue));
+  const maxSubscriptions = Math.max(...displayData.map(d => d.subscriptions));
+
+  const totalRevenue = displayData.reduce((sum, d) => sum + d.revenue, 0); // Note: summing MRR over months is confusing, but this was original logic. 
+  // Wait, original logic: data.reduce((sum, d) => sum + d.revenue, 0); 
+  // If revenue was MRR, then sum is just sum of MRR snapshots? Sure, keeps original behavior.
+  const totalSubscriptions = displayData.reduce((sum, d) => sum + d.subscriptions, 0);
+  const avgRevenue = totalRevenue / displayData.length;
 
   if (loading) {
     return (
@@ -76,26 +90,26 @@ export default function AdminCharts({ revenueData = defaultRevenueData, loading 
             <p className="text-xs text-gray-500">Promedio</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900">€{revenueData[revenueData.length - 1]?.revenue || 0}</p>
+            <p className="text-2xl font-bold text-gray-900">€{displayData[displayData.length - 1]?.revenue || 0}</p>
             <p className="text-xs text-gray-500">Este mes</p>
           </div>
         </div>
 
         {/* Chart */}
         <div className="space-y-2">
-          {revenueData.map((data, index) => (
+          {displayData.map((item, index) => (
             <div key={index} className="flex items-center space-x-3">
-              <div className="w-8 text-xs text-gray-600 font-medium">
-                {data.month}
+              <div className="w-8 text-xs text-gray-600 font-medium whitespace-nowrap">
+                {item.label}
               </div>
               <div className="flex-1">
                 <div className="bg-gray-200 rounded-full h-4">
                   <div
                     className="bg-gradient-to-r from-blue-500 to-blue-600 h-4 rounded-full transition-all duration-700 flex items-center justify-end pr-2"
-                    style={{ width: `${(data.revenue / maxRevenue) * 100}%` }}
+                    style={{ width: `${maxRevenue > 0 ? (item.revenue / maxRevenue) * 100 : 0}%` }}
                   >
                     <span className="text-xs text-white font-medium">
-                      €{(data.revenue / 1000).toFixed(1)}k
+                      €{(item.revenue / 1000).toFixed(1)}k
                     </span>
                   </div>
                 </div>
@@ -125,30 +139,30 @@ export default function AdminCharts({ revenueData = defaultRevenueData, loading 
             <p className="text-xs text-gray-500">Total</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900">{Math.round(totalSubscriptions / revenueData.length)}</p>
+            <p className="text-2xl font-bold text-gray-900">{Math.round(totalSubscriptions / displayData.length)}</p>
             <p className="text-xs text-gray-500">Promedio</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900">{revenueData[revenueData.length - 1]?.subscriptions || 0}</p>
+            <p className="text-2xl font-bold text-gray-900">{displayData[displayData.length - 1]?.subscriptions || 0}</p>
             <p className="text-xs text-gray-500">Este mes</p>
           </div>
         </div>
 
         {/* Chart */}
         <div className="space-y-2">
-          {revenueData.map((data, index) => (
+          {displayData.map((item, index) => (
             <div key={index} className="flex items-center space-x-3">
-              <div className="w-8 text-xs text-gray-600 font-medium">
-                {data.month}
+              <div className="w-8 text-xs text-gray-600 font-medium whitespace-nowrap">
+                {item.label}
               </div>
               <div className="flex-1">
                 <div className="bg-gray-200 rounded-full h-4">
                   <div
                     className="bg-gradient-to-r from-purple-500 to-purple-600 h-4 rounded-full transition-all duration-700 flex items-center justify-end pr-2"
-                    style={{ width: `${(data.subscriptions / maxSubscriptions) * 100}%` }}
+                    style={{ width: `${maxSubscriptions > 0 ? (item.subscriptions / maxSubscriptions) * 100 : 0}%` }}
                   >
                     <span className="text-xs text-white font-medium">
-                      {data.subscriptions}
+                      {item.subscriptions}
                     </span>
                   </div>
                 </div>

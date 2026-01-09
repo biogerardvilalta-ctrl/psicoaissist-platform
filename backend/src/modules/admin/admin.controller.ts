@@ -78,7 +78,7 @@ export class AdminController {
     ]);
 
     const subscriptionStats = await this.getSubscriptionStats();
-    const revenueData = await this.getRevenueChartData();
+    const revenueData = await this.getRevenueChartData('6m');
     const recentActivity = await this.getSystemActivity();
 
     return {
@@ -97,16 +97,50 @@ export class AdminController {
       recentActivity
     };
 
-    return result;
+
   }
 
-  private async getRevenueChartData() {
-    const months = 6;
+  @Get('stats/evolution')
+  async getEvolutionStats(@Query('period') period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
+    return this.getRevenueChartData(period);
+  }
+
+  private async getRevenueChartData(period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
     const now = new Date();
     const data = [];
 
-    // Pre-fetch all potentially relevant subscriptions (active or recently cancelled)
-    // optimizing by not selecting everything, just what we need
+    // Determine interval and iterations based on period
+    let intervalType: 'day' | 'week' | 'month' = 'day';
+    let iterations = 7;
+
+    switch (period) {
+      case '1w': // Last 7 days
+        intervalType = 'day';
+        iterations = 7;
+        break;
+      case '1m': // Last 30 days
+        intervalType = 'day';
+        iterations = 30;
+        break;
+      case '3m': // Last 3 months (approx 12 weeks)
+        intervalType = 'week';
+        iterations = 12;
+        break;
+      case '6m': // Last 6 months
+        intervalType = 'month';
+        iterations = 6;
+        break;
+      case '1y': // Last 12 months
+        intervalType = 'month';
+        iterations = 12;
+        break;
+      default:
+        intervalType = 'month';
+        iterations = 6;
+    }
+
+    // Pre-fetch all potentially relevant subscriptions
+    // Optimizing selection
     const allSubscriptions = await this.prisma.subscription.findMany({
       where: {
         createdAt: {
@@ -114,10 +148,11 @@ export class AdminController {
         }
       },
       select: {
+        id: true,
         planType: true,
         createdAt: true,
         canceledAt: true,
-        status: true // useful for double checking
+        status: true
       }
     });
 
@@ -125,41 +160,104 @@ export class AdminController {
       basic: 29,
       pro: 59,
       premium: 99,
-      minutes_pack: 15, // assuming packs might be stored here or ignored. adapting to subscription model.
-      agenda_manager_pack: 15
+      agenda_manager: 15,
+      // yearly plans approx / 12 for monthly view, but strictly for 'revenue' chart often we want realized revenue or MRR. 
+      // simple MRR:
+      basic_annual: 290,
+      pro_annual: 590,
+      premium_annual: 990,
     };
 
-    for (let i = months - 1; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthName = date.toLocaleString('es-ES', { month: 'short' });
-      // Capitalize first letter
-      const monthLabel = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    // Helper to get price (monthly equivalent for MRR logic)
+    const getPrice = (planType: string) => {
+      const lower = planType?.toLowerCase() || '';
+      if (lower.includes('annual')) {
+        // Simple MRR approximation: annual price / 12
+        const base = lower.replace('_annual', '');
+        return (planPrices[lower as keyof typeof planPrices] || (planPrices[base as keyof typeof planPrices] * 10)) / 12;
+      }
+      return planPrices[lower as keyof typeof planPrices] || 0;
+    };
 
-      const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-      const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    for (let i = iterations - 1; i >= 0; i--) {
+      let startDate: Date;
+      let endDate: Date;
+      let label: string;
 
-      // Revenue Calculation (Approximated MRR for that month)
-      // A subscription contributes to revenue if it existed before end of month AND (was not cancelled OR cancelled after start of month)
-      const activeSubsInMonth = allSubscriptions.filter(sub => {
-        const createdBeforeMonthEnd = sub.createdAt <= endOfMonth;
-        const notCancelledBeforeMonthStart = !sub.canceledAt || sub.canceledAt >= startOfMonth;
-        return createdBeforeMonthEnd && notCancelledBeforeMonthStart;
+      if (intervalType === 'day') {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        d.setHours(0, 0, 0, 0);
+        startDate = new Date(d);
+
+        endDate = new Date(startDate);
+        endDate.setHours(23, 59, 59, 999);
+
+        label = startDate.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+      } else if (intervalType === 'week') {
+        // Weeks back
+        // To align with "3 months back" roughly:
+        const d = new Date(now);
+        // Move back i weeks
+        d.setDate(d.getDate() - (i * 7));
+        // Normalize to start of that week (e.g. Monday) or just use the calculated day as anchor
+        // Let's use simpler logic: "Week ending X"
+        endDate = new Date(d);
+        endDate.setHours(23, 59, 59, 999);
+
+        startDate = new Date(endDate);
+        startDate.setDate(startDate.getDate() - 6);
+        startDate.setHours(0, 0, 0, 0);
+
+        label = `${startDate.getDate()}/${startDate.getMonth() + 1}`;
+      } else {
+        // Months
+        const d = new Date(now);
+        d.setMonth(d.getMonth() - i);
+        d.setDate(1); // First day of that month
+        d.setHours(0, 0, 0, 0);
+        startDate = new Date(d);
+
+        endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + 1);
+        endDate.setDate(0); // Last day of that month
+        endDate.setHours(23, 59, 59, 999);
+
+        // Label: "Jan", "Feb" etc or "Ene", "Feb"
+        const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        label = monthNames[startDate.getMonth()];
+        // If spanning years (e.g. 5y), add year to label. For now 1y max so month is fine.
+        if (period === '1y' && i > 0 && startDate.getMonth() === 0) {
+          label += ` '${startDate.getFullYear().toString().substring(2)}`;
+        }
+      }
+
+      // CUMULATIVE: Total Active Revenue & Subs at the END of the period
+      const activeSubsAtEnd = allSubscriptions.filter(sub => {
+        // Created before or at end date
+        const created = sub.createdAt <= endDate;
+        // Still active at end date (not cancelled, or cancelled AFTER end date)
+        const active = !sub.canceledAt || sub.canceledAt > endDate;
+        return created && active;
       });
 
-      const revenue = activeSubsInMonth.reduce((sum, sub) => {
-        const price = planPrices[sub.planType?.toLowerCase()] || 0;
-        return sum + price;
-      }, 0);
+      const totalRevenue = activeSubsAtEnd.reduce((sum, sub) => sum + getPrice(sub.planType), 0);
+      const totalSubscriptions = activeSubsAtEnd.length;
 
-      // New Subscriptions (Created in this specific month)
-      const newSubsCount = allSubscriptions.filter(sub =>
-        sub.createdAt >= startOfMonth && sub.createdAt <= endOfMonth
-      ).length;
+      // INCREMENTAL: New Revenue & Subs created DURING the period
+      const newSubsInPeriod = allSubscriptions.filter(sub =>
+        sub.createdAt >= startDate && sub.createdAt <= endDate
+      );
+
+      const newRevenue = newSubsInPeriod.reduce((sum, sub) => sum + getPrice(sub.planType), 0);
+      const newSubscriptions = newSubsInPeriod.length;
 
       data.push({
-        month: monthLabel,
-        revenue: revenue,
-        subscriptions: newSubsCount
+        label: label,
+        totalRevenue: Math.round(totalRevenue),
+        newRevenue: Math.round(newRevenue),
+        totalSubscriptions: totalSubscriptions,
+        newSubscriptions: newSubscriptions
       });
     }
 
