@@ -17,7 +17,7 @@ sh get-docker.sh
    ```bash
    git clone <URL_DE_TU_REPO_GITLAB> psicoaissist-platform
    cd psicoaissist-platform
-   git checkout develop  # Asegúrate de estar en la rama correcta
+   git checkout main  # Asegúrate de estar en la rama correcta
    ```
 
 2. **Configurar el entorno**:
