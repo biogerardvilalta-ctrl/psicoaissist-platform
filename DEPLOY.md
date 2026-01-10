@@ -15,8 +15,8 @@ sh get-docker.sh
 
 1. **Clonar el repositorio**:
    ```bash
-   git clone <URL_DE_TU_REPO_GITLAB> psycoai-platform
-   cd psycoai-platform
+   git clone <URL_DE_TU_REPO_GITLAB> psicoaissist-platform
+   cd psicoaissist-platform
    git checkout develop  # Asegúrate de estar en la rama correcta
    ```
 
@@ -45,7 +45,7 @@ Cuando hayas subido cambios a GitLab desde tu ordenador:
 1. Conéctate al servidor vía SSH.
 2. Entra en la carpeta:
    ```bash
-   cd psycoai-platform
+   cd psicoaissist-platform
    ```
 3. Ejecuta el script:
    ```bash

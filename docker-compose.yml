@@ -2,7 +2,7 @@ services:
   # Base de datos PostgreSQL
   postgres:
     image: postgres:15-alpine
-    container_name: psycoai_beta_db
+    container_name: psicoaissist_beta_db
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -19,7 +19,7 @@ services:
   # Cache Redis
   redis:
     image: redis:7-alpine
-    container_name: psycoai_beta_redis
+    container_name: psicoaissist_beta_redis
     restart: unless-stopped
     volumes:
       - redis_beta_data:/data
@@ -34,7 +34,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: psycoai_beta_backend
+    container_name: psicoaissist_beta_backend
     restart: unless-stopped
     depends_on:
       postgres:
@@ -54,7 +54,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: psycoai_beta_frontend
+    container_name: psicoaissist_beta_frontend
     restart: unless-stopped
     depends_on:
       - backend

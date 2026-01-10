@@ -282,7 +282,7 @@ export default function PricingSection() {
                     </div>
                     <div className="mt-8">
                       <a
-                        href="mailto:ventas@psycoai.com"
+                        href="mailto:ventas@psicoaissist.com"
                         className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors bg-slate-900 hover:bg-slate-800 text-white`}
                       >
                         Contactar Ventas
