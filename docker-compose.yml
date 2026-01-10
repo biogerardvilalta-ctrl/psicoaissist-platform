@@ -1,0 +1,72 @@
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: psycoai_beta_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_beta_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    container_name: psycoai_beta_redis
+    restart: unless-stopped
+    volumes:
+      - redis_beta_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Backend (NestJS)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: psycoai_beta_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "3001:3000" # API accessible at port 3001 on Host
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: psycoai_beta_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    env_file: .env
+    environment:
+      # Browser -> API (External URL)
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      # Server Side Rendering -> API (Internal Docker URL)
+      INTERNAL_API_URL: http://backend:3000/api/v1
+    ports:
+      - "3000:3000" # Frontend accessible at port 3000 on Host
+
+volumes:
+  postgres_beta_data:
+  redis_beta_data:
