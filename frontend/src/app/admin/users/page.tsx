@@ -324,12 +324,22 @@ export default function UsersPage() {
     const styles = {
       ACTIVE: 'bg-green-100 text-green-800',
       INACTIVE: 'bg-gray-100 text-gray-800',
-      SUSPENDED: 'bg-red-100 text-red-800'
+      SUSPENDED: 'bg-orange-100 text-orange-800',
+      DELETED: 'bg-red-100 text-red-800',
+      PENDING_REVIEW: 'bg-yellow-100 text-yellow-800'
+    };
+
+    const labels = {
+      ACTIVE: 'Activo',
+      INACTIVE: 'Inactivo',
+      SUSPENDED: 'Suspendido',
+      DELETED: 'Eliminado',
+      PENDING_REVIEW: 'Pendiente'
     };
 
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}>
-        {status === 'ACTIVE' ? 'Activo' : status === 'INACTIVE' ? 'Inactivo' : 'Suspendido'}
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-800'}`}>
+        {labels[status as keyof typeof labels] || status}
       </span>
     );
   };
@@ -348,7 +358,6 @@ export default function UsersPage() {
       PRO: 'bg-indigo-100 text-indigo-800',
       PREMIUM: 'bg-purple-100 text-purple-800',
       AGENDA_MANAGER: 'bg-pink-100 text-pink-800', // Added specific color
-      BUSINESS: 'bg-orange-100 text-orange-800'
     };
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[planType.toUpperCase()] || colors.FREE}`}>
@@ -386,6 +395,32 @@ export default function UsersPage() {
           userToEdit={editingUser}
         />
 
+        {/* Status Tabs */}
+        <div className="border-b border-gray-200 mb-6">
+          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            {[
+              { id: 'ALL', name: 'Todos' },
+              { id: 'ACTIVE', name: 'Activos' },
+              { id: 'SUSPENDED', name: 'Suspendidos' },
+              { id: 'DELETED', name: 'Eliminados' },
+              { id: 'INACTIVE', name: 'Inactivos' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setStatusFilter(tab.id as UserFilters['status'])}
+                className={`
+                  whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                  ${statusFilter === tab.id
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                `}
+              >
+                {tab.name}
+              </button>
+            ))}
+          </nav>
+        </div>
+
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border mb-6">
           <div className="p-6">
@@ -404,19 +439,9 @@ export default function UsersPage() {
                 />
               </div>
 
-              {/* Status Filter */}
+              {/* Status Filter - Removed from here as it is now in Tabs */}
               <div className="flex items-center space-x-3">
                 <Filter className="h-4 w-4 text-gray-400" />
-                <select
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  value={statusFilter}
-                  onChange={(e) => handleStatusFilter(e.target.value as UserFilters['status'])}
-                >
-                  <option value="ALL">Todos los estados</option>
-                  <option value="ACTIVE">Activos</option>
-                  <option value="INACTIVE">Inactivos</option>
-                  <option value="SUSPENDED">Suspendidos</option>
-                </select>
 
                 {/* Role Filter */}
                 <select
@@ -495,8 +520,8 @@ export default function UsersPage() {
                   </span>
                 )}
                 {statusFilter !== 'ALL' && (
-                  <span className="inline-flex items-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Estado: {statusFilter === 'ACTIVE' ? 'Activos' : statusFilter === 'INACTIVE' ? 'Inactivos' : 'Suspendidos'}
+                  <span className="inline-flex items-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    Estado: {statusFilter === 'ACTIVE' ? 'Activos' : statusFilter === 'INACTIVE' ? 'Inactivos' : statusFilter === 'SUSPENDED' ? 'Suspendidos' : statusFilter === 'DELETED' ? 'Eliminados' : statusFilter}
                   </span>
                 )}
                 {roleFilter !== 'ALL' && (
@@ -709,12 +734,7 @@ export default function UsersPage() {
                   {users.filter(u =>
                     u.status === 'ACTIVE' &&
                     u.role !== 'ADMIN' &&
-                    u.role !== 'SUPER_ADMIN' &&
-                    (
-                      u.subscription?.status === 'active' ||
-                      u.agendaManagerEnabled === true ||
-                      u.role === 'AGENDA_MANAGER'
-                    )
+                    u.role !== 'SUPER_ADMIN'
                   ).length}
                 </p>
               </div>
@@ -729,7 +749,12 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Suscripciones Activas</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.subscription?.status === 'active').length}
+                  {users.filter(u =>
+                    u.status === 'ACTIVE' &&
+                    u.role !== 'AGENDA_MANAGER' &&
+                    u.role !== 'ADMIN' &&
+                    u.role !== 'SUPER_ADMIN'
+                  ).length}
                 </p>
               </div>
             </div>
@@ -757,7 +782,9 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Inactivos</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.status !== 'ACTIVE').length}
+                  {users.filter(u =>
+                    u.status === 'SUSPENDED' || u.status === 'DELETED'
+                  ).length}
                 </p>
               </div>
             </div>

@@ -82,7 +82,7 @@ export default function AdminCharts({ revenueData, loading = false }: AdminChart
         {/* Summary stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900">€{(totalRevenue / 1000).toFixed(1)}k</p>
+            <p className="text-2xl font-bold text-gray-900">€{totalRevenue}</p>
             <p className="text-xs text-gray-500">Total</p>
           </div>
           <div className="text-center">
@@ -109,7 +109,7 @@ export default function AdminCharts({ revenueData, loading = false }: AdminChart
                     style={{ width: `${maxRevenue > 0 ? (item.revenue / maxRevenue) * 100 : 0}%` }}
                   >
                     <span className="text-xs text-white font-medium">
-                      €{(item.revenue / 1000).toFixed(1)}k
+                      €{item.revenue}
                     </span>
                   </div>
                 </div>

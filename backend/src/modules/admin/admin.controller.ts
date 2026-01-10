@@ -49,15 +49,15 @@ export class AdminController {
       this.prisma.user.count({
         where: {
           status: UserStatus.ACTIVE,
-          role: { notIn: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
-          OR: [
-            { subscription: { status: 'active' } },
-            { agendaManagerEnabled: true },
-            { role: UserRole.AGENDA_MANAGER }
-          ]
+          role: { notIn: [UserRole.ADMIN, UserRole.SUPER_ADMIN] }
         }
       }),
-      this.prisma.subscription.count({ where: { status: 'active' } }),
+      this.prisma.user.count({
+        where: {
+          status: UserStatus.ACTIVE,
+          role: { notIn: [UserRole.AGENDA_MANAGER, UserRole.ADMIN, UserRole.SUPER_ADMIN] }
+        }
+      }),
       this.calculateTotalRevenue(),
       this.prisma.user.count({ where: { role: UserRole.AGENDA_MANAGER } }),
       this.prisma.user.aggregate({
@@ -305,7 +305,13 @@ export class AdminController {
         planType: true,
         createdAt: true,
         canceledAt: true,
-        status: true
+        status: true,
+        user: {
+          select: {
+            role: true,
+            status: true
+          }
+        }
       }
     });
 
@@ -391,26 +397,72 @@ export class AdminController {
         const created = sub.createdAt <= endDate;
         // Still active at end date (not cancelled, or cancelled AFTER end date)
         const active = !sub.canceledAt || sub.canceledAt > endDate;
-        return created && active;
+
+        // --- NEW LOGIC: User Filter ---
+        // Must be Active User and not a Restricted Role (Agenda Manager / Admin)
+        const validUser =
+          sub.user.status === 'ACTIVE' &&
+          sub.user.role !== 'AGENDA_MANAGER' &&
+          sub.user.role !== 'ADMIN' &&
+          sub.user.role !== 'SUPER_ADMIN';
+
+        return created && active && validUser;
+      });
+
+      // CUMULATIVE: Total Cancelled/Inactive at the END of the period
+      // Subscriptions that were created <= endDate AND have a canceledAt <= endDate
+      // Should we also count users who became Inactive/Suspended but sub is technically active?
+      // For simplicity/consistency with "Active", we'll consider ANY sub that isn't in "Active" group as Inactive?
+      // OR specifically "Cancelled Subscriptions".
+      // User said: "Inactive: suspended+deleted".
+      // Let's stick to "Cancelled Subscriptions" + "Subs of Inactive Users".
+      // Ideally "Total" = Active + Inactive.
+      // So Inactive = All - Active.
+
+      const allSubsAtEnd = allSubscriptions.filter(sub => sub.createdAt <= endDate);
+      // Let's explicitly calculate "Inactive" as remainder or explicit set?
+      // User requested "sum of the two". If we have Active + Cancelled, sum is Total.
+      // Let's calculate Cancelled as explicit cancellations for visual clarity, 
+      // but maybe "Inactive" bucket is better.
+      // Let's stick to "Cancelled or Invalid User Status".
+
+      const inactiveSubsAtEnd = allSubsAtEnd.filter(sub => {
+        const isActiveGroup = activeSubsAtEnd.find(a => a.id === sub.id);
+        return !isActiveGroup;
       });
 
       const totalRevenue = activeSubsAtEnd.reduce((sum, sub) => sum + getPrice(sub.planType), 0);
       const totalSubscriptions = activeSubsAtEnd.length;
+      const totalCancelled = inactiveSubsAtEnd.length;
+      const totalAll = totalSubscriptions + totalCancelled;
 
       // INCREMENTAL: New Revenue & Subs created DURING the period
       const newSubsInPeriod = allSubscriptions.filter(sub =>
         sub.createdAt >= startDate && sub.createdAt <= endDate
       );
 
+      // For incremental "Cancelled" view, it's ambiguous. "New Cancellations"?
+      // Or "New Inactive Users"? 
+      // Let's stick to explicitly cancelled/ended subs in period
+      const newCancelledInPeriod = allSubscriptions.filter(sub =>
+        sub.canceledAt && sub.canceledAt >= startDate && sub.canceledAt <= endDate
+      );
+
       const newRevenue = newSubsInPeriod.reduce((sum, sub) => sum + getPrice(sub.planType), 0);
       const newSubscriptions = newSubsInPeriod.length;
+      const newCancelled = newCancelledInPeriod.length;
+      const newAll = newSubscriptions + newCancelled; // Logic debatable for incremental sum but valid visually
 
       data.push({
         label: label,
         totalRevenue: Math.round(totalRevenue),
         newRevenue: Math.round(newRevenue),
         totalSubscriptions: totalSubscriptions,
-        newSubscriptions: newSubscriptions
+        totalCancelled: totalCancelled,
+        totalAll: totalAll,
+        newSubscriptions: newSubscriptions,
+        newCancelled: newCancelled,
+        newAll: newAll
       });
     }
 

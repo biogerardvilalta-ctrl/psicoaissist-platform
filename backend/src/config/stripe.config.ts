@@ -29,16 +29,7 @@ export default registerAs('stripe', () => ({
       name: 'Plan Pro',
       features: PLAN_FEATURES.pro
     },
-    business: {
-      priceId: process.env.STRIPE_BUSINESS_PRICE_ID || 'price_business',
-      priceIdAnnual: process.env.STRIPE_BUSINESS_ANNUAL_PRICE_ID || 'price_business_annual',
-      amount: 12900, // €129.00
-      amountAnnual: 129000, // €1290.00
-      currency: 'eur',
-      interval: 'month',
-      name: 'Plan Business',
-      features: PLAN_FEATURES.business
-    },
+
     premium: {
       priceId: process.env.STRIPE_PREMIUM_PRICE_ID || 'price_premium',
       priceIdAnnual: process.env.STRIPE_PREMIUM_ANNUAL_PRICE_ID || 'price_premium_annual',

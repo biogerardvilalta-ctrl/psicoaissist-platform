@@ -11,6 +11,10 @@ interface RevenueData {
     newRevenue: number;
     totalSubscriptions: number;
     newSubscriptions: number;
+    totalCancelled: number;
+    newCancelled: number;
+    totalAll: number;
+    newAll: number;
 }
 
 const PERIODS = [
@@ -117,8 +121,8 @@ export default function EvolutionCharts() {
                             key={p.id}
                             onClick={() => setPeriod(p.id)}
                             className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap ${period === p.id
-                                    ? 'bg-white text-blue-700 shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'bg-white text-blue-700 shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             {p.label}
@@ -134,7 +138,7 @@ export default function EvolutionCharts() {
                         <div>
                             <h3 className="text-lg font-medium text-gray-900">Ingresos {viewMode === 'cumulative' ? '(MRR Activo)' : '(Nuevos)'}</h3>
                             <div className="flex items-baseline space-x-2 mt-1">
-                                <span className="text-2xl font-bold text-gray-900">€{(displayRevenue / (viewMode === 'cumulative' ? 1000 : 1)).toFixed(viewMode === 'cumulative' ? 1 : 0)}{viewMode === 'cumulative' ? 'k' : ''}</span>
+                                <span className="text-2xl font-bold text-gray-900">€{displayRevenue}</span>
                                 <span className={`text-sm font-medium ${growth >= 0 ? 'text-green-600' : 'text-red-500'}`}>
                                     {growth > 0 ? '+' : ''}{growth.toFixed(1)}% vs anterior
                                 </span>
@@ -211,6 +215,14 @@ export default function EvolutionCharts() {
                                         <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
                                         <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                                     </linearGradient>
+                                    <linearGradient id="colorCancelled" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#6b7280" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#6b7280" stopOpacity={0} />
+                                    </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                                 <XAxis
@@ -228,11 +240,32 @@ export default function EvolutionCharts() {
                                 <Tooltip content={<CustomTooltip />} />
                                 <Area
                                     type="monotone"
+                                    dataKey={viewMode === 'cumulative' ? 'totalAll' : 'newAll'}
+                                    name="Total"
+                                    stroke="#6b7280"
+                                    fillOpacity={1}
+                                    fill="url(#colorTotal)"
+                                    strokeWidth={2}
+                                    strokeDasharray="4 4"
+                                    animationDuration={500}
+                                />
+                                <Area
+                                    type="monotone"
                                     dataKey={subsKey}
-                                    name="Suscripciones"
+                                    name="Activas"
                                     stroke="#8b5cf6"
                                     fillOpacity={1}
                                     fill="url(#colorSubs)"
+                                    strokeWidth={2}
+                                    animationDuration={500}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey={viewMode === 'cumulative' ? 'totalCancelled' : 'newCancelled'}
+                                    name="Inactivas/Eliminadas"
+                                    stroke="#ef4444"
+                                    fillOpacity={1}
+                                    fill="url(#colorCancelled)"
                                     strokeWidth={2}
                                     animationDuration={500}
                                 />

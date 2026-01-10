@@ -158,14 +158,7 @@ export default function LoginPage() {
                 <div className="opacity-75 truncate">premium@plan.com</div>
               </button>
 
-              <button
-                type="button"
-                onClick={() => setFormData(prev => ({ ...prev, email: 'business@plan.com', password: 'password123' }))}
-                className="text-left bg-white/50 hover:bg-white border border-blue-100 rounded p-2 text-xs text-blue-700 transition-colors"
-              >
-                <div className="font-semibold">👥 Business</div>
-                <div className="opacity-75 truncate">business@plan.com</div>
-              </button>
+
             </div>
           </div>
         </div>
