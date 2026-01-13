@@ -593,7 +593,9 @@ export class PaymentsService {
                 simulatorUsageCount: 0,
                 simulatorLastReset: new Date(),
                 transcriptionWarningSent: false,
-                simulatorWarningSent: false
+                simulatorWarningSent: false,
+                clientWarningSent: false,
+                reportWarningSent: false
               }
             });
             this.logger.log(`Reset usage limits for user ${user.id} after successful payment.`);
@@ -734,7 +736,9 @@ export class PaymentsService {
         simulatorUsageCount: 0,
         simulatorLastReset: new Date(),
         transcriptionWarningSent: false,
-        simulatorWarningSent: false
+        simulatorWarningSent: false,
+        clientWarningSent: false,
+        reportWarningSent: false
       }
     });
 

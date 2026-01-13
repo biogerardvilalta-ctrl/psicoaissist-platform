@@ -3,9 +3,15 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { PLAN_FEATURES, PlanLimits } from './plan-features';
 import { addMonths, isBefore, isAfter } from 'date-fns';
 
+import { UserRole } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
+
 @Injectable()
 export class UsageLimitsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService
+  ) { }
 
   async checkClientLimit(userId: string): Promise<void> {
     const user = await this.prisma.user.findUnique({
@@ -46,6 +52,26 @@ export class UsageLimitsService {
         throw new ForbiddenException(
           `Fair Use Policy: Maximum clients limit reached (${PlanLimits.FAIR_USE_CLIENTS}). Please contact support for enterprise options.`
         );
+      }
+    }
+
+    // Check for 75% Warning Trigger
+    if (!user.clientWarningSent) {
+      let limitToCheck = planFeatures.maxClients;
+      if (limitToCheck === PlanLimits.UNLIMITED) {
+        limitToCheck = PlanLimits.FAIR_USE_CLIENTS;
+      }
+
+      const usagePercent = (user._count.clients / limitToCheck) * 100;
+
+      if (usagePercent >= 75) {
+        // Fire and forget update to avoid blocking flow
+        // But we need to update the user record to prevent spamming
+        await this.prisma.user.update({
+          where: { id: userId },
+          data: { clientWarningSent: true }
+        });
+        await this.notifyAdmins(user, 'Pacientes Activos', user._count.clients, limitToCheck);
       }
     }
   }
@@ -125,12 +151,23 @@ export class UsageLimitsService {
           `Monthly report limit reached. Your ${user.subscription.planType} plan allows up to ${planFeatures.reportsPerMonth} reports per month.`
         );
       }
-    } else {
-      // Fair Use Check
-      if (reportCount >= PlanLimits.FAIR_USE_REPORTS) {
-        throw new ForbiddenException(
-          `Fair Use Policy: Report generation excessive (${PlanLimits.FAIR_USE_REPORTS} reports/month). System protection engaged.`
-        );
+    }
+
+    // Check for 75% Warning Trigger
+    if (!user.reportWarningSent) {
+      let limitToCheck = planFeatures.reportsPerMonth;
+      if (limitToCheck === PlanLimits.UNLIMITED) {
+        limitToCheck = PlanLimits.FAIR_USE_REPORTS;
+      }
+
+      const usagePercent = (reportCount / limitToCheck) * 100;
+
+      if (usagePercent >= 75) {
+        await this.prisma.user.update({
+          where: { id: userId },
+          data: { reportWarningSent: true }
+        });
+        await this.notifyAdmins(user, 'Informes Generados', reportCount, limitToCheck);
       }
     }
   }
@@ -327,6 +364,18 @@ export class UsageLimitsService {
       }
     }
 
+    // Check for 75% Warning Trigger
+    let shouldTriggerWarning = false;
+    const totalLimit = planLimit === PlanLimits.UNLIMITED ? PlanLimits.FAIR_USE_TRANSCRIPTION_MINUTES : (planLimit + extraMinutes);
+    const newUsed = currentUsed + minutes;
+
+    if (!user.transcriptionWarningSent) {
+      const usagePercent = (newUsed / totalLimit) * 100;
+      if (usagePercent >= 75) {
+        shouldTriggerWarning = true;
+      }
+    }
+
     // Determine how much to deduct from Extra vs Count as Normal Usage
     // Actually, we ALWAYS increment 'transcriptionMinutesUsed' for stats.
     // But we need to decrement 'extraTranscriptionMinutes' ONLY if we are dipping into them.
@@ -350,12 +399,17 @@ export class UsageLimitsService {
       where: { id: userId },
       data: {
         transcriptionMinutesUsed: { increment: minutes },
-        ...(decrementExtra > 0 ? { extraTranscriptionMinutes: { decrement: decrementExtra } } : {})
+        ...(decrementExtra > 0 ? { extraTranscriptionMinutes: { decrement: decrementExtra } } : {}),
+        ...(shouldTriggerWarning ? { transcriptionWarningSent: true } : {})
       } as any
     });
 
+    if (shouldTriggerWarning) {
+      await this.notifyAdmins(user, 'Transcripción', Math.round(newUsed), Math.round(totalLimit));
+    }
+
     // Calculate remaining (after update) to return strict status
-    const newUsed = currentUsed + minutes;
+    // newUsed is already calculated above
     const newExtra = Math.max(0, extraMinutes - decrementExtra);
     const newAvailable = planLimit === PlanLimits.UNLIMITED ? 99999 : Math.max(0, planLimit - newUsed) + newExtra;
 
@@ -403,6 +457,23 @@ export class UsageLimitsService {
       return { limitExceeded: true };
     }
 
+    // Check for 75% Warning Trigger
+    let shouldTriggerWarning = false;
+    const newUsed = currentUsed + 1; // Anticipate the increment
+
+    // For fair play warning, we care about the "Total Limit" (Plan + Referral + Extra) for capped plans,
+    // OR the Fair Use Limit for unlimited plans.
+    const warningLimitBase = planFeatures.simulatorCases === PlanLimits.UNLIMITED
+      ? PlanLimits.FAIR_USE_SIMULATOR_CASES
+      : (planFeatures.simulatorCases + referralBonus + extraCases);
+
+    if (!user.simulatorWarningSent) {
+      const usagePercent = (newUsed / warningLimitBase) * 100;
+      if (usagePercent >= 75) {
+        shouldTriggerWarning = true;
+      }
+    }
+
     // Determine if we are dipping into extras
     // We increase usage first.
     // If (currentUsed + 1) > baseLimit, we consume 1 extra.
@@ -425,9 +496,14 @@ export class UsageLimitsService {
       where: { id: userId },
       data: {
         simulatorUsageCount: { increment: 1 },
-        ...(decrementExtra > 0 ? { extraSimulatorCases: { decrement: decrementExtra } } : {})
+        ...(decrementExtra > 0 ? { extraSimulatorCases: { decrement: decrementExtra } } : {}),
+        ...(shouldTriggerWarning ? { simulatorWarningSent: true } : {})
       } as any
     });
+
+    if (shouldTriggerWarning) {
+      await this.notifyAdmins(user, 'Simulador', newUsed, totalLimit);
+    }
 
     return { limitExceeded: false };
   }
@@ -452,5 +528,32 @@ export class UsageLimitsService {
     }
 
     return nextReset;
+  }
+
+
+  private async notifyAdmins(user: any, resourceName: string, used: number, limit: number) {
+    try {
+      // Find all admins
+      const admins = await this.prisma.user.findMany({
+        where: { role: UserRole.ADMIN }
+      });
+
+      for (const admin of admins) {
+        await this.notificationsService.create({
+          userId: admin.id,
+          title: '⚠️ Alerta de Fair Play',
+          message: `El usuario ${user.firstName} ${user.lastName} (${user.email}) ha superado el 75% de su límite de ${resourceName}. Uso: ${used}/${limit}.`,
+          type: 'WARNING',
+          data: {
+            targetUserId: user.id,
+            resource: resourceName,
+            used,
+            limit
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to notify admins about usage limit:', error);
+    }
   }
 }

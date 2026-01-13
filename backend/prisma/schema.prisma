@@ -57,6 +57,8 @@ model User {
   agendaManagerEnabled      Boolean            @default(false) @map("agenda_manager_enabled")
   transcriptionWarningSent  Boolean            @default(false) @map("transcription_warning_sent")
   simulatorWarningSent      Boolean            @default(false) @map("simulator_warning_sent")
+  clientWarningSent         Boolean            @default(false) @map("client_warning_sent")
+  reportWarningSent         Boolean            @default(false) @map("report_warning_sent")
   auditLogs                 AuditLog[]
   clients                   Client[]
   encryptionKeys            EncryptionKey[]
