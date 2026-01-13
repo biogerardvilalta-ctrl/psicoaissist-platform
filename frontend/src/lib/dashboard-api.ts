@@ -12,6 +12,7 @@ export interface DashboardStats {
     sessionTypes?: Array<{ name: string; value: number }>;
     tests?: Array<{ name: string; value: number }>;
     techniques?: Array<{ name: string; value: number }>;
+    alerts?: Array<{ type: 'WARNING' | 'INFO' | 'CRITICAL'; message: string }>;
 }
 
 export class DashboardAPI {

@@ -302,6 +302,26 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* System Alerts */}
+        {stats?.alerts && stats.alerts.length > 0 && (
+          <div className="mb-8 space-y-3">
+            {stats.alerts.map((alert, index) => (
+              <div
+                key={index}
+                className={`p-4 rounded-lg flex items-start gap-3 border ${alert.type === 'WARNING' ? 'bg-amber-50 border-amber-200 text-amber-800' :
+                    alert.type === 'CRITICAL' ? 'bg-red-50 border-red-200 text-red-800' :
+                      'bg-blue-50 border-blue-200 text-blue-800'
+                  }`}
+              >
+                {alert.type === 'WARNING' && <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />}
+                {alert.type === 'CRITICAL' && <XCircle className="h-5 w-5 mt-0.5 shrink-0" />}
+                {alert.type === 'INFO' && <Shield className="h-5 w-5 mt-0.5 shrink-0" />}
+                <p className="text-sm font-medium">{alert.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
         {isAdmin() ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
             <div className="p-6 bg-purple-50 rounded-full ring-1 ring-purple-100">

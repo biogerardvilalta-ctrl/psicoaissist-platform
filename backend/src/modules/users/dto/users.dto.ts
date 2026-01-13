@@ -66,6 +66,16 @@ export class UpdateUserDto {
   @IsEnum(UserStatus)
   status?: UserStatus;
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  professionalNumber?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  country?: string;
+
   // New Settings Fields
   @ApiProperty({ required: false })
   @IsOptional()

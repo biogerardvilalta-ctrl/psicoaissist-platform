@@ -55,6 +55,8 @@ model User {
   extraTranscriptionMinutes Int                @default(0) @map("extra_transcription_minutes")
   extraSimulatorCases       Int                @default(0) @map("extra_simulator_cases")
   agendaManagerEnabled      Boolean            @default(false) @map("agenda_manager_enabled")
+  transcriptionWarningSent  Boolean            @default(false) @map("transcription_warning_sent")
+  simulatorWarningSent      Boolean            @default(false) @map("simulator_warning_sent")
   auditLogs                 AuditLog[]
   clients                   Client[]
   encryptionKeys            EncryptionKey[]

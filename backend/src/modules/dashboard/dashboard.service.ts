@@ -1,14 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { ClientsService } from '../clients/clients.service';
 import { EncryptionService } from '../encryption/encryption.service';
 
+import { UsageLimitsService } from '../payments/usage-limits.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { differenceInDays } from 'date-fns';
+
 @Injectable()
 export class DashboardService {
+    private readonly logger = new Logger(DashboardService.name);
     constructor(
         private readonly prisma: PrismaService,
         private readonly clientsService: ClientsService,
-        private readonly encryption: EncryptionService
+        private readonly encryption: EncryptionService,
+        private readonly usageLimits: UsageLimitsService,
+        private readonly notifications: NotificationsService
     ) { }
 
     // Helper to unpack data
@@ -406,8 +413,133 @@ export class DashboardService {
             techniques,
             tests,
             topThemes,    // NEW
-            sentimentTrend // NEW
+            sentimentTrend, // NEW
+            alerts: await this.checkAlerts(user) // NEW: System Alerts
         };
+    }
+
+    private async checkAlerts(user: any) {
+        const alerts: { type: 'WARNING' | 'INFO' | 'CRITICAL'; message: string }[] = [];
+
+        // 1. Subscription Renewal (<= 10 days)
+        if (user.subscription?.currentPeriodEnd) {
+            const daysLeft = differenceInDays(new Date(user.subscription.currentPeriodEnd), new Date());
+            if (daysLeft <= 10 && daysLeft >= 0) {
+                alerts.push({
+                    type: 'INFO',
+                    message: `Tu plan se renovará en ${daysLeft} días.`
+                });
+            }
+        }
+
+        // 2 & 3. Simulator & Transcription Limits
+        // We use the aggregation from usageLimitsService to get the full calculated limits (including extras)
+        // Note: user object passed here might not have updated usage counts if we just read it from 'request'.
+        // But getStats re-reads some data. However, usageLimits.getUserUsage reads FRESH data.
+        // Let's call getUserUsage to be safe and accurate.
+        const usageStats = await this.usageLimits.getUserUsage(user.id);
+
+        if (usageStats) {
+            // Simulator: 1 session or less remaining
+            const simLimit = usageStats.limits.simulatorCases;
+            const simUsed = usageStats.currentUsage.simulatorCases;
+            const simRemaining = simLimit - simUsed;
+
+            // Console log for debugging
+            this.logger.log(`Simulator Check: Used=${simUsed}, Limit=${simLimit}, Remaining=${simRemaining}`);
+
+            // Only show if limit is NOT unlimited (9999)
+            if (simLimit < 9000 && simRemaining <= 1) {
+                this.logger.log(`Simulator limit condition met: simLimit < 9000 (${simLimit}) && simRemaining <= 1 (${simRemaining})`);
+                // Check flag (re-fetch user like transcription)
+                const freshUser = await this.prisma.user.findUnique({
+                    where: { id: user.id },
+                    select: { simulatorWarningSent: true, transcriptionWarningSent: true }
+                });
+
+                this.logger.log(`Simulator Warning Flag: ${freshUser?.simulatorWarningSent}`);
+
+                if (freshUser && !freshUser.simulatorWarningSent) {
+                    const message = `Te queda ${Math.max(0, simRemaining)} sesión${simRemaining !== 1 ? 'es' : ''} en el simulador.`;
+
+                    alerts.push({
+                        type: 'WARNING',
+                        message
+                    });
+
+                    // Send Persistent Notification
+                    await this.notifications.create({
+                        userId: user.id,
+                        title: 'Límite del Simulador',
+                        message,
+                        type: 'WARNING'
+                    });
+
+                    // Set Flag to true
+                    await this.prisma.user.update({
+                        where: { id: user.id },
+                        data: { simulatorWarningSent: true }
+                    });
+                } else if (freshUser && freshUser.simulatorWarningSent) {
+                    // Still show the banner every time? Or suppress it too?
+                    // User said "pero si un mensaje en el dahsboard".
+                    // The original requirement was "avisar cuando...".
+                    // If we suppress the banner, they won't see it anymore.
+                    // But if we show it every time, it's just a status info.
+                    // Let's keep the banner always visible as a status indicator
+                    // BUT avoiding re-sending the persistent notification.
+                    const message = `Te queda ${Math.max(0, simRemaining)} sesión${simRemaining !== 1 ? 'es' : ''} en el simulador.`;
+                    alerts.push({
+                        type: 'WARNING',
+                        message
+                    });
+                }
+            }
+
+            // Transcription: 60 mins or less remaining (One-time check)
+            const transLimit = usageStats.limits.transcriptionMinutes;
+            const transUsed = usageStats.currentUsage.transcriptionMinutes;
+            const transRemaining = transLimit - transUsed;
+
+            if (transLimit < 9000 && transRemaining <= 60) {
+                // Check flag on USER (we need to fetch it fresh if 'user' arg is stale, checking simple prop)
+                // The user object passed to getStats usually comes from Request, which might be stale regarding the flag?
+                // Actually usageStats re-fetched the user. Let's assume we need to check the flag from DB or assume 'user' param is decent.
+                // Safest: check usageStats source if possible, but usageStats return object doesn't have the flag.
+                // Let's re-fetch the specific flag to be 100% sure we don't spam.
+                // OPTIMIZATION: We already fetched it above if simulator case ran. But let's keep it robust.
+                const freshUser = await this.prisma.user.findUnique({
+                    where: { id: user.id },
+                    select: { transcriptionWarningSent: true }
+                });
+
+                if (freshUser && !freshUser.transcriptionWarningSent) {
+                    const message = `Te quedan ${Math.max(0, transRemaining)} minutos o menos de transcripción.`;
+
+                    // Add to current alerts (ephemeral)
+                    alerts.push({
+                        type: 'WARNING',
+                        message
+                    });
+
+                    // Send Persistent Notification
+                    await this.notifications.create({
+                        userId: user.id,
+                        title: 'Límite de Transcripción',
+                        message,
+                        type: 'WARNING'
+                    });
+
+                    // Set Flag to true
+                    await this.prisma.user.update({
+                        where: { id: user.id },
+                        data: { transcriptionWarningSent: true }
+                    });
+                }
+            }
+        }
+
+        return alerts;
     }
 
     private getColorForType(type: string): string {
