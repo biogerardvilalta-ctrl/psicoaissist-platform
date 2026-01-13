@@ -112,6 +112,27 @@ export class UpdateUserDto {
   @ApiProperty({ required: false })
   @IsOptional()
   brandingConfig?: any;
+
+  // Usage Limit Overrides (Admin)
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  transcriptionMinutesUsed?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  extraTranscriptionMinutes?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  simulatorUsageCount?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  extraSimulatorCases?: number;
 }
 
 export class UserResponseDto {

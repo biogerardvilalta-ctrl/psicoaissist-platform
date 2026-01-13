@@ -60,7 +60,12 @@ function UserModal({
     lastName: '',
     role: 'PSYCHOLOGIST',
     country: 'España',
-    professionalNumber: ''
+    professionalNumber: '',
+    // Usage Limits
+    transcriptionMinutesUsed: 0,
+    extraTranscriptionMinutes: 0,
+    simulatorUsageCount: 0,
+    extraSimulatorCases: 0
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,7 +80,11 @@ function UserModal({
         lastName: userToEdit.lastName || '',
         role: userToEdit.role || 'PSYCHOLOGIST',
         country: userToEdit.country || 'España',
-        professionalNumber: userToEdit.professionalNumber || ''
+        professionalNumber: userToEdit.professionalNumber || '',
+        transcriptionMinutesUsed: userToEdit.transcriptionMinutesUsed || 0,
+        extraTranscriptionMinutes: userToEdit.extraTranscriptionMinutes || 0,
+        simulatorUsageCount: userToEdit.simulatorUsageCount || 0,
+        extraSimulatorCases: userToEdit.extraSimulatorCases || 0
       });
     } else {
       setFormData({
@@ -85,7 +94,11 @@ function UserModal({
         lastName: '',
         role: 'PSYCHOLOGIST',
         country: 'España',
-        professionalNumber: ''
+        professionalNumber: '',
+        transcriptionMinutesUsed: 0,
+        extraTranscriptionMinutes: 0,
+        simulatorUsageCount: 0,
+        extraSimulatorCases: 0
       });
     }
   }, [userToEdit, isOpen]);
@@ -164,6 +177,55 @@ function UserModal({
               <option value="AGENDA_MANAGER">Gestor de Agenda</option>
             </select>
           </div>
+
+
+          {/* Usage Limits Section */}
+          <div className="border-t pt-4 mt-4">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">Uso y Límites</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Minutos Transcritos (Usados)</label>
+                <input
+                  type="number"
+                  min="0"
+                  className="block w-full border rounded-md p-2 text-sm"
+                  value={formData.transcriptionMinutesUsed}
+                  onChange={e => setFormData({ ...formData, transcriptionMinutesUsed: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Minutos Extra (Pack)</label>
+                <input
+                  type="number"
+                  min="0"
+                  className="block w-full border rounded-md p-2 text-sm"
+                  value={formData.extraTranscriptionMinutes}
+                  onChange={e => setFormData({ ...formData, extraTranscriptionMinutes: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Casos Simulador (Usados)</label>
+                <input
+                  type="number"
+                  min="0"
+                  className="block w-full border rounded-md p-2 text-sm"
+                  value={formData.simulatorUsageCount}
+                  onChange={e => setFormData({ ...formData, simulatorUsageCount: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Casos Extra (Pack)</label>
+                <input
+                  type="number"
+                  min="0"
+                  className="block w-full border rounded-md p-2 text-sm"
+                  value={formData.extraSimulatorCases}
+                  onChange={e => setFormData({ ...formData, extraSimulatorCases: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="flex justify-end gap-3 mt-6">
             <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
             <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
@@ -171,8 +233,8 @@ function UserModal({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 
