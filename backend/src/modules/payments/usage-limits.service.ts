@@ -541,7 +541,7 @@ export class UsageLimitsService {
       for (const admin of admins) {
         await this.notificationsService.create({
           userId: admin.id,
-          title: '⚠️ Alerta de Fair Play',
+          title: '⚠️ Alerta de Fair Use',
           message: `El usuario ${user.firstName} ${user.lastName} (${user.email}) ha superado el 75% de su límite de ${resourceName}. Uso: ${used}/${limit}.`,
           type: 'WARNING',
           data: {

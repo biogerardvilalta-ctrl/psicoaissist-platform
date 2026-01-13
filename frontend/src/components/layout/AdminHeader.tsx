@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { NotificationBell } from '@/components/ui/NotificationBell';
 
 export default function AdminHeader() {
   const { user, logout } = useAuth();
@@ -86,6 +87,10 @@ export default function AdminHeader() {
 
           {/* Usuario y acciones */}
           <div className="flex items-center space-x-4">
+            <div className="text-gray-300 hover:text-white">
+              <NotificationBell />
+            </div>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center space-x-3 focus:outline-none">
