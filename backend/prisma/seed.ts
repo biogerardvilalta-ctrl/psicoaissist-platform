@@ -5,24 +5,38 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Starting database seed...');
+  const isProduction = process.env.NODE_ENV === 'production';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
 
-  // Clean existing data
+  // Clean existing data in correct order to avoid Foreign Key violations
   console.log('🧹 Cleaning existing data...');
-  await prisma.subscription.deleteMany({});
+
+  // Tables that might restrict User deletion but don't have Cascade delete
+  await prisma.simulationReport.deleteMany({});
   await prisma.auditLog.deleteMany({});
+
+  // Tables with Cascade delete (deleting them explicitly is safer/cleaner)
+  await prisma.notification.deleteMany({});
+  await prisma.report.deleteMany({});
   await prisma.session.deleteMany({});
+  await prisma.consent.deleteMany({});
   await prisma.client.deleteMany({});
+  await prisma.encryptionKey.deleteMany({});
+  await prisma.subscription.deleteMany({});
+
+  // Finally delete users
   await prisma.user.deleteMany({});
 
   // Create users with hashed passwords
-  console.log('👥 Creating users...');
-  const hashedPassword = await bcrypt.hash('password123', 10);
+  console.log(`👥 Creating users (Mode: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'})...`);
+  const hashedAdminPassword = await bcrypt.hash(adminPassword, 10);
+  const hashedDefaultPassword = await bcrypt.hash('password123', 10);
 
-  // 1. Admin
+  // 1. Admin (Always created)
   const adminUser = await prisma.user.create({
     data: {
       email: 'admin@psicoaissist.com',
-      passwordHash: hashedPassword,
+      passwordHash: hashedAdminPassword,
       role: UserRole.ADMIN,
       status: UserStatus.ACTIVE,
       verified: true,
@@ -32,11 +46,21 @@ async function main() {
     },
   });
 
+  console.log(`✅ Admin user created (Password: ${process.env.ADMIN_PASSWORD ? '******' : 'password123'})`);
+
+  if (isProduction) {
+    console.log('🔒 Production mode detected: Skipping demo users and data.');
+    console.log('✅ Database seed completed successfully!');
+    return;
+  }
+
+  // --- DEV DATA ONLY BELOW THIS LINE ---
+
   // 2. Basic User
   const basicUser = await prisma.user.create({
     data: {
       email: 'basic@plan.com',
-      passwordHash: hashedPassword,
+      passwordHash: hashedDefaultPassword,
       role: UserRole.PSYCHOLOGIST_BASIC,
       status: UserStatus.ACTIVE,
       verified: true,
@@ -59,7 +83,7 @@ async function main() {
   const proUser = await prisma.user.create({
     data: {
       email: 'pro@plan.com',
-      passwordHash: hashedPassword,
+      passwordHash: hashedDefaultPassword,
       role: UserRole.PSYCHOLOGIST_PRO,
       status: UserStatus.ACTIVE,
       verified: true,
@@ -82,7 +106,7 @@ async function main() {
   const premiumUser = await prisma.user.create({
     data: {
       email: 'premium@plan.com',
-      passwordHash: hashedPassword,
+      passwordHash: hashedDefaultPassword,
       role: UserRole.PSYCHOLOGIST_PREMIUM,
       status: UserStatus.ACTIVE,
       verified: true,
@@ -105,7 +129,7 @@ async function main() {
   const businessUser = await prisma.user.create({
     data: {
       email: 'business@plan.com',
-      passwordHash: hashedPassword,
+      passwordHash: hashedDefaultPassword,
       role: UserRole.PSYCHOLOGIST, // Or specific role if exists, but planType drives features
       status: UserStatus.ACTIVE,
       verified: true,
@@ -151,12 +175,19 @@ async function main() {
         dataVersion: 1,
         lastModifiedBy: proUser.id,
         firstSessionAt: new Date(Date.now() - i * 7 * 24 * 60 * 60 * 1000),
+        consents: {
+          create: {
+            consentType: 'DATA_STORAGE',
+            granted: true,
+            grantedAt: new Date()
+          }
+        }
       },
     });
     clients.push(client);
   }
 
-  // Create some sessions
+  // Create sessions
   console.log('📝 Creating sessions...');
   for (let i = 0; i < 3; i++) {
     await prisma.session.create({
@@ -175,15 +206,12 @@ async function main() {
     });
   }
 
-  /* Audit Logs Skipped for brevity in this update, or update to use new users */
-
-  console.log('✅ Database seed completed successfully!');
+  console.log('✅ Database seed (DEV) completed successfully!');
   console.log(`Created:`);
   console.log(`- 4 users (1 admin, 2 psychologists, 1 student)`);
   console.log(`- 2 subscriptions (1 pro, 1 basic)`);
   console.log(`- 5 clients for Ana`);
   console.log(`- 3 sessions for Ana`);
-  console.log(`- 2 audit log entries`);
 }
 
 main()
