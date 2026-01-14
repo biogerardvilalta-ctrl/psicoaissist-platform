@@ -1,6 +1,6 @@
-# Psychologist Assistant App 🧠
+# PsicoAIssist Platform 🧠
 
-Una aplicación web completa para psicólogos con asistencia de IA, diseñada para mejorar la productividad y calidad de la atención psicológica.
+Una plataforma integral para psicólogos con asistencia de IA, diseñada para mejorar la productividad y calidad de la atención psicológica.
 
 ## 📋 Estado del Proyecto
 
@@ -33,26 +33,8 @@ Una aplicación web completa para psicólogos con asistencia de IA, diseñada pa
 - Monitoring de conexiones de base de datos
 - Alertas automáticas por degradación del sistema
 
-### 🔄 DevOps y CI/CD
-- Pipeline GitHub Actions para testing automático
-- Docker containerization para desarrollo
-- Tests E2E para autenticación y health
-- Linting y type checking automático
-- Build y deployment automatizado
-- Security audit en pipeline
-
-## 🚀 Características Implementadas
-
-### 🔐 Seguridad y Autenticación
-- JWT con HttpOnly cookies para máxima seguridad
-- Rate limiting configurable por endpoint
-- Cifrado AES-256 para datos sensibles
-- Headers de seguridad con Helmet
-- Validación estricta de inputs
-- Logs de auditoría completos
-
 ### 👥 Gestión de Usuarios
-- Sistema de roles (Admin, Psicólogos, Estudiantes)
+- Sistema de roles (Admin, Professional, Agenda Manager, Demo)
 - Registro y autenticación segura
 - Gestión de perfiles y permisos
 - Recuperación de contraseña
@@ -67,7 +49,7 @@ Una aplicación web completa para psicólogos con asistencia de IA, diseñada pa
 - Next.js 14 con App Router
 - TypeScript para type safety
 - Tailwind CSS para estilos
-- Componentes reutilizables
+- Componentes reutilizables (shadcn/ui)
 - Estado global con Zustand
 
 ## 🛠️ Stack Tecnológico
@@ -94,7 +76,7 @@ Una aplicación web completa para psicólogos con asistencia de IA, diseñada pa
 - **Contenedores**: Docker
 - **Cache**: Redis
 - **Proxy inverso**: Nginx (producción)
-- **CI/CD**: GitHub Actions
+- **CI/CD**: GitHub Actions / GitLab CI
 - **Monitoreo**: Logs estructurados
 
 ### Seguridad
@@ -114,14 +96,14 @@ Una aplicación web completa para psicólogos con asistencia de IA, diseñada pa
 
 ### 1. Clonar el repositorio
 ```bash
-git clone <repository-url>
-cd psychologist-app
+git clone <URL_DE_TU_REPO_GITLAB> psicoaissist-platform
+cd psicoaissist-platform
 ```
 
 ### 2. Iniciar servicios de desarrollo
 ```bash
 # Iniciar PostgreSQL y Redis
-docker-compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml up -d
 
 # Verificar que los servicios estén corriendo
 docker ps
@@ -136,7 +118,7 @@ npm install
 
 # Configurar variables de entorno
 cp .env.example .env
-# Editar .env con tus configuraciones
+# Editar .env con tus configuraciones (Ver env.beta.example.txt como referencia)
 
 # Aplicar migraciones
 npx prisma db push
@@ -174,11 +156,14 @@ npm run dev
 ### Backend (.env)
 ```env
 # Database
-DATABASE_URL="postgresql://postgres:password@localhost:5432/psychologist_app"
+POSTGRES_DB=psicoaissist_beta_db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=cambiar_esta_contrasena_segura
+DATABASE_URL="postgresql://postgres:password@localhost:5432/psicoaissist_beta_db"
 
 # JWT
 JWT_SECRET="your-super-secret-jwt-key"
-JWT_EXPIRES_IN="15m"
+JWT_EXPIRES_IN="1d"
 JWT_REFRESH_SECRET="your-refresh-secret-key"
 JWT_REFRESH_EXPIRES_IN="7d"
 
@@ -196,7 +181,7 @@ PORT=3001
 NEXT_PUBLIC_API_URL="http://localhost:3001/api/v1"
 
 # App
-NEXT_PUBLIC_APP_NAME="Psychologist Assistant"
+NEXT_PUBLIC_APP_NAME="PsicoAIssist"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
@@ -238,7 +223,7 @@ GET /api/docs-json             # OpenAPI JSON
 ## 📊 Estructura del Proyecto
 
 ```
-psychologist-app/
+psicoaissist-platform/
 ├── frontend/                 # Aplicación Next.js
 │   ├── src/
 │   │   ├── app/             # App Router pages
@@ -290,14 +275,14 @@ npm run test:e2e
 ### Desarrollo
 ```bash
 # Reiniciar base de datos
-docker-compose -f docker-compose.dev.yml down -v
-docker-compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml down -v
+docker compose -f docker-compose.dev.yml up -d
 
 # Ver logs de la base de datos
-docker logs psychologist_app_db -f
+docker logs psicoaissist_beta_db -f
 
 # Conectar a PostgreSQL
-docker exec -it psychologist_app_db psql -U postgres -d psychologist_app
+docker exec -it psicoaissist_beta_db psql -U postgres -d psicoaissist_beta_db
 
 # Reiniciar schema de Prisma
 cd backend
@@ -331,16 +316,16 @@ npx prisma generate
 - [x] Generación de reportes automáticos
 
 ### Fase 3: Integración IA
-- [x] Transcripción automática (Gemini 2.0)
+- [x] Transcripción automática (Gemini 2.0 / OpenAI)
 - [x] Análisis de sentimientos
 - [x] Sugerencias terapéuticas / Insights
-- [ ] Simulador de casos clínicos
+- [x] Simulador de casos clínicos
 
 ### Fase 4: Funcionalidades Avanzadas
-- [ ] Sistema de pagos con Stripe
-- [ ] Notificaciones en tiempo real
-- [ ] Calendario y citas
-- [x] Dashboard analítico
+- [x] Sistema de pagos con Stripe (Base implementada)
+- [x] Notificaciones en tiempo real (Sockets & Emails)
+- [x] Calendario y citas (Sync con Google Calendar)
+- [x] Dashboard analítico (Admin & Professional)
 
 ## 🤝 Contribuir
 
@@ -357,9 +342,8 @@ Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 ## 🆘 Soporte
 
 Para soporte y preguntas:
-- 📧 Email: soporte@psychologist-app.com
-- 📱 Discord: [Servidor de la comunidad]
-- 📖 Documentación: [docs.psychologist-app.com]
+- 📧 Email: soporte@psicoaissist.com
+- 📖 Documentación: [Docs internos]
 
 ---
 

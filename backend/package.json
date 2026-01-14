@@ -1,7 +1,7 @@
 {
   "name": "psicoaissist-backend",
   "version": "0.1.0",
-  "description": "Backend API for Psychologist Assistant App",
+  "description": "Backend API for PsicoAIssist Platform",
   "author": "PsicoAIssist Team",
   "private": true,
   "license": "MIT",

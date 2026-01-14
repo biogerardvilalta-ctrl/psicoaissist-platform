@@ -4,7 +4,7 @@
 
 echo "🚀 Iniciando despliegue..."
 
-# 1. Bajar últimos cambios de la rama actual (develop)
+# 1. Bajar últimos cambios de la rama actual (normalmente main)
 echo "📥 Descargando código..."
 git pull
 
