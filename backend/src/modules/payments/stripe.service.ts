@@ -24,7 +24,8 @@ export class StripeService {
         this.stripe = new Stripe(this.config.secretKey, {
           apiVersion: '2023-10-16',
         });
-        this.logger.log('Stripe initialized successfully');
+        const maskedKey = this.config.secretKey.substring(0, 8) + '...';
+        this.logger.log(`Stripe initialized successfully with key: ${maskedKey}`);
       } catch (error) {
         this.logger.error('Failed to initialize Stripe, switching to demo mode', error);
         this.isDemoMode = true;
