@@ -10,7 +10,8 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
-  Delete
+  Delete,
+  RawBodyRequest
 } from '@nestjs/common';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
