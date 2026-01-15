@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { StripeService } from './stripe.service';
 import { EmailService } from '../email/email.service';
@@ -148,6 +148,11 @@ export class PaymentsService {
       };
     } catch (error) {
       this.logger.error('Error creating checkout session:', error);
+      // Prevent Stripe 401 (Invalid Key) from propagating as HTTP 401 (Unauthorized)
+      // which causes frontend forced logout.
+      if (error.statusCode === 401 || error.type === 'StripeAuthenticationError') {
+        throw new InternalServerErrorException('Payment provider configuration error');
+      }
       throw error;
     }
   }
