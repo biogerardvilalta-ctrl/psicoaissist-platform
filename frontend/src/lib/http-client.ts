@@ -1,6 +1,8 @@
 import { ApiResponse, PaginatedResponse } from '@/types'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+const envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// Strip /api/v1 suffix if present to avoid duplication with endpoints
+const API_BASE_URL = envUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
 
 export class ApiError extends Error {
   status: number;
