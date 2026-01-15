@@ -18,7 +18,7 @@ import {
   Shield
 } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { RecentActivity, TodaysSessions } from '@/components/dashboard';
 import { useEffect, useState } from 'react';
 import { DashboardAPI, DashboardStats } from '@/lib/dashboard-api';
@@ -128,6 +128,33 @@ export default function DashboardPage() {
   }, [user]);
 
   // Fetch Data
+  const searchParams = useSearchParams(); // Needs import
+
+  useEffect(() => {
+    const paymentError = searchParams.get('payment_error');
+    const intendedPlan = searchParams.get('intended_plan');
+
+    if (paymentError && intendedPlan) {
+      toast({
+        title: "Atención: Pago no completado",
+        description: `Tu cuenta se ha creado, pero el pago del plan ${intendedPlan.toUpperCase()} no se pudo iniciar. Por favor, actualiza tu suscripción.`,
+        variant: "destructive",
+        duration: 8000,
+        action: (
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-white text-destructive border-destructive hover:bg-destructive/10"
+            onClick={() => router.push('/dashboard/settings?section=billing')}
+          >
+            Completar Pago
+          </Button>
+        ),
+      });
+      // Optional: Cleanup params
+      router.replace('/dashboard');
+    }
+  }, [searchParams, toast, router]);
   useEffect(() => {
     const fetchStats = async () => {
       try {

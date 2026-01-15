@@ -150,7 +150,7 @@ export default function RegisterPage() {
           console.error('Error initiating payment redirect:', paymentError);
           // If payment fails to init, we still have the user registered.
           // Fallback to dashboard with a warning or let them correct it there.
-          router.push('/dashboard?payment_error=init_failed');
+          router.push(`/dashboard?payment_error=init_failed&intended_plan=${selectedPlan}&interval=${billingInterval || 'month'}`);
           return;
         }
       }
