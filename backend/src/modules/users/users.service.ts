@@ -4,6 +4,8 @@ import { EncryptionService } from '../encryption/encryption.service';
 import { UserRole, UserStatus } from '@prisma/client';
 import { CreateUserDto, UpdateUserDto, UserResponseDto, CreateAgendaManagerDto } from './dto/users.dto';
 
+import { PaymentsService } from '../payments/payments.service';
+
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -11,6 +13,7 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly encryptionService: EncryptionService,
+    private readonly paymentsService: PaymentsService,
   ) { }
 
   /**
@@ -175,6 +178,16 @@ export class UsersService {
       }
 
       // Preparar datos de actualización
+      if (updateUserDto.status === UserStatus.INACTIVE || updateUserDto.status === UserStatus.DELETED) {
+        try {
+          await this.paymentsService.cancelSubscription(id);
+          this.logger.log(`Subscription canceled for suspended/deleted user: ${existingUser.email}`);
+        } catch (error) {
+          // We log but don't stop the process if subscription cancellation fails (maybe they didn't have one)
+          this.logger.warn(`Could not cancel subscription for ${existingUser.email}: ${error.message}`);
+        }
+      }
+
       const updateData: any = {
         ...updateUserDto,
         updatedAt: new Date(),
@@ -228,6 +241,14 @@ export class UsersService {
           updatedAt: new Date(),
         },
       });
+
+      // Cancel subscription on Stripe
+      try {
+        await this.paymentsService.cancelSubscription(id);
+        this.logger.log(`Subscription canceled for deleted user: ${user.email}`);
+      } catch (error) {
+        this.logger.warn(`Could not cancel subscription for ${user.email}: ${error.message}`);
+      }
 
       this.logger.log(`User deleted: ${user.email}`);
 
