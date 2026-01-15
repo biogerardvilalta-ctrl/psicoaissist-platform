@@ -10,7 +10,9 @@ import {
   Delete,
   RawBodyRequest,
   Req,
-  UseGuards
+  UseGuards,
+  BadRequestException,
+  InternalServerErrorException
 } from '@nestjs/common';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
@@ -140,9 +142,31 @@ export class PaymentsController {
     @Headers('stripe-signature') signature: string,
     @Req() req: RawBodyRequest<Request>,
   ) {
-    return this.paymentsService.handleWebhook(
-      signature,
-      req.rawBody || req.body,
-    );
+    console.log('🔔 Webhook received');
+    try {
+      // Check if signature is present
+      if (!signature) {
+        console.error('❌ Missing stripe-signature header');
+        throw new BadRequestException('Missing stripe-signature header');
+      }
+
+      console.log(`📝 Signature: ${signature.substring(0, 10)}...`);
+      // Check raw body availability
+      if (!req.rawBody) {
+        console.error('❌ Raw body not available. Ensure "rawBody: true" is set in main.ts');
+        throw new InternalServerErrorException('Raw body missing');
+      }
+
+      const result = await this.paymentsService.handleWebhook(
+        signature,
+        req.rawBody
+      );
+      console.log('✅ Webhook processed successfully');
+      return result;
+    } catch (error) {
+      console.error('❌ Webhook processing failed:', error.message);
+      if (error.type) console.error('Stripe Error Type:', error.type);
+      throw error;
+    }
   }
 }
