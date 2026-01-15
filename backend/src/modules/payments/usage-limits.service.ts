@@ -13,6 +13,18 @@ export class UsageLimitsService {
     private notificationsService: NotificationsService
   ) { }
 
+  private getEffectiveSubscription(user: any) {
+    if (user?.subscription) return user.subscription;
+
+    // Virtual Demo Subscription
+    return {
+      planType: 'DEMO',
+      status: 'active',
+      currentPeriodStart: user.createdAt,
+      currentPeriodEnd: new Date(new Date(user.createdAt).getTime() + 14 * 24 * 60 * 60 * 1000) // 14 days trial
+    };
+  }
+
   async checkClientLimit(userId: string): Promise<void> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -30,11 +42,12 @@ export class UsageLimitsService {
       },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+    const subscription = this.getEffectiveSubscription(user);
+    if (!subscription || subscription.status !== 'active' || subscription.currentPeriodEnd < new Date()) {
       throw new ForbiddenException('Active subscription required or trial expired');
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -43,7 +56,7 @@ export class UsageLimitsService {
     if (planFeatures.maxClients !== PlanLimits.UNLIMITED) {
       if (user._count.clients >= planFeatures.maxClients) {
         throw new ForbiddenException(
-          `Client limit reached. Your ${user.subscription.planType} plan allows up to ${planFeatures.maxClients} clients.`
+          `Client limit reached. Your ${subscription.planType} plan allows up to ${planFeatures.maxClients} clients.`
         );
       }
     } else {
@@ -82,11 +95,12 @@ export class UsageLimitsService {
       include: { subscription: true },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active') {
+    const subscription = this.getEffectiveSubscription(user);
+    if (!subscription || subscription.status !== 'active') {
       throw new ForbiddenException('Active subscription required or trial expired');
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -123,12 +137,13 @@ export class UsageLimitsService {
       },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+    const subscription = this.getEffectiveSubscription(user);
+    if (!subscription || subscription.status !== 'active' || subscription.currentPeriodEnd < new Date()) {
       throw new ForbiddenException('Active subscription required or trial expired');
     }
 
     // Use currentPeriodStart for billing cycle, fallback to 1st of month if missing for some reason
-    const periodStart = user.subscription.currentPeriodStart || new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const periodStart = subscription.currentPeriodStart || new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
     const reportCount = await this.prisma.report.count({
       where: {
@@ -139,7 +154,7 @@ export class UsageLimitsService {
       }
     });
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -148,7 +163,7 @@ export class UsageLimitsService {
     if (planFeatures.reportsPerMonth !== PlanLimits.UNLIMITED) {
       if (reportCount >= planFeatures.reportsPerMonth) {
         throw new ForbiddenException(
-          `Monthly report limit reached. Your ${user.subscription.planType} plan allows up to ${planFeatures.reportsPerMonth} reports per month.`
+          `Monthly report limit reached. Your ${subscription.planType} plan allows up to ${planFeatures.reportsPerMonth} reports per month.`
         );
       }
     }
@@ -180,11 +195,12 @@ export class UsageLimitsService {
       },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active' || user.subscription.currentPeriodEnd < new Date()) {
+    const subscription = this.getEffectiveSubscription(user);
+    if (!subscription || subscription.status !== 'active' || subscription.currentPeriodEnd < new Date()) {
       throw new ForbiddenException('Active subscription required or trial expired');
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -224,9 +240,10 @@ export class UsageLimitsService {
       },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active') return; // Should probably throw, but let's be safe
+    const subscription = this.getEffectiveSubscription(user);
+    if (!subscription || subscription.status !== 'active') return; // Should probably throw, but let's be safe
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) return;
 
     if (planFeatures.simulatorMinutes !== PlanLimits.UNLIMITED) {
@@ -277,8 +294,11 @@ export class UsageLimitsService {
       },
     });
 
-    if (!user?.subscription) {
-      return null;
+    // If no subscription, treat as DEMO
+    const subscription = this.getEffectiveSubscription(user);
+
+    if (!subscription) {
+      return null; // Should not happen with above fallback, but kept for type safety if needed
     }
 
     // Calculate total duration in minutes then convert to hours for display, 
@@ -290,7 +310,7 @@ export class UsageLimitsService {
     const totalMinutes = Math.round(totalSeconds / 60);
     const totalHours = Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) {
       return null;
     }
@@ -308,7 +328,7 @@ export class UsageLimitsService {
       : planFeatures.transcriptionMinutes + extraTranscriptionMinutes;
 
     return {
-      planType: user.subscription.planType,
+      planType: subscription.planType,
       planFeatures,
       currentUsage: {
         clients: user._count.clients,
@@ -320,8 +340,8 @@ export class UsageLimitsService {
         simulatorCases: user.simulatorUsageCount,
         extraSimulatorCases: extraSimulatorCases, // Explicitly return extra cases
         simulatorMinutes: user.simulatorMinutesUsed,
-        limitResetDate: this.getNextMonthlyResetDate(user.subscription.currentPeriodStart),
-        subscriptionStatus: user.subscription.status,
+        limitResetDate: this.getNextMonthlyResetDate(subscription.currentPeriodStart),
+        subscriptionStatus: subscription.status,
       },
       limits: {
         clients: planFeatures.maxClients,
@@ -341,11 +361,12 @@ export class UsageLimitsService {
       include: { subscription: true },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active') {
+    const subscription = this.getEffectiveSubscription(user);
+    if (!subscription || subscription.status !== 'active') {
       return { limitExceeded: true };
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) return { limitExceeded: true };
 
     const currentUsed = (user as any).transcriptionMinutesUsed || 0;
@@ -422,11 +443,12 @@ export class UsageLimitsService {
       include: { subscription: true },
     });
 
-    if (!user?.subscription || user.subscription.status !== 'active') {
+    const subscription = this.getEffectiveSubscription(user);
+    if (!subscription || subscription.status !== 'active') {
       return { limitExceeded: true }; // Or throw ForbiddenException
     }
 
-    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
+    const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) return { limitExceeded: true };
 
     const currentUsed = user.simulatorUsageCount || 0;

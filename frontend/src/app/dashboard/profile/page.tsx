@@ -184,12 +184,16 @@ export default function ProfilePage() {
     };
 
     // Computed Subscription Object (Defaults to Demo if null)
+    const demoExpirationDate = user?.createdAt
+        ? new Date(new Date(user.createdAt).getTime() + 14 * 24 * 60 * 60 * 1000).toISOString()
+        : undefined;
+
     const currentSubscription = user?.subscription || {
         id: 'demo-default',
         planType: 'DEMO',
         status: 'active',
-        currentPeriodStart: new Date().toISOString(),
-        currentPeriodEnd: undefined
+        currentPeriodStart: user?.createdAt || new Date().toISOString(),
+        currentPeriodEnd: demoExpirationDate
     };
 
     return (
@@ -291,11 +295,13 @@ export default function ProfilePage() {
                                 <div className="flex items-start gap-3">
                                     <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
                                     <div>
-                                        <p className="text-sm font-medium text-slate-700">Próxima Renovación</p>
+                                        <p className="text-sm font-medium text-slate-700">
+                                            {currentSubscription.planType === 'DEMO' ? 'Fecha de Caducidad' : 'Próxima Renovación'}
+                                        </p>
                                         <p className="text-sm text-slate-500">
                                             {currentSubscription.currentPeriodEnd
                                                 ? new Date(currentSubscription.currentPeriodEnd).toLocaleDateString()
-                                                : "Ilimitado (Demo)"}
+                                                : "Ilimitado"}
                                         </p>
                                     </div>
                                 </div>
@@ -429,7 +435,10 @@ export default function ProfilePage() {
                                     </div>
 
                                     <p className="text-xs text-muted-foreground pt-2 border-t">
-                                        * Los límites mensuales se reinician el {new Date(stats.usage.nextReset).toLocaleDateString()}.
+                                        {currentSubscription.planType === 'DEMO'
+                                            ? `* Tu periodo de prueba finaliza el ${currentSubscription.currentPeriodEnd ? new Date(currentSubscription.currentPeriodEnd).toLocaleDateString() : 'N/A'}.`
+                                            : `* Los límites mensuales se reinician el ${new Date(stats.usage.nextReset).toLocaleDateString()}.`
+                                        }
                                     </p>
                                 </>
                             )}
