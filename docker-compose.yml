@@ -63,7 +63,7 @@ services:
     env_file: .env
     environment:
       # Browser -> API (External URL)
-      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       # Server Side Rendering -> API (Internal Docker URL)
       INTERNAL_API_URL: http://backend:3000/api/v1
     ports:
