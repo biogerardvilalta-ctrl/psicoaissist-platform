@@ -488,14 +488,17 @@ export class PaymentsService {
     const startTime = subscription.current_period_start ? new Date(subscription.current_period_start * 1000) : new Date();
     const endTime = subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : new Date(startTime.getTime() + 30 * 24 * 60 * 60 * 1000);
 
+    const safeStartTime = !isNaN(startTime.getTime()) ? startTime : new Date();
+    const safeEndTime = !isNaN(endTime.getTime()) ? endTime : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
     await this.prisma.subscription.upsert({
       where: { userId: user.id },
       update: {
         stripeSubscriptionId: subscription.id,
         status: subscription.status,
         planType,
-        currentPeriodStart: !isNaN(startTime.getTime()) ? startTime : new Date(),
-        currentPeriodEnd: !isNaN(endTime.getTime()) ? endTime : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        currentPeriodStart: safeStartTime,
+        currentPeriodEnd: safeEndTime,
         updatedAt: new Date(),
       },
       create: {
@@ -503,8 +506,8 @@ export class PaymentsService {
         stripeSubscriptionId: subscription.id,
         status: subscription.status,
         planType,
-        currentPeriodStart: !isNaN(startTime.getTime()) ? startTime : new Date(),
-        currentPeriodEnd: !isNaN(endTime.getTime()) ? endTime : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        currentPeriodStart: safeStartTime,
+        currentPeriodEnd: safeEndTime,
       },
     });
 
@@ -537,13 +540,16 @@ export class PaymentsService {
     const startTime = subscription.current_period_start ? new Date(subscription.current_period_start * 1000) : new Date();
     const endTime = subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : new Date(startTime.getTime() + 30 * 24 * 60 * 60 * 1000);
 
+    const safeStartTime = !isNaN(startTime.getTime()) ? startTime : new Date();
+    const safeEndTime = !isNaN(endTime.getTime()) ? endTime : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
     await this.prisma.subscription.update({
       where: { userId: user.id },
       data: {
         status: subscription.status,
         planType,
-        currentPeriodStart: !isNaN(startTime.getTime()) ? startTime : new Date(),
-        currentPeriodEnd: !isNaN(endTime.getTime()) ? endTime : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        currentPeriodStart: safeStartTime,
+        currentPeriodEnd: safeEndTime,
         updatedAt: new Date(),
       },
     });
