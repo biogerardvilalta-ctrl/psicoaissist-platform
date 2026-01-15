@@ -67,7 +67,7 @@ const ALL_WIDGETS = [
   { id: 'sentimentWidget', label: 'Tendencia Bienestar', category: 'Charts' },
   { id: 'sessionTypesWidget', label: 'Tipos de Sesión', category: 'Charts' },
   { id: 'testsWidget', label: 'Pruebas Realizadas', category: 'Analítica Clínica' },
-  { id: 'testsWidget', label: 'Pruebas Realizadas', category: 'Analítica Clínica' },
+
   { id: 'techniquesWidget', label: 'Técnicas Terapéuticas', category: 'Analítica Clínica' },
   { id: 'referralWidget', label: 'Invita y Gana', category: 'Growth' },
 ];
@@ -77,24 +77,9 @@ const DEFAULT_LAYOUT = [
   'sessionsThisMonth',
   'activePatients',
   'monthIncome',
-
-  // Operational Block
   'sessionsNextWeek',
-  'pendingNotes',
-  'weeklyChart', // Moved here as requested
-
-  // Analytics
-  'attendanceRate',
-  'cancellationRate',
-  'sessionsChart',
-
-  // Clinical
-  'themesWidget',
-  'sentimentWidget',
-  // 'testsWidget', // By default maybe? User said "falta añadir", implying availability or presence. I'll add them to default.
-  'testsWidget',
-  'techniquesWidget',
-  'sessionTypesWidget'
+  'weeklyChart',
+  'sessionsChart'
 ];
 
 export default function DashboardPage() {
@@ -309,8 +294,8 @@ export default function DashboardPage() {
               <div
                 key={index}
                 className={`p-4 rounded-lg flex items-start gap-3 border ${alert.type === 'WARNING' ? 'bg-amber-50 border-amber-200 text-amber-800' :
-                    alert.type === 'CRITICAL' ? 'bg-red-50 border-red-200 text-red-800' :
-                      'bg-blue-50 border-blue-200 text-blue-800'
+                  alert.type === 'CRITICAL' ? 'bg-red-50 border-red-200 text-red-800' :
+                    'bg-blue-50 border-blue-200 text-blue-800'
                   }`}
               >
                 {alert.type === 'WARNING' && <AlertCircle className="h-5 w-5 mt-0.5 shrink-0" />}
