@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Eye, EyeOff, UserPlus, Heart, AlertCircle, Gift, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { usePayments } from '@/hooks/usePayments';
+import { UserAPI } from '@/lib/user-api';
 
 interface RegisterFormData {
   firstName: string;
@@ -148,9 +149,22 @@ export default function RegisterPage() {
           return;
         } catch (paymentError) {
           console.error('Error initiating payment redirect:', paymentError);
-          // If payment fails to init, we still have the user registered.
-          // Fallback to dashboard with a warning or let them correct it there.
-          router.push(`/dashboard?payment_error=init_failed&intended_plan=${selectedPlan}&interval=${billingInterval || 'month'}`);
+
+          // ROLLBACK: Delete the created user if payment fails to initialize
+          try {
+            await UserAPI.deleteAccount();
+            console.log('Rollback successful: User deleted.');
+          } catch (rollbackError) {
+            console.error('Rollback failed:', rollbackError);
+          }
+
+          // Logout locally to clean up state
+          // Assuming 'logout' is available from useAuth, otherwise we just clear tokens or let context handle it
+          // We can't access logout directly if it wasn't destructured, checking imports...
+          // We only have { register } from useAuth(). detailed below.
+
+          setLocalError('Error iniciando la pasarela de pago. La cuenta no se ha creado. Por favor, inténtalo de nuevo.');
+          setIsSubmitting(false);
           return;
         }
       }

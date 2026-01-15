@@ -37,4 +37,8 @@ export class UserAPI {
     static async deleteProfessionalGroup(groupId: string): Promise<void> {
         return httpClient.delete<void>(`${this.BASE_URL}/professional-groups/${groupId}`);
     }
+
+    static async deleteAccount(): Promise<void> {
+        return httpClient.delete<void>(`${this.BASE_URL}/me`);
+    }
 }
