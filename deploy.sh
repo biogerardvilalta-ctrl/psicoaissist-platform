@@ -14,6 +14,11 @@ echo "🐳 Reconstruyendo contenedores..."
 # -d lo ejecuta en segundo plano (detached)
 docker compose up -d --build
 
+# 3. Aplicar migraciones de base de datos
+echo "🔄 Aplicando migraciones de base de datos..."
+sleep 5 # Esperar un poco a que el backend arranque
+docker exec psicoaissist_beta_backend npx prisma migrate deploy
+
 # 3. Limpieza opcional (elimina imágenes antiguas para ahorrar espacio)
 echo "🧹 Limpiando imágenes antiguas..."
 docker image prune -f
