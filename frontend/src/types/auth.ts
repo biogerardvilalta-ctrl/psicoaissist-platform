@@ -7,7 +7,7 @@ export interface User {
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   subscription?: {
     id: string;
-    planType: 'BASIC' | 'PRO' | 'PREMIUM';
+    planType: 'BASIC' | 'PRO' | 'PREMIUM' | 'DEMO';
     status: string;
     currentPeriodStart?: string;
     currentPeriodEnd?: string;
