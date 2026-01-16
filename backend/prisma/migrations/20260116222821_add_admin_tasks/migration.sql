@@ -1,14 +1,30 @@
--- CreateEnum
-CREATE TYPE "NotificationType" AS ENUM ('INFO', 'SUCCESS', 'WARNING', 'ERROR');
+-- CreateEnum safely
+DO $$ BEGIN
+    CREATE TYPE "NotificationType" AS ENUM ('INFO', 'SUCCESS', 'WARNING', 'ERROR');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "AdminTaskType" AS ENUM ('ONBOARDING_SETUP', 'SUPPORT_REQUEST', 'ACCOUNT_REVIEW', 'CUSTOM');
+DO $$ BEGIN
+    CREATE TYPE "AdminTaskType" AS ENUM ('ONBOARDING_SETUP', 'SUPPORT_REQUEST', 'ACCOUNT_REVIEW', 'CUSTOM');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "AdminTaskStatus" AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
+DO $$ BEGIN
+    CREATE TYPE "AdminTaskStatus" AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateEnum
-CREATE TYPE "AdminTaskPriority" AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL');
+DO $$ BEGIN
+    CREATE TYPE "AdminTaskPriority" AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateTable
 CREATE TABLE "notifications" (
