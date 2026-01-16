@@ -10,6 +10,20 @@ git pull
 
 # 2. Reconstruir y reiniciar contenedores
 echo "🐳 Reconstruyendo contenedores..."
+
+# Pre-limpieza: Asegurar que el puerto 3001 esté libre (evita error 500 por procesos zombies)
+if lsof -i :3001 -t >/dev/null; then
+    echo "⚠️  Detectado proceso ocupando puerto 3001. Intentando liberar..."
+    echo "    1. Deletiendo contenedores antiguos..."
+    docker compose down
+    
+    # Si sigue ocupado, es un proceso rogue (zombie)
+    if lsof -i :3001 -t >/dev/null; then
+        echo "    2. Matando proceso zombie en puerto 3001..."
+        kill -9 $(lsof -t -i:3001) || true
+    fi
+fi
+
 # --build fuerza la reconstrucción para asegurar que los cambios de código se apliquen
 # -d lo ejecuta en segundo plano (detached)
 docker compose up -d --build
