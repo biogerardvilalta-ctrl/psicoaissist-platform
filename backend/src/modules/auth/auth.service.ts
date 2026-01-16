@@ -56,10 +56,17 @@ export class AuthService {
         throw new UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
       }
 
-      const isPasswordValid = await this.encryptionService.comparePassword(password, user.passwordHash);
+      let isPasswordValid = false;
+      try {
+        isPasswordValid = await this.encryptionService.comparePassword(password, user.passwordHash);
+      } catch (bcryptError) {
+        this.logger.error(`Bcrypt comparison failed for user ${email}: ${bcryptError.message}`);
+        // Treat as invalid password rather than crashing
+        isPasswordValid = false;
+      }
 
       if (!isPasswordValid) {
-        this.logger.warn(`Failed login attempt for user: ${email}`);
+        this.logger.warn(`Failed login attempt for user: ${email} (Invalid Password)`);
         await this.logAuthAttempt(user.id, false);
         return null;
       }
@@ -68,7 +75,8 @@ export class AuthService {
       const { passwordHash, ...result } = user;
       return result;
     } catch (error) {
-      this.logger.error(`Error validating user: ${error.message}`);
+      // Log the full stack trace for internal server errors
+      this.logger.error(`Error validating user ${email}: ${error.message}`, error.stack);
       throw error;
     }
   }

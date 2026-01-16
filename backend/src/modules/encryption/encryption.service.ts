@@ -189,6 +189,10 @@ export class EncryptionService {
    * Comparar contraseña con hash
    */
   async comparePassword(password: string, hash: string): Promise<boolean> {
+    if (!hash || typeof hash !== 'string' || !hash.startsWith('$2')) {
+      // Invalid hash format - surely not a match
+      return false;
+    }
     const bcrypt = await import('bcrypt');
     return bcrypt.compare(password, hash);
   }

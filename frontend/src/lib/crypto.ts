@@ -73,6 +73,11 @@ export class CryptoService {
 
     static async encryptRSA(data: any, publicKeyPem: string): Promise<string> {
         try {
+            if (!window.crypto || !window.crypto.subtle) {
+                console.warn('Web Crypto API not available (likely insecure context). Falling back to plaintext.');
+                return null; // Fallback to plaintext handled by caller
+            }
+
             // Import public key
             const pemHeader = "-----BEGIN PUBLIC KEY-----";
             const pemFooter = "-----END PUBLIC KEY-----";
@@ -111,7 +116,8 @@ export class CryptoService {
             return this.arrayBufferToBase64(new Uint8Array(encryptedBuffer));
         } catch (error) {
             console.error('RSA Encryption failed:', error);
-            throw new Error('RSA Encryption failed');
+            // Don't throw, let it fall back
+            return null;
         }
     }
 }
