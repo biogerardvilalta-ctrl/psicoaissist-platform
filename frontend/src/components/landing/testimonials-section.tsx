@@ -58,6 +58,11 @@ const testimonials = [
 ];
 
 export function TestimonialsSection() {
+  // TODO: Enable this section in production once we have real testimonials
+  if (process.env.NODE_ENV === 'production') {
+    return null;
+  }
+
   return (
     <section id="testimonials" className="py-16 bg-white sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
