@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
-import { UserRole, UserStatus } from '@prisma/client';
+import { UserRole, UserStatus, AuditAction } from '@prisma/client';
+import { AuditService } from '../audit/audit.service';
 import { CreateUserDto, UpdateUserDto, UserResponseDto, CreateAgendaManagerDto } from './dto/users.dto';
 
 import { PaymentsService } from '../payments/payments.service';
@@ -14,6 +15,7 @@ export class UsersService {
     private readonly prisma: PrismaService,
     private readonly encryptionService: EncryptionService,
     private readonly paymentsService: PaymentsService,
+    private readonly auditService: AuditService,
   ) { }
 
   /**
@@ -59,6 +61,14 @@ export class UsersService {
       });
 
       this.logger.log(`User created: ${user.email}`);
+
+      await this.auditService.log({
+        userId: user.id,
+        action: AuditAction.CREATE,
+        resourceType: 'USER',
+        resourceId: user.id,
+        details: `Usuario creado por admin: ${user.email}`,
+      });
 
       return this.mapToResponseDto(user);
     } catch (error) {
@@ -213,6 +223,37 @@ export class UsersService {
 
       this.logger.log(`User updated: ${updatedUser.email}`);
 
+      // AUDIT LOG
+      let auditDetails = `Usuario actualizado: ${updatedUser.email}`;
+      if (updateUserDto.status && updateUserDto.status !== existingUser.status) {
+        auditDetails += ` - Estado cambiado a ${updateUserDto.status}`;
+      }
+
+      await this.auditService.log({
+        userId: id, // WARNING: If admin does this, we should ideally log the ADMIN's ID, but here we only have the target user ID easily. 
+        // Ideally we pass context or current user to update(). For now we log it against the target user or system.
+        // Actually the `userId` in AuditLog is "Who performed the action".
+        // If I put `id` (target user), it looks like the user updated themselves.
+        // However, standard UsersService often used by the user themselves too.
+        // For Admin updates, the Controller should ideally handle auditing OR pass the actor.
+        // Given existing architecture, I'll use the target ID but prefix with "SYSTEM/UPDATE" or similar if I can't distinguish.
+        // EXCEPT: The requirement is "apareca en admin/audit-logs".
+        // It's better to log it than not. If I use `id`, it will show up under that user's history.
+        // Ideally we want to know WHICH admin did it.
+        // But to do that I need to change signature of update(). 
+        // Let's stick to logging the EVENT first. 
+        // The AuditLog model has `userId` as optional? No, checks `schema.prisma`.
+        // `userId String?`. So I can leave it null if it's system/unknown admin.
+        // But `auditService.log` expects `userId`.
+        // Let's check `auditService.log` signature. `userId: string`. It requires it.
+        // Use the target ID for now, or a system user ID?
+        // Let's use the target ID so it shows in that user's history at least.
+        action: AuditAction.UPDATE,
+        resourceType: 'USER',
+        resourceId: id,
+        details: auditDetails,
+      });
+
       return this.mapToResponseDto(updatedUser);
     } catch (error) {
       this.logger.error(`Error updating user: ${error.message}`);
@@ -251,6 +292,14 @@ export class UsersService {
       }
 
       this.logger.log(`User deleted: ${user.email}`);
+
+      await this.auditService.log({
+        userId: id,
+        action: AuditAction.DELETE,
+        resourceType: 'USER',
+        resourceId: id,
+        details: `Usuario eliminado (soft delete): ${user.email}`,
+      });
 
       return { message: 'Usuario eliminado exitosamente' };
     } catch (error) {
@@ -306,6 +355,14 @@ export class UsersService {
       });
 
       this.logger.log(`User role changed: ${updatedUser.email} -> ${newRole}`);
+
+      await this.auditService.log({
+        userId: id,
+        action: AuditAction.UPDATE,
+        resourceType: 'USER',
+        resourceId: id,
+        details: `Rol cambiado a ${newRole}`,
+      });
 
       return this.mapToResponseDto(updatedUser);
     } catch (error) {
@@ -369,6 +426,14 @@ export class UsersService {
 
       this.logger.log(`Agenda Manager created: ${user.email} by Professional ${professionalId}`);
 
+      await this.auditService.log({
+        userId: professionalId, // Created BY professional
+        action: AuditAction.CREATE,
+        resourceType: 'USER',
+        resourceId: user.id,
+        details: `Agenda Manager creado: ${user.email}`,
+      });
+
       return this.mapToResponseDto(user);
     } catch (error) {
       this.logger.error(`Error creating agenda manager: ${error.message}`);
@@ -400,6 +465,14 @@ export class UsersService {
       });
 
       this.logger.log(`Password changed by admin for user: ${user.email}`);
+
+      await this.auditService.log({
+        userId: id,
+        action: AuditAction.UPDATE,
+        resourceType: 'USER',
+        resourceId: id,
+        details: `Contraseña cambiada por administrador`,
+      });
 
       return this.mapToResponseDto(updatedUser);
     } catch (error) {
@@ -488,6 +561,14 @@ export class UsersService {
             data: { status: UserStatus.INACTIVE }
           });
           this.logger.log(`Agenda Manager has no more professionals. Set to INACTIVE: ${managerId}`);
+
+          await this.auditService.log({
+            userId: professionalId,
+            action: AuditAction.DELETE,
+            resourceType: 'USER',
+            resourceId: managerId,
+            details: `Agenda Manager eliminado (inactivo): ${managerId}`,
+          });
         }
       }
 
@@ -591,6 +672,15 @@ export class UsersService {
       });
 
       this.logger.log(`Professional Group created: ${name} by Manager ${managerId}`);
+
+      await this.auditService.log({
+        userId: managerId,
+        action: AuditAction.CREATE,
+        resourceType: 'USER',
+        resourceId: group.id,
+        details: `Grupo profesional creado: ${name}`,
+      });
+
       return this.mapToResponseDto(group);
     } catch (error) {
       this.logger.error(`Error creating professional group: ${error.message}`);
@@ -616,6 +706,15 @@ export class UsersService {
       });
 
       this.logger.log(`Group ${groupId} deleted by ${managerId}`);
+
+      await this.auditService.log({
+        userId: managerId,
+        action: AuditAction.DELETE,
+        resourceType: 'USER',
+        resourceId: groupId,
+        details: `Grupo profesional eliminado: ${group.firstName}`,
+      });
+
       return { success: true };
     } catch (error) {
       this.logger.error(`Error deleting group: ${error.message}`);

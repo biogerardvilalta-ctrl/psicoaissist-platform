@@ -11,6 +11,8 @@ import {
 } from './dto/payments.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import Stripe from 'stripe';
+import { AuditService } from '../audit/audit.service';
+import { AuditAction } from '@prisma/client';
 
 @Injectable()
 export class PaymentsService {
@@ -21,6 +23,7 @@ export class PaymentsService {
     private stripeService: StripeService,
     private emailService: EmailService,
     private notificationsService: NotificationsService,
+    private readonly auditService: AuditService,
   ) { }
 
   async createCheckoutSession(createCheckoutDto: CreateCheckoutSessionDto, userId: string) {
@@ -134,6 +137,14 @@ export class PaymentsService {
             currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
           }
         });
+
+        await this.auditService.log({
+          userId: user.id,
+          action: AuditAction.SUBSCRIPTION_CHANGE,
+          resourceType: 'SUBSCRIPTION',
+          details: `Simulación DEV: Suscripción activada para ${createCheckoutDto.plan}`,
+          isSuccess: true,
+        });
       }
 
       return {
@@ -160,6 +171,7 @@ export class PaymentsService {
   // ... (createCustomer, createPortalSession, etc remain same)
 
   async addExtraPack(userId: string, packId: string) {
+    let details = '';
     if (packId === PlanType.MINUTES_PACK) {
       const MINUTES_IN_PACK = 500;
       await this.prisma.user.update({
@@ -168,6 +180,7 @@ export class PaymentsService {
           extraTranscriptionMinutes: { increment: MINUTES_IN_PACK }
         }
       });
+      details = `Pack Minutos (${MINUTES_IN_PACK} min) añadido`;
       this.logger.log(`Added ${MINUTES_IN_PACK} extra minutes to user ${userId}`);
     } else if (packId === PlanType.SIMULATOR_PACK) {
       const CASES_IN_PACK = 10;
@@ -177,6 +190,7 @@ export class PaymentsService {
           extraSimulatorCases: { increment: CASES_IN_PACK }
         }
       });
+      details = `Pack Simulador (${CASES_IN_PACK} casos) añadido`;
       this.logger.log(`Added ${CASES_IN_PACK} extra simulator cases to user ${userId}`);
     } else if (packId === PlanType.AGENDA_MANAGER_PACK) {
       // Enable Agenda Manager pack
@@ -186,8 +200,18 @@ export class PaymentsService {
           agendaManagerEnabled: true
         }
       });
+      details = `Pack Agenda Manager activado`;
       this.logger.log(`Enabled Agenda Manager for user ${userId}`);
     }
+
+    await this.auditService.log({
+      userId: userId,
+      action: AuditAction.SUBSCRIPTION_CHANGE,
+      resourceType: 'SUBSCRIPTION',
+      resourceId: packId,
+      details: details,
+      isSuccess: true,
+    });
   }
 
   // ... (rest of methods)
@@ -375,6 +399,15 @@ export class PaymentsService {
         },
       });
 
+      await this.auditService.log({
+        userId: userId,
+        action: AuditAction.SUBSCRIPTION_CHANGE,
+        resourceType: 'SUBSCRIPTION',
+        resourceId: user.subscription.id,
+        details: `Suscripción actualizada a ${updateSubscriptionDto.newPlan}`,
+        isSuccess: true,
+      });
+
       return {
         subscription: updatedSubscription,
         plan: newPlan,
@@ -418,6 +451,15 @@ export class PaymentsService {
           canceledAt: new Date(),
           updatedAt: new Date(),
         },
+      });
+
+      await this.auditService.log({
+        userId: userId,
+        action: AuditAction.SUBSCRIPTION_CHANGE,
+        resourceType: 'SUBSCRIPTION',
+        resourceId: user.subscription.id,
+        details: `Suscripción cancelada`,
+        isSuccess: true,
       });
 
       return {
@@ -513,6 +555,15 @@ export class PaymentsService {
 
     this.logger.log(`Subscription created for user ${user.id}`);
 
+    await this.auditService.log({
+      userId: user.id,
+      action: AuditAction.SUBSCRIPTION_CHANGE,
+      resourceType: 'SUBSCRIPTION',
+      resourceId: subscription.id,
+      details: `Suscripción creada: ${planType}`,
+      isSuccess: true,
+    });
+
     // Enviar email de confirmación de suscripción
     try {
       await this.emailService.sendSubscriptionConfirmation(
@@ -554,6 +605,16 @@ export class PaymentsService {
       },
     });
 
+    // Only log if status is meaningful or plan changed.
+    await this.auditService.log({
+      userId: user.id,
+      action: AuditAction.SUBSCRIPTION_CHANGE,
+      resourceType: 'SUBSCRIPTION',
+      resourceId: subscription.id,
+      details: `Suscripción actualizada: ${planType} (${subscription.status})`,
+      isSuccess: true,
+    });
+
     this.logger.log(`Subscription updated for user ${user.id}`);
   }
 
@@ -578,6 +639,15 @@ export class PaymentsService {
     });
 
     this.logger.log(`Subscription deleted for user ${user.id}`);
+
+    await this.auditService.log({
+      userId: user.id,
+      action: AuditAction.SUBSCRIPTION_CHANGE,
+      resourceType: 'SUBSCRIPTION',
+      resourceId: subscription.id,
+      details: `Suscripción finalizada/eliminada por Stripe`,
+      isSuccess: true,
+    });
 
     // Enviar email de cancelación
     try {

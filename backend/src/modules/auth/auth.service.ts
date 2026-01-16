@@ -5,7 +5,8 @@ import { EncryptionService } from '../encryption/encryption.service';
 import { UsersService } from '../users/users.service';
 import { EmailService } from '../email/email.service';
 import { LoginDto, RegisterDto, TokensDto, AuthResponseDto } from './dto/auth.dto';
-import { UserRole, UserStatus } from '@prisma/client';
+import { AuditService } from '../audit/audit.service';
+import { UserRole, UserStatus, AuditAction } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -19,6 +20,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
+    private readonly auditService: AuditService,
   ) { }
 
   /**
@@ -221,6 +223,16 @@ export class AuthService {
 
       this.logger.log(`New user registered: ${user.email} (Referred by: ${referredByUserId || 'None'})`);
 
+      // AUDIT LOG
+      await this.auditService.log({
+        userId: user.id,
+        action: AuditAction.CREATE,
+        resourceType: 'USER',
+        resourceId: user.id,
+        details: `Usuario registrado: ${user.email}`,
+        isSuccess: true,
+      });
+
       // Enviar email de bienvenida
       try {
         await this.emailService.sendWelcomeEmail(
@@ -344,7 +356,14 @@ export class AuthService {
     try {
       // En una implementación completa, aquí agregaríamos el token a una blacklist
       // Por ahora, simplemente loggeamos el evento
-      this.logger.log(`User logged out: ${userId}`);
+      await this.auditService.log({
+        userId,
+        action: AuditAction.LOGOUT,
+        resourceType: 'USER',
+        resourceId: userId,
+        details: 'Logout exitoso',
+        isSuccess: true,
+      });
 
       return { message: 'Logout exitoso' };
     } catch (error) {
@@ -376,6 +395,14 @@ export class AuthService {
       );
 
       if (!isCurrentPasswordValid) {
+        await this.auditService.log({
+          userId,
+          action: AuditAction.UPDATE,
+          resourceType: 'USER',
+          resourceId: userId,
+          details: 'Intento fallido de cambio de contraseña (contraseña actual incorrecta)',
+          isSuccess: false,
+        });
         throw new UnauthorizedException('Contraseña actual incorrecta');
       }
 
@@ -391,6 +418,15 @@ export class AuthService {
 
       this.logger.log(`Password changed for user: ${userId}`);
 
+      await this.auditService.log({
+        userId,
+        action: AuditAction.PASSWORD_RESET, // Or UPDATE, but PASSWORD_RESET is more specific if available. Schema has PASSWORD_RESET.
+        resourceType: 'USER',
+        resourceId: userId,
+        details: 'Contraseña cambiada exitosamente',
+        isSuccess: true,
+      });
+
       return { message: 'Contraseña cambiada exitosamente' };
     } catch (error) {
       this.logger.error(`Error changing password: ${error.message}`);
@@ -403,16 +439,13 @@ export class AuthService {
    */
   private async logAuthAttempt(userId: string, success: boolean): Promise<void> {
     try {
-      await this.prisma.auditLog.create({
-        data: {
-          userId,
-          action: success ? 'LOGIN_SUCCESS' : 'LOGIN_FAILED',
-          resourceType: 'USER',
-          metadata: { timestamp: new Date(), success },
-          ipAddress: '', // Se puede obtener del request
-          userAgent: '', // Se puede obtener del request
-          isSuccess: success,
-        },
+      await this.auditService.log({
+        userId,
+        action: success ? AuditAction.LOGIN_SUCCESS : AuditAction.LOGIN_FAILED,
+        resourceType: 'USER',
+        resourceId: userId,
+        details: success ? 'Login exitoso' : 'Fallo en login',
+        isSuccess: success,
       });
     } catch (error) {
       this.logger.error(`Error logging auth attempt: ${error.message}`);
