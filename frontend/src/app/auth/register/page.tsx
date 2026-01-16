@@ -419,7 +419,7 @@ export default function RegisterPage() {
                 <label htmlFor="termsAccepted" className="font-medium text-gray-700">
                   Acepto los <Link href="/dashboard/compliance?tab=terms" target="_blank" className="text-blue-600 hover:text-blue-500">Términos de Servicio</Link> y la <Link href="/dashboard/compliance?tab=gdpr" target="_blank" className="text-blue-600 hover:text-blue-500">Política de Privacidad</Link>
                 </label>
-                <p className="text-gray-500 mt-1 text-xs">Aquesta eina ofereix suport clínic orientatiu exclusivament per a professionals de la salut mental. No realitza diagnòstics ni substitueix el criteri clínic.</p>
+                <p className="text-gray-500 mt-1 text-xs">Esta herramienta ofrece apoyo clínico orientativo exclusivamente para psicólogos. No realiza diagnósticos ni sustituye el criterio clínico.</p>
               </div>
             </div>
 

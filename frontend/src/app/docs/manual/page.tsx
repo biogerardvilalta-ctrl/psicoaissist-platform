@@ -102,7 +102,7 @@ export default function ManualPage() {
 
                             <div className="grid md:grid-cols-2 gap-6 my-6 not-prose">
                                 <div className="p-6 bg-blue-50 rounded-xl border border-blue-100">
-                                    <h3 className="text-lg font-semibold text-blue-900 mb-2">Professional (Doctor/a)</h3>
+                                    <h3 className="text-lg font-semibold text-blue-900 mb-2">Professional (Psicólogo/a)</h3>
                                     <p className="text-blue-800 text-sm mb-4">Usuario principal (terapeuta/psicólogo).</p>
                                     <ul className="space-y-3 text-sm text-blue-700 pl-5">
                                         <li className="flex gap-2"><span className="shrink-0">✓</span> Gestión de sus propios pacientes</li>

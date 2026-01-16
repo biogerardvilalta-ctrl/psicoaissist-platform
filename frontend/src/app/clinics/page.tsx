@@ -55,7 +55,7 @@ export default function ClinicsPage() {
                     <div className="mx-auto max-w-2xl lg:text-center">
                         <h2 className="text-base font-semibold leading-7 text-blue-600">Enterprise Grade</h2>
                         <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                            Todo lo que un Director Médico necesita
+                            Todo lo que un Director Clínico necesita
                         </p>
                         <p className="mt-6 text-lg leading-8 text-gray-600">
                             Deja de gestionar tu clínica con hojas de cálculo y herramientas desconectadas. Centraliza la operación, la formación y el control de calidad.
