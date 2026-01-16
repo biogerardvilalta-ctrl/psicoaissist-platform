@@ -27,7 +27,8 @@ EXCEPTION
 END $$;
 
 -- CreateTable
-CREATE TABLE "notifications" (
+-- CreateTable safely
+CREATE TABLE IF NOT EXISTS "notifications" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -40,8 +41,8 @@ CREATE TABLE "notifications" (
     CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "admin_tasks" (
+-- CreateTable safely
+CREATE TABLE IF NOT EXISTS "admin_tasks" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "type" "AdminTaskType" NOT NULL,
@@ -58,26 +59,38 @@ CREATE TABLE "admin_tasks" (
     CONSTRAINT "admin_tasks_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE INDEX "notifications_user_id_is_read_idx" ON "notifications"("user_id", "is_read");
+-- CreateIndex safely
+CREATE INDEX IF NOT EXISTS "notifications_user_id_is_read_idx" ON "notifications"("user_id", "is_read");
 
--- CreateIndex
-CREATE INDEX "notifications_user_id_created_at_idx" ON "notifications"("user_id", "created_at");
+-- CreateIndex safely
+CREATE INDEX IF NOT EXISTS "notifications_user_id_created_at_idx" ON "notifications"("user_id", "created_at");
 
--- CreateIndex
-CREATE INDEX "admin_tasks_user_id_idx" ON "admin_tasks"("user_id");
+-- CreateIndex safely
+CREATE INDEX IF NOT EXISTS "admin_tasks_user_id_idx" ON "admin_tasks"("user_id");
 
--- CreateIndex
-CREATE INDEX "admin_tasks_status_idx" ON "admin_tasks"("status");
+-- CreateIndex safely
+CREATE INDEX IF NOT EXISTS "admin_tasks_status_idx" ON "admin_tasks"("status");
 
--- CreateIndex
-CREATE INDEX "admin_tasks_type_idx" ON "admin_tasks"("type");
+-- CreateIndex safely
+CREATE INDEX IF NOT EXISTS "admin_tasks_type_idx" ON "admin_tasks"("type");
 
--- AddForeignKey
-ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey safely
+DO $$ BEGIN
+    ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "admin_tasks" ADD CONSTRAINT "admin_tasks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- AddForeignKey safely
+DO $$ BEGIN
+    ALTER TABLE "admin_tasks" ADD CONSTRAINT "admin_tasks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "admin_tasks" ADD CONSTRAINT "admin_tasks_assigned_to_fkey" FOREIGN KEY ("assigned_to") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+-- AddForeignKey safely
+DO $$ BEGIN
+    ALTER TABLE "admin_tasks" ADD CONSTRAINT "admin_tasks_assigned_to_fkey" FOREIGN KEY ("assigned_to") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
