@@ -46,6 +46,7 @@ export interface User {
   limits?: {
     maxClients: number;
   };
+  hasOnboardingPack?: boolean;
 }
 
 export interface AuthTokens {

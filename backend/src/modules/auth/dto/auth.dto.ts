@@ -125,6 +125,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   agendaManagerEnabled?: boolean;
+
+  @ApiProperty({ required: false })
+  hasOnboardingPack?: boolean;
 }
 
 export class AuthResponseDto {

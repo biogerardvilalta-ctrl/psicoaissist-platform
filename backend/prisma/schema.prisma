@@ -74,6 +74,8 @@ model User {
   groupMembers              User[]             @relation("GroupMembers")
   memberOfGroups            User[]             @relation("GroupMembers")
   notifications             Notification[]
+  adminTasks                AdminTask[]
+  assignedTasks             AdminTask[]        @relation("TaskAssignee")
 
   @@map("users")
 }
@@ -376,9 +378,55 @@ model Notification {
   @@map("notifications")
 }
 
+
 enum NotificationType {
   INFO
   SUCCESS
   WARNING
   ERROR
 }
+
+model AdminTask {
+  id          String           @id @default(cuid())
+  userId      String           @map("user_id")
+  type        AdminTaskType
+  status      AdminTaskStatus  @default(PENDING)
+  priority    AdminTaskPriority @default(MEDIUM)
+  title       String
+  description String?
+  metadata    Json?
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  completedAt DateTime?        @map("completed_at")
+  assignedTo  String?          @map("assigned_to")
+  
+  user        User             @relation(fields: [userId], references: [id])
+  assignee    User?            @relation("TaskAssignee", fields: [assignedTo], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+  @@map("admin_tasks")
+}
+
+enum AdminTaskType {
+  ONBOARDING_SETUP
+  SUPPORT_REQUEST
+  ACCOUNT_REVIEW
+  CUSTOM
+}
+
+enum AdminTaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum AdminTaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+

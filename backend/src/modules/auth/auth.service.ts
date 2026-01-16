@@ -30,7 +30,10 @@ export class AuthService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email: email.toLowerCase() },
-        include: { subscription: true },
+        include: {
+          subscription: true,
+          adminTasks: true
+        },
       });
 
       if (!user) {
@@ -139,6 +142,7 @@ export class AuthService {
         subscription: user.subscription,
         simulatorUsageCount: user.simulatorUsageCount,
         agendaManagerEnabled: user.agendaManagerEnabled,
+        hasOnboardingPack: user.adminTasks ? user.adminTasks.some((t: any) => t.type === 'ONBOARDING_SETUP' && t.status !== 'CANCELLED') : false,
       },
       tokens,
       encryptionKey: {
@@ -269,6 +273,7 @@ export class AuthService {
           subscription: user.subscription,
           simulatorUsageCount: user.simulatorUsageCount,
           agendaManagerEnabled: user.agendaManagerEnabled,
+          hasOnboardingPack: false,
         },
         tokens,
         encryptionKey: {
@@ -502,7 +507,10 @@ export class AuthService {
   async getProfile(userId: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { subscription: true },
+      include: {
+        subscription: true,
+        adminTasks: true,
+      },
     });
 
     if (!user) {
@@ -544,7 +552,8 @@ export class AuthService {
       },
       limits: {
         maxClients: limits?.maxClients ?? 3 // Default fallback
-      }
+      },
+      hasOnboardingPack: user.adminTasks ? user.adminTasks.some((t: any) => t.type === 'ONBOARDING_SETUP' && t.status !== 'CANCELLED') : false,
     };
   }
 }

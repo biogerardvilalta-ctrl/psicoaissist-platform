@@ -44,6 +44,11 @@ export class EmailService {
     await this.sendEmail(to, template);
   }
 
+  async sendOnboardingConfirmation(to: string, name: string): Promise<void> {
+    const template = this.getOnboardingTemplate(name);
+    await this.sendEmail(to, template);
+  }
+
   private async sendEmail(to: string, template: EmailTemplate): Promise<void> {
     // Mock implementation - logs to console
     // In production, replace with actual email service
@@ -282,6 +287,61 @@ export class EmailService {
         Tipo: ${data.type}
 
         Ver agenda: https://psicoaissist.com/dashboard/sessions
+      `
+    };
+  }
+
+  private getOnboardingTemplate(name: string): EmailTemplate {
+    return {
+      subject: 'Pack On-boarding: ¡Empezamos! 🚀',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">¡On-boarding Iniciado!</h1>
+          </div>
+          <div style="padding: 20px; background: #f8f9fa;">
+            <p style="color: #333; font-size: 16px;">Hola ${name},</p>
+            <p style="color: #555; line-height: 1.6;">
+              Hemos recibido tu contratación del <strong>Pack de On-boarding</strong>. ¡Gracias por confiar en nosotros!
+            </p>
+            <p style="color: #555; line-height: 1.6;">
+              Nuestro equipo técnico ya ha sido notificado y comenzará a preparar tu servidor web personalizado. 
+              Este proceso suele tardar entre 24 y 48 horas laborables.
+            </p>
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #6366f1;">
+               <h3 style="color: #333; margin-top: 0;">¿Qué sigue?</h3>
+               <ul style="color: #666; margin-bottom: 0;">
+                 <li>Un técnico asignado revisará tu solicitud.</li>
+                 <li>Configuraremos tu entorno dedicado.</li>
+                 <li>Te contactaremos por email cuando todo esté listo para entregarte las credenciales de acceso a tu nuevo servidor.</li>
+               </ul>
+            </div>
+            <p style="color: #555; line-height: 1.6;">
+              Mientras tanto, puedes seguir utilizando la plataforma con normalidad.
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://psicoaissist.com/dashboard" 
+                 style="background: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                Ir al Dashboard
+              </a>
+            </div>
+          </div>
+          <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
+            © 2025 PsicoAIssist
+          </div>
+        </div>
+      `,
+      text: `
+        Pack On-boarding: ¡Empezamos!
+  
+        Hola ${name},
+  
+        Hemos recibido tu contratación del Pack de On-boarding. Nuestro equipo ya está trabajando en configurar tu servidor web.
+  
+        Te notificaremos en 24-48h laborables cuando esté listo.
+  
+        Gracias,
+        Equipo de PsicoAIssist
       `
     };
   }

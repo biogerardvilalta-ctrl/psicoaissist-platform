@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { AuthAPI } from '@/lib/auth-api';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { CreditCard, Calendar, CheckCircle2, AlertCircle, Activity, Users } from 'lucide-react';
+import { CreditCard, Calendar, CheckCircle2, AlertCircle, Activity, Users, Server } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 // ... imports
@@ -444,29 +444,56 @@ export default function ProfilePage() {
                             )}
                         </div>
 
-                        {/* Agenda Manager Add-on */}
-                        {user?.agendaManagerEnabled && user?.subscription && (
+                        {/* Add-ons Section */}
+                        {((user?.agendaManagerEnabled) || (user?.hasOnboardingPack)) && user?.subscription && (
                             <div className="pt-6 border-t space-y-4">
                                 <h3 className="text-sm font-medium mb-3">Complementos Activos</h3>
-                                <div className="bg-emerald-50/50 rounded-lg p-4 border border-emerald-100/50 flex flex-col md:flex-row justify-between items-center gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                            <Users className="h-5 w-5" />
+
+                                {/* Agenda Manager */}
+                                {user?.agendaManagerEnabled && (
+                                    <div className="bg-emerald-50/50 rounded-lg p-4 border border-emerald-100/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                                <Users className="h-5 w-5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-emerald-900">Agenda Manager</p>
+                                                <p className="text-xs text-emerald-700">
+                                                    Gestión delegada de agenda y pacientes
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-emerald-900">Agenda Manager</p>
-                                            <p className="text-xs text-emerald-700">
-                                                Gestión delegada de agenda y pacientes
+                                        <div className="text-right flex flex-col items-end gap-1">
+                                            <Badge className="bg-emerald-600 hover:bg-emerald-700 w-fit">Activado</Badge>
+                                            <p className="text-xs text-muted-foreground">
+                                                Renovación: {user.subscription.currentPeriodEnd ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString() : 'N/A'}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="text-right flex flex-col items-end gap-1">
-                                        <Badge className="bg-emerald-600 hover:bg-emerald-700 w-fit">Activado</Badge>
-                                        <p className="text-xs text-muted-foreground">
-                                            Renovación: {user.subscription.currentPeriodEnd ? new Date(user.subscription.currentPeriodEnd).toLocaleDateString() : 'N/A'}
-                                        </p>
+                                )}
+
+                                {/* On-boarding Pack */}
+                                {user?.hasOnboardingPack && (
+                                    <div className="bg-indigo-50/50 rounded-lg p-4 border border-indigo-100/50 flex flex-col md:flex-row justify-between items-center gap-4 mt-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                                                <Server className="h-5 w-5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-indigo-900">Pack On-boarding</p>
+                                                <p className="text-xs text-indigo-700">
+                                                    Configuramos tu cuenta contigo en 45 min: importación de pacientes, enlace con Google Calendar y personalización. Garantía de funcionamiento.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right flex flex-col items-end gap-1">
+                                            <Badge className="bg-indigo-600 hover:bg-indigo-700 w-fit">En Proceso / Activo</Badge>
+                                            <p className="text-xs text-muted-foreground">
+                                                Consulta el estado en soporte
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         )}
 

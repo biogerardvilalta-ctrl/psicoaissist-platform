@@ -73,6 +73,14 @@ export default registerAs('stripe', () => ({
       interval: 'month', // Recurring Add-on
       name: 'Pack Agenda Manager',
       features: null
+    },
+    on_boarding_pack: {
+      priceId: process.env.STRIPE_PRICE_ONBOARDING_PACK || 'price_on_boarding_pack',
+      amount: 5000,
+      currency: 'eur',
+      interval: null, // One-time
+      name: 'Pack On-boarding',
+      features: null
     }
   }
 }));

@@ -125,7 +125,8 @@ export class UsersService {
       const user = await this.prisma.user.findUnique({
         where: { id },
         include: {
-          subscription: true // Include subscription
+          subscription: true, // Include subscription
+          adminTasks: true
         }
       });
 
@@ -148,7 +149,8 @@ export class UsersService {
       const user = await this.prisma.user.findUnique({
         where: { email: email.toLowerCase() },
         include: {
-          subscription: true // Include subscription
+          subscription: true, // Include subscription
+          adminTasks: true
         }
       });
 
@@ -767,6 +769,7 @@ export class UsersService {
       })) : undefined,
       simulatorUsageCount: user.simulatorUsageCount,
       agendaManagerEnabled: user.agendaManagerEnabled,
+      hasOnboardingPack: user.adminTasks ? user.adminTasks.some((t: any) => t.type === 'ONBOARDING_SETUP' && t.status !== 'CANCELLED') : false,
     };
   }
 }

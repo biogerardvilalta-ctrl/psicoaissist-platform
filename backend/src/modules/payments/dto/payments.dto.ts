@@ -9,6 +9,7 @@ export enum PlanType {
   MINUTES_PACK = 'minutes_pack',
   SIMULATOR_PACK = 'simulator_pack',
   AGENDA_MANAGER_PACK = 'agenda_manager_pack',
+  ONBOARDING_PACK = 'on_boarding_pack',
 }
 
 export class CreateCheckoutSessionDto {

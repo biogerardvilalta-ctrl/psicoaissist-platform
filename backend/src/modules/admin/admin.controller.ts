@@ -16,7 +16,7 @@ import { UsersService } from '../users/users.service';
 import { PaymentsService } from '../payments/payments.service';
 import { CreateUserDto, UpdateUserDto, AdminChangePasswordDto } from '../users/dto/users.dto';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { UserRole, UserStatus, AuditAction } from '@prisma/client';
+import { UserRole, UserStatus, AuditAction, AdminTaskStatus, AdminTaskType, AdminTaskPriority } from '@prisma/client';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -494,9 +494,19 @@ export class AdminController {
       }
     });
 
-    // 3. Recent Audit Logs (Errors or Logins) - Optional, grabbing errors for interest
-    // Disabled for now to keep it simple and focused on growth/activity, 
-    // but the Feed component supports errors.
+    // 3. Recent Admin Tasks (Onboarding Packs)
+    const recentTasks = await this.prisma.adminTask.findMany({
+      where: {
+        type: 'ONBOARDING_SETUP',
+      },
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: { firstName: true, lastName: true, email: true }
+        }
+      }
+    });
 
     // Transform to common format
     const activities = [
@@ -513,6 +523,13 @@ export class AdminController {
         title: `Nueva suscripción ${s.planType}`,
         description: `${s.user.firstName} ${s.user.lastName} activó el plan ${s.planType}`,
         timestamp: s.createdAt
+      })),
+      ...recentTasks.map(t => ({
+        id: `task-${t.id}`,
+        type: 'pack_purchased',
+        title: 'Pack On-boarding Contratado',
+        description: `${t.user.firstName} ${t.user.lastName} (${t.user.email}) ha contratado el pack.`,
+        timestamp: t.createdAt
       }))
     ];
 
@@ -1042,5 +1059,49 @@ export class AdminController {
   private async logAdminAction(action: string, metadata: any) {
     // In a real app, you'd have a dedicated audit log table
     console.log('Admin Action:', { action, metadata, timestamp: new Date() });
+  }
+
+  @Get('tasks')
+  async getTasks(
+    @Query('status') status?: AdminTaskStatus,
+    @Query('type') type?: AdminTaskType,
+    @Query('priority') priority?: AdminTaskPriority
+  ) {
+    const where: any = {};
+    if (status) where.status = status;
+    if (type) where.type = type;
+    if (priority) where.priority = priority;
+
+    return this.prisma.adminTask.findMany({
+      where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  @Patch('tasks/:id')
+  async updateTask(
+    @Param('id') id: string,
+    @Body() data: { status?: AdminTaskStatus, priority?: AdminTaskPriority, assignedTo?: string }
+  ) {
+    return this.prisma.adminTask.update({
+      where: { id },
+      data: {
+        ...data,
+        completedAt: data.status === 'COMPLETED' ? new Date() : undefined
+      },
+      include: {
+        user: true
+      }
+    });
   }
 }

@@ -13,7 +13,8 @@ import {
   UserCircleIcon,
   ArrowLeftIcon,
   CreditCardIcon,
-  ClipboardListIcon
+  ClipboardListIcon,
+  SparklesIcon
 } from '@heroicons/react/outline';
 import {
   DropdownMenu,
@@ -38,6 +39,7 @@ export default function AdminHeader() {
   const navigationItems = [
     { name: 'Panel', href: '/admin', icon: HomeIcon },
     { name: 'Usuarios', href: '/admin/users', icon: UsersIcon },
+    { name: 'Tareas', href: '/admin/tasks', icon: SparklesIcon },
     { name: 'Facturación', href: '/admin/billing', icon: CreditCardIcon },
     { name: 'Logs', href: '/admin/audit-logs', icon: ClipboardListIcon },
     { name: 'Sistema', href: '/admin/system', icon: CogIcon },
@@ -59,13 +61,7 @@ export default function AdminHeader() {
               </div>
             </Link>
 
-            <Link
-              href="/dashboard"
-              className="flex items-center space-x-1 text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors mr-4"
-            >
-              <ArrowLeftIcon className="h-4 w-4" />
-              <span>Volver a la App</span>
-            </Link>
+
 
             {/* Navegación */}
             <nav className="hidden md:flex space-x-4">
@@ -134,13 +130,7 @@ export default function AdminHeader() {
       {/* Navegación móvil */}
       <div className="md:hidden border-t border-gray-700">
         <nav className="px-4 pt-2 pb-3 space-y-1">
-          <Link
-            href="/dashboard"
-            className="flex items-center space-x-3 text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
-          >
-            <ArrowLeftIcon className="h-5 w-5" />
-            <span>Volver a la App</span>
-          </Link>
+
           {navigationItems.map((item) => {
             const Icon = item.icon;
             return (

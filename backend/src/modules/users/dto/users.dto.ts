@@ -219,6 +219,9 @@ export class UserResponseDto {
     status: string;
     currentPeriodEnd?: Date;
   };
+
+  @ApiProperty({ required: false })
+  hasOnboardingPack?: boolean;
 }
 
 // ... existing code ...

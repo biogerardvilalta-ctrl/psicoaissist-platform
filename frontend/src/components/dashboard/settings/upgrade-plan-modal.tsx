@@ -59,6 +59,17 @@ const upgradePlans = [
         features: ['Gestión de agenda', 'Gestión de pacientes', 'Acceso delegado'],
         popular: false,
         planType: 'ADD_ON'
+    },
+    {
+        id: 'on_boarding_pack',
+        name: 'Pack On-boarding',
+        priceMonthly: 50,
+        priceAnnual: 50,
+        isPack: true,
+        description: 'Configuración personalizada de servidor y dominio',
+        features: ['Servidor dedicado', 'Configuración de dominio', 'Soporte prioritario'],
+        popular: false,
+        planType: 'ADD_ON'
     }
 ];
 
@@ -84,7 +95,7 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
 
     const handleUpgrade = async (planId: string) => {
         try {
-            const isPack = ['minutes_pack', 'simulator_pack', 'agenda_manager_pack'].includes(planId);
+            const isPack = ['minutes_pack', 'simulator_pack', 'agenda_manager_pack', 'on_boarding_pack'].includes(planId);
             const hasActiveSubscription = user?.subscription?.status === 'active';
 
             // If it's a pack OR the user has no subscription, use Checkout Session
@@ -148,12 +159,14 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
 
         switch (currentPlan) {
             case 'PREMIUM':
-                return upgradePlans.filter(p => ['minutes_pack', 'simulator_pack', 'agenda_manager_pack'].includes(p.id) || (showCurrentPlan && p.id === 'premium'));
+                return upgradePlans.filter(p => ['minutes_pack', 'simulator_pack', 'agenda_manager_pack', 'on_boarding_pack'].includes(p.id) || (showCurrentPlan && p.id === 'premium'));
             case 'PRO':
-                return upgradePlans.filter(p => ['premium', 'minutes_pack', 'simulator_pack', 'agenda_manager_pack'].includes(p.id) || (showCurrentPlan && p.id === 'pro'));
+                return upgradePlans.filter(p => ['premium', 'minutes_pack', 'simulator_pack', 'agenda_manager_pack', 'on_boarding_pack'].includes(p.id) || (showCurrentPlan && p.id === 'pro'));
             case 'BASIC':
             default:
-                // Hide Minutes Pack and Simulator Pack for Basic users
+                // Hide Minutes Pack and Simulator Pack for Basic users? Strategy: Maybe allow onboarding for everyone.
+                // Assuming onboarding is allowed for basic too logic above says "Hide ... for Basic".
+                // I will allow onboarding for everyone as it's a server setup.
                 return upgradePlans.filter(p => !['minutes_pack', 'simulator_pack'].includes(p.id));
         }
     };
@@ -243,6 +256,7 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
                                                 {plan.id === 'minutes_pack' && <Zap className="h-4 w-4 text-amber-500 fill-amber-500" />}
                                                 {plan.id === 'simulator_pack' && <Crown className="h-4 w-4 text-blue-500 fill-blue-500" />}
                                                 {plan.id === 'agenda_manager_pack' && <Crown className="h-4 w-4 text-emerald-500 fill-emerald-500" />}
+                                                {plan.id === 'on_boarding_pack' && <Crown className="h-4 w-4 text-purple-600 fill-purple-600" />}
                                                 <h3 className="font-bold text-base text-slate-900">{plan.name}</h3>
                                             </div>
                                             <span className="font-bold text-lg text-slate-900">

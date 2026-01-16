@@ -4,7 +4,7 @@ import { TrendingUp, TrendingDown, Activity, AlertTriangle } from 'lucide-react'
 
 export interface AdminActivityItem {
   id: string;
-  type: 'user_registered' | 'subscription_created' | 'payment_completed' | 'error' | 'login';
+  type: 'user_registered' | 'subscription_created' | 'payment_completed' | 'error' | 'login' | 'pack_purchased';
   title: string;
   description: string;
   timestamp: Date | string;
@@ -40,6 +40,11 @@ const activityConfig = {
     icon: Activity,
     color: 'bg-gray-100 text-gray-600',
     bgColor: 'bg-gray-50'
+  },
+  pack_purchased: {
+    icon: TrendingUp,
+    color: 'bg-indigo-100 text-indigo-600',
+    bgColor: 'bg-indigo-50'
   }
 };
 

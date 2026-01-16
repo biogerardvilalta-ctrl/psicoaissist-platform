@@ -38,7 +38,7 @@ export class PaymentsService {
       }
 
       // Check specific logic for Packs
-      const isPack = createCheckoutDto.plan === PlanType.MINUTES_PACK || createCheckoutDto.plan === PlanType.SIMULATOR_PACK || createCheckoutDto.plan === PlanType.AGENDA_MANAGER_PACK;
+      const isPack = createCheckoutDto.plan === PlanType.MINUTES_PACK || createCheckoutDto.plan === PlanType.SIMULATOR_PACK || createCheckoutDto.plan === PlanType.AGENDA_MANAGER_PACK || createCheckoutDto.plan === PlanType.ONBOARDING_PACK;
 
       const planConfig = this.stripeService.getPlan(createCheckoutDto.plan, createCheckoutDto.interval);
       if (!planConfig) {
@@ -114,35 +114,42 @@ export class PaymentsService {
       );
 
       if (process.env.NODE_ENV === 'development') {
-        this.logger.log('DEV MODE: Simulating subscription success immediately for testing.');
-        // We can't know the subscription ID yet (it's created on checkout completion),
-        // but we can create a placeholder one to allow the UI to show "Active".
-        // REAL logic relies on Webhook.
-        // For smoother dev experience without CLI:
-        await this.prisma.subscription.upsert({
-          where: { userId: user.id },
-          update: {
-            status: 'active',
-            planType: createCheckoutDto.plan,
-            stripeSubscriptionId: `sub_test_dev_${Date.now()}`,
-            currentPeriodStart: new Date(),
-            currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
-          },
-          create: {
-            userId: user.id,
-            status: 'active',
-            planType: createCheckoutDto.plan,
-            stripeSubscriptionId: `sub_test_dev_${Date.now()}`,
-            currentPeriodStart: new Date(),
-            currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
-          }
-        });
+        this.logger.log('DEV MODE: Simulating subscription/pack success immediately for testing (Webhooks may not reach localhost).');
+
+        if (isPack) {
+          // For packs, we don't update the subscription PlanType (it remains as Basic/Pro/etc)
+          // We just deliver the content immediately because webhooks won't reach localhost without CLI
+          this.logger.log(`DEV MODE: Auto-delivering pack ${createCheckoutDto.plan}`);
+          await this.addExtraPack(user.id, createCheckoutDto.plan);
+        } else {
+          // Only for SUBSCRIPTIONS do we update the main subscription record
+          // We can't know the subscription ID yet (it's created on checkout completion),
+          // but we can create a placeholder one to allow the UI to show "Active".
+          await this.prisma.subscription.upsert({
+            where: { userId: user.id },
+            update: {
+              status: 'active',
+              planType: createCheckoutDto.plan,
+              stripeSubscriptionId: `sub_test_dev_${Date.now()}`,
+              currentPeriodStart: new Date(),
+              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
+            },
+            create: {
+              userId: user.id,
+              status: 'active',
+              planType: createCheckoutDto.plan,
+              stripeSubscriptionId: `sub_test_dev_${Date.now()}`,
+              currentPeriodStart: new Date(),
+              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
+            }
+          });
+        }
 
         await this.auditService.log({
           userId: user.id,
           action: AuditAction.SUBSCRIPTION_CHANGE,
           resourceType: 'SUBSCRIPTION',
-          details: `Simulación DEV: Suscripción activada para ${createCheckoutDto.plan}`,
+          details: `Simulación DEV: Acción completada para ${createCheckoutDto.plan}`,
           isSuccess: true,
         });
       }
@@ -202,6 +209,51 @@ export class PaymentsService {
       });
       details = `Pack Agenda Manager activado`;
       this.logger.log(`Enabled Agenda Manager for user ${userId}`);
+    } else if (packId === PlanType.ONBOARDING_PACK) {
+      // Create Admin Task for Onboarding
+      await this.prisma.adminTask.create({
+        data: {
+          userId: userId,
+          type: 'ONBOARDING_SETUP',
+          title: 'Configuración On-boarding WebServer',
+          description: 'Configuramos tu cuenta contigo en 45 min: importación de pacientes, enlace con Google Calendar y personalización. Garantía de funcionamiento.',
+          priority: 'HIGH',
+          status: 'PENDING'
+        }
+      });
+
+      // Send confirmation email to user
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (user) {
+        try {
+          await this.emailService.sendOnboardingConfirmation(user.email, user.firstName || 'Usuario');
+
+          // Notify User on Dashboard
+          await this.notificationsService.create({
+            userId: user.id,
+            title: 'Pack On-boarding Contratado 🚀',
+            message: 'Hemos recibido tu solicitud. Un administrador configurará tu servidor pronto.',
+            type: 'SUCCESS'
+          });
+
+        } catch (e) {
+          this.logger.error(`Failed to send onboarding email/notification to ${user.email}`, e);
+        }
+      }
+
+      // Notify Admin(s)
+      const admins = await this.prisma.user.findMany({ where: { role: 'ADMIN' } });
+      for (const admin of admins) {
+        await this.notificationsService.create({
+          userId: admin.id,
+          title: 'Nuevo Pack On-boarding 📦',
+          message: `El usuario ${user?.email} ha contratado el Pack On-boarding. Revisa las Tareas.`,
+          type: 'INFO'
+        });
+      }
+
+      details = `Pack On-boarding contratado (Tarea Admin Creada)`;
+      this.logger.log(`Created Onboarding task for user ${userId}`);
     }
 
     await this.auditService.log({
@@ -227,7 +279,7 @@ export class PaymentsService {
     }
 
     if (isOneTime) {
-      if (planType === PlanType.MINUTES_PACK || planType === PlanType.SIMULATOR_PACK || planType === PlanType.AGENDA_MANAGER_PACK) {
+      if (planType === PlanType.MINUTES_PACK || planType === PlanType.SIMULATOR_PACK || planType === PlanType.AGENDA_MANAGER_PACK || planType === PlanType.ONBOARDING_PACK) {
         await this.addExtraPack(userId, planType);
       }
       return; // Done
@@ -251,7 +303,7 @@ export class PaymentsService {
         throw new NotFoundException('User not found');
       }
 
-      const isPack = createCheckoutDto.plan === 'minutes_pack' || createCheckoutDto.plan === 'simulator_pack' || createCheckoutDto.plan === 'agenda_manager_pack';
+      const isPack = createCheckoutDto.plan === 'minutes_pack' || createCheckoutDto.plan === 'simulator_pack' || createCheckoutDto.plan === 'agenda_manager_pack' || createCheckoutDto.plan === 'on_boarding_pack';
 
       // Planes demo hardcoded sin llamar a Stripe
       const demoPlans = {
@@ -261,7 +313,8 @@ export class PaymentsService {
         premium_plus: { name: 'Plan Premium Plus', amount: 9900, currency: 'eur', interval: 'month' },
         minutes_pack: { name: 'Pack Minutos', amount: 1500, currency: 'eur', interval: 'one-time' },
         simulator_pack: { name: 'Pack 10 Casos Clínicos', amount: 1500, currency: 'eur', interval: 'one-time' },
-        agenda_manager_pack: { name: 'Pack Agenda Manager', amount: 1500, currency: 'eur', interval: 'one-time' }
+        agenda_manager_pack: { name: 'Pack Agenda Manager', amount: 1500, currency: 'eur', interval: 'one-time' },
+        on_boarding_pack: { name: 'Pack On-boarding', amount: 5000, currency: 'eur', interval: 'one-time' }
       };
 
       const plan = demoPlans[createCheckoutDto.plan];
