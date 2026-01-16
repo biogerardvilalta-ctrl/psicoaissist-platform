@@ -133,9 +133,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <div className="bg-gray-100 p-4 rounded-lg">
                 <p className="text-gray-800 font-medium">Delegado de Protección de Datos</p>
-                <p className="text-gray-700">Email: dpo@psychoai.com</p>
-                <p className="text-gray-700">Teléfono: +34 900 123 456</p>
-                <p className="text-gray-700">Dirección: Calle Serrano 123, 28006 Madrid, España</p>
+                <p className="text-gray-700">Email: hola@psicoaissist.com</p>
               </div>
             </section>
 
