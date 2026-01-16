@@ -21,7 +21,9 @@ export class AuthAPI {
       if (publicKey) {
         const { CryptoService } = await import('./crypto');
         const encrypted = await CryptoService.encryptRSA(credentials, publicKey);
-        payload = { encryptedData: encrypted };
+        if (encrypted) {
+          payload = { encryptedData: encrypted };
+        }
       }
     } catch (e) {
       console.error('Login encryption failed, falling back to plaintext', e);

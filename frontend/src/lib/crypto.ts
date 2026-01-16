@@ -71,7 +71,7 @@ export class CryptoService {
         return window.btoa(binary);
     }
 
-    static async encryptRSA(data: any, publicKeyPem: string): Promise<string> {
+    static async encryptRSA(data: any, publicKeyPem: string): Promise<string | null> {
         try {
             if (!window.crypto || !window.crypto.subtle) {
                 console.warn('Web Crypto API not available (likely insecure context). Falling back to plaintext.');
