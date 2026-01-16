@@ -42,8 +42,18 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/privacy" className="text-gray-300 hover:text-white transition-colors">
+                <a href="/legal?tab=gdpr" className="text-gray-300 hover:text-white transition-colors">
                   Política de Privacidad
+                </a>
+              </li>
+              <li>
+                <a href="/legal?tab=terms" className="text-gray-300 hover:text-white transition-colors">
+                  Términos y Condiciones
+                </a>
+              </li>
+              <li>
+                <a href="/legal?tab=cookies" className="text-gray-300 hover:text-white transition-colors">
+                  Política de Cookies
                 </a>
               </li>
             </ul>
@@ -71,24 +81,18 @@ export function Footer() {
       <div className="border-t border-gray-800">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <div className="md:flex md:items-center md:justify-between">
-            <div className="text-gray-400 text-sm">
-              © {currentYear} PsicoAIssist. Todos los derechos reservados.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Trust badges */}
-      <div className="border-t border-gray-800 bg-gray-950">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-center items-center space-x-8 text-xs text-gray-500">
-            <div className="flex items-center space-x-1">
-              <Shield className="w-3 h-3" />
-              <span>GDPR Compliant</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Shield className="w-3 h-3" />
-              <span>AES-256 Encryption</span>
+            <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-6 text-gray-400 text-sm">
+              <span>© {currentYear} PsicoAIssist. Todos los derechos reservados.</span>
+              <div className="flex items-center space-x-4 text-xs text-gray-500">
+                <div className="flex items-center space-x-1">
+                  <Shield className="w-3 h-3" />
+                  <span>GDPR Compliant</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Shield className="w-3 h-3" />
+                  <span>AES-256 Encryption</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

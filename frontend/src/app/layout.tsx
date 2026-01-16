@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'es_ES',
-    url: 'https://psychoai.com',
+    url: 'https://psicoaissist.com',
     siteName: 'PsicoAIssist',
     title: 'PsicoAIssist - Asistente IA para Psicólogos',
     description: 'Potencia tu práctica psicológica con IA responsable. Transcripción automática, informes profesionales y análisis inteligente.',

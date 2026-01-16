@@ -54,7 +54,7 @@ export default function AdminHeader() {
                 <span className="text-white font-bold text-sm">PA</span>
               </div>
               <div className="hidden sm:block">
-                <span className="text-white font-semibold">PsychoAI</span>
+                <span className="text-white font-semibold">PsicoAIssist</span>
                 <span className="text-gray-400 text-sm ml-2">Admin</span>
               </div>
             </Link>

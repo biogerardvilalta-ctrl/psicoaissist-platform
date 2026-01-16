@@ -64,7 +64,7 @@ export default function ReferencePage() {
                                     API Reference (Básico)
                                 </h2>
                                 <p className="text-slate-600 mb-4">
-                                    PsycoAIssist ofrece una API RESTful para integraciones personalizadas.
+                                    PsicoAIssist ofrece una API RESTful para integraciones personalizadas.
                                     Para obtener acceso completo a la documentación de la API (Swagger), contacte con soporte.
                                 </p>
 

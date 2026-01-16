@@ -61,7 +61,7 @@ export function Header() {
                 Blog
               </Link>
               <Link
-                href="/dashboard/compliance?tab=terms"
+                href="/legal?tab=terms"
                 className="flex items-center text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
                 <Scale className="w-4 h-4 mr-1.5" />
@@ -155,7 +155,7 @@ export function Header() {
                 blog
               </Link>
               <Link
-                href="/dashboard/compliance?tab=terms"
+                href="/legal?tab=terms"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >

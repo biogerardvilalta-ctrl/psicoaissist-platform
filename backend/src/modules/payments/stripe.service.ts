@@ -215,7 +215,7 @@ export class StripeService {
     if (this.isDemoMode) {
       return {
         id: customerId,
-        email: 'demo@psychoai.com',
+        email: 'demo@psicoaissist.com',
         name: 'Demo User',
         object: 'customer',
       };
