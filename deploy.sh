@@ -33,9 +33,9 @@ echo "🔄 Aplicando migraciones de base de datos..."
 sleep 5 # Esperar un poco a que el backend arranque
 docker exec psicoaissist_beta_backend npx prisma migrate deploy
 
-# 3. Limpieza opcional (elimina imágenes antiguas para ahorrar espacio)
-echo "🧹 Limpiando imágenes antiguas..."
-docker image prune -f
+# 3. Limpieza profunda (elimina imágenes no usadas, caché y contenedores detenidos)
+echo "🧹 Limpiando sistema Docker (imágenes antiguas, caché, etc)..."
+docker system prune -a -f
 
 echo "✅ ¡Despliegue completado con éxito!"
 echo "   Frontend: http://localhost:3000 (o tu IP)"
