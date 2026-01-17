@@ -48,7 +48,7 @@ export default function CommunicationsPage() {
             // For this feature, a specialized "get all users for dropdown" endpoint is better, 
             // but let's try to fetch a reasonably large list or just standard list.
             // We'll use limit=100 for now.
-            const response = await httpClient.get<{ users: User[] }>('/api/v1/admin/users?limit=100');
+            const response = await httpClient.get<{ users: User[] }>('/api/v1/admin/users?limit=100&status=ACTIVE');
             setUsers(response.users);
         } catch (error) {
             console.error('Error fetching users:', error);
