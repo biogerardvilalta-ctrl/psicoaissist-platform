@@ -123,7 +123,7 @@ const storage = {
   getItem: (key: string): string | null => {
     if (typeof window === 'undefined') return null;
     try {
-      return localStorage.getItem(key);
+      return sessionStorage.getItem(key);
     } catch {
       return null;
     }
@@ -132,18 +132,18 @@ const storage = {
   setItem: (key: string, value: string): void => {
     if (typeof window === 'undefined') return;
     try {
-      localStorage.setItem(key, value);
+      sessionStorage.setItem(key, value);
     } catch (error) {
-      console.error('Error saving to localStorage:', error);
+      console.error('Error saving to sessionStorage:', error);
     }
   },
 
   removeItem: (key: string): void => {
     if (typeof window === 'undefined') return;
     try {
-      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
     } catch (error) {
-      console.error('Error removing from localStorage:', error);
+      console.error('Error removing from sessionStorage:', error);
     }
   },
 
@@ -151,10 +151,10 @@ const storage = {
     if (typeof window === 'undefined') return;
     try {
       Object.values(STORAGE_KEYS).forEach(key => {
-        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
       });
     } catch (error) {
-      console.error('Error clearing localStorage:', error);
+      console.error('Error clearing sessionStorage:', error);
     }
   }
 };
@@ -194,7 +194,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const userStr = storage.getItem(STORAGE_KEYS.USER);
       const encryptionKeyStr = storage.getItem(STORAGE_KEYS.ENCRYPTION_KEY);
 
-      console.log('🔄 Checking localStorage for session...');
+      console.log('🔄 Checking sessionStorage for session...');
 
       if (accessToken && refreshToken && userStr) {
         // Tentative user data
@@ -228,7 +228,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           // We don't return here, we fall through to the "no valid session" case
         }
       } else {
-        console.log('ℹ️ No existing session found in localStorage');
+        console.log('ℹ️ No existing session found in sessionStorage');
       }
     } catch (error) {
       console.error('Error restoring session:', error);
