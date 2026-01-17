@@ -30,12 +30,15 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # Install only production dependencies
-RUN npm ci --only=production --legacy-peer-deps && apk add --no-cache openssl
+RUN npm ci --only=production --legacy-peer-deps && apk add --no-cache openssl tini
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 EXPOSE 3000
 
-# Start command
-CMD ["npm", "run", "start:prod"]
+# Use tini as the entrypoint to handle signals and zombie processes
+ENTRYPOINT ["/sbin/tini", "--"]
+
+# Start command (run node directly to allow efficient signal handling by tini)
+CMD ["node", "dist/src/main"]
