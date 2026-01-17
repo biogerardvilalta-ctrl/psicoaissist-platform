@@ -153,11 +153,30 @@ export default function AdminUserDetailPage() {
                                 <h1 className="text-xl font-bold text-gray-900">{user.firstName} {user.lastName}</h1>
                                 <p className="text-sm text-gray-500">{user.email}</p>
                                 <div className="mt-3">
-                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${user.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${user.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                                        user.status === 'DELETED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
                                         }`}>
                                         {user.status}
                                     </span>
                                 </div>
+                                {user.status === 'DELETED' && (
+                                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-800">
+                                        <p className="font-bold mb-1">📅 Recuperación de Cuenta</p>
+                                        {(() => {
+                                            const deletionDate = new Date(user.updatedAt);
+                                            const now = new Date();
+                                            const diffTime = Math.abs(now.getTime() - deletionDate.getTime());
+                                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                            const remainingDays = 30 - diffDays;
+
+                                            if (remainingDays > 0) {
+                                                return <p>Quedan <strong>{remainingDays} días</strong> para la anonimización irreversible.</p>;
+                                            } else {
+                                                return <p><strong>Procesando anonimización...</strong> (Pendiente de cron)</p>;
+                                            }
+                                        })()}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-4 border-t pt-4">
