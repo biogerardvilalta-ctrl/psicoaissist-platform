@@ -41,12 +41,14 @@ export function Header() {
             >
               Precios
             </Link>
-            <Link
-              href="/#testimonials"
-              className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
-            >
-              Testimonios
-            </Link>
+            {process.env.NODE_ENV !== 'production' && (
+              <Link
+                href="/#testimonials"
+                className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              >
+                Testimonios
+              </Link>
+            )}
             <div className="hidden lg:flex items-center space-x-8">
               <Link
                 href="/docs"
@@ -133,13 +135,15 @@ export function Header() {
               >
                 Precios
               </Link>
-              <Link
-                href="/#testimonials"
-                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Testimonios
-              </Link>
+              {process.env.NODE_ENV !== 'production' && (
+                <Link
+                  href="/#testimonials"
+                  className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Testimonios
+                </Link>
+              )}
               <Link
                 href="/docs"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
