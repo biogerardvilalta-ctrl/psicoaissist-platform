@@ -664,6 +664,19 @@ export default function ManualPage() {
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🔔 Notificaciones</h3>
                             <p><strong>Recordatorios por Email:</strong> Si está activo, el sistema envía un correo al paciente 24h antes de la cita (requiere email en la ficha del paciente).</p>
+
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🛑 Gestión de Cuenta y Baja</h3>
+                            <p className="leading-relaxed text-slate-600 mb-4">
+                                Entendemos que su privacidad es fundamental. Si decide dar de baja su cuenta (desde <strong>Perfil {'>'} Eliminar Cuenta</strong>), el sistema iniciará un proceso seguro:
+                            </p>
+                            <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r">
+                                <h4 className="font-bold text-amber-900 mb-2">Proceso de Eliminación y Recuperación (30 días)</h4>
+                                <ul className="list-disc pl-5 space-y-2 text-amber-800 text-sm">
+                                    <li><strong>Inicio (Día 0):</strong> Su cuenta se marca como "Eliminada". Ya no podrá acceder, pero sus datos siguen encriptados en nuestros servidores.</li>
+                                    <li><strong>Periodo de Gracia (30 días):</strong> Durante este tiempo, si se arrepiente, puede contactar con soporte para reactivar su cuenta íntegramente.</li>
+                                    <li><strong>Borrado Definitivo (Día 31):</strong> El sistema ejecuta automáticamente un proceso de <strong>Anonimización Irreversible</strong>. Su nombre, email y datos de contacto se borran para siempre, cumpliendo con el RGPD.</li>
+                                </ul>
+                            </div>
                         </section>
                     </div>
                 </div>

@@ -143,7 +143,7 @@ export function GdprContent() {
                     <section className="space-y-3">
                         <h2 className="text-lg font-bold text-blue-900">8. Retención de Datos</h2>
                         <ul className="list-disc pl-6 text-slate-700 space-y-1">
-                            <li><strong>Datos de cuenta:</strong> Mientras se mantenga la cuenta activa.</li>
+                            <li><strong>Datos de cuenta:</strong> Mientras se mantenga la cuenta activa. En caso de solicitar la baja, los datos se mantendrán bloqueados durante 30 días (periodo de gracia) antes de ser anonimizados permanentemente.</li>
                             <li><strong>Datos clínicos:</strong> Según las regulaciones médicas aplicables.</li>
                             <li><strong>Datos de facturación:</strong> 7 años (requisito fiscal).</li>
                             <li><strong>Logs de auditoría:</strong> 3 años.</li>

@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { UserRole, UserStatus, AuditAction } from '@prisma/client';
@@ -306,6 +307,52 @@ export class UsersService {
       return { message: 'Usuario eliminado exitosamente' };
     } catch (error) {
       this.logger.error(`Error deleting user: ${error.message}`);
+      throw error;
+    }
+  }
+
+
+  /**
+   * Permanently Anonymize User (GDPR Compliance)
+   * Irreversible action to scrub PII
+   */
+  async anonymize(id: string): Promise<void> {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) return;
+
+      const randomId = crypto.randomUUID();
+      const anonymousEmail = `deleted_${randomId}@anonymized.local`;
+
+      await this.prisma.user.update({
+        where: { id },
+        data: {
+          firstName: 'Deleted',
+          lastName: 'User',
+          email: anonymousEmail,
+          phone: null,
+          professionalNumber: null,
+          speciality: null,
+          country: null,
+          googleCalendarId: null,
+          googleRefreshToken: null,
+          status: UserStatus.DELETED, // Ensure it is deleted
+          updatedAt: new Date(),
+        }
+      });
+
+      this.logger.log(`User Anonymized (GDPR): ${user.id}`);
+
+      await this.auditService.log({
+        userId: id,
+        action: AuditAction.DELETE,
+        resourceType: 'USER',
+        resourceId: id,
+        details: `Usuario anonimizado permanentemente (GDPR Cleanup)`,
+      });
+
+    } catch (error) {
+      this.logger.error(`Error anonymizing user ${id}: ${error.message}`);
       throw error;
     }
   }
