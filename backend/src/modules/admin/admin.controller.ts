@@ -7,16 +7,19 @@ import {
   Body,
   UseGuards,
   Query,
-  Post
+  Post,
+  BadRequestException
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UsersService } from '../users/users.service';
 import { PaymentsService } from '../payments/payments.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { EmailService } from '../email/email.service';
 import { CreateUserDto, UpdateUserDto, AdminChangePasswordDto } from '../users/dto/users.dto';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { UserRole, UserStatus, AuditAction, AdminTaskStatus, AdminTaskType, AdminTaskPriority } from '@prisma/client';
+import { UserRole, UserStatus, AuditAction, AdminTaskStatus, AdminTaskType, AdminTaskPriority, NotificationType } from '@prisma/client';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -26,7 +29,82 @@ export class AdminController {
     private readonly usersService: UsersService,
     private readonly paymentsService: PaymentsService,
     private readonly prisma: PrismaService,
+    private readonly notificationsService: NotificationsService,
+    private readonly emailService: EmailService,
   ) { }
+
+  @Post('communicate')
+  async sendCommunication(@Body() body: {
+    type: 'EMAIL' | 'NOTIFICATION' | 'BOTH';
+    target: 'ALL' | 'SPECIFIC';
+    userIds?: string[];
+    subject: string; // Used as title for notification
+    message: string;
+  }) {
+    const { type, target, userIds, subject, message } = body;
+
+    let recipients = [];
+
+    if (target === 'ALL') {
+      recipients = await this.prisma.user.findMany({
+        where: {
+          role: { notIn: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+          status: UserStatus.ACTIVE
+        },
+        select: { id: true, email: true, firstName: true }
+      });
+    } else if (target === 'SPECIFIC') {
+      if (!userIds || userIds.length === 0) {
+        throw new BadRequestException('Debe seleccionar al menos un usuario');
+      }
+      recipients = await this.prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, email: true, firstName: true }
+      });
+    }
+
+    const results = {
+      total: recipients.length,
+      emailsSent: 0,
+      notificationsSent: 0
+    };
+
+    // Process asynchronously but await completion for the response (or make it a job)
+    // For now, we process in loop
+    for (const user of recipients) {
+      // Send Email
+      if (type === 'EMAIL' || type === 'BOTH') {
+        try {
+          await this.emailService.sendCustomEmail(user.email, subject, message);
+          results.emailsSent++;
+        } catch (e) {
+          console.error(`Failed to send email to ${user.email}`, e);
+        }
+      }
+
+      // Send Notification
+      if (type === 'NOTIFICATION' || type === 'BOTH') {
+        try {
+          await this.notificationsService.create({
+            userId: user.id,
+            title: subject,
+            message: message, // Plain text usually
+            type: 'INFO' as NotificationType,
+            data: { fromAdmin: true }
+          });
+          results.notificationsSent++;
+        } catch (e) {
+          console.error(`Failed to send notification to ${user.id}`, e);
+        }
+      }
+    }
+
+    return {
+      success: true,
+      message: `Enviado a ${recipients.length} usuarios`,
+      details: results
+    };
+  }
 
   @Get('dashboard')
   async getDashboardStats() {

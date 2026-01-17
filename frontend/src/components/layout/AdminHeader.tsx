@@ -14,7 +14,8 @@ import {
   ArrowLeftIcon,
   CreditCardIcon,
   ClipboardListIcon,
-  SparklesIcon
+  SparklesIcon,
+  MailIcon
 } from '@heroicons/react/outline';
 import {
   DropdownMenu,
@@ -40,6 +41,7 @@ export default function AdminHeader() {
     { name: 'Panel', href: '/admin', icon: HomeIcon },
     { name: 'Usuarios', href: '/admin/users', icon: UsersIcon },
     { name: 'Tareas', href: '/admin/tasks', icon: SparklesIcon },
+    { name: 'Comunicaciones', href: '/admin/communications', icon: MailIcon },
     { name: 'Facturación', href: '/admin/billing', icon: CreditCardIcon },
     { name: 'Logs', href: '/admin/audit-logs', icon: ClipboardListIcon },
     { name: 'Sistema', href: '/admin/system', icon: CogIcon },

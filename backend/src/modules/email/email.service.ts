@@ -61,6 +61,48 @@ export class EmailService {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
+  async sendCustomEmail(to: string, subject: string, content: string): Promise<void> {
+    const template = this.getCustomMessageTemplate(subject, content);
+    await this.sendEmail(to, template);
+  }
+
+  private getCustomMessageTemplate(subject: string, content: string): EmailTemplate {
+    return {
+      subject: subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Notificación Administrativa</h1>
+          </div>
+          <div style="padding: 20px; background: #f8f9fa;">
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <h2 style="color: #333; margin-top: 0;">${subject}</h2>
+              <div style="color: #555; line-height: 1.6; white-space: pre-wrap;">${content}</div>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://psicoaissist.com/dashboard" 
+                 style="background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                Ir al Dashboard
+              </a>
+            </div>
+          </div>
+          <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
+            © 2025 PsicoAIssist. Todos los derechos reservados.
+          </div>
+        </div>
+      `,
+      text: `
+        ${subject}
+        
+        ${content}
+        
+        Soporte PsicoAIssist
+      `
+    };
+  }
+
+  // Existing methods...
   private getWelcomeTemplate(name: string): EmailTemplate {
     return {
       subject: '¡Bienvenido a PsicoAIssist!',
