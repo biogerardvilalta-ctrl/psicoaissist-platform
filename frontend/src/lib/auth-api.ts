@@ -99,7 +99,7 @@ export class AuthAPI {
     formData.append('file', file);
 
     // Bypass httpClient to handle FormData correctly via fetch
-    const token = typeof window !== 'undefined' ? sessionStorage.getItem('psychoai_access_token') : null;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('psychoai_access_token') : null;
 
     // Determine base URL, handling if it already includes /api/v1 or not
     let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
