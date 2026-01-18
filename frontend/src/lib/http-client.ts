@@ -33,8 +33,11 @@ class HttpClient {
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
-        ...(typeof window !== 'undefined' && localStorage.getItem('psychoai_access_token')
-          ? { 'Authorization': `Bearer ${localStorage.getItem('psychoai_access_token')}` }
+        ...(typeof window !== 'undefined'
+          ? (() => {
+            const token = localStorage.getItem('psychoai_access_token') || sessionStorage.getItem('psychoai_access_token');
+            return token ? { 'Authorization': `Bearer ${token}` } : {};
+          })()
           : {}),
         ...options.headers,
       },
