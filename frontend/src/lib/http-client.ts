@@ -38,7 +38,7 @@ class HttpClient {
             const token = localStorage.getItem('psychoai_access_token') || sessionStorage.getItem('psychoai_access_token');
             return token ? { 'Authorization': `Bearer ${token}` } : {};
           })()
-          : {}),
+          : {}) as any,
         ...options.headers,
       },
       credentials: 'include', // Include cookies for JWT
