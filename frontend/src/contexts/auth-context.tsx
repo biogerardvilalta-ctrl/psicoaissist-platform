@@ -21,7 +21,7 @@ type AuthAction =
 
 // Auth Context Interface
 interface AuthContextType extends AuthState {
-  login: (credentials: LoginRequest) => Promise<void>;
+  login: (credentials: LoginRequest, remember?: boolean) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
   refreshToken: () => Promise<void>;
@@ -123,18 +123,28 @@ const storage = {
   getItem: (key: string): string | null => {
     if (typeof window === 'undefined') return null;
     try {
-      return localStorage.getItem(key);
+      // Check localStorage first
+      const local = localStorage.getItem(key);
+      if (local) return local;
+      // Then check sessionStorage
+      return sessionStorage.getItem(key);
     } catch {
       return null;
     }
   },
 
-  setItem: (key: string, value: string): void => {
+  setItem: (key: string, value: string, remember: boolean = true): void => {
     if (typeof window === 'undefined') return;
     try {
-      localStorage.setItem(key, value);
+      if (remember) {
+        localStorage.setItem(key, value);
+        sessionStorage.removeItem(key); // Ensure it's not in session
+      } else {
+        sessionStorage.setItem(key, value);
+        localStorage.removeItem(key); // Ensure it's not in local
+      }
     } catch (error) {
-      console.error('Error saving to localStorage:', error);
+      console.error('Error saving to storage:', error);
     }
   },
 
@@ -142,8 +152,9 @@ const storage = {
     if (typeof window === 'undefined') return;
     try {
       localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
     } catch (error) {
-      console.error('Error removing from localStorage:', error);
+      console.error('Error removing from storage:', error);
     }
   },
 
@@ -152,9 +163,10 @@ const storage = {
     try {
       Object.values(STORAGE_KEYS).forEach(key => {
         localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
       });
     } catch (error) {
-      console.error('Error clearing localStorage:', error);
+      console.error('Error clearing storage:', error);
     }
   }
 };
@@ -171,22 +183,22 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Save tokens and user to localStorage
-  const saveSession = useCallback((user: User, tokens: AuthTokens, encryptionKey?: EncryptionKey) => {
-    storage.setItem(STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken);
-    storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken);
-    storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+  // Save tokens and user to storage
+  const saveSession = useCallback((user: User, tokens: AuthTokens, encryptionKey?: EncryptionKey, remember: boolean = true) => {
+    storage.setItem(STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken, remember);
+    storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken, remember);
+    storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user), remember);
     if (encryptionKey) {
-      storage.setItem(STORAGE_KEYS.ENCRYPTION_KEY, JSON.stringify(encryptionKey));
+      storage.setItem(STORAGE_KEYS.ENCRYPTION_KEY, JSON.stringify(encryptionKey), remember);
     }
   }, []);
 
-  // Clear session from localStorage
+  // Clear session from storage
   const clearSession = useCallback(() => {
     storage.clear();
   }, []);
 
-  // Restore session from localStorage
+  // Restore session from storage
   const restoreSession = useCallback(async () => {
     try {
       const accessToken = storage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
@@ -194,7 +206,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const userStr = storage.getItem(STORAGE_KEYS.USER);
       const encryptionKeyStr = storage.getItem(STORAGE_KEYS.ENCRYPTION_KEY);
 
-      console.log('🔄 Checking localStorage for session...');
+      console.log('🔄 Checking storage for session...');
 
       if (accessToken && refreshToken && userStr) {
         // Tentative user data
@@ -228,7 +240,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           // We don't return here, we fall through to the "no valid session" case
         }
       } else {
-        console.log('ℹ️ No existing session found in localStorage');
+        console.log('ℹ️ No existing session found in storage');
       }
     } catch (error) {
       console.error('Error restoring session:', error);
@@ -240,7 +252,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [clearSession]);
 
   // Login function
-  const login = useCallback(async (credentials: LoginRequest) => {
+  const login = useCallback(async (credentials: LoginRequest, remember: boolean = false) => {
     dispatch({ type: 'LOGIN_START' });
 
     try {
@@ -254,7 +266,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error('Respuesta de login inválida');
       }
 
-      saveSession(user, tokens, encryptionKey);
+      saveSession(user, tokens, encryptionKey, remember);
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user, tokens, encryptionKey } });
 
       console.log('✅ Login successful for:', user.email);
@@ -277,7 +289,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const response = await AuthAPI.register(userData);
       const { user, tokens, encryptionKey } = response;
 
-      saveSession(user, tokens, encryptionKey);
+      // Default to true (persistent) for registration, or could be false
+      saveSession(user, tokens, encryptionKey, true);
       dispatch({ type: 'REGISTER_SUCCESS', payload: { user, tokens, encryptionKey } });
 
       console.log('✅ Register successful for:', user.email);

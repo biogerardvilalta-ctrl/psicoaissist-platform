@@ -79,7 +79,7 @@ export default function LoginPage() {
     if (!validateForm()) return;
 
     try {
-      await login({ email: formData.email, password: formData.password });
+      await login({ email: formData.email, password: formData.password }, formData.rememberMe);
       // Redirect is handled by useEffect when user state changes
     } catch (err: any) {
       console.error('Login error:', err);
