@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as nodemailer from 'nodemailer';
 
 export interface EmailTemplate {
   subject: string;
@@ -8,11 +10,30 @@ export interface EmailTemplate {
 
 @Injectable()
 export class EmailService {
-  // In a real implementation, you would use a service like:
-  // - SendGrid
-  // - AWS SES
-  // - Mailgun
-  // - Nodemailer with SMTP
+  private transporter: nodemailer.Transporter;
+  private readonly logger = new Logger(EmailService.name);
+
+  constructor(private configService: ConfigService) {
+    this.initializeTransporter();
+  }
+
+  private initializeTransporter() {
+    const host = this.configService.get<string>('SMTP_HOST');
+    const port = this.configService.get<number>('SMTP_PORT');
+    const user = this.configService.get<string>('SMTP_USER');
+    const pass = this.configService.get<string>('SMTP_PASS');
+
+    if (host) {
+      this.transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465, // true for 465, false for other ports
+        auth: user ? { user, pass } : undefined,
+      });
+    }
+  }
+
+  // Implementation methods...
 
   async sendWelcomeEmail(to: string, name: string): Promise<void> {
     const template = this.getWelcomeTemplate(name);
@@ -50,15 +71,28 @@ export class EmailService {
   }
 
   private async sendEmail(to: string, template: EmailTemplate): Promise<void> {
-    // Mock implementation - logs to console
-    // In production, replace with actual email service
-    console.log('📧 Sending email:');
-    console.log('To:', to);
-    console.log('Subject:', template.subject);
-    console.log('HTML:', template.html.substring(0, 100) + '...');
+    if (!this.transporter) {
+      this.logger.warn(`Email sending skipped (no configuration): ${template.subject} -> ${to}`);
+      // Fallback to console log for debugging if no transporter
+      console.log('📧 [MOCK] Sending email:', to, template.subject);
+      return;
+    }
 
-    // Simulate async email sending
-    await new Promise(resolve => setTimeout(resolve, 100));
+    const from = this.configService.get<string>('SMTP_FROM') || 'noreply@psicoaissist.com';
+
+    try {
+      await this.transporter.sendMail({
+        from,
+        to,
+        subject: template.subject,
+        html: template.html,
+        text: template.text,
+      });
+      this.logger.log(`Email sent successfully: ${template.subject} -> ${to}`);
+    } catch (error) {
+      this.logger.error(`Failed to send email to ${to}`, error);
+      throw error;
+    }
   }
 
   async sendCustomEmail(to: string, subject: string, content: string): Promise<void> {
