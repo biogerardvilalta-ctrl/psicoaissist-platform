@@ -475,7 +475,7 @@ export default function SettingsPage() {
                     Activar recordatorios por email
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    Recibe un correo 24 horas antes de tus sesiones programadas.
+                    Recibirás un correo el día anterior a las 20:00h con el resumen de las sesiones de la jornada siguiente.
                   </p>
                 </div>
               </div>

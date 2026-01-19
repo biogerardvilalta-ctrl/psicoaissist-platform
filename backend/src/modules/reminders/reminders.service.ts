@@ -130,9 +130,9 @@ export class RemindersService {
         return { iv, tag, encryptedData, keyId };
     }
 
-    // Cron: At 21:48 every day (Testing Schedule)
+    // Cron: At 20:00 every day
     // Sends a summary email to the psychologist with tomorrow's sessions
-    @Cron('48 21 * * *')
+    @Cron('0 20 * * *')
     async handleDailyAgendaSummary() {
         this.logger.debug('Running Daily Agenda Summary Cron...');
         const now = new Date();

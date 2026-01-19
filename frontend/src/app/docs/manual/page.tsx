@@ -663,7 +663,10 @@ export default function ManualPage() {
                             <p><strong>Idioma Preferido:</strong> Define en qué idioma generará la IA los informes automáticos.</p>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🔔 Notificaciones</h3>
-                            <p><strong>Recordatorios por Email:</strong> Si está activo, el sistema envía un correo al paciente 24h antes de la cita (requiere email en la ficha del paciente).</p>
+                            <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">
+                                <li><strong>Recordatorios a Pacientes:</strong> El sistema envía un correo al paciente 24h antes de la cita (requiere email en la ficha del paciente).</li>
+                                <li><strong>Resumen de Agenda (Profesional):</strong> Si activa esta opción, recibirá un correo diario a las 20:00h con el listado de visitas del día siguiente.</li>
+                            </ul>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🛑 Gestión de Cuenta y Baja</h3>
                             <p className="leading-relaxed text-slate-600 mb-4">
