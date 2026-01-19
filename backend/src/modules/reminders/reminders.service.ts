@@ -94,12 +94,20 @@ export class RemindersService {
                 });
 
                 // 2b. Notify Client by Email
+                // 2b. Notify Client by Email
                 if (session.client.sendEmailReminders && clientEmail) {
                     this.logger.log(`📧 Sending Reminder Email to Client ${clientName} (${clientEmail})`);
-                    // Reuse/adapt sendSessionReminder or create specific method. For now reusing template but sending to client.
-                    // Ideally we need a separate template 'sendClientSessionReminder'.
-                    // Simulating send:
-                    // await this.emailService.sendClientSessionReminder(clientEmail, { ... });
+
+                    const professionalName = `${session.user.firstName} ${session.user.lastName}`;
+                    const dateStr = format(session.startTime, "EEEE d 'de' MMMM", { locale: es });
+                    const timeStr = format(session.startTime, "HH:mm");
+
+                    await this.emailService.sendClientSessionReminder(clientEmail, {
+                        clientName,
+                        professionalName,
+                        date: dateStr,
+                        time: timeStr
+                    });
                 }
 
                 // 2c. Notify Client by WhatsApp
