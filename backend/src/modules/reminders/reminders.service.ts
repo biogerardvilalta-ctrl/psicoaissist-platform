@@ -129,4 +129,92 @@ export class RemindersService {
         const encryptedData = buffer.subarray(32);
         return { iv, tag, encryptedData, keyId };
     }
+
+    // Cron: At 21:48 every day (Testing Schedule)
+    // Sends a summary email to the psychologist with tomorrow's sessions
+    @Cron('48 21 * * *')
+    async handleDailyAgendaSummary() {
+        this.logger.debug('Running Daily Agenda Summary Cron...');
+        const now = new Date();
+
+        // Define "Tomorrow" range (00:00 to 23:59 of next day)
+        const tomorrowStart = new Date(now);
+        tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+        tomorrowStart.setHours(0, 0, 0, 0);
+
+        const tomorrowEnd = new Date(tomorrowStart);
+        tomorrowEnd.setHours(23, 59, 59, 999);
+
+        // 1. Find users who have reminders enabled
+        const users = await this.prisma.user.findMany({
+            where: {
+                enableReminders: true,
+                status: 'ACTIVE'
+            },
+            select: { id: true, email: true }
+        });
+
+        this.logger.log(`Found ${users.length} users with reminders enabled for daily summary.`);
+
+        for (const user of users) {
+            try {
+                // 2. Find sessions for this user tomorrow
+                const sessions = await this.prisma.session.findMany({
+                    where: {
+                        userId: user.id,
+                        status: SessionStatus.SCHEDULED,
+                        startTime: {
+                            gte: tomorrowStart,
+                            lte: tomorrowEnd
+                        }
+                    },
+                    orderBy: { startTime: 'asc' },
+                    include: {
+                        client: true
+                    }
+                });
+
+                if (sessions.length === 0) {
+                    continue; // No sessions, no email needed
+                }
+
+                // 3. Prepare data for email
+                const sessionSummaries = [];
+
+                for (const session of sessions) {
+                    let clientName = 'Paciente';
+
+                    // Decrypt patient name if needed
+                    if (session.client.encryptedPersonalData && session.client.encryptionKeyId) {
+                        try {
+                            const unpacked = this.unpackClientData(
+                                session.client.encryptedPersonalData,
+                                session.client.encryptionKeyId
+                            );
+                            // Using 'any' as interface temporary
+                            const result = await this.encryption.decryptData<any>(unpacked);
+                            if (result.success && result.data) {
+                                clientName = `${result.data.firstName} ${result.data.lastName}`;
+                            }
+                        } catch (e) {
+                            // Keep default name
+                        }
+                    }
+
+                    sessionSummaries.push({
+                        time: format(session.startTime, 'HH:mm'),
+                        patient: clientName,
+                        type: session.sessionType
+                    });
+                }
+
+                // 4. Send Email
+                await this.emailService.sendDailyUpcomingSessions(user.email, sessionSummaries);
+                this.logger.log(`Sent daily agenda summary to ${user.email} (${sessions.length} sessions)`);
+
+            } catch (error) {
+                this.logger.error(`Failed to send daily summary to user ${user.id}`, error);
+            }
+        }
+    }
 }

@@ -70,6 +70,11 @@ export class EmailService {
     await this.sendEmail(to, template);
   }
 
+  async sendDailyUpcomingSessions(to: string, sessions: { time: string; patient: string; type: string }[]): Promise<void> {
+    const template = this.getDailySummaryTemplate(sessions);
+    await this.sendEmail(to, template);
+  }
+
   private async sendEmail(to: string, template: EmailTemplate): Promise<void> {
     if (!this.transporter) {
       this.logger.warn(`Email sending skipped (no configuration): ${template.subject} -> ${to}`);
@@ -418,6 +423,69 @@ export class EmailService {
   
         Gracias,
         Equipo de PsicoAIssist
+      `
+    };
+  }
+
+  private getDailySummaryTemplate(sessions: { time: string; patient: string; type: string }[]): EmailTemplate {
+    const rows = sessions.map(s => `
+      <tr style="border-bottom: 1px solid #eee;">
+        <td style="padding: 10px;"><strong>${s.time}</strong></td>
+        <td style="padding: 10px;">${s.patient}</td>
+        <td style="padding: 10px; color: #666;">${s.type}</td>
+      </tr>
+    `).join('');
+
+    const textRows = sessions.map(s => `- ${s.time}: ${s.patient} (${s.type})`).join('\n');
+
+    return {
+      subject: `Resumen de Agenda - Mañana (${sessions.length} visitas)`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Tu Agenda para Mañana</h1>
+          </div>
+          <div style="padding: 20px; background: #fff;">
+            <p style="color: #333; font-size: 16px;">Hola,</p>
+            <p style="color: #555; line-height: 1.6;">
+              Tienes <strong>${sessions.length} sesiones</strong> programadas para mañana.
+            </p>
+            
+            <div style="background: white; border: 1px solid #eee; border-radius: 8px; overflow: hidden; margin: 20px 0;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: #f8f9fa;">
+                  <tr>
+                    <th style="padding: 10px; color: #444;">Hora</th>
+                    <th style="padding: 10px; color: #444;">Paciente</th>
+                    <th style="padding: 10px; color: #444;">Tipo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows}
+                </tbody>
+              </table>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://psicoaissist.com/dashboard/sessions" 
+                 style="background: #0ea5e9; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                Ver Agenda Completa
+              </a>
+            </div>
+          </div>
+          <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
+            © 2025 PsicoAIssist
+          </div>
+        </div>
+      `,
+      text: `
+        Tu Agenda para Mañana
+
+        Tienes ${sessions.length} sesiones programadas:
+
+        ${textRows}
+
+        Ver agenda: https://psicoaissist.com/dashboard/sessions
       `
     };
   }
