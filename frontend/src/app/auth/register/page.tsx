@@ -39,6 +39,7 @@ export default function RegisterPage() {
   // We use local loading state for UI feedback, but actual logic relies on hooks
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [isVerificationSent, setIsVerificationSent] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -118,8 +119,12 @@ export default function RegisterPage() {
     setLocalError(null);
 
     try {
-      // 1. Register User (this also handles Auto-Login in AuthContext)
-      await register({
+      // 2. Check for Plan Selection
+      const selectedPlan = searchParams.get('plan');
+      const billingInterval = searchParams.get('interval') as 'month' | 'year' | undefined;
+
+      // 1. Register User with Plan info (this also handles Auto-Login in AuthContext if no verification needed)
+      const isLoggedIn = await register({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -127,12 +132,17 @@ export default function RegisterPage() {
         professionalNumber: formData.professionalNumber,
         country: formData.country,
         referralCode: formData.referralCode || undefined,
-        role: 'PSYCHOLOGIST'
+        role: 'PSYCHOLOGIST',
+        plan: selectedPlan || undefined,
+        interval: billingInterval || undefined
       });
 
-      // 2. Check for Plan Selection
-      const selectedPlan = searchParams.get('plan');
-      const billingInterval = searchParams.get('interval') as 'month' | 'year' | undefined;
+      if (!isLoggedIn) {
+        // Verification required flow
+        setIsVerificationSent(true);
+        setIsSubmitting(false);
+        return;
+      }
 
       // Check if a paid plan is selected (Basic is now paid, only 'demo' or null is free/trial)
       if (selectedPlan && selectedPlan !== 'demo') {
@@ -180,6 +190,34 @@ export default function RegisterPage() {
       setIsSubmitting(false); // Only stop loading if we hit an error (otherwise we are redirecting)
     }
   };
+
+  if (isVerificationSent) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full text-center space-y-6 bg-white p-8 rounded-2xl shadow-xl">
+          <div className="flex justify-center">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+              <Heart className="w-8 h-8 text-blue-600" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">¡Registro exitoso!</h2>
+          <p className="text-gray-600">
+            Hemos enviado un correo de verificación a <strong>{formData.email}</strong>.
+            <br /><br />
+            Por favor, revisa tu bandeja de entrada (y spam) y haz clic en el enlace para activar tu cuenta.
+          </p>
+          <div className="pt-4">
+            <Link
+              href="/auth/login"
+              className="inline-block w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all"
+            >
+              Ir a Iniciar Sesión
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

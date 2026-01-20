@@ -55,6 +55,16 @@ export class RegisterDto {
   @IsString()
   @IsOptional()
   referralCode?: string;
+
+  @ApiProperty({ required: false, example: 'pro' })
+  @IsString()
+  @IsOptional()
+  plan?: string;
+
+  @ApiProperty({ required: false, example: 'month' })
+  @IsString()
+  @IsOptional()
+  interval?: string;
 }
 
 export class TokensDto {

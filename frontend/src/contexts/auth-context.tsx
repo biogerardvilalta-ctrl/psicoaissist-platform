@@ -10,7 +10,7 @@ type AuthAction =
   | { type: 'LOGIN_SUCCESS'; payload: { user: User; tokens: AuthTokens; encryptionKey?: EncryptionKey } }
   | { type: 'LOGIN_FAILURE'; payload: string }
   | { type: 'REGISTER_START' }
-  | { type: 'REGISTER_SUCCESS'; payload: { user: User; tokens: AuthTokens; encryptionKey?: EncryptionKey } }
+  | { type: 'REGISTER_SUCCESS'; payload: { user: User; tokens?: AuthTokens; encryptionKey?: EncryptionKey } }
   | { type: 'REGISTER_FAILURE'; payload: string }
   | { type: 'LOGOUT' }
   | { type: 'REFRESH_TOKEN_SUCCESS'; payload: { user: User; tokens: AuthTokens; encryptionKey?: EncryptionKey } }
@@ -22,12 +22,13 @@ type AuthAction =
 // Auth Context Interface
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest, remember?: boolean) => Promise<void>;
-  register: (userData: RegisterRequest) => Promise<void>;
+  register: (userData: RegisterRequest) => Promise<boolean>;
   logout: () => void;
   refreshToken: () => Promise<void>;
   clearError: () => void;
   updateUser: (user: User) => void;
   reloadUser: () => Promise<void>;
+  loginWithTokens: (user: User, tokens: AuthTokens, encryptionKey?: EncryptionKey) => Promise<void>;
 }
 
 // Initial State
@@ -58,9 +59,9 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
       return {
         ...state,
         user: action.payload.user,
-        tokens: action.payload.tokens,
+        tokens: action.payload.tokens || null,
         encryptionKey: action.payload.encryptionKey || state.encryptionKey || null,
-        isAuthenticated: true,
+        isAuthenticated: !!action.payload.tokens,
         isLoading: false,
         error: null,
       };
@@ -280,20 +281,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [saveSession, clearSession]);
 
   // Register function
-  const register = useCallback(async (userData: RegisterRequest) => {
+  const register = useCallback(async (userData: RegisterRequest): Promise<boolean> => {
     dispatch({ type: 'REGISTER_START' });
 
     try {
       console.log('📝 Register attempt:', userData.email);
 
       const response = await AuthAPI.register(userData);
-      const { user, tokens, encryptionKey } = response;
+      const { user, tokens, encryptionKey, verificationRequired } = response;
 
-      // Default to true (persistent) for registration, or could be false
+      if (verificationRequired || !tokens) {
+        // Verification required flow
+        console.log('ℹ️ Verification required for:', user.email);
+        dispatch({ type: 'REGISTER_SUCCESS', payload: { user } });
+        return false; // Not logged in
+      }
+
+      // Default to true (persistent) for registration
       saveSession(user, tokens, encryptionKey, true);
       dispatch({ type: 'REGISTER_SUCCESS', payload: { user, tokens, encryptionKey } });
 
       console.log('✅ Register successful for:', user.email);
+      return true; // Logged in
 
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error en el registro';
@@ -302,6 +311,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       throw error;
     }
   }, [saveSession, clearSession]);
+
+  // Login with existing tokens (e.g. after email verification)
+  const loginWithTokens = useCallback(async (user: User, tokens: AuthTokens, encryptionKey?: EncryptionKey) => {
+    saveSession(user, tokens, encryptionKey, true);
+    dispatch({ type: 'LOGIN_SUCCESS', payload: { user, tokens, encryptionKey } });
+  }, [saveSession]);
 
   // Logout function
   const logout = useCallback(() => {
@@ -322,6 +337,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const response = await AuthAPI.refreshToken(currentRefreshToken);
       const { user, tokens, encryptionKey } = response;
+
+      if (!tokens) {
+        throw new Error('No se recibieron tokens al refrescar sesión');
+      }
 
       saveSession(user, tokens, encryptionKey);
       dispatch({ type: 'REFRESH_TOKEN_SUCCESS', payload: { user, tokens, encryptionKey } });
@@ -383,6 +402,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     clearError,
     updateUser,
     reloadUser,
+    loginWithTokens
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

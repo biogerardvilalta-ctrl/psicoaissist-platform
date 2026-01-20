@@ -40,6 +40,11 @@ export class EmailService {
     await this.sendEmail(to, template);
   }
 
+  async sendVerificationEmail(to: string, name: string, token: string, plan?: string, interval?: string): Promise<void> {
+    const template = this.getVerificationTemplate(name, token, plan, interval);
+    await this.sendEmail(to, template);
+  }
+
   async sendSubscriptionConfirmation(to: string, planName: string): Promise<void> {
     const template = this.getSubscriptionTemplate(planName);
     await this.sendEmail(to, template);
@@ -62,6 +67,16 @@ export class EmailService {
     type: string
   }): Promise<void> {
     const template = this.getSessionReminderTemplate(sessionData);
+    await this.sendEmail(to, template);
+  }
+
+  async sendClientSessionReminder(to: string, sessionData: {
+    clientName: string;
+    professionalName: string;
+    date: string;
+    time: string
+  }): Promise<void> {
+    const template = this.getClientSessionReminderTemplate(sessionData);
     await this.sendEmail(to, template);
   }
 
@@ -200,6 +215,53 @@ export class EmailService {
         Si necesitas ayuda, contacta: soporte@psicoaissist.com
 
         © 2025 PsicoAIssist. Todos los derechos reservados.
+      `
+    };
+  };
+
+
+  private getVerificationTemplate(name: string, token: string, plan?: string, interval?: string): EmailTemplate {
+    const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
+    let verificationUrl = `${frontendUrl}/auth/verify-email?token=${token}`;
+    if (plan) verificationUrl += `&plan=${plan}`;
+    if (interval) verificationUrl += `&interval=${interval}`;
+
+    return {
+      subject: 'Verifica tu cuenta - PsicoAIssist',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Verifica tu Email</h1>
+          </div>
+          <div style="padding: 20px; background: #f8f9fa;">
+            <h2 style="color: #333;">Hola ${name},</h2>
+            <p style="color: #666; line-height: 1.6;">
+              Gracias por registrarte en PsicoAIssist. Para comenzar, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente enlace:
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${verificationUrl}" 
+                 style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                Verificar Email
+              </a>
+            </div>
+            <p style="color: #666; font-size: 14px;">
+              Si no has creado una cuenta en PsicoAIssist, puedes ignorar este mensaje.
+            </p>
+          </div>
+          <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
+            © 2025 PsicoAIssist. Todos los derechos reservados.
+          </div>
+        </div>
+      `,
+      text: `
+        Verifica tu Email - PsicoAIssist
+        
+        Hola ${name},
+
+        Por favor verifica tu cuenta haciendo clic en el siguiente enlace:
+        ${verificationUrl}
+
+        Si no has solicitado esto, ignora este mensaje.
       `
     };
   }
@@ -368,6 +430,44 @@ export class EmailService {
         Tipo: ${data.type}
 
         Ver agenda: https://psicoaissist.com/dashboard/sessions
+      `
+    };
+  };
+
+
+  private getClientSessionReminderTemplate(data: { clientName: string; professionalName: string; date: string; time: string }): EmailTemplate {
+    return {
+      subject: `Recordatorio de cita con ${data.professionalName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Recordatorio de Cita</h1>
+          </div>
+          <div style="padding: 20px; background: #ffff;">
+            <p style="color: #333; font-size: 16px;">Hola ${data.clientName},</p>
+            <p style="color: #555; line-height: 1.6;">
+              Este es un recordatorio de tu cita programada con <strong>${data.professionalName}</strong>.
+            </p>
+            
+            <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 5px 0;"><strong>Fecha:</strong> ${data.date}</p>
+              <p style="margin: 5px 0;"><strong>Hora:</strong> ${data.time}</p>
+            </div>
+          </div>
+          <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
+            © 2025 PsicoAIssist
+          </div>
+        </div>
+      `,
+      text: `
+        Recordatorio de Cita
+        
+        Hola ${data.clientName},
+        
+        Tienes una cita con ${data.professionalName}:
+        
+        Fecha: ${data.date}
+        Hora: ${data.time}
       `
     };
   }

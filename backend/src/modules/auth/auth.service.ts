@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException, ConflictException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { UsersService } from '../users/users.service';
@@ -54,6 +55,11 @@ export class AuthService {
       if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED) {
         this.logger.warn(`Login attempt with inactive user: ${email}`);
         throw new UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
+      }
+
+      if (!user.verified) {
+        this.logger.warn(`Login attempt with unverified user: ${email}`);
+        throw new UnauthorizedException('Cuenta no verificada. Por favor revisa tu correo electrónico para verificar tu cuenta.');
       }
 
       let isPasswordValid = false;
@@ -245,19 +251,33 @@ export class AuthService {
         isSuccess: true,
       });
 
-      // Enviar email de bienvenida
+      // Enviar email de verificación
+      const verificationToken = uuidv4();
+
+      // Update user with verification token
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          verificationToken,
+          verified: false
+        }
+      });
+
       try {
-        await this.emailService.sendWelcomeEmail(
+        await this.emailService.sendVerificationEmail(
           user.email,
-          `${user.firstName} ${user.lastName}`
+          `${user.firstName} ${user.lastName}`,
+          verificationToken,
+          registerDto.plan,
+          registerDto.interval
         );
       } catch (emailError) {
-        this.logger.warn(`Failed to send welcome email to ${user.email}: ${emailError.message}`);
-        // No fallar el registro si el email falla
+        this.logger.warn(`Failed to send verification email to ${user.email}: ${emailError.message}`);
+        // We still allow registration, but user might need to resend verification
       }
 
-      const tokens = await this.generateTokens(user);
-      const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(user.id);
+      // No generamos tokens ni login automático
+      // Devolvemos solo el usuario y flag de verificación
 
       return {
         user: {
@@ -267,7 +287,7 @@ export class AuthService {
           lastName: user.lastName,
           role: user.role,
           status: user.status,
-          enableReminders: user.enableReminders, // Add this
+          enableReminders: user.enableReminders,
           defaultDuration: user.defaultDuration,
           bufferTime: user.bufferTime,
           workStartHour: user.workStartHour,
@@ -283,11 +303,8 @@ export class AuthService {
           agendaManagerEnabled: user.agendaManagerEnabled,
           hasOnboardingPack: false,
         },
-        tokens,
-        encryptionKey: {
-          id: encryptionKey.id,
-          key: encryptionKey.keyValue,
-        },
+        tokens: null, // No tokens
+        encryptionKey: null, // No key access yet
       };
     } catch (error) {
       this.logger.error(`Error registering user: ${error.message}`);
@@ -360,6 +377,86 @@ export class AuthService {
       this.logger.error(`Error refreshing token: ${error.message}`);
       throw new UnauthorizedException('Token de refresh inválido');
     }
+  }
+
+  /**
+   * Verificar email de usuario
+   */
+  /**
+   * Verificar email de usuario y retornar tokens para login automático
+   */
+  async verifyEmail(token: string): Promise<AuthResponseDto> {
+    const user = await this.prisma.user.findFirst({
+      where: { verificationToken: token },
+      include: { subscription: true },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Token de verificación inválido');
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        verified: true,
+        verificationToken: null,
+        status: UserStatus.ACTIVE // Ensure active if it wasn't
+      },
+    });
+
+    await this.auditService.log({
+      userId: user.id,
+      action: AuditAction.EMAIL_VERIFICATION,
+      resourceType: 'USER',
+      resourceId: user.id,
+      details: 'Email verificado exitosamente',
+      isSuccess: true,
+    });
+
+    // Send welcome email NOW after verification
+    try {
+      await this.emailService.sendWelcomeEmail(
+        user.email,
+        `${user.firstName} ${user.lastName}`
+      );
+    } catch (e) {
+      this.logger.warn(`Could not send welcome email after verification: ${e.message}`);
+    }
+
+    // Generate Tokens for Auto-Login
+    const tokens = await this.generateTokens(user);
+    const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(user.id);
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        status: user.status,
+        enableReminders: user.enableReminders,
+        defaultDuration: user.defaultDuration,
+        bufferTime: user.bufferTime,
+        workStartHour: user.workStartHour,
+        workEndHour: user.workEndHour,
+        preferredLanguage: user.preferredLanguage,
+        scheduleConfig: user.scheduleConfig as any,
+        dashboardLayout: user.dashboardLayout as any,
+        hourlyRate: user.hourlyRate,
+        referralCode: user.referralCode,
+        referralsCount: user.referralsCount,
+        subscription: user.subscription,
+        simulatorUsageCount: user.simulatorUsageCount,
+        agendaManagerEnabled: user.agendaManagerEnabled,
+        hasOnboardingPack: false, // Default or fetch
+      },
+      tokens,
+      encryptionKey: {
+        id: encryptionKey.id,
+        key: encryptionKey.keyValue,
+      },
+    };
   }
 
   /**

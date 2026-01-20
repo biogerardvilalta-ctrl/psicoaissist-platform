@@ -65,6 +65,15 @@ export class AuthAPI {
     }
   }
 
+  static async verifyEmail(token: string): Promise<AuthResponse> {
+    try {
+      const response = await httpClient.get<AuthResponse>(`${this.BASE_URL}/verify-email?token=${token}`);
+      return (response as any).data || response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async getCurrentUser(): Promise<User> {
     try {
       // Add timestamp to prevent browser caching

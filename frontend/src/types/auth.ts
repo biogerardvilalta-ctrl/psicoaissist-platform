@@ -82,10 +82,13 @@ export interface RegisterRequest {
   professionalNumber: string;
   country: string;
   referralCode?: string;
+  plan?: string;
+  interval?: string;
 }
 
 export interface AuthResponse {
   user: User;
-  tokens: AuthTokens;
+  tokens?: AuthTokens; // Optional now
   encryptionKey?: EncryptionKey;
+  verificationRequired?: boolean;
 }

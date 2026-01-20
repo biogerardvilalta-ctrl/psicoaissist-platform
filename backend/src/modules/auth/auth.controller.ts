@@ -10,7 +10,9 @@ import {
   Patch,
   Logger,
   Header,
+  Query,
 } from '@nestjs/common';
+
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
@@ -80,6 +82,15 @@ export class AuthController {
     try {
       const result = await this.authService.register(registerDto);
 
+      if (!result.tokens) {
+        // Verification required case
+        return {
+          message: 'Usuario registrado. Por favor verifica tu email.',
+          user: result.user,
+          verificationRequired: true
+        };
+      }
+
       // Configurar cookies HttpOnly para seguridad
       response.cookie('accessToken', result.tokens.accessToken, {
         httpOnly: true,
@@ -142,6 +153,13 @@ export class AuthController {
       this.logger.error(`Token refresh error: ${error.message}`);
       throw error;
     }
+  }
+
+  @ApiOperation({ summary: 'Verificar email' })
+  @ApiResponse({ status: 200, description: 'Email verificado correctamente y usuario logueado', type: AuthResponseDto })
+  @Get('verify-email')
+  async verifyEmail(@Query('token') token: string): Promise<AuthResponseDto> {
+    return this.authService.verifyEmail(token);
   }
 
   @ApiOperation({ summary: 'Logout de usuario' })
