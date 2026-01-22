@@ -45,30 +45,16 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
     const user = req.user;
-    // We already have the user from validateGoogleUser in strategy which is called by the Guard
 
     // Generate tokens
     const tokens = await this.authService.generateTokens(user);
 
-    // Set Cookies
-    res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    // Redirect to frontend
-    // We should ideally get the frontend URL from config
+    // Frontend URL
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-    res.redirect(`${frontendUrl}/dashboard?login=success`);
+
+    // Redirect with tokens in query params so frontend can extract and save them to localStorage
+    // (Since auth-context relies on localStorage and cannot read httpOnly cookies)
+    res.redirect(`${frontendUrl}/auth/login?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`);
   }
 
   @ApiOperation({ summary: 'Login de usuario' })

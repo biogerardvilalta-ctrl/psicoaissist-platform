@@ -27,6 +27,31 @@ export default function LoginPage() {
   const { login, isLoading, error, clearError, isAuthenticated, user } = useAuth();
 
   useEffect(() => {
+    // Check for Google Login tokens in URL
+    const accessToken = searchParams.get('accessToken');
+    const refreshToken = searchParams.get('refreshToken');
+
+    if (accessToken && refreshToken) {
+      // Clear params from URL to avoid leaking tokens
+      window.history.replaceState({}, '', '/auth/login');
+
+      // Store tokens temporarily
+      const tokens = { accessToken, refreshToken };
+
+      // We need to fetch the user profile to complete the login
+      // We can manually use AuthAPI or create a helper
+      // Ideally AuthContext should handle this "login from external token" flow
+
+      // Quick manual implementation:
+      // We'll set the token in local storage so subsequent requests use it
+      localStorage.setItem('psychoai_access_token', accessToken);
+      localStorage.setItem('psychoai_refresh_token', refreshToken);
+
+      // Now force a reload/restore of the session
+      window.location.href = '/dashboard';
+      return;
+    }
+
     // Redirect if already authenticated
     if (isAuthenticated && user) {
       if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
