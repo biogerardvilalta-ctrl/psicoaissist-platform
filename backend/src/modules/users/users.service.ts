@@ -778,6 +778,46 @@ export class UsersService {
 
 
   /**
+   * Verificar manualmente un usuario (Admin)
+   */
+  async verifyUser(id: string): Promise<UserResponseDto> {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: {
+          verified: true,
+          verificationToken: null,
+          status: user.status === UserStatus.PENDING_REVIEW ? UserStatus.ACTIVE : user.status,
+          updatedAt: new Date(),
+        },
+        include: {
+          subscription: true
+        }
+      });
+
+      this.logger.log(`User manually verified by admin: ${user.email}`);
+
+      await this.auditService.log({
+        userId: id,
+        action: AuditAction.UPDATE,
+        resourceType: 'USER',
+        resourceId: id,
+        details: `Usuario verificado manualmente`,
+      });
+
+      return this.mapToResponseDto(updatedUser);
+    } catch (error) {
+      this.logger.error(`Error verifying user: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Mapear usuario a DTO de respuesta
    */
   private mapToResponseDto(user: any): UserResponseDto {
@@ -817,6 +857,7 @@ export class UsersService {
       simulatorUsageCount: user.simulatorUsageCount,
       agendaManagerEnabled: user.agendaManagerEnabled,
       hasOnboardingPack: user.adminTasks ? user.adminTasks.some((t: any) => t.type === 'ONBOARDING_SETUP' && t.status !== 'CANCELLED') : false,
+      verified: user.verified,
     };
   }
 }

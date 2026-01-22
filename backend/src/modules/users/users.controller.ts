@@ -137,6 +137,22 @@ export class UsersController {
     }
   }
 
+  @ApiOperation({ summary: 'Verificar usuario manualmente (Admin)' })
+  @ApiResponse({ status: 200, description: 'Usuario verificado exitosamente', type: UserResponseDto })
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  @Patch(':id/verify')
+  async verifyUser(@Param('id') id: string) {
+    try {
+      const result = await this.usersService.verifyUser(id);
+      this.logger.log(`User manually verified: ${id}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Error verifying user: ${error.message}`);
+      throw error;
+    }
+  }
+
   @ApiOperation({ summary: 'Actualizar layout del dashboard' })
   @ApiResponse({ status: 200, description: 'Layout actualizado', type: UserResponseDto })
   @Roles(UserRole.ADMIN, UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)

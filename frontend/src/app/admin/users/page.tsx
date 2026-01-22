@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRole } from '@/hooks/useRole';
 import { useAdminUsers } from '@/hooks/useAdmin';
 import { UserFilters, AdminAPI } from '@/lib/admin-api';
-import { Users, Search, Filter, MoreHorizontal, UserCheck, UserX, Mail, RefreshCw, CreditCard, Calendar } from 'lucide-react';
+import { Users, Search, Filter, MoreHorizontal, UserCheck, UserX, Mail, RefreshCw, CreditCard, Calendar, CheckCircle } from 'lucide-react';
 
 const PLAN_LIMITS: Record<string, number> = {
   FREE: 30,
@@ -314,6 +314,17 @@ export default function UsersPage() {
         refetch();
       } catch (err) {
         alert('Error al eliminar usuario');
+      }
+    }
+  };
+
+  const handleVerifyUser = async (user: any) => {
+    if (confirm(`¿Confirmas que deseas verificar manualmente al usuario ${user.email}? Esto activará su cuenta inmediatamente.`)) {
+      try {
+        await AdminAPI.verifyUser(user.id);
+        refetch();
+      } catch (err) {
+        alert('Error al verificar usuario');
       }
     }
   };
@@ -651,7 +662,17 @@ export default function UsersPage() {
                           <div className="text-sm font-medium text-gray-900">
                             {user.firstName} {user.lastName}
                           </div>
-                          <div className="text-sm text-gray-500">{user.email}</div>
+                          <div className="text-sm text-gray-500 flex items-center gap-1">
+                            {user.email}
+                            {user.verified && (
+                              <div className="group relative">
+                                <CheckCircle className="w-3 h-3 text-blue-500" />
+                                <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50">
+                                  Verificado
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -766,6 +787,14 @@ export default function UsersPage() {
                             >
                               Enviar email
                             </a>
+                            {!user.verified && (
+                              <button
+                                onClick={() => handleVerifyUser(user)}
+                                className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 w-full text-left"
+                              >
+                                Verificar Usuario
+                              </button>
+                            )}
                             <button
                               onClick={() => handleDeleteUser(user)}
                               className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"

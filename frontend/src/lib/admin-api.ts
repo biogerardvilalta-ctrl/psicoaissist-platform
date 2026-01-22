@@ -25,6 +25,7 @@ export interface AdminUser {
   simulatorUsageCount?: number;
   extraSimulatorCases?: number;
   agendaManagerEnabled?: boolean;
+  verified?: boolean;
 }
 
 export interface AdminStats {
@@ -279,6 +280,17 @@ export class AdminAPI {
     } catch (error) {
       console.error('❌ Error deleting user:', error);
       throw new Error('Error al eliminar el usuario');
+    }
+  }
+
+  static async verifyUser(id: string): Promise<AdminUser> {
+    try {
+      console.log('✅ Verifying user:', id);
+      const response = await httpClient.patch(`${this.BASE_URL}/users/${id}/verify`, {});
+      return response as any;
+    } catch (error) {
+      console.error('❌ Error verifying user:', error);
+      throw new Error('Error al verificar el usuario');
     }
   }
 }

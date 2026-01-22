@@ -222,6 +222,9 @@ export class UserResponseDto {
 
   @ApiProperty({ required: false })
   hasOnboardingPack?: boolean;
+
+  @ApiProperty({ required: false })
+  verified?: boolean;
 }
 
 // ... existing code ...
