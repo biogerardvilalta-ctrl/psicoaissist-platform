@@ -17,7 +17,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
                 ? `${configService.get<string>('API_URL')}/auth/google/callback`
                 : 'http://localhost:3001/api/v1/auth/google/callback',
             scope: ['email', 'profile'],
+            authorizationParams: {
+                prompt: 'select_account'
+            },
         });
+        const url = configService.get<string>('API_URL')
+            ? `${configService.get<string>('API_URL')}/auth/google/callback`
+            : 'http://localhost:3001/api/v1/auth/google/callback';
+        console.log('--------------------------------------------------');
+        console.log('GOOGLE STRATEGY CALLBACK URL:', url);
+        console.log('--------------------------------------------------');
     }
 
     async validate(

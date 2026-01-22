@@ -120,7 +120,7 @@ export default function LoginPage() {
         {/* Google Login Button */}
         <div>
           <a
-            href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'}/auth/google`}
+            href={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001').replace(/\/api\/v1\/?$/, '')}/api/v1/auth/google`}
             className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
           >
             <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">

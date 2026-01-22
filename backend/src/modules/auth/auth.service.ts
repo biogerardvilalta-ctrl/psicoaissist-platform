@@ -73,6 +73,7 @@ export class AuthService {
 
       if (!isPasswordValid) {
         this.logger.warn(`Failed login attempt for user: ${email} (Invalid Password)`);
+        console.log(`[DEBUG] Password mismatch for ${email}. Provided: ${password.substring(0, 3)}***`);
         await this.logAuthAttempt(user.id, false);
         return null;
       }
@@ -81,6 +82,7 @@ export class AuthService {
       const { passwordHash, ...result } = user;
       return result;
     } catch (error) {
+      console.log(`[DEBUG] Error validating user ${email}:`, error);
       // Log the full stack trace for internal server errors
       this.logger.error(`Error validating user ${email}: ${error.message}`, error.stack);
       throw error;
