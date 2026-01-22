@@ -661,4 +661,67 @@ export class AuthService {
       hasOnboardingPack: user.adminTasks ? user.adminTasks.some((t: any) => t.type === 'ONBOARDING_SETUP' && t.status !== 'CANCELLED') : false,
     };
   }
+  /**
+   * Valida o registra un usuario proveniente de Google
+   */
+  async validateGoogleUser(googleUser: { email: string; firstName: string; lastName: string; picture: string; accessToken: string }) {
+    const { email, firstName, lastName, picture } = googleUser;
+
+    // Check if user exists
+    let user = await this.prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      include: { subscription: true }
+    });
+
+    if (user) {
+      if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED) {
+        if (user.status === UserStatus.DELETED || user.status === UserStatus.INACTIVE) {
+          await this.prisma.user.update({
+            where: { id: user.id },
+            data: { status: UserStatus.ACTIVE }
+          });
+        }
+      }
+    } else {
+      // Create new user
+      const referralCode = await this.generateUniqueReferralCode(firstName);
+      const randomPassword = Math.random().toString(36).slice(-10) + uuidv4();
+      const passwordHash = await this.encryptionService.hashPassword(randomPassword);
+
+      user = await this.prisma.user.create({
+        data: {
+          email: email.toLowerCase(),
+          firstName,
+          lastName,
+          passwordHash,
+          referralCode,
+          role: UserRole.PSYCHOLOGIST,
+          status: UserStatus.ACTIVE,
+          verified: true,
+          verificationToken: null,
+        },
+        include: { subscription: true }
+      });
+
+      await this.auditService.log({
+        userId: user.id,
+        action: AuditAction.CREATE,
+        resourceType: 'USER',
+        resourceId: user.id,
+        details: `Usuario registrado via Google: ${user.email}`,
+        isSuccess: true,
+      });
+
+      try {
+        await this.emailService.sendWelcomeEmail(
+          user.email,
+          `${user.firstName} ${user.lastName}`
+        );
+      } catch (e) {
+        this.logger.warn(`Could not send welcome email after Google register: ${e.message}`);
+      }
+    }
+
+    return user;
+  }
 }

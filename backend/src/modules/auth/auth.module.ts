@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { UsersModule } from '../users/users.module';
@@ -32,6 +33,7 @@ import { ConfigModule } from '@nestjs/config';
     AuthService,
     JwtStrategy,
     LocalStrategy,
+    GoogleStrategy,
     JwtAuthGuard,
     RolesGuard,
   ],
