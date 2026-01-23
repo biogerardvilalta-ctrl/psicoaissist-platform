@@ -51,6 +51,12 @@ export class AuthController {
     // Frontend URL
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
+    console.log('--------------------------------------------------');
+    console.log('DEBUG GOOGLE REDIRECT:');
+    console.log('process.env.FRONTEND_URL:', process.env.FRONTEND_URL);
+    console.log('Computed frontendUrl:', frontendUrl);
+    console.log('--------------------------------------------------');
+
     // Handle Pending Registration
     if (user.isPendingRegistration) {
       const token = await this.authService.generateRegistrationToken(user);
