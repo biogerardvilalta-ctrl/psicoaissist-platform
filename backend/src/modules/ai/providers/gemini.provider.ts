@@ -10,7 +10,7 @@ export class GeminiProvider implements AiProvider {
     private readonly logger = new Logger(GeminiProvider.name);
 
     // Default connection settings
-    private defaultModel = 'gemini-2.0-flash';
+    private defaultModel: string;
 
     constructor(private configService: ConfigService) {
         const apiKey = this.configService.get<string>('GEMINI_API_KEY');
@@ -18,6 +18,7 @@ export class GeminiProvider implements AiProvider {
             this.logger.warn('GEMINI_API_KEY is not set. Provider will fail on execution.');
         }
         this.genAI = new GoogleGenerativeAI(apiKey || '');
+        this.defaultModel = this.configService.get('GEMINI_MODEL') || 'gemini-2.0-flash';
     }
 
     async generateText(prompt: string | string[], options?: AiOptions): Promise<string> {

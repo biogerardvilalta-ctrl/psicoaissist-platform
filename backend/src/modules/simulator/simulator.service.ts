@@ -30,14 +30,17 @@ export interface PatientProfile {
 @Injectable()
 export class SimulatorService {
     private readonly logger = new Logger(SimulatorService.name);
-    private modelName = 'gemini-2.0-flash'; // Default model
+    private modelName: string;
 
     constructor(
         private configService: ConfigService,
         private prisma: PrismaService,
         private usageLimitsService: UsageLimitsService,
         @Inject('AI_PROVIDER') private aiProvider: AiProvider
-    ) { }
+    ) {
+        // Allow overriding model via ENV, default to 2.0-flash if not set
+        this.modelName = this.configService.get('GEMINI_MODEL') || 'gemini-2.0-flash';
+    }
 
     private async checkAndIncrementUsage(userId: string): Promise<void> {
         // Reset Logic Check (handled here to ensure it runs before limit check)
