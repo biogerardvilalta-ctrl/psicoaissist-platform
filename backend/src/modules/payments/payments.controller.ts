@@ -70,8 +70,7 @@ export class PaymentsController {
   }
 
   @Post('create-checkout-session')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
+  @UseGuards(JwtAuthGuard)
   async createCheckoutSession(
     @Body() createCheckoutDto: CreateCheckoutSessionDto,
     @Req() req: any,

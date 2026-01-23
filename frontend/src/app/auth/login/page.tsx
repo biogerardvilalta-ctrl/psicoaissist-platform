@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, LogIn, Heart, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { AuthAPI } from '@/lib/auth-api';
+import { usePayments } from '@/hooks/usePayments';
+import { useToast } from '@/hooks/use-toast';
 
 interface LoginFormData {
   email: string;
@@ -24,36 +27,76 @@ export default function LoginPage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoading, error, clearError, isAuthenticated, user } = useAuth();
+  const { login, isLoading, error, clearError, isAuthenticated, user, loginWithTokens } = useAuth();
+  const { createCheckoutSession } = usePayments();
+  const { toast } = useToast();
+
+  const processedRef = useRef(false);
+  const errorProcessedRef = useRef(false);
 
   useEffect(() => {
+    // Wait for auth check to finish before processing URL tokens (prevents race condition)
+    if (isLoading) return;
+
     // Check for Google Login tokens in URL
     const accessToken = searchParams.get('accessToken');
     const refreshToken = searchParams.get('refreshToken');
 
-    if (accessToken && refreshToken) {
-      // Clear params from URL to avoid leaking tokens
-      window.history.replaceState({}, '', '/auth/login');
+    if (accessToken && refreshToken && !processedRef.current) {
+      processedRef.current = true;
+      const handleGoogleLogin = async () => {
+        try {
+          // Clear params from URL
+          window.history.replaceState({}, '', '/auth/login');
 
-      // Store tokens temporarily
-      const tokens = { accessToken, refreshToken };
+          // CRITICAL: Force clear any existing session/storage to prevent mixing users
+          // accessing direct localStorage since logout() might trigger state updates we don't want yet
+          localStorage.removeItem('psychoai_user');
+          localStorage.removeItem('psychoai_access_token');
+          localStorage.removeItem('psychoai_refresh_token');
+          sessionStorage.clear();
 
-      // We need to fetch the user profile to complete the login
-      // We can manually use AuthAPI or create a helper
-      // Ideally AuthContext should handle this "login from external token" flow
+          // Set tokens in storage for API calls
+          localStorage.setItem('psychoai_access_token', accessToken);
+          localStorage.setItem('psychoai_refresh_token', refreshToken);
 
-      // Quick manual implementation:
-      // We'll set the token in local storage so subsequent requests use it
-      localStorage.setItem('psychoai_access_token', accessToken);
-      localStorage.setItem('psychoai_refresh_token', refreshToken);
+          // Fetch user profile
+          const user = await AuthAPI.getCurrentUser();
 
-      // Now force a reload/restore of the session
-      window.location.href = '/dashboard';
+          if (user) {
+            // Update context state atomically
+            await loginWithTokens(user, { accessToken, refreshToken });
+
+            // Check if there is a pending plan selection from registration
+            const plan = searchParams.get('plan');
+            const interval = searchParams.get('interval') as 'month' | 'year' | undefined;
+
+            if (plan && plan !== 'demo') {
+              console.log('Redirecting to payment for plan:', plan);
+              await createCheckoutSession({
+                plan: plan as any,
+                interval: interval || 'month'
+              });
+              // Return to avoid dashboard redirect
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Google login error:', error);
+          localStorage.removeItem('psychoai_access_token');
+          localStorage.removeItem('psychoai_refresh_token');
+        }
+      };
+
+      handleGoogleLogin();
       return;
     }
 
     // Redirect if already authenticated
     if (isAuthenticated && user) {
+      // Don't redirect if we are about to process a payment plan
+      if (searchParams.get('plan')) return;
+
       if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
         router.push('/admin');
       } else {
@@ -67,7 +110,24 @@ export default function LoginPage() {
     if (message === 'registro-exitoso') {
       setSuccessMessage('¡Registro exitoso! Ahora puedes iniciar sesión.');
     }
-  }, [searchParams, isAuthenticated, user, router]);
+
+    // Check for error messages from redirects (e.g. Google Login failure)
+    const errorParam = searchParams.get('error');
+    if (errorParam === 'account_not_found') {
+      clearError(); // Clear any previous errors
+      setSuccessMessage(null);
+
+      toast({
+        title: "Cuenta no encontrada",
+        description: "No existe ninguna cuenta con este email.",
+        variant: "destructive",
+        duration: 6000,
+      });
+
+      // Clean URL to prevent toast on refresh
+      window.history.replaceState({}, '', '/auth/login');
+    }
+  }, [searchParams, isAuthenticated, user, router, isLoading]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;

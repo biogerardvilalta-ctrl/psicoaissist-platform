@@ -18,6 +18,7 @@ import { Response, Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 import {
   LoginDto,
   RegisterDto,
@@ -25,6 +26,7 @@ import {
   ChangePasswordDto,
   RefreshTokenDto,
 } from './dto/auth.dto';
+import { CompleteGoogleRegisterDto } from './dto/complete-google-register.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -35,26 +37,118 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Login con Google' })
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   async googleAuth(@Req() req) {
     // Initiates the Google OAuth2 login flow
   }
 
   @ApiOperation({ summary: 'Callback de Google Login' })
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
     const user = req.user;
 
-    // Generate tokens
-    const tokens = await this.authService.generateTokens(user);
+    console.log('DEBUG: googleAuthRedirect user:', {
+      email: user.email,
+      id: user.id,
+      role: user.role,
+      isPendingRegistration: user.isPendingRegistration
+    });
 
     // Frontend URL
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-    // Redirect with tokens in query params so frontend can extract and save them to localStorage
-    // (Since auth-context relies on localStorage and cannot read httpOnly cookies)
-    res.redirect(`${frontendUrl}/auth/login?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`);
+    // Handle Pending Registration
+    if (user.isPendingRegistration) {
+      const token = await this.authService.generateRegistrationToken(user);
+
+      let redirectUrl = `${frontendUrl}/auth/complete-profile?token=${token}&email=${user.email}&name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}`;
+
+      // Preserve plan info
+      if ((user as any).plan) redirectUrl += `&plan=${(user as any).plan}`;
+      if ((user as any).interval) redirectUrl += `&interval=${(user as any).interval}`;
+
+      console.log('Redirecting to complete profile with:', redirectUrl);
+
+      // CRITICAL: Clear any existing session to prevent Admin/Old user bleeding
+      // Since we are entering a registration flow, we must ensure no other user is logged in
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax' as const,
+        path: '/'
+      };
+
+      res.clearCookie('accessToken', cookieOptions);
+      res.clearCookie('refreshToken', cookieOptions);
+      // Try clearing without options just in case (for older cookies)
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+
+      // Redirect to completion page
+      return res.redirect(redirectUrl);
+    }
+
+    // Generate tokens
+    const tokens = await this.authService.generateTokens(user);
+
+    // Redirect with tokens in query params
+    let redirectUrl = `${frontendUrl}/auth/login?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`;
+
+    // If plan info was preserved from registration state, pass it back to frontend
+    // If plan info was preserved from registration state, pass it back to frontend
+    if ((user as any).plan) {
+      redirectUrl += `&plan=${(user as any).plan}`;
+    }
+    if ((user as any).interval) {
+      redirectUrl += `&interval=${(user as any).interval}`;
+    }
+
+    // CRITICAL: Overwrite any existing session cookies (e.g. Admin) to prevent session bleeding
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000, // 15 minutos
+    });
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+    });
+
+    return res.redirect(redirectUrl);
+  }
+
+  @ApiOperation({ summary: 'Completar registro con Google' })
+  @ApiResponse({ status: 200, description: 'Registro completado exitosamente', type: AuthResponseDto })
+  @Post('google/complete')
+  async completeGoogleRegistration(
+    @Body() dto: CompleteGoogleRegisterDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.authService.completeGoogleRegistration(dto);
+
+    if (result.tokens) {
+      // Configurar cookies HttpOnly para seguridad (igual que en login/register) to overwrite any old session
+      response.cookie('accessToken', result.tokens.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 15 * 60 * 1000, // 15 minutos
+      });
+
+      response.cookie('refreshToken', result.tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+      });
+    }
+
+    return result;
   }
 
   @ApiOperation({ summary: 'Login de usuario' })
@@ -72,14 +166,14 @@ export class AuthController {
       response.cookie('accessToken', result.tokens.accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 15 * 60 * 1000, // 15 minutos
       });
 
       response.cookie('refreshToken', result.tokens.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
       });
 
@@ -120,14 +214,14 @@ export class AuthController {
       response.cookie('accessToken', result.tokens.accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 15 * 60 * 1000, // 15 minutos
       });
 
       response.cookie('refreshToken', result.tokens.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
       });
 
@@ -159,14 +253,14 @@ export class AuthController {
       response.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 15 * 60 * 1000, // 15 minutos
       });
 
       response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
       });
 
@@ -200,8 +294,8 @@ export class AuthController {
       await this.authService.logout(req.user.id);
 
       // Limpiar cookies
-      response.clearCookie('accessToken');
-      response.clearCookie('refreshToken');
+      response.clearCookie('accessToken', { path: '/' });
+      response.clearCookie('refreshToken', { path: '/' });
 
       this.logger.log(`User logged out: ${req.user.id}`);
 

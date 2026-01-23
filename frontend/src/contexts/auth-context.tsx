@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode, useRef } from 'react';
 import { AuthAPI } from '@/lib/auth-api';
 import type { AuthState, AuthTokens, User, LoginRequest, RegisterRequest, EncryptionKey } from '@/types/auth';
 
@@ -202,47 +202,43 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Restore session from storage
   const restoreSession = useCallback(async () => {
     try {
-      const accessToken = storage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-      const refreshToken = storage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-      const userStr = storage.getItem(STORAGE_KEYS.USER);
-      const encryptionKeyStr = storage.getItem(STORAGE_KEYS.ENCRYPTION_KEY);
+      console.log('🔄 AuthProvider: Checking for existing session...');
 
-      console.log('🔄 Checking storage for session...');
+      // Attempt to verify session with backend (Cookie or Token based)
+      try {
+        const user = await AuthAPI.getCurrentUser();
+        console.log('✅ Session verified via Backend for:', user.email);
 
-      if (accessToken && refreshToken && userStr) {
-        // Tentative user data
-        const storedUser = JSON.parse(userStr);
-        console.log('🔄 Found stored tokens for:', storedUser.email);
+        // Retrieve stored artifacts if available
+        const accessToken = storage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+        const refreshToken = storage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+        const encryptionKeyStr = storage.getItem(STORAGE_KEYS.ENCRYPTION_KEY);
 
-        // VERIFY TOKEN WITH BACKEND BEFORE TRUSTING IT
-        try {
-          console.log('🔍 Verifying session validity with backend...');
-          // access token is automatically attached by http-client
-          const verifiedUser = await AuthAPI.getCurrentUser();
+        // Use stored tokens or fallback to cookie-session markers
+        // This ensures the app considers the user "logged in" even if only cookies are present
+        const tokens: AuthTokens = {
+          accessToken: accessToken || 'cookie-session',
+          refreshToken: refreshToken || 'cookie-session'
+        };
 
-          console.log('✅ Session verified for:', verifiedUser.email);
-
-          const tokens = { accessToken, refreshToken };
-          let encryptionKey: EncryptionKey | undefined;
-
-          if (encryptionKeyStr) {
-            try {
-              encryptionKey = JSON.parse(encryptionKeyStr);
-            } catch (e) {
-              console.error('Error parsing encryption key', e);
-            }
+        let encryptionKey: EncryptionKey | undefined;
+        if (encryptionKeyStr) {
+          try {
+            encryptionKey = JSON.parse(encryptionKeyStr);
+          } catch (e) {
+            console.error('Error parsing encryption key', e);
           }
-
-          dispatch({ type: 'RESTORE_SESSION', payload: { user: verifiedUser, tokens, encryptionKey } });
-          return true;
-        } catch (verifyError) {
-          console.warn('⚠️ Stored session is invalid or expired:', verifyError);
-          clearSession();
-          // We don't return here, we fall through to the "no valid session" case
         }
-      } else {
-        console.log('ℹ️ No existing session found in storage');
+
+        dispatch({ type: 'RESTORE_SESSION', payload: { user, tokens, encryptionKey } });
+        return true;
+
+      } catch (verifyError) {
+        console.warn('ℹ️ No valid backend session found:', verifyError);
+        // Backend actively rejected us (401) or network error, so clear any stale local state
+        clearSession();
       }
+
     } catch (error) {
       console.error('Error restoring session:', error);
       clearSession();
@@ -376,10 +372,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     dispatch({ type: 'CLEAR_ERROR' });
   }, []);
 
+  const initialized = useRef(false);
+
   // Restore session on mount
   useEffect(() => {
-    console.log('🔄 AuthProvider: Checking for existing session...');
-    restoreSession();
+    if (!initialized.current) {
+      initialized.current = true;
+      console.log('🔄 AuthProvider: Checking for existing session...');
+      restoreSession();
+    }
 
     // Listen for unauthorized events (401)
     const handleUnauthorized = () => {
@@ -391,9 +392,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       window.removeEventListener('auth:unauthorized', handleUnauthorized);
     };
-  }, [restoreSession, logout]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const value: AuthContextType = {
+  const value = React.useMemo<AuthContextType>(() => ({
     ...state,
     login,
     register,
@@ -403,7 +405,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     updateUser,
     reloadUser,
     loginWithTokens
-  };
+  }), [state, login, register, logout, refreshToken, clearError, updateUser, reloadUser, loginWithTokens]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

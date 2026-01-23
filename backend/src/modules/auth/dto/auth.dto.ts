@@ -141,14 +141,17 @@ export class UserResponseDto {
 }
 
 export class AuthResponseDto {
+  @ApiProperty({ required: false })
+  message?: string;
+
   @ApiProperty()
   user: UserResponseDto;
 
-  @ApiProperty()
-  tokens: TokensDto;
+  @ApiProperty({ required: false })
+  tokens?: TokensDto;
 
-  @ApiProperty()
-  encryptionKey: {
+  @ApiProperty({ required: false })
+  encryptionKey?: {
     id: string;
     key: string;
   };

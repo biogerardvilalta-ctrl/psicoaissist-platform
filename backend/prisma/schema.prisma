@@ -14,6 +14,7 @@ model User {
   passwordHash              String             @map("password_hash")
   role                      UserRole
   status                    UserStatus         @default(ACTIVE)
+  isPendingRegistration     Boolean            @default(false) @map("is_pending_registration")
   verified                  Boolean            @default(false)
   verificationToken         String?            @map("verification_token")
   resetPasswordToken        String?            @map("reset_password_token")

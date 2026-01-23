@@ -6,6 +6,7 @@ import { EncryptionService } from '../encryption/encryption.service';
 import { UsersService } from '../users/users.service';
 import { EmailService } from '../email/email.service';
 import { LoginDto, RegisterDto, TokensDto, AuthResponseDto } from './dto/auth.dto';
+import { CompleteGoogleRegisterDto } from './dto/complete-google-register.dto';
 import { AuditService } from '../audit/audit.service';
 import { UserRole, UserStatus, AuditAction } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
@@ -88,6 +89,12 @@ export class AuthService {
       throw error;
     }
   }
+
+  /**
+   * Genera un token JWT para el proceso de registro con Google.
+   * Este token contiene información del perfil de Google para ser usada en el registro final.
+   */
+
 
   /**
    * Realiza el login y devuelve tokens JWT
@@ -313,9 +320,84 @@ export class AuthService {
       throw error;
     }
   }
+  /**
+   * Completa el registro de un usuario de Google
+   */
+  async completeGoogleRegistration(dto: CompleteGoogleRegisterDto): Promise<AuthResponseDto> {
+    const { token, professionalNumber, country, referralCode } = dto;
+
+    try {
+      // Decode registration token
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+
+      if (!payload.email || !payload.isRegistration) {
+        throw new UnauthorizedException('Token de registro inválido');
+      }
+
+      const user = await this.prisma.user.findUnique({
+        where: { email: payload.email },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('Usuario no encontrado');
+      }
+
+
+      // Check if user is already active (idempotency)
+      if (!(user as any).isPendingRegistration && user.status === UserStatus.ACTIVE) {
+        const tokens = await this.generateTokens(user);
+        return {
+          message: 'Usuario ya registrado',
+          user: user as any,
+          tokens
+        };
+      }
+
+      const updatedUser = await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          professionalNumber,
+          country,
+          isPendingRegistration: false,
+          status: UserStatus.ACTIVE,
+          verified: true,
+          role: UserRole.PSYCHOLOGIST,
+          updatedAt: new Date(),
+        } as any,
+      });
+
+      const tokens = await this.generateTokens(updatedUser);
+
+      return {
+        message: 'Registro completado exitosamente',
+        user: updatedUser as any,
+        tokens,
+      };
+
+    } catch (error) {
+      this.logger.error(`Error completing google registration: ${error.message}`);
+      throw new UnauthorizedException('Token de registro inválido o expirado');
+    }
+  }
+
+  async generateRegistrationToken(user: any): Promise<string> {
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      isRegistration: true,
+    };
+
+    return this.jwtService.signAsync(payload, {
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: '1h',
+    });
+  }
 
   private async generateUniqueReferralCode(firstName: string): Promise<string> {
-    const prefix = firstName.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'PSY');
+    const safeName = firstName || 'USER';
+    const prefix = safeName.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'PSY');
     const random = Math.floor(1000 + Math.random() * 9000);
     let code = `${prefix}${random}`;
 
@@ -666,7 +748,12 @@ export class AuthService {
   /**
    * Valida o registra un usuario proveniente de Google
    */
-  async validateGoogleUser(googleUser: { email: string; firstName: string; lastName: string; picture: string; accessToken: string }) {
+  async validateGoogleUser(
+    googleUser: { email: string; firstName: string; lastName: string; picture: string; accessToken: string },
+    isRegistering: boolean = false,
+    plan?: string,
+    interval?: string
+  ) {
     const { email, firstName, lastName, picture } = googleUser;
 
     // Check if user exists
@@ -685,7 +772,14 @@ export class AuthService {
         }
       }
     } else {
-      // Create new user
+      // User does NOT exist
+      if (!isRegistering) {
+        // Strict Login Mode: Failure
+        this.logger.warn(`Google Login failed: User ${email} not found and isRegistering=false`);
+        throw new UnauthorizedException('No existe ninguna cuenta con este email. Por favor, regístrate primero.');
+      }
+
+      // Create new user (Registration Mode)
       const referralCode = await this.generateUniqueReferralCode(firstName);
       const randomPassword = Math.random().toString(36).slice(-10) + uuidv4();
       const passwordHash = await this.encryptionService.hashPassword(randomPassword);
@@ -701,6 +795,7 @@ export class AuthService {
           status: UserStatus.ACTIVE,
           verified: true,
           verificationToken: null,
+          isPendingRegistration: true, // Force profile completion (prof number, country, terms)
         },
         include: { subscription: true }
       });

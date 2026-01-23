@@ -46,6 +46,21 @@ export class AuthAPI {
     }
   }
 
+  static async completeGoogleRegistration(data: {
+    token: string;
+    professionalNumber: string;
+    country: string;
+    referralCode?: string;
+    acceptTerms: boolean;
+  }): Promise<AuthResponse> {
+    try {
+      const response = await httpClient.post(`${this.BASE_URL}/google/complete`, data);
+      return (response as any).data || response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async refreshToken(refreshToken: string): Promise<AuthResponse> {
     try {
       const response = await httpClient.post(`${this.BASE_URL}/refresh`, {
