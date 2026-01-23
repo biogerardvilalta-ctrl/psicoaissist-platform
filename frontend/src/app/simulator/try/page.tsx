@@ -26,7 +26,8 @@ export default function PublicSimulatorPage() {
     const [isLimitReached, setIsLimitReached] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const API_URL = envUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
 
     useEffect(() => {
         startDemo();

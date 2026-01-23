@@ -208,7 +208,7 @@ export default function AdminTasksPage() {
                                     </div>
 
                                     <div className="flex-grow space-y-1">
-                                        <div className="flex items-start justify-between">
+                                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                                             <div>
                                                 <h3 className="font-semibold text-gray-900">{task.title}</h3>
                                                 <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
@@ -218,7 +218,7 @@ export default function AdminTasksPage() {
                                                     <span>{new Date(task.createdAt).toLocaleDateString()}</span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-wrap items-center gap-2 mt-1 sm:mt-0">
                                                 <Badge variant="outline" className={`${getPriorityColor(task.priority)}`}>
                                                     {task.priority}
                                                 </Badge>

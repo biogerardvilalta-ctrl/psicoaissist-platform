@@ -121,14 +121,19 @@ export function GoogleCalendarConnect() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1">
                         <p className="text-sm font-medium">Estado</p>
                         <p className={`text-sm ${isConnected ? "text-green-600 font-bold" : "text-muted-foreground"}`}>
                             {isConnected ? "Conectado" : "No conectado"}
                         </p>
                     </div>
-                    <Button onClick={handleConnect} disabled={loading || isConnected} variant={isConnected ? "outline" : "default"}>
+                    <Button
+                        onClick={handleConnect}
+                        disabled={loading || isConnected}
+                        variant={isConnected ? "outline" : "default"}
+                        className="w-full sm:w-auto"
+                    >
                         {loading ? "Conectando..." : isConnected ? "Conectado" : "Conectar Google Calendar"}
                     </Button>
                 </div>

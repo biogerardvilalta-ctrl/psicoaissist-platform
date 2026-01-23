@@ -254,30 +254,30 @@ export default function SettingsPage() {
                     const config = (user?.scheduleConfig?.weekly?.[day]) || { enabled: day !== 0 && day !== 6, start: workStartHour, end: workEndHour };
 
                     return (
-                      <div key={day} className="flex items-center gap-4 py-2 border-b last:border-0">
-                        <div className="w-24">
-                          <span className="font-medium">{dayNames[day]}</span>
+                      <div key={day} className="flex flex-col md:flex-row md:items-center gap-3 py-4 md:py-2 border-b last:border-0">
+                        <div className="flex items-center justify-between w-full md:w-auto gap-4">
+                          <div className="w-24 font-medium">{dayNames[day]}</div>
+                          <div className="flex items-center gap-3 flex-1 md:flex-none">
+                            <Checkbox
+                              checked={config.enabled}
+                              onCheckedChange={(checked) => {
+                                const newConfig = { ...user?.scheduleConfig };
+                                if (!newConfig.weekly) newConfig.weekly = {};
+                                newConfig.weekly[day] = { ...config, enabled: !!checked };
+                                updateUser({ ...user!, scheduleConfig: newConfig });
+                                handleUpdateProfile({ scheduleConfig: newConfig });
+                              }}
+                            />
+                            <span className="text-sm text-gray-500 w-16">{config.enabled ? 'Abierto' : 'Cerrado'}</span>
+                          </div>
                         </div>
-                        <Checkbox
-                          checked={config.enabled}
-                          onCheckedChange={(checked) => {
-                            const newConfig = { ...user?.scheduleConfig };
-                            if (!newConfig.weekly) newConfig.weekly = {};
-                            newConfig.weekly[day] = { ...config, enabled: !!checked };
-                            // Optimistic update
-                            updateUser({ ...user!, scheduleConfig: newConfig });
-                            // API Call
-                            handleUpdateProfile({ scheduleConfig: newConfig });
-                          }}
-                        />
-                        <span className="text-sm text-gray-500 w-16">{config.enabled ? 'Abierto' : 'Cerrado'}</span>
 
                         {config.enabled && (
-                          <>
+                          <div className="flex items-center gap-2 w-full md:w-auto pl-0 md:pl-4">
                             <Input
                               type="time"
                               value={config.start}
-                              className="w-32"
+                              className="flex-1 md:w-32"
                               onChange={(e) => {
                                 const newConfig = { ...user?.scheduleConfig };
                                 if (!newConfig.weekly) newConfig.weekly = {};
@@ -290,7 +290,7 @@ export default function SettingsPage() {
                             <Input
                               type="time"
                               value={config.end}
-                              className="w-32"
+                              className="flex-1 md:w-32"
                               onChange={(e) => {
                                 const newConfig = { ...user?.scheduleConfig };
                                 if (!newConfig.weekly) newConfig.weekly = {};
@@ -299,7 +299,7 @@ export default function SettingsPage() {
                               }}
                               onBlur={() => handleUpdateProfile({ scheduleConfig: user?.scheduleConfig })}
                             />
-                          </>
+                          </div>
                         )}
                       </div>
                     );
@@ -340,7 +340,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-4 pt-2">
+                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
                     <Button onClick={handleAddHoliday} variant="secondary" className="flex-1" disabled={!blockDate}>
                       Bloquear Día Completo
                     </Button>

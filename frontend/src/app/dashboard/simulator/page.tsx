@@ -373,7 +373,7 @@ export default function SimulatorPage() {
 
                     {/* ERROR / IDLE STATE */}
                     {status === 'idle' && (
-                        <Card className="flex-1 flex flex-col items-center justify-center p-12 bg-gray-50/50 border-dashed mt-4">
+                        <Card className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 bg-gray-50/50 border-dashed mt-4 overflow-y-auto">
                             <div className="text-center max-w-md space-y-4">
                                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <UserCheck className="w-8 h-8 text-blue-600" />
@@ -386,7 +386,7 @@ export default function SimulatorPage() {
                                     Selecciona el nivel de dificultad. El sistema generará un paciente con una patología y personalidad aleatoria.
                                 </p>
 
-                                <div className="grid grid-cols-3 gap-4 py-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-6 w-full">
                                     {(['easy', 'medium', 'hard'] as const).map((level) => (
                                         <button
                                             key={level}

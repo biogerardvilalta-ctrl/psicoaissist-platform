@@ -444,14 +444,14 @@ export default function UsersPage() {
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
               <p className="text-gray-600 mt-2">Administra los usuarios registrados en la plataforma</p>
             </div>
             <button
               onClick={handleCreateUser}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
             >
               <Mail className="w-4 h-4 mr-2" />
               Crear Usuario
@@ -470,7 +470,7 @@ export default function UsersPage() {
 
         {/* Status Tabs */}
         <div className="border-b border-gray-200 mb-6">
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          <nav className="-mb-px flex flex-wrap gap-2 sm:space-x-8" aria-label="Tabs">
             {[
               { id: 'ALL', name: 'Todos' },
               { id: 'ACTIVE', name: 'Activos' },
@@ -486,8 +486,7 @@ export default function UsersPage() {
                   ${statusFilter === tab.id
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
-                `}
-              >
+                `}>
                 {tab.name}
               </button>
             ))}
@@ -513,7 +512,7 @@ export default function UsersPage() {
               </div>
 
               {/* Status Filter - Removed from here as it is now in Tabs */}
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-wrap items-center gap-2">
                 <Filter className="h-4 w-4 text-gray-400" />
 
                 {/* Role Filter */}
@@ -615,35 +614,111 @@ export default function UsersPage() {
               </div>
             )}
           </div>
-          <div className="overflow-x-auto pb-40">
+          {/* Mobile Card View */}
+          <div className="md:hidden pb-20">
+            <div className="space-y-4 p-4">
+              {users.map((user) => (
+                <div key={user.id} className="bg-white rounded-lg border shadow-sm p-4 space-y-4">
+                  {/* Header: User & Status */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+                        <span className="text-sm font-medium text-blue-600">
+                          {user.firstName[0]}{user.lastName[0]}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-gray-900 truncate max-w-[120px]">
+                          {user.firstName} {user.lastName}
+                        </div>
+                        <div className="text-xs text-gray-500 truncate max-w-[120px]">
+                          {user.email}
+                        </div>
+                      </div>
+                    </div>
+                    {getStatusBadge(user.status)}
+                  </div>
+
+                  {/* Stats & Info Grid */}
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-lg">
+                    <div className="flex flex-col">
+                      <span className="text-gray-400 text-[10px] uppercase">Sesiones</span>
+                      <span className="font-medium">{user._count?.sessions || 0}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-gray-400 text-[10px] uppercase">Reportes</span>
+                      <span className="font-medium">{user._count?.sessions || 0}</span>
+                    </div>
+                    <div className="col-span-2 pt-1 border-t border-gray-100 mt-1">
+                      <div className="flex justify-between">
+                        <span>Uso IA:</span>
+                        <span className="font-medium">{Math.round(user.transcriptionMinutesUsed || 0)}/{getLimit(user)} min</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Badges */}
+                  <div className="flex flex-wrap gap-2">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${user.role === 'PSYCHOLOGIST' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
+                      {user.role}
+                    </span>
+                    {user.subscription && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                        {user.subscription.planType}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-3 border-t border-gray-100 flex justify-end gap-3">
+                    <button
+                      onClick={() => handleEditUser(user)}
+                      className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                    >
+                      Editar
+                    </button>
+                    <a
+                      href={`/admin/users/${user.id}`}
+                      className="text-sm font-medium text-gray-600 hover:text-gray-800"
+                    >
+                      Detalles
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="hidden md:block overflow-x-auto pb-40">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Usuario
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Uso (Ses/Rep/Packs)
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Rol
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Plan
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Packs Extra
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Último acceso
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Registro
                   </th>
-                  <th scope="col" className="relative px-6 py-3">
+                  <th scope="col" className="relative px-3 py-3">
                     <span className="sr-only">Acciones</span>
                   </th>
                 </tr>
@@ -651,18 +726,18 @@ export default function UsersPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {users.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-medium text-blue-600">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+                          <span className="text-xs font-medium text-blue-600">
                             {user.firstName[0]}{user.lastName[0]}
                           </span>
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                        <div className="ml-3 min-w-0">
+                          <div className="text-sm font-medium text-gray-900 truncate max-w-[120px]" title={`${user.firstName} ${user.lastName}`}>
                             {user.firstName} {user.lastName}
                           </div>
-                          <div className="text-sm text-gray-500 flex items-center gap-1">
+                          <div className="text-sm text-gray-500 flex items-center gap-1 max-w-[180px] truncate" title={user.email}>
                             {user.email}
                             {user.verified && (
                               <div className="group relative">
@@ -676,15 +751,15 @@ export default function UsersPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                       {(user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'AGENDA_MANAGER' && user.subscription?.planType !== 'agenda_manager') ? (
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-gray-900">{user._count?.sessions || 0}</span>
-                            <span className="text-xs">sesiones</span>
+                            <span className="text-xs">Ses</span>
                             <span className="text-gray-300">|</span>
                             <span className="font-medium text-gray-900">{user._count?.reports || 0}</span>
-                            <span className="text-xs">reportes</span>
+                            <span className="text-xs">Rep</span>
                           </div>
                           <div className="text-xs text-gray-500">
                             Trans: {Math.round(user.transcriptionMinutesUsed || 0)} / {getLimit(user)} min
@@ -697,10 +772,10 @@ export default function UsersPage() {
                         <span className="text-xs text-gray-400">-</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       {getStatusBadge(user.status)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'AGENDA_MANAGER' ? 'bg-pink-100 text-pink-800' :
                         user.role.startsWith('PSYCHOLOGIST') ? 'bg-green-100 text-green-800' :
                           'bg-gray-100 text-gray-800'
@@ -710,14 +785,14 @@ export default function UsersPage() {
                             user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? 'Admin' : 'Usuario'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       {(user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.role !== 'AGENDA_MANAGER') ? (
                         getPlanBadge(user.subscription?.planType || 'FREE')
                       ) : (
                         <span className="text-xs text-gray-400">-</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       <div className="flex flex-col gap-1 items-start">
                         {/* Only show Agenda Manager pack for Psychologists, not for the Agenda Manager user themselves */}
                         {(user.agendaManagerEnabled || user.subscription?.planType === 'agenda_manager') && user.role !== 'AGENDA_MANAGER' && (
@@ -741,13 +816,13 @@ export default function UsersPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(user.lastLogin || new Date().toISOString())}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(user.createdAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="relative inline-block text-left" data-dropdown>
                         <button
                           onClick={(e) => {

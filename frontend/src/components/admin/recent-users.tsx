@@ -111,10 +111,10 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
         ) : (
           <div className="space-y-4">
             {users.map((user) => (
-              <div key={user.id} className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
+              <div key={user.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                <div className="flex items-center space-x-3 w-full sm:w-auto">
                   {/* Avatar */}
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center shrink-0">
                     <User className="w-5 h-5 text-blue-600" />
                   </div>
 
@@ -125,14 +125,14 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                         {user.firstName} {user.lastName}
                       </p>
                       {user.role === 'ADMIN' && (
-                        <Crown className="w-4 h-4 text-yellow-500" />
+                        <Crown className="w-4 h-4 text-yellow-500 shrink-0" />
                       )}
                       {user.role === 'PSYCHOLOGIST' && (
-                        <Shield className="w-4 h-4 text-blue-500" />
+                        <Shield className="w-4 h-4 text-blue-500 shrink-0" />
                       )}
                     </div>
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                    <div className="flex items-center space-x-2 mt-1">
+                    <div className="flex items-center space-x-2 mt-1 flex-wrap gap-y-1">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${roleColors[user.role as keyof typeof roleColors] || 'bg-gray-100 text-gray-800'
                         }`}>
                         {user.role}
@@ -148,11 +148,11 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                 </div>
 
                 {/* Date and actions */}
-                <div className="flex items-center space-x-2 text-right">
-                  <div className="text-xs text-gray-500">
-                    <p>Registro: {formatDate(user.createdAt)}</p>
+                <div className="flex items-center justify-between sm:justify-end space-x-2 w-full sm:w-auto pl-13 sm:pl-0 border-t sm:border-0 pt-2 sm:pt-0 border-gray-100 bg-gray-50 sm:bg-transparent -mx-3 sm:mx-0 px-3 sm:px-0 rounded-b-lg sm:rounded-none mt-2 sm:mt-0">
+                  <div className="text-xs text-gray-500 flex sm:block items-center gap-4 sm:gap-0">
+                    <p>Reg: {formatDate(user.createdAt)}</p>
                     {user.lastLogin && (
-                      <p className="flex items-center justify-end mt-1">
+                      <p className="flex items-center sm:justify-end sm:mt-1">
                         <Clock className="w-3 h-3 mr-1" />
                         {formatDate(user.lastLogin)}
                       </p>
@@ -162,18 +162,24 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                   <div className="relative">
                     <button
                       onClick={() => setShowDropdown(showDropdown === user.id ? null : user.id)}
-                      className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                      className="p-1 rounded-full hover:bg-gray-200 transition-colors"
                     >
-                      <MoreVertical className="w-4 h-4 text-gray-400" />
+                      <MoreVertical className="w-4 h-4 text-gray-600" />
                     </button>
 
                     {showDropdown === user.id && (
-                      <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">
+                      <div className="absolute right-0 bottom-full sm:top-full sm:bottom-auto mt-1 mb-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-20">
                         <div className="py-1">
-                          <button className="block px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 w-full text-left">
+                          <button
+                            onClick={() => console.log('View details', user.id)}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          >
                             Ver detalles
                           </button>
-                          <button className="block px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 w-full text-left">
+                          <button
+                            onClick={() => console.log('Edit user', user.id)}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          >
                             Editar usuario
                           </button>
                         </div>

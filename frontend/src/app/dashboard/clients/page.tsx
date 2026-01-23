@@ -251,15 +251,107 @@ export default function ClientsPage() {
                                 )}
                             </div>
 
-                            <div className="rounded-md border">
+                            {/* Mobile View: Cards */}
+                            <div className="md:hidden space-y-4">
+                                {isLoading ? (
+                                    <div className="text-center py-8 text-muted-foreground">Cargando pacientes...</div>
+                                ) : filteredClients.length === 0 ? (
+                                    <div className="text-center py-8 text-muted-foreground">
+                                        {activeTab === 'active' ? 'No se encontraron pacientes activos.' : 'No se encontraron pacientes archivados.'}
+                                    </div>
+                                ) : (
+                                    filteredClients.map((client) => (
+                                        <Card key={client.id} className="overflow-hidden">
+                                            <CardContent className="p-4 space-y-3">
+                                                <div className="flex justify-between items-start gap-3">
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        <Avatar className="h-10 w-10">
+                                                            <AvatarFallback>{client.firstName[0]}{client.lastName[0]}</AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="flex flex-col min-w-0">
+                                                            <span className="font-medium truncate block max-w-[150px] sm:max-w-xs">
+                                                                {client.firstName} {client.lastName}
+                                                            </span>
+                                                            <span className="text-xs text-muted-foreground truncate block max-w-[150px] sm:max-w-xs">
+                                                                {client.diagnosis || 'Sin diagnóstico'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <Badge variant="secondary" className={`${getRiskBadgeColor(client.riskLevel)} shrink-0`}>
+                                                        {client.riskLevel}
+                                                    </Badge>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                                    <div className="flex flex-col gap-1 min-w-0">
+                                                        <span className="text-xs text-muted-foreground">Contacto</span>
+                                                        <span className="truncate" title={client.email || ''}>{client.email || '-'}</span>
+                                                        <span className="text-muted-foreground truncate">{client.phone || '-'}</span>
+                                                    </div>
+                                                    <div className="flex flex-col gap-1 text-right">
+                                                        <span className="text-xs text-muted-foreground">Última Sesión</span>
+                                                        <span>{client.lastSessionAt ? new Date(client.lastSessionAt).toLocaleDateString() : 'Nunca'}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="pt-2 flex justify-end gap-2 border-t mt-2">
+                                                    <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/clients/${client.id}`)}>
+                                                        <FileText className="h-4 w-4 mr-1" /> Ver
+                                                    </Button>
+                                                    {client.isActive ? (
+                                                        <Button size="sm" onClick={() => router.push(`/dashboard/sessions/new?clientId=${client.id}`)}>
+                                                            <Calendar className="h-4 w-4 mr-1" /> Agendar
+                                                        </Button>
+                                                    ) : (
+                                                        <Button size="sm" variant="outline" onClick={() => handleRestore(client.id)}>
+                                                            <RefreshCcw className="h-4 w-4 mr-1" /> Restaurar
+                                                        </Button>
+                                                    )}
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            {client.isActive && (
+                                                                <>
+                                                                    <DropdownMenuItem onClick={() => router.push(`/dashboard/statistics?clientId=${client.id}`)}>
+                                                                        <PieChart className="mr-2 h-4 w-4" /> Estadísticas
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem onClick={() => router.push(`/dashboard/clients/${client.id}/edit`)}>
+                                                                        <Pencil className="mr-2 h-4 w-4" /> Editar
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuSeparator />
+                                                                    <DropdownMenuItem className="text-red-600" onClick={() => handleArchive(client.id)}>
+                                                                        <Trash2 className="mr-2 h-4 w-4" /> Archivar
+                                                                    </DropdownMenuItem>
+                                                                </>
+                                                            )}
+                                                            {!client.isActive && (
+                                                                <DropdownMenuItem className="text-red-600" onClick={() => handleDeletePermanent(client.id)}>
+                                                                    <Trash2 className="mr-2 h-4 w-4" /> Eliminar def.
+                                                                </DropdownMenuItem>
+                                                            )}
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))
+                                )}
+                            </div>
+
+                            {/* Desktop View: Table */}
+                            <div className="hidden md:block rounded-md border">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead className="w-[250px]">Paciente</TableHead>
-                                            <TableHead>Estado / Riesgo</TableHead>
-                                            <TableHead>Contacto</TableHead>
-                                            <TableHead>Última Sesión</TableHead>
-                                            <TableHead className="text-right">Acciones</TableHead>
+                                            <TableHead className="w-[30%] min-w-[200px]">Paciente</TableHead>
+                                            <TableHead className="w-[15%]">Estado / Riesgo</TableHead>
+                                            <TableHead className="w-[25%] min-w-[150px]">Contacto</TableHead>
+                                            <TableHead className="w-[15%]">Última Sesión</TableHead>
+                                            <TableHead className="text-right w-[15%]">Acciones</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -280,25 +372,25 @@ export default function ClientsPage() {
                                         ) : (
                                             filteredClients.map((client) => (
                                                 <TableRow key={client.id}>
-                                                    <TableCell>
+                                                    <TableCell className="max-w-[200px] lg:max-w-[300px]">
                                                         <div className="flex items-center gap-3">
                                                             <Avatar>
                                                                 <AvatarFallback>
                                                                     {client.firstName[0]}{client.lastName[0]}
                                                                 </AvatarFallback>
                                                             </Avatar>
-                                                            <div className="flex flex-col">
-                                                                <span className="font-medium">
+                                                            <div className="flex flex-col min-w-0">
+                                                                <span className="font-medium truncate" title={`${client.firstName} ${client.lastName}`}>
                                                                     {client.firstName} {client.lastName}
                                                                 </span>
-                                                                <span className="text-xs text-muted-foreground">
+                                                                <span className="text-xs text-muted-foreground truncate" title={client.diagnosis || ''}>
                                                                     {client.diagnosis || 'Sin diagnóstico'}
                                                                 </span>
                                                             </div>
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <div className="flex flex-col gap-1">
+                                                        <div className="flex flex-col gap-1 items-start">
                                                             <Badge variant="secondary" className={getRiskBadgeColor(client.riskLevel)}>
                                                                 {client.riskLevel}
                                                             </Badge>
@@ -311,14 +403,14 @@ export default function ClientsPage() {
                                                             )}
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell>
-                                                        <div className="flex flex-col text-sm">
-                                                            <span>{client.email || '-'}</span>
-                                                            <span className="text-muted-foreground">{client.phone || '-'}</span>
+                                                    <TableCell className="max-w-[200px]">
+                                                        <div className="flex flex-col text-sm min-w-0">
+                                                            <span className="truncate" title={client.email || ''}>{client.email || '-'}</span>
+                                                            <span className="text-muted-foreground truncate">{client.phone || '-'}</span>
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <div className="text-sm">
+                                                        <div className="text-sm whitespace-nowrap">
                                                             {client.lastSessionAt ? new Date(client.lastSessionAt).toLocaleDateString() : 'Nunca'}
                                                         </div>
                                                     </TableCell>

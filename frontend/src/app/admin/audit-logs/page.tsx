@@ -203,71 +203,128 @@ export default function AdminLogsPage() {
                             <p className="text-gray-500">Cargando registros...</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción / Estado</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recurso</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalles</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {logs.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                                                No se encontraron registros {errorOnly ? 'de error' : ''}
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        logs.map((log) => (
-                                            <tr
-                                                key={log.id}
-                                                className="hover:bg-gray-50 cursor-pointer transition-colors"
-                                                onClick={() => setSelectedLog(log)}
-                                            >
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center">
-                                                        {log.isSuccess ? (
-                                                            <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                                                        ) : (
-                                                            <XCircle className="w-5 h-5 text-red-500 mr-3" />
-                                                        )}
-                                                        <span className={`text-sm font-medium ${log.isSuccess ? 'text-gray-900' : 'text-red-700'}`}>
-                                                            {ACTIONS.find(a => a.value === log.action)?.label || log.action}
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900">{log.user?.email || 'Sistema'}</div>
-                                                    <div className="text-xs text-gray-500">{log.user?.firstName}</div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {log.resourceType}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {new Date(log.createdAt).toLocaleString()}
-                                                </td>
-                                                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" title={log.metadata?.details || ''}>
-                                                    {log.errorMessage ? (
-                                                        <span className="text-red-600 font-medium">{log.errorMessage}</span>
+                        <>
+                            {/* Mobile Card View */}
+                            <div className="md:hidden space-y-4 p-4 bg-gray-50 border-t border-b border-gray-100">
+                                {logs.length === 0 ? (
+                                    <div className="text-center py-8 text-gray-500">
+                                        No se encontraron registros {errorOnly ? 'de error' : ''}
+                                    </div>
+                                ) : (
+                                    logs.map((log) => (
+                                        <div
+                                            key={log.id}
+                                            className="bg-white rounded-lg border shadow-sm p-4 space-y-3 cursor-pointer hover:border-blue-300 transition-colors"
+                                            onClick={() => setSelectedLog(log)}
+                                        >
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex items-center space-x-2">
+                                                    {log.isSuccess ? (
+                                                        <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                                                     ) : (
-                                                        <span className="text-gray-600">
-                                                            {log.metadata?.details
-                                                                ? (log.metadata.details.length > 50 ? log.metadata.details.substring(0, 50) + '...' : log.metadata.details)
-                                                                : <span className="text-gray-400 italic">Ver detalles</span>
-                                                            }
-                                                        </span>
+                                                        <XCircle className="w-5 h-5 text-red-500 shrink-0" />
                                                     )}
+                                                    <span className={`text-sm font-bold ${log.isSuccess ? 'text-gray-900' : 'text-red-700'}`}>
+                                                        {ACTIONS.find(a => a.value === log.action)?.label || log.action}
+                                                    </span>
+                                                </div>
+                                                <span className="text-xs text-gray-500">
+                                                    {new Date(log.createdAt).toLocaleDateString()}
+                                                </span>
+                                            </div>
+
+                                            <div className="text-sm grid grid-cols-1 gap-1">
+                                                <div className="flex items-center text-gray-600">
+                                                    <span className="w-20 text-xs text-gray-400 uppercase">Usuario:</span>
+                                                    <span className="truncate flex-1">{log.user?.email || 'Sistema'}</span>
+                                                </div>
+                                                <div className="flex items-center text-gray-600">
+                                                    <span className="w-20 text-xs text-gray-400 uppercase">Recurso:</span>
+                                                    <span className="truncate flex-1 font-mono text-xs">{log.resourceType}</span>
+                                                </div>
+                                            </div>
+
+                                            {log.errorMessage ? (
+                                                <div className="text-xs text-red-600 bg-red-50 p-2 rounded">
+                                                    Error: {log.errorMessage}
+                                                </div>
+                                            ) : (
+                                                <div className="text-xs text-gray-500 truncate">
+                                                    {log.metadata?.details || 'Sin detalles adicionales'}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            {/* Desktop Table View */}
+                            <div className="hidden md:block overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción / Estado</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recurso</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalles</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {logs.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                                                    No se encontraron registros {errorOnly ? 'de error' : ''}
                                                 </td>
                                             </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                                        ) : (
+                                            logs.map((log) => (
+                                                <tr
+                                                    key={log.id}
+                                                    className="hover:bg-gray-50 cursor-pointer transition-colors"
+                                                    onClick={() => setSelectedLog(log)}
+                                                >
+                                                    <td className="px-3 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center">
+                                                            {log.isSuccess ? (
+                                                                <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
+                                                            ) : (
+                                                                <XCircle className="w-5 h-5 text-red-500 mr-3" />
+                                                            )}
+                                                            <span className={`text-sm font-medium ${log.isSuccess ? 'text-gray-900' : 'text-red-700'}`}>
+                                                                {ACTIONS.find(a => a.value === log.action)?.label || log.action}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-3 py-4 whitespace-nowrap">
+                                                        <div className="text-sm text-gray-900 truncate max-w-[150px]" title={log.user?.email || 'Sistema'}>{log.user?.email || 'Sistema'}</div>
+                                                        <div className="text-xs text-gray-500 truncate max-w-[120px]">{log.user?.firstName}</div>
+                                                    </td>
+                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {log.resourceType}
+                                                    </td>
+                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {new Date(log.createdAt).toLocaleString()}
+                                                    </td>
+                                                    <td className="px-3 py-4 text-sm text-gray-500 max-w-xs truncate" title={log.metadata?.details || ''}>
+                                                        {log.errorMessage ? (
+                                                            <span className="text-red-600 font-medium">{log.errorMessage}</span>
+                                                        ) : (
+                                                            <span className="text-gray-600">
+                                                                {log.metadata?.details
+                                                                    ? (log.metadata.details.length > 50 ? log.metadata.details.substring(0, 50) + '...' : log.metadata.details)
+                                                                    : <span className="text-gray-400 italic">Ver detalles</span>
+                                                                }
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
                     )}
 
                     {/* Pagination */}
