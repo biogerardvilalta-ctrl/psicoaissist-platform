@@ -7,9 +7,6 @@ export class GoogleAuthGuard extends AuthGuard('google') {
         const req = context.switchToHttp().getRequest();
         const state = req.query.state;
 
-        console.log('DEBUG GoogleAuthGuard: Incoming Request for Auth');
-        console.log('DEBUG GoogleAuthGuard: Query Params:', req.query);
-        console.log('DEBUG GoogleAuthGuard: State:', state);
 
         return {
             state: state,
@@ -28,14 +25,8 @@ export class GoogleAuthGuard extends AuthGuard('google') {
                 errorType = 'account_not_found';
             }
 
-            console.warn('Google Auth Failed Full Error:', JSON.stringify(err, Object.getOwnPropertyNames(err)));
-
-            // Adding details for debugging
-            const details = err?.message
-                ? encodeURIComponent(err.message.substring(0, 100))
-                : (err ? encodeURIComponent(JSON.stringify(err)) : 'unknown_error_or_user_false');
-
-            return res.redirect(`${frontendUrl}/auth/login?error=${errorType}&details=${details}`);
+            console.warn('Google Auth Failed:', err?.message || 'No user returned');
+            return res.redirect(`${frontendUrl}/auth/login?error=${errorType}`);
         }
         return user;
     }

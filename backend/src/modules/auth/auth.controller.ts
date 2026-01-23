@@ -48,13 +48,6 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
     const user = req.user;
 
-    console.log('DEBUG: googleAuthRedirect user:', {
-      email: user.email,
-      id: user.id,
-      role: user.role,
-      isPendingRegistration: user.isPendingRegistration
-    });
-
     // Frontend URL
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
@@ -67,8 +60,6 @@ export class AuthController {
       // Preserve plan info
       if ((user as any).plan) redirectUrl += `&plan=${(user as any).plan}`;
       if ((user as any).interval) redirectUrl += `&interval=${(user as any).interval}`;
-
-      console.log('Redirecting to complete profile with:', redirectUrl);
 
       // CRITICAL: Clear any existing session to prevent Admin/Old user bleeding
       // Since we are entering a registration flow, we must ensure no other user is logged in
