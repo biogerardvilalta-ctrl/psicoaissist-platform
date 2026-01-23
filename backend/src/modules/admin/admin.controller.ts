@@ -992,6 +992,17 @@ export class AdminController {
     return user;
   }
 
+  @Patch('users/:id/verify')
+  async verifyUser(@Param('id') id: string) {
+    const user = await this.usersService.verifyUser(id);
+
+    await this.logAdminAction('USER_VERIFY', {
+      targetUserId: id
+    });
+
+    return user;
+  }
+
   @Delete('users/:id')
   async deleteUser(@Param('id') id: string, @Body() body: { reason: string }) {
     // Soft delete or hard delete based on requirements
