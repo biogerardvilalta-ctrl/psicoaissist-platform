@@ -17,8 +17,9 @@ export class GeminiProvider implements AiProvider {
         if (!apiKey) {
             this.logger.warn('GEMINI_API_KEY is not set. Provider will fail on execution.');
         }
-        this.genAI = new GoogleGenerativeAI(apiKey || '');
-        this.defaultModel = this.configService.get('GEMINI_MODEL') || 'gemini-2.0-flash';
+        // TRIM to avoid invisible characters causing 403s
+        this.genAI = new GoogleGenerativeAI(apiKey ? apiKey.trim() : '');
+        this.defaultModel = (this.configService.get('GEMINI_MODEL') || 'gemini-2.0-flash').trim();
     }
 
     async generateText(prompt: string | string[], options?: AiOptions): Promise<string> {

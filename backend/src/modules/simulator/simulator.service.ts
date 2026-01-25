@@ -39,11 +39,11 @@ export class SimulatorService {
         @Inject('AI_PROVIDER') private aiProvider: AiProvider
     ) {
         // Allow overriding model via ENV, default to 2.0-flash if not set
-        this.modelName = this.configService.get('GEMINI_MODEL') || 'gemini-2.0-flash';
+        this.modelName = (this.configService.get('GEMINI_MODEL') || 'gemini-2.0-flash').trim();
 
         // DEBUG: Print config to logs
-        const apiKey = this.configService.get('GEMINI_API_KEY');
-        this.logger.warn(`Simulator Init: Model=${this.modelName}, API_KEY=${apiKey ? 'Set (starts with ' + apiKey.substring(0, 4) + ')' : 'MISSING'}`);
+        const apiKey = this.configService.get<string>('GEMINI_API_KEY');
+        this.logger.warn(`Simulator Init: Model=${this.modelName}, API_KEY=${apiKey ? 'Set (starts with ' + apiKey.trim().substring(0, 4) + ')' : 'MISSING'}`);
     }
 
     private async checkAndIncrementUsage(userId: string): Promise<void> {
