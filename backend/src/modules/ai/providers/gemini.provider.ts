@@ -25,19 +25,20 @@ export class GeminiProvider implements AiProvider {
         const model = options?.modelName || this.defaultModel;
 
         try {
-            const endpoint = `${this.baseUrl}/${model}:generateContent`;
+            // STRATEGY CHANGE: Use Query Param instead of Header (Matches verify_gemini_v2.sh)
+            const endpoint = `${this.baseUrl}/${model}:generateContent?key=${this.apiKey}`;
 
             const contents = Array.isArray(prompt)
                 ? [{ role: 'user', parts: [{ text: prompt.join('\n') }] }]
                 : [{ role: 'user', parts: [{ text: prompt }] }];
 
-            this.logger.log(`Calling Gemini (Raw Fetch): ${endpoint}`);
+            this.logger.log(`Calling Gemini (Fetch+QueryParam): ${this.baseUrl}/${model}:generateContent?key=***`);
 
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-goog-api-key': this.apiKey
+                    'Content-Type': 'application/json'
+                    // Header removed, moving to URL param as proved working by script
                 },
                 body: JSON.stringify({
                     contents: contents,
@@ -90,7 +91,7 @@ export class GeminiProvider implements AiProvider {
         const model = options?.modelName || this.defaultModel;
 
         try {
-            const endpoint = `${this.baseUrl}/${model}:generateContent`;
+            const endpoint = `${this.baseUrl}/${model}:generateContent?key=${this.apiKey}`;
 
             // Transform history to Gemini format (user/model roles)
             // System prompt (if any) should be handled. Quick hack: Prepend to first user message if needed, 
@@ -131,13 +132,13 @@ export class GeminiProvider implements AiProvider {
                 };
             }
 
-            this.logger.log(`Calling Gemini Chat (Raw Fetch): ${endpoint}`);
+            this.logger.log(`Calling Gemini Chat (Fetch+QueryParam): ${this.baseUrl}/${model}:generateContent?key=***`);
 
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-goog-api-key': this.apiKey
+                    'Content-Type': 'application/json'
+                    // Header removed
                 },
                 body: JSON.stringify(body)
             });
