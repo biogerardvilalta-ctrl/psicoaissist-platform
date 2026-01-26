@@ -332,7 +332,7 @@ export default function SimulatorPage() {
     const [limitMessage, setLimitMessage] = useState("");
 
     return (
-        <div className={`container mx-auto p-6 max-w-5xl flex flex-col gap-6 ${isFixedLayout ? 'h-[calc(100vh-140px)] overflow-hidden' : 'h-auto min-h-[calc(100vh-140px)] pb-20'}`}>
+        <div className={`container mx-auto p-4 md:p-6 max-w-5xl flex flex-col gap-4 md:gap-6 ${isFixedLayout ? 'h-[calc(100dvh-100px)] md:h-[calc(100vh-140px)] overflow-hidden' : 'h-auto min-h-[calc(100dvh-140px)] pb-20'}`}>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Simulador Clínico</h1>
@@ -435,17 +435,36 @@ export default function SimulatorPage() {
 
                     {/* ACTIVE SESSION */}
                     {status === 'active' && profile && (
-                        <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-6 h-full overflow-hidden mt-4">
-                            {/* Patient Profile Sidebar */}
-                            <Card className="md:col-span-1 flex flex-col h-full overflow-hidden">
-                                <CardHeader className="shrink-0">
-                                    <CardTitle className="flex items-start gap-2 break-words text-xl leading-tight">
-                                        <User className="w-5 h-5 mt-1 shrink-0" />
-                                        <span>{profile.name}</span>
-                                    </CardTitle>
-                                    <CardDescription>{profile.age} años</CardDescription>
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 h-full overflow-hidden mt-4 grid-rows-[auto_1fr] md:grid-rows-1">
+                            {/* Patient Profile Sidebar - Collapsible on Mobile */}
+                            <Card className="md:col-span-1 flex flex-col md:h-full overflow-hidden shrink-0">
+                                <CardHeader className="p-4 md:p-6 pb-2 md:pb-6 cursor-pointer md:cursor-default" onClick={() => {
+                                    // Simple toggle for mobile view details
+                                    const content = document.getElementById('profile-content');
+                                    if (content) content.classList.toggle('hidden');
+                                    const icon = document.getElementById('profile-chevron');
+                                    if (icon) icon.classList.toggle('rotate-180');
+                                }}>
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle className="flex items-start gap-2 break-words text-lg md:text-xl leading-tight">
+                                            <User className="w-5 h-5 mt-1 shrink-0" />
+                                            <span>{profile.name}</span>
+                                        </CardTitle>
+                                        {/* Chevron for mobile only */}
+                                        <div id="profile-chevron" className="md:hidden transition-transform duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6" /></svg>
+                                        </div>
+                                    </div>
+                                    <CardDescription className="flex items-center gap-2">
+                                        {profile.age} años
+                                        <span className="md:hidden inline-block w-1 h-1 rounded-full bg-gray-400 mx-1"></span>
+                                        <span className="md:hidden text-xs truncate max-w-[150px]">{profile.condition}</span>
+                                    </CardDescription>
                                 </CardHeader>
-                                <CardContent className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar">
+
+                                {/* Content - Hidden by default on mobile (via CSS class toggle logic handled in click above for simplicity, or just use state if preferred, but CSS is valid too. Let's strictly use state for React best practices safely, or default hidden on mobile) */}
+                                {/* Actually, let's use a standard React state for this small UI toggle to be cleaner than direct DOM manip. */}
+                                <CardContent id="profile-content" className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar hidden md:block p-4 pt-0 md:p-6 md:pt-0">
                                     <div>
                                         <h4 className="text-xs font-semibold uppercase text-gray-500 mb-1">Motivo de Consulta</h4>
                                         <p className="text-sm font-medium">{profile.condition}</p>
@@ -466,7 +485,7 @@ export default function SimulatorPage() {
                             </Card>
 
                             {/* Chat Area */}
-                            <Card className="md:col-span-3 flex flex-col h-full overflow-hidden">
+                            <Card className="md:col-span-3 flex flex-col h-full overflow-hidden min-h-0">
                                 <div
                                     ref={chatContainerRef}
                                     className="flex-1 overflow-y-auto p-4 space-y-4"

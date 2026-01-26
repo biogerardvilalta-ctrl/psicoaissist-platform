@@ -103,7 +103,7 @@ export const AiAPI = {
         formData.append('audio', audioBlob, 'chunk.webm');
 
         // We use fetch directly here because httpClient might be configured for JSON
-        const token = localStorage.getItem('psychoai_access_token');
+        const token = localStorage.getItem('psychoai_access_token') || sessionStorage.getItem('psychoai_access_token');
         const url = new URL(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1/ai/transcribe`);
         if (isLive) {
             url.searchParams.append('isLive', 'true');

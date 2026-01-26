@@ -280,27 +280,28 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     if (!session) return null;
 
     return (
-        <div className="p-6 max-w-[1600px] mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={() => router.back()}>
+
+        <div className="p-4 md:p-6 max-w-[1600px] mx-auto space-y-4 md:space-y-6">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <div className="flex items-center gap-4 w-full lg:w-auto">
+                    <Button variant="ghost" size="icon" onClick={() => router.back()} className="-ml-2 lg:ml-0">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Detalle de Sesión</h1>
-                        <p className="text-muted-foreground flex items-center gap-2 mt-1">
+                    <div className="flex-1 lg:flex-none">
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Detalle de Sesión</h1>
+                        <p className="text-muted-foreground flex items-center gap-2 mt-1 text-sm md:text-base">
                             <Calendar className="h-4 w-4" />
                             {format(new Date(session.startTime), 'PPP', { locale: es })}
-                            <span>•</span>
-                            <Clock className="h-4 w-4" />
+                            <span className="hidden sm:inline">•</span>
+                            <Clock className="h-4 w-4 ml-2 sm:ml-0" />
                             {format(new Date(session.startTime), 'p', { locale: es })}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-end">
                     {session.status === SessionStatus.IN_PROGRESS && (
-                        <div className="mr-4 font-mono text-xl font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-md border border-blue-100">
+                        <div className="mr-0 lg:mr-4 font-mono text-lg md:text-xl font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-md border border-blue-100 w-full lg:w-auto text-center mb-2 lg:mb-0">
                             {formatTime(elapsedTime)}
                         </div>
                     )}
@@ -309,13 +310,13 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         <>
                             <Button
                                 variant="outline"
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 flex-1 lg:flex-none"
                                 onClick={() => handleStatusChange(SessionStatus.CANCELLED)}
                             >
                                 <XCircle className="mr-2 h-4 w-4" /> Cancelar
                             </Button>
                             <Button
-                                className="bg-blue-600 hover:bg-blue-700"
+                                className="bg-blue-600 hover:bg-blue-700 flex-1 lg:flex-none"
                                 onClick={handleStartSessionClick}
                             >
                                 <CheckCircle2 className="mr-2 h-4 w-4" /> Iniciar Sesión
@@ -325,7 +326,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
 
                     {session.status === SessionStatus.IN_PROGRESS && (
                         <Button
-                            className="bg-green-600 hover:bg-green-700"
+                            className="bg-green-600 hover:bg-green-700 w-full lg:w-auto"
                             onClick={() => handleStatusChange(SessionStatus.COMPLETED)}
                         >
                             <CheckCircle2 className="mr-2 h-4 w-4" /> Finalizar Sesión
@@ -335,7 +336,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                     {session.status === SessionStatus.COMPLETED && !isEditing && (
                         <Button
                             variant="outline"
-                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50 flex-1 lg:flex-none"
                             onClick={() => setIsEditing(true)}
                         >
                             <FileText className="mr-2 h-4 w-4" /> Editar Notas
@@ -344,7 +345,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
 
                     {session.status === SessionStatus.COMPLETED && isEditing && (
                         <Button
-                            className="bg-blue-600 hover:bg-blue-700"
+                            className="bg-blue-600 hover:bg-blue-700 flex-1 lg:flex-none"
                             onClick={handleSaveNotes}
                             disabled={isSavingNotes}
                         >
@@ -637,7 +638,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                     }
                 </div>
 
-                <div className="lg:col-span-6 flex flex-col h-[calc(100vh-140px)] sticky top-6 gap-4">
+                <div className="lg:col-span-6 flex flex-col h-auto lg:h-[calc(100vh-140px)] lg:sticky lg:top-6 gap-4">
                     {session.status === SessionStatus.IN_PROGRESS && (
                         <AudioRecorder
                             isLimitReached={isAiLimitReached}
