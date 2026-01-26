@@ -671,7 +671,7 @@ export default function UsersPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-3 border-t border-gray-100 flex justify-end gap-3">
+                  <div className="pt-3 border-t border-gray-100 flex justify-end gap-3 items-center">
                     <button
                       onClick={() => handleEditUser(user)}
                       className="text-sm font-medium text-blue-600 hover:text-blue-700"
@@ -684,6 +684,64 @@ export default function UsersPage() {
                     >
                       Detalles
                     </a>
+
+                    {/* Mobile Dropdown Menu */}
+                    <div className="relative inline-block text-left" data-dropdown>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const dropdown = e.currentTarget.nextElementSibling;
+                          if (dropdown) {
+                            dropdown.classList.toggle('hidden');
+                          }
+                        }}
+                        className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                      >
+                        <MoreHorizontal className="w-5 h-5" />
+                      </button>
+                      <div className="hidden absolute right-0 bottom-full mb-2 z-10 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                        <div className="py-1">
+                          <a
+                            href={`/admin/users/${user.id}`}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          >
+                            Ver detalles y movimientos
+                          </a>
+                          <button
+                            onClick={() => handleEditUser(user)}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          >
+                            Editar usuario
+                          </button>
+                          <button
+                            onClick={() => handleToggleStatus(user)}
+                            className={`block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left ${user.status === 'ACTIVE' ? 'text-red-700' : 'text-green-700'}`}
+                          >
+                            {user.status === 'ACTIVE' ? 'Suspender' : 'Activar'} usuario
+                          </button>
+                          <a
+                            href={`mailto:${user.email}`}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          >
+                            Enviar email
+                          </a>
+                          {!user.verified && (
+                            <button
+                              onClick={() => handleVerifyUser(user)}
+                              className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 w-full text-left"
+                            >
+                              Verificar Usuario
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteUser(user)}
+                            className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
+                          >
+                            Eliminar usuario
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}

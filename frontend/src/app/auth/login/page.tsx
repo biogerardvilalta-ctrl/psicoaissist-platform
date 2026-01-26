@@ -27,7 +27,7 @@ export default function LoginPage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoading, error, clearError, isAuthenticated, user, loginWithTokens } = useAuth();
+  const { login, logout, isLoading, error, clearError, isAuthenticated, user, loginWithTokens } = useAuth();
   const { createCheckoutSession } = usePayments();
   const { toast } = useToast();
 
@@ -42,12 +42,51 @@ export default function LoginPage() {
     const accessToken = searchParams.get('accessToken');
     const refreshToken = searchParams.get('refreshToken');
 
+    // Check for error messages from redirects (e.g. Google Login failure)
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      if (errorParam === 'account_not_found') {
+        clearError(); // Clear any previous errors
+        setSuccessMessage(null);
+        logout(); // Force logout to prevent redirect to dashboard
+        toast({
+          title: "Cuenta no encontrada",
+          description: "No existe ninguna cuenta con este email. Por favor, regístrate.",
+          variant: "destructive",
+          duration: 6000,
+        });
+      } else {
+        const errorDesc = searchParams.get('error_description');
+        logout(); // Force logout on any login error
+        toast({
+          title: "Error de inicio de sesión",
+          description: errorDesc ? decodeURIComponent(errorDesc) : `Ha ocurrido un error al intentar iniciar sesión (Código: ${errorParam}).`,
+          variant: "destructive",
+          duration: 6000,
+        });
+      }
+      // Clean URL and stop processing
+      // Use router.replace to ensure useSearchParams hook updates (fixes persistent error loop)
+      router.replace('/auth/login');
+      return;
+    }
+
+    // Check for success message from registration
+    const message = searchParams.get('message');
+    if (message === 'registro-exitoso') {
+      setSuccessMessage('¡Registro exitoso! Ahora puedes iniciar sesión.');
+    }
+
     if (accessToken && refreshToken && !processedRef.current) {
       processedRef.current = true;
       const handleGoogleLogin = async () => {
         try {
           // Clear params from URL
           window.history.replaceState({}, '', '/auth/login');
+
+          // Explicitly logout from backend to clear any httpOnly session cookies
+          // This prevents the backend from prioritizing an old session over the new tokens
+          await AuthAPI.logout().catch(() => { });
 
           // CRITICAL: Force clear any existing session/storage to prevent mixing users
           // accessing direct localStorage since logout() might trigger state updates we don't want yet
@@ -105,28 +144,7 @@ export default function LoginPage() {
       return;
     }
 
-    // Check for success message from registration
-    const message = searchParams.get('message');
-    if (message === 'registro-exitoso') {
-      setSuccessMessage('¡Registro exitoso! Ahora puedes iniciar sesión.');
-    }
 
-    // Check for error messages from redirects (e.g. Google Login failure)
-    const errorParam = searchParams.get('error');
-    if (errorParam === 'account_not_found') {
-      clearError(); // Clear any previous errors
-      setSuccessMessage(null);
-
-      toast({
-        title: "Cuenta no encontrada",
-        description: "No existe ninguna cuenta con este email.",
-        variant: "destructive",
-        duration: 6000,
-      });
-
-      // Clean URL to prevent toast on refresh
-      window.history.replaceState({}, '', '/auth/login');
-    }
   }, [searchParams, isAuthenticated, user, router, isLoading]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

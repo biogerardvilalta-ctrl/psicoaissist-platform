@@ -51,6 +51,15 @@ export class AuthController {
     // Frontend URL
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
+    // Handle Guard Error (Fix for Headers Sent issue)
+    if (user && user._isError) {
+      const errorType = user.errorType || 'auth_failed';
+      const errorDesc = user.message || 'Unknown error';
+      console.warn('Handling authentication error in controller:', errorDesc);
+
+      return res.redirect(`${frontendUrl}/auth/login?error=${errorType}&error_description=${encodeURIComponent(errorDesc)}`);
+    }
+
     console.log('--------------------------------------------------');
     console.log('DEBUG GOOGLE REDIRECT:');
     console.log('process.env.FRONTEND_URL:', process.env.FRONTEND_URL);
@@ -68,22 +77,26 @@ export class AuthController {
       if ((user as any).interval) redirectUrl += `&interval=${(user as any).interval}`;
 
       // CRITICAL: Clear any existing session to prevent Admin/Old user bleeding
-      // Since we are entering a registration flow, we must ensure no other user is logged in
-      const cookieOptions = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax' as const,
-        path: '/'
-      };
+      if (!res.headersSent) {
+        const cookieOptions = {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax' as const,
+          path: '/'
+        };
 
-      res.clearCookie('accessToken', cookieOptions);
-      res.clearCookie('refreshToken', cookieOptions);
-      // Try clearing without options just in case (for older cookies)
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
+        res.clearCookie('accessToken', cookieOptions);
+        res.clearCookie('refreshToken', cookieOptions);
+        // Try clearing without options just in case (for older cookies)
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
 
-      // Redirect to completion page
-      return res.redirect(redirectUrl);
+        // Redirect to completion page
+        return res.redirect(redirectUrl);
+      } else {
+        console.warn('Headers already sent in googleAuthRedirect, cannot redirect or clear cookies.');
+        return;
+      }
     }
 
     // Generate tokens
@@ -101,22 +114,26 @@ export class AuthController {
       redirectUrl += `&interval=${(user as any).interval}`;
     }
 
-    // CRITICAL: Overwrite any existing session cookies (e.g. Admin) to prevent session bleeding
-    res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutos
-    });
+    if (!res.headersSent) {
+      // CRITICAL: Overwrite any existing session cookies (e.g. Admin) to prevent session bleeding
+      res.cookie('accessToken', tokens.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 15 * 60 * 1000, // 15 minutos
+      });
 
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
-    });
+      res.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+      });
 
-    return res.redirect(redirectUrl);
+      return res.redirect(redirectUrl);
+    } else {
+      console.warn('Headers already sent in googleAuthRedirect (login flow), cannot redirect.');
+    }
   }
 
   @ApiOperation({ summary: 'Completar registro con Google' })

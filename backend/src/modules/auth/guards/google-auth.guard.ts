@@ -16,6 +16,10 @@ export class GoogleAuthGuard extends AuthGuard('google') {
 
     handleRequest(err, user, info, context: ExecutionContext) {
         if (err || !user) {
+            console.error('GoogleAuthGuard Error:', err);
+            console.error('GoogleAuthGuard User:', user);
+            console.error('GoogleAuthGuard Info:', info);
+
             const res = context.switchToHttp().getResponse();
             const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
@@ -25,8 +29,15 @@ export class GoogleAuthGuard extends AuthGuard('google') {
                 errorType = 'account_not_found';
             }
 
-            console.warn('Google Auth Failed:', err?.message || 'No user returned');
-            return res.redirect(`${frontendUrl}/auth/login?error=${errorType}`);
+            console.warn('Google Auth Failed: returning error object to controller');
+            // Return an error object that the controller can handle, INSTEAD of redirecting here
+            // This prevents the "Headers already sent" error caused by NestJS trying to handle the "false" return
+            return {
+                _isError: true,
+                message: err?.message || 'Authentication failed',
+                info: info,
+                errorType: errorType
+            };
         }
         return user;
     }

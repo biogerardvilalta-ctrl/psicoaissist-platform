@@ -102,9 +102,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
         try {
             const validatedUser = await this.authService.validateGoogleUser(user, isRegistering, plan, interval);
+            console.log('Google Strategy: Validation success for', user.email);
             // Attach plan info to user so controller can see it
             done(null, { ...validatedUser, plan, interval });
         } catch (err) {
+            console.error('Google Strategy: Validation failed:', err);
             done(err, false);
         }
     }

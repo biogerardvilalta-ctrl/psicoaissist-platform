@@ -754,6 +754,7 @@ export class AuthService {
     plan?: string,
     interval?: string
   ) {
+    console.log('DEBUG validateGoogleUser:', { email: googleUser.email, isRegistering, plan });
     const { email, firstName, lastName, picture } = googleUser;
 
     // Check if user exists
@@ -787,8 +788,8 @@ export class AuthService {
       user = await this.prisma.user.create({
         data: {
           email: email.toLowerCase(),
-          firstName,
-          lastName,
+          firstName: firstName || null,
+          lastName: lastName || null,
           passwordHash,
           referralCode,
           role: UserRole.PSYCHOLOGIST,

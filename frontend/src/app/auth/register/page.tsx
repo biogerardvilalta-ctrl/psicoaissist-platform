@@ -243,7 +243,7 @@ export default function RegisterPage() {
         {/* Google Register Button */}
         <div>
           <a
-            href={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001').replace(/\/api\/v1\/?$/, '')}/api/v1/auth/google?state=${typeof window !== 'undefined' ? btoa(JSON.stringify({ action: 'register', plan: selectedPlan, interval: billingInterval })) : 'register'}`}
+            href={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001').replace(/\/api\/v1\/?$/, '')}/api/v1/auth/google?state=${typeof window !== 'undefined' ? encodeURIComponent(btoa(JSON.stringify({ action: 'register', plan: selectedPlan, interval: billingInterval }))) : 'register'}`}
             className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
           >
             <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
