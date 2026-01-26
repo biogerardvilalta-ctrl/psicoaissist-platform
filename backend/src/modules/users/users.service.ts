@@ -269,14 +269,20 @@ export class UsersService {
    */
   async remove(id: string): Promise<{ message: string }> {
     try {
+      // 1. Fetch user with linked Agenda Managers
+      // We need to know who this user manages (if they are a manager) OR who manages this user.
+      // The requirement is: If a Professional (User A) is deleted, their Agenda Managers (User B) should be checked.
+      // So we fetch `agendaManagers` relation of the user being deleted.
       const user = await this.prisma.user.findUnique({
         where: { id },
+        include: { agendaManagers: true },
       });
 
       if (!user) {
         throw new NotFoundException('Usuario no encontrado');
       }
 
+      // 2. Perform Soft Delete of the target user
       await this.prisma.user.update({
         where: { id },
         data: {
@@ -286,12 +292,63 @@ export class UsersService {
         },
       });
 
-      // Cancel subscription on Stripe
+      // 3. Cancel subscription if exists
       try {
         await this.paymentsService.cancelSubscription(id);
         this.logger.log(`Subscription canceled for deleted user: ${user.email}`);
       } catch (error) {
+        // Warning only, don't block deletion
         this.logger.warn(`Could not cancel subscription for ${user.email}: ${error.message}`);
+      }
+
+      // 4. Cleanup Agenda Managers logic
+      // If the deleted user had Agenda Managers, we must unlink them.
+      // If an Agenda Manager is left with 0 professionals, delete them too.
+      if (user.agendaManagers && user.agendaManagers.length > 0) {
+        this.logger.log(`Processing agenda managers cleanup for deleted user ${id}`);
+
+        for (const manager of user.agendaManagers) {
+          // 4a. Unlink the deleted professional from this manager
+          await this.prisma.user.update({
+            where: { id: manager.id },
+            data: {
+              managedProfessionals: {
+                disconnect: { id: id }
+              }
+            }
+          });
+
+          // 4b. Check if this manager has other ACTIVE professionals
+          const remainingProsCount = await this.prisma.user.count({
+            where: {
+              status: { not: UserStatus.DELETED },
+              agendaManagers: { some: { id: manager.id } }
+            }
+          });
+
+          // 4c. Only delete if NO active professionals remain
+          if (remainingProsCount === 0) {
+            this.logger.log(`Agenda Manager ${manager.email} has no remaining professionals. Auto-deleting.`);
+
+            // Soft delete the orphan agenda manager
+            await this.prisma.user.update({
+              where: { id: manager.id },
+              data: {
+                status: UserStatus.DELETED,
+                email: `deleted_${Date.now()}_${manager.email}`,
+                updatedAt: new Date(),
+              },
+            });
+
+            await this.auditService.log({
+              userId: id, // Triggered by deletion of professional
+              action: AuditAction.DELETE,
+              resourceType: 'USER',
+              resourceId: manager.id,
+              details: `Agenda Manager eliminado automáticamente (huérfano): ${manager.email}`,
+            });
+          }
+        }
       }
 
       this.logger.log(`User deleted: ${user.email}`);
