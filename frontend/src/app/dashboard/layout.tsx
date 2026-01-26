@@ -64,7 +64,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     <h1 className="text-xl font-bold text-gray-900 hidden sm:block">PsicoAIssist</h1>
                                 </Link>
 
-                                <nav className="hidden md:flex items-center gap-4">
+                                <nav className="hidden lg:flex items-center gap-4">
                                     {navItems.map((item) => {
                                         const Icon = item.icon;
                                         const isActive = pathname === item.href;
@@ -147,7 +147,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                                 {/* Mobile menu button */}
                                 <button
-                                    className="md:hidden p-2 text-gray-600"
+                                    className="lg:hidden p-2 text-gray-600"
                                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 >
                                     {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -158,7 +158,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                     {/* Mobile Nav */}
                     {isMobileMenuOpen && (
-                        <div className="md:hidden border-t">
+                        <div className="lg:hidden border-t">
                             <div className="space-y-1 px-4 pb-3 pt-2">
                                 {navItems.map((item) => (
                                     <Link

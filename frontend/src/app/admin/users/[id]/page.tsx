@@ -151,7 +151,7 @@ export default function AdminUserDetailPage() {
                                     </span>
                                 </div>
                                 <h1 className="text-xl font-bold text-gray-900">{user.firstName} {user.lastName}</h1>
-                                <p className="text-sm text-gray-500">{user.email}</p>
+                                <p className="text-sm text-gray-500 break-all">{user.email}</p>
                                 <div className="mt-3">
                                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${user.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
                                         user.status === 'DELETED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
@@ -315,7 +315,7 @@ export default function AdminUserDetailPage() {
                                         <div key={log.id} className="px-6 py-3 hover:bg-gray-50">
                                             <div className="flex items-center justify-between">
                                                 <div className="flex-1">
-                                                    <p className="text-sm font-medium text-gray-900">
+                                                    <p className="text-sm font-medium text-gray-900 break-words">
                                                         {log.action} <span className="text-gray-400">on</span> {log.resourceType}
                                                     </p>
                                                     <p className="text-xs text-gray-500">
@@ -331,7 +331,7 @@ export default function AdminUserDetailPage() {
                                                 </div>
                                             </div>
                                             {log.metadata && (
-                                                <div className="mt-1 text-xs text-gray-400 font-mono truncate max-w-lg">
+                                                <div className="mt-1 text-xs text-gray-400 font-mono break-all whitespace-pre-wrap">
                                                     {JSON.stringify(log.metadata)}
                                                 </div>
                                             )}

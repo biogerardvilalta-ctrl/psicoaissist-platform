@@ -2,20 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import {
   HomeIcon,
   UsersIcon,
   ChartBarIcon,
   CogIcon,
-  LogoutIcon,
-  UserCircleIcon,
-  ArrowLeftIcon,
-  CreditCardIcon,
-  ClipboardListIcon,
-  SparklesIcon,
-  MailIcon
 } from '@heroicons/react/outline';
 import {
   DropdownMenu,
@@ -27,10 +20,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { NotificationBell } from '@/components/ui/NotificationBell';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
+import { Menu, LogOut, LayoutDashboard, Users, FileText, Settings, Scale, Mail, ClipboardList, Sparkles, CreditCard, UserCircle } from 'lucide-react';
+
 
 export default function AdminHeader() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     await logout();
@@ -38,13 +35,13 @@ export default function AdminHeader() {
   };
 
   const navigationItems = [
-    { name: 'Panel', href: '/admin', icon: HomeIcon },
-    { name: 'Usuarios', href: '/admin/users', icon: UsersIcon },
-    { name: 'Tareas', href: '/admin/tasks', icon: SparklesIcon },
-    { name: 'Comunicaciones', href: '/admin/communications', icon: MailIcon },
-    { name: 'Facturación', href: '/admin/billing', icon: CreditCardIcon },
-    { name: 'Logs', href: '/admin/audit-logs', icon: ClipboardListIcon },
-    { name: 'Sistema', href: '/admin/system', icon: CogIcon },
+    { name: 'Panel', href: '/admin', icon: LayoutDashboard },
+    { name: 'Usuarios', href: '/admin/users', icon: Users },
+    { name: 'Tareas', href: '/admin/tasks', icon: Sparkles },
+    { name: 'Comunicaciones', href: '/admin/communications', icon: Mail },
+    { name: 'Facturación', href: '/admin/billing', icon: CreditCard },
+    { name: 'Logs', href: '/admin/audit-logs', icon: ClipboardList },
+    { name: 'Sistema', href: '/admin/system', icon: Settings },
   ];
 
   return (
@@ -66,14 +63,18 @@ export default function AdminHeader() {
 
 
             {/* Navegación */}
-            <nav className="hidden md:flex space-x-4">
+            <nav className="hidden lg:flex space-x-4">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
+                const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="flex items-center space-x-1 text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                        ? 'bg-gray-800 text-white'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                      }`}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.name}</span>
@@ -84,7 +85,7 @@ export default function AdminHeader() {
           </div>
 
           {/* Usuario y acciones */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="text-gray-300 hover:text-white">
               <NotificationBell />
             </div>
@@ -108,45 +109,68 @@ export default function AdminHeader() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="w-full cursor-pointer flex items-center">
-                    <UserCircleIcon className="mr-2 h-4 w-4" />
+                    <UserCircle className="mr-2 h-4 w-4" />
                     <span>Perfil</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center">
-                    <CogIcon className="mr-2 h-4 w-4" />
+                    <Settings className="mr-2 h-4 w-4" />
                     <span>Configuración</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
-                  <LogoutIcon className="mr-2 h-4 w-4" />
+                  <LogOut className="mr-2 h-4 w-4" />
                   <span>Cerrar Sesión</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Mobile Sidebar (Sheet) */}
+            <div className="lg:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button className="p-2 text-gray-300 hover:text-white">
+                    <Menu className="w-6 h-6" />
+                  </button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-white text-gray-900">
+                  <div className="flex flex-col h-full">
+                    <div className="mb-8">
+                      <SheetTitle className="text-xl font-bold text-gray-900 mb-2">PsicoAIssist</SheetTitle>
+                      <p className="text-sm text-gray-500">Panel de Administración</p>
+                    </div>
+
+                    <nav className="flex-1 space-y-2">
+                      {navigationItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = pathname === item.href;
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive
+                                ? 'bg-blue-50 text-blue-600 font-medium'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                              }`}
+                          >
+                            <Icon className="w-5 h-5" />
+                            <span>{item.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </nav>
+
+                    <div className="pt-6 border-t border-gray-100 text-center text-xs text-gray-400">
+                      © 2024 PsicoAIssist
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Navegación móvil */}
-      <div className="md:hidden border-t border-gray-700">
-        <nav className="px-4 pt-2 pb-3 space-y-1">
-
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="flex items-center space-x-3 text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
-              >
-                <Icon className="h-5 w-5" />
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
       </div>
     </header>
   );

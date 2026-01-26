@@ -36,7 +36,7 @@ export default function CompliancePage() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto mb-8">
+                <TabsList className="h-auto flex flex-col md:grid w-full md:grid-cols-4 max-w-2xl mx-auto mb-8">
                     <TabsTrigger value="legal-justification" className="gap-2">
                         <Shield className="h-4 w-4" />
                         Justificación IA

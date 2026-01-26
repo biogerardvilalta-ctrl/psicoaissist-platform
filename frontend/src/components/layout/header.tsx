@@ -22,7 +22,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
+          <nav className="hidden lg:flex items-center space-x-4 lg:space-x-8">
             <Link
               href="/#features"
               className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
@@ -73,7 +73,7 @@ export function Header() {
           </nav>
 
           {/* Desktop CTA buttons */}
-          <div className="hidden md:flex items-center space-x-2 lg:space-x-4 flex-shrink-0">
+          <div className="hidden lg:flex items-center space-x-2 lg:space-x-4 flex-shrink-0">
             <Link
               href="/clinics"
               className="hidden xl:inline-flex items-center px-3 py-1.5 text-xs bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors"
@@ -100,7 +100,7 @@ export function Header() {
           {/* Mobile menu button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
           >
             {isMenuOpen ? (
               <X className="w-6 h-6" />
@@ -112,7 +112,7 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4 absolute top-16 left-0 right-0 bg-white shadow-lg z-40 px-4">
+          <div className="lg:hidden border-t border-gray-200 py-4 absolute top-16 left-0 right-0 bg-white shadow-lg z-40 px-4">
             <nav className="space-y-4">
               <Link
                 href="/#features"

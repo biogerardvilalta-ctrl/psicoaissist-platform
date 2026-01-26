@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRole } from '@/hooks/useRole';
 import { useAdminUsers } from '@/hooks/useAdmin';
 import { UserFilters, AdminAPI } from '@/lib/admin-api';
-import { Users, Search, Filter, MoreHorizontal, UserCheck, UserX, Mail, RefreshCw, CreditCard, Calendar, CheckCircle } from 'lucide-react';
+import { Users, Search, Filter, MoreHorizontal, UserCheck, UserX, Mail, RefreshCw, CreditCard, Calendar, CheckCircle, XCircle } from 'lucide-react';
 
 const PLAN_LIMITS: Record<string, number> = {
   FREE: 30,
@@ -634,6 +634,19 @@ export default function UsersPage() {
                         <div className="text-xs text-gray-500 truncate max-w-[120px]">
                           {user.email}
                         </div>
+                        <div className="mt-1 flex items-center">
+                          {user.verified ? (
+                            <div className="flex items-center text-blue-600">
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              <span className="text-[10px] font-medium">Verificado</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center text-red-500">
+                              <XCircle className="w-3 h-3 mr-1" />
+                              <span className="text-[10px] font-medium">No Verificado</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                     {getStatusBadge(user.status)}
@@ -713,12 +726,6 @@ export default function UsersPage() {
                           >
                             Editar usuario
                           </button>
-                          <button
-                            onClick={() => handleToggleStatus(user)}
-                            className={`block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left ${user.status === 'ACTIVE' ? 'text-red-700' : 'text-green-700'}`}
-                          >
-                            {user.status === 'ACTIVE' ? 'Suspender' : 'Activar'} usuario
-                          </button>
                           <a
                             href={`mailto:${user.email}`}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
@@ -733,6 +740,13 @@ export default function UsersPage() {
                               Verificar Usuario
                             </button>
                           )}
+                          <div className="border-t border-gray-100 my-1"></div>
+                          <button
+                            onClick={() => handleToggleStatus(user)}
+                            className={`block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left ${user.status === 'ACTIVE' ? 'text-amber-600' : 'text-green-600'}`}
+                          >
+                            {user.status === 'ACTIVE' ? 'Suspender usuario' : 'Activar usuario'}
+                          </button>
                           <button
                             onClick={() => handleDeleteUser(user)}
                             className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
@@ -795,16 +809,23 @@ export default function UsersPage() {
                           <div className="text-sm font-medium text-gray-900 truncate max-w-[120px]" title={`${user.firstName} ${user.lastName}`}>
                             {user.firstName} {user.lastName}
                           </div>
-                          <div className="text-sm text-gray-500 flex items-center gap-1 max-w-[180px] truncate" title={user.email}>
-                            {user.email}
-                            {user.verified && (
-                              <div className="group relative">
+
+                          <div className="mt-0.5">
+                            {user.verified ? (
+                              <div className="group relative inline-flex items-center">
                                 <CheckCircle className="w-3 h-3 text-blue-500" />
-                                <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50">
-                                  Verificado
-                                </span>
+                                <span className="ml-1 text-[10px] text-blue-600 font-medium">Verificado</span>
+                              </div>
+                            ) : (
+                              <div className="group relative inline-flex items-center">
+                                <XCircle className="w-3 h-3 text-red-500" />
+                                <span className="ml-1 text-[10px] text-red-500 font-medium">No Verificado</span>
                               </div>
                             )}
+                          </div>
+
+                          <div className="text-sm text-gray-500 flex items-center gap-1 max-w-[180px] truncate" title={user.email}>
+                            {user.email}
                           </div>
                         </div>
                       </div>
@@ -908,12 +929,6 @@ export default function UsersPage() {
                             >
                               Editar usuario
                             </button>
-                            <button
-                              onClick={() => handleToggleStatus(user)}
-                              className={`block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left ${user.status === 'ACTIVE' ? 'text-red-700' : 'text-green-700'}`}
-                            >
-                              {user.status === 'ACTIVE' ? 'Suspender' : 'Activar'} usuario
-                            </button>
                             <a
                               href={`mailto:${user.email}`}
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
@@ -928,6 +943,13 @@ export default function UsersPage() {
                                 Verificar Usuario
                               </button>
                             )}
+                            <div className="border-t border-gray-100 my-1"></div>
+                            <button
+                              onClick={() => handleToggleStatus(user)}
+                              className={`block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left ${user.status === 'ACTIVE' ? 'text-amber-600' : 'text-green-600'}`}
+                            >
+                              {user.status === 'ACTIVE' ? 'Suspender usuario' : 'Activar usuario'}
+                            </button>
                             <button
                               onClick={() => handleDeleteUser(user)}
                               className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
