@@ -39,11 +39,13 @@ import { Textarea } from '@/components/ui/textarea';
 // ... (previous imports)
 import { useSocket } from '@/hooks/use-socket';
 import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function SessionDetailPage({ params }: { params: { id: string } }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
+    const { tokens } = useAuth(); // Get tokens from context
     const [session, setSession] = useState<Session | null>(null);
     const [client, setClient] = useState<Client | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -65,7 +67,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     // Connect to 'sessions' namespace
     // Connect to 'sessions' namespace
     const socketUrl = (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001') + '/sessions';
-    const { socket, isConnected, isAiLimitReached } = useSocket(socketUrl); // Add isAiLimitReached
+    // Pass token explicitly to ensure auth works
+    const { socket, isConnected, isAiLimitReached } = useSocket(socketUrl, tokens?.accessToken); // Add isAiLimitReached
 
     // Effect for AI Limit Notification
     const showLimitToast = useCallback(() => {

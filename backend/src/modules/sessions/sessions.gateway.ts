@@ -141,26 +141,30 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             return;
         }
 
-        // 2. Authentication & Feature Check logic (re-using existing simplified check)
-        // ... (rest of the method logic) ...
+        // 2. Authentication & Feature Check logic
+        let userId: string;
         try {
             // Extract token from handshake auth or headers
             const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
 
-            if (!token) return;
+            if (!token) {
+                client.emit('debug_log', { message: "No Token Found" });
+                return;
+            }
 
             const payload = this.jwtService.decode(token) as any;
-            if (!payload || !payload.sub) return;
+            if (!payload || !payload.sub) {
+                client.emit('debug_log', { message: "Invalid Token Payload" });
+                return;
+            }
 
-            const userId = payload.sub;
+            userId = payload.sub;
 
             // Check Plan Features
-            const user = await this.prisma.user.findUnique({
-                where: { id: userId },
-                include: { subscription: true }
-            });
+            // Check Plan Features using centralized logic (Respects Role Override)
+            const planFeatures = await this.usageLimitsService.getPlanFeatures(userId);
 
-            const planFeatures = user?.subscription ? PLAN_FEATURES[user.subscription.planType] : null;
+            client.emit('debug_log', { message: `Plan Check: ${planFeatures ? 'OK' : 'FAIL'} (Analytics: ${planFeatures?.advancedAnalytics})` });
 
             if (!planFeatures?.advancedAnalytics) {
                 return;
@@ -172,6 +176,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         } catch (e) {
             console.error(`[SessionsGateway] Auth check failed: ${e.message}`);
+            client.emit('debug_log', { message: `Auth Error: ${e.message}` });
             return;
         }
 
@@ -179,8 +184,9 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         try {
             // Rate Limiting & Optimization
             // a) Length Check: Ignore very short updates (e.g. "Ah") to save tokens and calls
-            if (!notes || notes.trim().length < 50) {
-                // console.log('[SessionsGateway] Skipping AI: Text too short');
+            // DEBUG: Lowered to 5 for testing. Original: 50
+            if (!notes || notes.trim().length < 5) {
+                // client.emit('debug_log', { message: `Too short: ${notes?.length || 0}` });
                 return;
             }
 
@@ -189,13 +195,28 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             if (sessionData && sessionData.lastAiRequestTime) {
                 const timeSinceLastCall = now - sessionData.lastAiRequestTime;
                 if (timeSinceLastCall < 5000) {
-                    // console.log('[SessionsGateway] Skipping AI: Throttled');
+                    // client.emit('debug_log', { message: "Throttled" });
                     return;
                 }
             }
 
+            client.emit('debug_log', { message: "Calling AI Service..." });
+            console.log(`[SessionsGateway] Requesting AI suggestions for User ${userId} (${notes.length} chars)`);
             const suggestions = await this.aiService.getLiveSuggestions(notes);
-            client.emit('aiSuggestions', suggestions);
+            console.log(`[SessionsGateway] AI Suggestions generated:`, suggestions ? 'Yes' : 'No');
+
+            if (suggestions && (suggestions.questions.length > 0 || suggestions.considerations.length > 0)) {
+                client.emit('debug_log', { message: `AI Success: ${suggestions.questions.length} Qs` });
+                client.emit('aiSuggestions', suggestions);
+            } else {
+                client.emit('debug_log', { message: "AI Returned Empty. Sending Mock." });
+                // MOCK FALLBACK TO PROVE PIPELINE
+                client.emit('aiSuggestions', {
+                    questions: ["¿Mock: Como te hace sentir esto?", "Mock: ¿Puedes elaborar?"],
+                    considerations: ["Mock: Observar lenguaje corporal"],
+                    indicators: []
+                });
+            }
 
             // Update throttle timestamp
             if (sessionData) {
@@ -205,6 +226,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         } catch (error) {
             this.logger.error(`Error processing AI suggestions: ${error.message}`);
+            client.emit('debug_log', { message: `AI Error: ${error.message}` });
         }
     }
 

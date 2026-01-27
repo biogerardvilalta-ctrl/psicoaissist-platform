@@ -848,7 +848,8 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
      */
     async getLiveSuggestions(context: string): Promise<{ questions: string[]; considerations: string[]; indicators: { type: string; label: string }[] }> {
         // Redundant safety check (already in Gateway, but good for robustness)
-        if (!context || context.length < 20) {
+        // DEBUG: Lowered to 5 to match Gateway for testing. Original: 20
+        if (!context || context.length < 5) {
             return {
                 questions: [],
                 considerations: [],

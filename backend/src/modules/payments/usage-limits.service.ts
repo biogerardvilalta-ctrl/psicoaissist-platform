@@ -13,6 +13,19 @@ export class UsageLimitsService {
     private notificationsService: NotificationsService
   ) { }
 
+  async getPlanFeatures(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { subscription: true }
+    });
+
+    // Use the robust logic (Role Override > Subscription > Demo)
+    const subscription = this.getEffectiveSubscription(user);
+    if (!subscription) return null;
+
+    return PLAN_FEATURES[subscription.planType.toLowerCase()];
+  }
+
   private getEffectiveSubscription(user: any) {
     // Override: Check Role FIRST for administrative/manual entitlements
     // This ensures that if a user has a "Pro" role but a "Basic" subscription record, the Role wins.

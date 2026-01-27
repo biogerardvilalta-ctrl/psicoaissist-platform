@@ -1,19 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-export const useSocket = (url: string = 'http://localhost:3001') => {
+export const useSocket = (url: string = 'http://localhost:3001', token?: string | null) => {
     const socketRef = useRef<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [isAiLimitReached, setIsAiLimitReached] = useState(false); // Added state
 
     useEffect(() => {
+        // Resolve token: explicit arg > localStorage
+        const authToken = token || localStorage.getItem('psychoai_access_token');
+
         // Init socket
-        const token = localStorage.getItem('psychoai_access_token');
         const socketIo = io(url, {
             transports: ['websocket'],
             autoConnect: true,
             auth: {
-                token: token
+                token: authToken
             }
         });
 
@@ -38,7 +40,7 @@ export const useSocket = (url: string = 'http://localhost:3001') => {
         return () => {
             socketIo.disconnect();
         };
-    }, [url]);
+    }, [url, token]);
 
     return {
         socket: socketRef.current,

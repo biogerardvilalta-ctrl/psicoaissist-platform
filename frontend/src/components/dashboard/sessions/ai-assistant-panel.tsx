@@ -1,7 +1,4 @@
 
-
-'use client';
-
 import { useState, useEffect, useRef } from 'react';
 import { Sparkles, Brain, MessageSquare, PlusCircle, XCircle, AlertTriangle, Lightbulb, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -16,16 +13,14 @@ export interface AiAssistantPanelProps {
     onSuggestionClick?: (text: string) => void;
     socket?: Socket | null; // Added socket prop
     isConnected?: boolean;
-    isAiLimitReached?: boolean; // Added limit prop
+    isAiLimitReached?: boolean;
 }
 
-import { useAuthStore } from '@/store/auth-store';
-
-// ... imports
+import { useAuth } from '@/contexts/auth-context';
 
 export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestionClick, socket, isConnected, isAiLimitReached }: AiAssistantPanelProps) {
     const { toast } = useToast();
-    const { user } = useAuthStore();
+    const { user } = useAuth();
 
     // ... plan type checks ...
     let planType = user?.subscription?.planType;
@@ -34,27 +29,35 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
     // This allows manually verifying users or granting access via Role to override a Basic/Demo subscription
     if (user?.role) {
         const role = user.role.toUpperCase();
-        if (role.includes('PREMIUM')) planType = 'premium';
-        else if (role.includes('PRO')) planType = 'pro';
-        else if (role.includes('TRIAL')) planType = 'pro';
+        if (role.includes('PREMIUM')) planType = 'PREMIUM';
+        else if (role.includes('PRO')) planType = 'PRO';
+        else if (role.includes('TRIAL')) planType = 'PRO';
     }
 
     // Explicitly force planType defaults if still undefined
-    planType = planType || 'basic';
+    planType = planType || 'BASIC';
 
-    const hasAdvancedAnalytics = planType !== 'basic';
+    const hasAdvancedAnalytics = planType !== 'BASIC';
 
     const [questions, setQuestions] = useState<string[]>([]);
     const [considerations, setConsiderations] = useState<string[]>([]);
     const [indicators, setIndicators] = useState<{ type: string; label: string }[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    const [debugLog, setDebugLog] = useState<string>("Waiting for server...");
+
     // Socket Listener
     useEffect(() => {
         if (!socket || !isActive) return;
 
+        const handleDebugLog = (data: { message: string }) => {
+            setDebugLog(prev => data.message + " | " + prev.substring(0, 50));
+        };
+
         const handleAiSuggestions = (data: any) => {
             setIsLoading(false); // Stop loading when data arrives
+            setDebugLog("Received Data!"); // VISIBLE PROOF
+
             if (data) {
                 // Update Questions - REPLACE strategy
                 if (data.questions && data.questions.length > 0) {
@@ -83,9 +86,11 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
         };
 
         socket.on('aiSuggestions', handleAiSuggestions);
+        socket.on('debug_log', handleDebugLog);
 
         return () => {
             socket.off('aiSuggestions', handleAiSuggestions);
+            socket.off('debug_log', handleDebugLog);
         };
     }, [socket, isActive, toast]);
 
@@ -150,6 +155,10 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                 </CardTitle>
                 <CardDescription className="text-slate-500 font-medium text-xs">
                     Anàlisi en temps real • 100% Privat
+                    {/* SOCKET DEBUG LOG */}
+                    <div className="text-[10px] text-red-500 font-mono mt-1 border-t pt-1 border-red-200">
+                        SRV: {debugLog}
+                    </div>
                 </CardDescription>
 
                 {isAiLimitReached && (
