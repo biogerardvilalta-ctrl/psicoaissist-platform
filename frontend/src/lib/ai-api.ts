@@ -104,7 +104,14 @@ export const AiAPI = {
 
         // We use fetch directly here because httpClient might be configured for JSON
         const token = localStorage.getItem('psychoai_access_token') || sessionStorage.getItem('psychoai_access_token');
-        const url = new URL(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1/ai/transcribe`);
+
+        let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        // Remove trailing slash if present
+        baseUrl = baseUrl.replace(/\/$/, '');
+        // Remove /api/v1 suffix if present to avoid duplication
+        baseUrl = baseUrl.replace(/\/api\/v1$/, '');
+
+        const url = new URL(`${baseUrl}/api/v1/ai/transcribe`);
         if (isLive) {
             url.searchParams.append('isLive', 'true');
         }
