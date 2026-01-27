@@ -14,9 +14,8 @@ export class UsageLimitsService {
   ) { }
 
   private getEffectiveSubscription(user: any) {
-    if (user?.subscription) return user.subscription;
-
-    // Fallback: Check Role for administrative/manual entitlements
+    // Override: Check Role FIRST for administrative/manual entitlements
+    // This ensures that if a user has a "Pro" role but a "Basic" subscription record, the Role wins.
     if (user?.role) {
       const role = user.role.toString().toUpperCase();
       // Map roles to plans
@@ -36,6 +35,8 @@ export class UsageLimitsService {
         };
       }
     }
+
+    if (user?.subscription) return user.subscription;
 
     // Virtual Demo Subscription (Default for new users without sub/role)
     return {

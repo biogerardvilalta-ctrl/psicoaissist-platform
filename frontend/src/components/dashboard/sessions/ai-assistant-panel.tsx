@@ -30,14 +30,16 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
     // ... plan type checks ...
     let planType = user?.subscription?.planType;
 
-    // Fallback: Check role if no direct subscription plan is found
-    if (!planType && user?.role) {
+    // Override: Check role to upgrade plan type regardless of subscription
+    // This allows manually verifying users or granting access via Role to override a Basic/Demo subscription
+    if (user?.role) {
         const role = user.role.toUpperCase();
         if (role.includes('PREMIUM')) planType = 'premium';
         else if (role.includes('PRO')) planType = 'pro';
-        else if (role.includes('TRIAL')) planType = 'pro'; // Demo/Trial acts as Pro
+        else if (role.includes('TRIAL')) planType = 'pro';
     }
 
+    // Explicitly force planType defaults if still undefined
     planType = planType || 'basic';
 
     const hasAdvancedAnalytics = planType !== 'basic';
