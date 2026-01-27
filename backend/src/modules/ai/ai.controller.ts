@@ -34,7 +34,7 @@ export class AiController {
         @Query('isLive') isLive: string, // Add query param
     ) {
         return {
-            text: await this.transcriptionService.transcribeAudio(file, req.user.sub, isLive === 'true')
+            text: await this.transcriptionService.transcribeAudio(file, req.user.id, isLive === 'true')
         };
     }
 

@@ -10,7 +10,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         private configService: ConfigService,
         private authService: AuthService,
     ) {
-        const apiUrl = configService.get<string>('API_URL');
+        // Use public URL for callback construction if available to ensure correct domain
+        const publicApiUrl = configService.get<string>('NEXT_PUBLIC_API_URL');
+        const apiUrl = publicApiUrl || configService.get<string>('API_URL');
+
         if (!apiUrl) {
             console.warn('API_URL not set. Defaulting to local dev URL.');
         }

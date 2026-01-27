@@ -28,8 +28,19 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
     const { user } = useAuthStore();
 
     // ... plan type checks ...
-    const planType = user?.subscription?.planType || 'basic';
-    const hasAdvancedAnalytics = planType !== 'basic' && planType !== 'demo';
+    let planType = user?.subscription?.planType;
+
+    // Fallback: Check role if no direct subscription plan is found
+    if (!planType && user?.role) {
+        const role = user.role.toUpperCase();
+        if (role.includes('PREMIUM')) planType = 'premium';
+        else if (role.includes('PRO')) planType = 'pro';
+        else if (role.includes('TRIAL')) planType = 'pro'; // Demo/Trial acts as Pro
+    }
+
+    planType = planType || 'basic';
+
+    const hasAdvancedAnalytics = planType !== 'basic';
 
     const [questions, setQuestions] = useState<string[]>([]);
     const [considerations, setConsiderations] = useState<string[]>([]);

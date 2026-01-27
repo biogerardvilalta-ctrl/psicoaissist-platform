@@ -48,8 +48,21 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
     const user = req.user;
 
-    // Frontend URL
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    // Frontend URL Logic: Prefer ENV, fallback to headers (dynamic), then localhost default
+    let frontendUrl = process.env.FRONTEND_URL;
+
+    // Smart detection for Nginx/Proxy environments if ENV is missing
+    if (!frontendUrl && req.headers.host) {
+      const protocol = req.headers['x-forwarded-proto'] || 'http';
+      // Use the host header (which will be the domain name in Nginx)
+      frontendUrl = `${protocol}://${req.headers.host}`;
+      console.log('Dynamically detected FRONTEND_URL from headers:', frontendUrl);
+    }
+
+    // Ultimate fallback
+    if (!frontendUrl) {
+      frontendUrl = 'http://localhost:3000';
+    }
 
     // Handle Guard Error (Fix for Headers Sent issue)
     if (user && user._isError) {

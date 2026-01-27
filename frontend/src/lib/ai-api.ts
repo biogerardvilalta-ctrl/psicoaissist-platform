@@ -112,6 +112,7 @@ export const AiAPI = {
         const response = await fetch(url.toString(), {
             method: 'POST',
             body: formData,
+            credentials: 'include', // Send cookies
             headers: {
                 ...(token ? { 'Authorization': `Bearer ${token}` } : {})
             }

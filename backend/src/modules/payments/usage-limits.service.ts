@@ -16,7 +16,28 @@ export class UsageLimitsService {
   private getEffectiveSubscription(user: any) {
     if (user?.subscription) return user.subscription;
 
-    // Virtual Demo Subscription
+    // Fallback: Check Role for administrative/manual entitlements
+    if (user?.role) {
+      const role = user.role.toString().toUpperCase();
+      // Map roles to plans
+      if (role.includes('PREMIUM') || role.includes('PRO') || role.includes('TRIAL')) {
+        let planType = 'basic';
+        if (role.includes('PREMIUM')) planType = 'premium';
+        else if (role.includes('PRO')) planType = 'pro';
+        else if (role.includes('TRIAL')) planType = 'pro'; // Trial acts as Pro
+
+        // Return a virtual active subscription
+        return {
+          planType: planType,
+          status: 'active',
+          currentPeriodStart: new Date(),
+          // Valid for 1 year from now (rolling) to ensure it doesn't expire for admin-granted roles
+          currentPeriodEnd: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+        };
+      }
+    }
+
+    // Virtual Demo Subscription (Default for new users without sub/role)
     return {
       planType: 'DEMO',
       status: 'active',
