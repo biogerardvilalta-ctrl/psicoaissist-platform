@@ -11,6 +11,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
   });
+
+  // Enable Trust Proxy for Nginx (Critical for Secure Cookies in Production)
+  (app as any).set('trust proxy', 1);
+
   const configService = app.get(ConfigService);
 
   // Ensure uploads directory exists
