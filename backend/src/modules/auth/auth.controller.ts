@@ -55,7 +55,12 @@ export class AuthController {
     if (!frontendUrl && req.headers.host) {
       const protocol = req.headers['x-forwarded-proto'] || 'http';
       // Use the host header (which will be the domain name in Nginx)
-      frontendUrl = `${protocol}://${req.headers.host}`;
+      // Fix for Local Dev: If host is backend port (3001), don't use it as frontend base
+      if (req.headers.host.includes(':3001')) {
+        frontendUrl = 'http://localhost:3000';
+      } else {
+        frontendUrl = `${protocol}://${req.headers.host}`;
+      }
       console.log('Dynamically detected FRONTEND_URL from headers:', frontendUrl);
     }
 
