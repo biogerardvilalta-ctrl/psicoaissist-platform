@@ -7,6 +7,7 @@ import { Video, Mic, MicOff, VideoOff, PhoneOff, ArrowLeft } from 'lucide-react'
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
+import { useWebRTC } from '@/hooks/use-webrtc';
 
 export default function ProfessionalVideoPage({ params }: { params: { id: string } }) {
     const { tokens } = useAuth();
@@ -15,7 +16,18 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
     const [isConnected, setIsConnected] = useState(false);
     const [status, setStatus] = useState('Conectando...');
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const [roomId, setRoomId] = useState<string | null>(null);
+
+    const localVideoRef = useRef<HTMLVideoElement>(null);
+    const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+    // Initialize WebRTC Hook
+    const { remoteStream, connectionStatus } = useWebRTC({
+        socket,
+        roomId,
+        localStream,
+        identity: 'host'
+    });
 
     useEffect(() => {
         if (!tokens?.accessToken) return;
@@ -35,6 +47,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
 
         newSocket.on('room-joined', (data) => {
             setStatus('En linea. Esperando paciente...');
+            setRoomId(data.roomId);
         });
 
         newSocket.on('peer-joined', (data) => {
@@ -56,8 +69,8 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then(stream => {
                 setLocalStream(stream);
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
+                if (localVideoRef.current) {
+                    localVideoRef.current.srcObject = stream;
                 }
             })
             .catch(err => {
@@ -73,6 +86,14 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
         };
     }, [params.id, tokens?.accessToken]);
 
+    // Attach remote stream when available
+    useEffect(() => {
+        if (remoteVideoRef.current && remoteStream) {
+            remoteVideoRef.current.srcObject = remoteStream;
+        }
+    }, [remoteStream]);
+
+
     return (
         <div className="h-[calc(100vh-6rem)] flex flex-col p-4 bg-slate-950 rounded-lg">
             <div className="mb-4 flex items-center gap-2 text-white">
@@ -83,29 +104,37 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
             </div>
 
             <Card className="flex-1 bg-slate-900 border-slate-800 text-white overflow-hidden relative rounded-xl">
-                {/* Main Video Area (Remote placeholder) */}
+                {/* Main Video Area (Remote) */}
                 <div className="absolute inset-0 bg-black flex items-center justify-center text-slate-500">
+                    {remoteStream ? (
+                        <video
+                            ref={remoteVideoRef}
+                            autoPlay
+                            playsInline
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <div className="text-slate-500 animate-pulse">Esperando vídeo del paciente...</div>
+                    )}
+
+                    <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm text-white">
+                        {status} ({connectionStatus})
+                    </div>
+                </div>
+
+                {/* Self View PIP */}
+                <div className="absolute top-4 right-4 w-40 h-28 bg-slate-800 rounded border border-slate-700 shadow-xl overflow-hidden z-10">
                     <video
-                        ref={videoRef}
+                        ref={localVideoRef}
                         autoPlay
                         muted
                         playsInline
                         className="w-full h-full object-cover transform scale-x-[-1]"
                     />
-                    <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm text-white">
-                        {status}
-                    </div>
-                </div>
-
-                {/* Self View PIP - mocked */}
-                <div className="absolute top-4 right-4 w-40 h-28 bg-slate-800 rounded border border-slate-700 shadow-xl overflow-hidden z-10">
-                    <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
-                        (Tu cámara - PiP)
-                    </div>
                 </div>
 
                 {/* Controls */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 bg-black/40 backdrop-blur-md p-3 rounded-full border border-white/10">
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 bg-black/40 backdrop-blur-md p-3 rounded-full border border-white/10 z-20">
                     <Button variant="ghost" size="icon" className="rounded-full h-12 w-12 bg-white/10 hover:bg-white/20 text-white">
                         <Mic />
                     </Button>

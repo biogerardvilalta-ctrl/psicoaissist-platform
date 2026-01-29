@@ -5,13 +5,25 @@ import { io, Socket } from 'socket.io-client';
 import { Button } from '@/components/ui/button';
 import { Video, Mic, MicOff, VideoOff, PhoneOff } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { useWebRTC } from '@/hooks/use-webrtc';
 
 export default function VideoCallPage({ params }: { params: { token: string } }) {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [status, setStatus] = useState('Conectando...');
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const [roomId, setRoomId] = useState<string | null>(null);
+
+    const localVideoRef = useRef<HTMLVideoElement>(null);
+    const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+    // Initialize WebRTC Hook
+    const { remoteStream, connectionStatus } = useWebRTC({
+        socket,
+        roomId,
+        localStream,
+        identity: 'guest'
+    });
 
     useEffect(() => {
         const socketUrl = (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001') + '/sessions';
@@ -26,7 +38,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
 
         newSocket.on('room-joined', (data) => {
             setStatus('Conectado. Esperando al profesional...');
-            // Here we would initialize WebRTC
+            setRoomId(data.roomId);
         });
 
         newSocket.on('error', (err) => {
@@ -44,8 +56,8 @@ export default function VideoCallPage({ params }: { params: { token: string } })
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then(stream => {
                 setLocalStream(stream);
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
+                if (localVideoRef.current) {
+                    localVideoRef.current.srcObject = stream;
                 }
             })
             .catch(err => {
@@ -61,33 +73,48 @@ export default function VideoCallPage({ params }: { params: { token: string } })
         };
     }, [params.token]);
 
+    // Attach remote stream when available
+    useEffect(() => {
+        if (remoteVideoRef.current && remoteStream) {
+            remoteVideoRef.current.srcObject = remoteStream;
+        }
+    }, [remoteStream]);
+
     return (
         <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
             <Card className="w-full max-w-4xl bg-slate-800 border-slate-700 text-white overflow-hidden relative aspect-video">
 
-                {/* Main Video Area (Remote would go here, Local for now) */}
+                {/* Main Video Area (Remote) */}
                 <div className="absolute inset-0 bg-black flex items-center justify-center">
+                    {remoteStream ? (
+                        <video
+                            ref={remoteVideoRef}
+                            autoPlay
+                            playsInline
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <div className="text-slate-500 animate-pulse">Esperando vídeo del profesional...</div>
+                    )}
+
+                    <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm">
+                        {status} ({connectionStatus})
+                    </div>
+                </div>
+
+                {/* Self View (PIP) */}
+                <div className="absolute top-4 right-4 w-32 h-24 bg-slate-700 rounded border border-slate-600 shadow-lg overflow-hidden z-20">
                     <video
-                        ref={videoRef}
+                        ref={localVideoRef}
                         autoPlay
                         muted
                         playsInline
                         className="w-full h-full object-cover transform scale-x-[-1]"
                     />
-                    <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm">
-                        {status}
-                    </div>
-                </div>
-
-                {/* Self View (PIP) - Mocked for now since main view is self */}
-                <div className="absolute top-4 right-4 w-32 h-24 bg-slate-700 rounded border border-slate-600 shadow-lg overflow-hidden">
-                    <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
-                        Tu imagen
-                    </div>
                 </div>
 
                 {/* Controls */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent flex justify-center gap-4">
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent flex justify-center gap-4 z-20">
                     <Button variant="outline" size="icon" className="rounded-full h-12 w-12 bg-slate-700 border-transparent hover:bg-slate-600 text-white">
                         <Mic />
                     </Button>
