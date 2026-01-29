@@ -282,4 +282,61 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         this.stopTracking(client.id);
         console.log(`[SessionsGateway] Stopped recording & billing for client ${client.id}`);
     }
+
+    // --- Video Call Signaling ---
+
+    @SubscribeMessage('join-video-room')
+    async handleJoinVideoRoom(
+        @MessageBody() data: { token?: string, sessionId?: string },
+        @ConnectedSocket() client: Socket,
+    ) {
+        let roomId: string | null = null;
+        let identity: 'host' | 'guest' = 'guest';
+
+        if (data.sessionId) {
+            // Authenticated User
+            const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
+            if (token) {
+                try {
+                    const payload = this.jwtService.decode(token) as any;
+                    if (payload && payload.sub) {
+                        roomId = data.sessionId;
+                        identity = 'host';
+                    }
+                } catch (e) { }
+            }
+        } else if (data.token) {
+            // Patient / Guest
+            const session = await this.prisma.session.findUnique({ where: { videoCallToken: data.token } });
+            if (session) {
+                roomId = session.id;
+                identity = 'guest';
+            }
+        }
+
+        if (roomId) {
+            const roomName = `video_${roomId}`;
+            client.join(roomName);
+            client.emit('room-joined', { identity, roomId });
+            // Notify others
+            client.to(roomName).emit('peer-joined', { identity });
+            this.logger.log(`Client ${client.id} joined video room ${roomId} as ${identity}`);
+        } else {
+            client.emit('error', { message: 'Invalid video session' });
+        }
+    }
+
+    @SubscribeMessage('signal')
+    handleSignal(
+        @MessageBody() data: { roomId: string; type: string; payload: any },
+        @ConnectedSocket() client: Socket,
+    ) {
+        const roomName = `video_${data.roomId}`;
+        // Relay signal to everyone else in room (should be just 1 other peer)
+        client.to(roomName).emit('signal', {
+            type: data.type,
+            payload: data.payload,
+            sender: client.id
+        });
+    }
 }

@@ -90,6 +90,11 @@ export class EmailService {
     await this.sendEmail(to, template);
   }
 
+  async sendVideoCallInvitation(to: string, clientName: string, professionalName: string, link: string): Promise<void> {
+    const template = this.getVideoCallTemplate(clientName, professionalName, link);
+    await this.sendEmail(to, template);
+  }
+
   private async sendEmail(to: string, template: EmailTemplate): Promise<void> {
     if (!this.transporter) {
       this.logger.warn(`Email sending skipped (no configuration): ${template.subject} -> ${to}`);
@@ -587,6 +592,29 @@ export class EmailService {
 
         Ver agenda: https://psicoaissist.com/dashboard/sessions
       `
+    };
+  }
+
+  private getVideoCallTemplate(clientName: string, professionalName: string, link: string): EmailTemplate {
+    return {
+      subject: `Invitación a Videoconferencia - ${professionalName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Hola ${clientName},</h2>
+          <p>${professionalName} te ha invitado a una sesión por videoconferencia.</p>
+          <p>Por favor, haz clic en el siguiente enlace para unirte a la llamada a la hora acordada:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${link}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+              Unirse a la Videollamada
+            </a>
+          </div>
+          <p>Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
+          <p style="word-break: break-all; color: #666;">${link}</p>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;" />
+          <p style="color: #888; font-size: 12px;">Este es un mensaje automático de PsicoAIssist.</p>
+        </div>
+      `,
+      text: `Hola ${clientName},\n\n${professionalName} te ha invitado a una sesión por videoconferencia.\n\nÚnete aquí: ${link}\n\nGracias,\nEl equipo de PsicoAIssist`
     };
   }
 }

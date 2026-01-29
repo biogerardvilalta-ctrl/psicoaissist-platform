@@ -16,6 +16,8 @@ import { AuditAction } from '@prisma/client';
 
 import { GoogleService } from '../google/google.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { EmailService } from '../email/email.service';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class SessionsService {
@@ -27,6 +29,7 @@ export class SessionsService {
         private googleService: GoogleService,
         private usageLimitsService: UsageLimitsService,
         private notificationsService: NotificationsService,
+        private emailService: EmailService,
     ) { }
 
     // ... (keep private methods)
@@ -602,7 +605,6 @@ export class SessionsService {
     }
 
     async remove(id: string, userId: string) {
-        // Standard remove
         const session = await this.prisma.session.findUnique({ where: { id } });
 
         let isManagerAction = false;
@@ -633,7 +635,7 @@ export class SessionsService {
         // Sync Google Calendar Delete
         if ((session as any).googleEventId) {
             try {
-                await this.googleService.deleteEvent(userId, (session as any).googleEventId);
+                await this.googleService.deleteEvent(session.userId, (session as any).googleEventId);
             } catch (e) {
                 console.error('Failed to delete Google Event', e);
             }
@@ -666,6 +668,57 @@ export class SessionsService {
 
         return { success: true };
     }
+
+    async createVideoCall(id: string, userId: string): Promise<{ token: string; link: string }> {
+        const session = await this.prisma.session.findUnique({
+            where: { id },
+            include: { client: true, user: true },
+        });
+
+        if (!session) throw new NotFoundException('Session not found');
+
+        // Simple auth check for now (owner or manager logic could be reused but keeping it simple)
+        if (session.userId !== userId) {
+            const manager = await this.prisma.user.findUnique({ where: { id: userId }, include: { managedProfessionals: true } });
+            const isManaged = manager?.managedProfessionals.some(p => p.id === session.userId);
+            if (!isManaged) throw new ForbiddenException('Access denied');
+        }
+
+        let token = session.videoCallToken;
+        if (!token) {
+            token = randomBytes(32).toString('hex');
+            await this.prisma.session.update({
+                where: { id },
+                data: { videoCallToken: token },
+            });
+        }
+
+        const link = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/video-call/${token}`;
+
+        if (session.client && session.client.encryptedPersonalData && session.client.encryptionKeyId) {
+            try {
+                const unpacked = this.unpackClientData(session.client.encryptedPersonalData, session.client.encryptionKeyId);
+                const result = await this.encryption.decryptData<{ firstName: string; lastName: string; email: string }>(unpacked);
+
+                if (result.success && result.data && result.data.email) {
+                    const professionalName = `${session.user.firstName || ''} ${session.user.lastName || ''}`.trim() || 'Su psicólogo';
+                    const clientName = `${result.data.firstName} ${result.data.lastName}`;
+
+                    await this.emailService.sendVideoCallInvitation(
+                        result.data.email,
+                        clientName,
+                        professionalName,
+                        link
+                    );
+                }
+            } catch (e) {
+                console.error('Failed to send video invitation email', e);
+            }
+        }
+
+        return { token, link };
+    }
+
 
     // --- Helpers ---
 
@@ -719,6 +772,7 @@ export class SessionsService {
             clientName: clientName,
             client: session.client,
             aiMetadata: session.aiMetadata,
+            videoCallToken: session.videoCallToken,
         };
     }
 

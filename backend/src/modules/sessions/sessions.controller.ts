@@ -46,4 +46,10 @@ export class SessionsController {
     remove(@Request() req, @Param('id') id: string) {
         return this.sessionsService.remove(id, req.user.id);
     }
+
+    @Post(':id/video-call')
+    createVideoCall(@Request() req, @Param('id') id: string) {
+        return this.sessionsService.createVideoCall(id, req.user.id);
+    }
+
 }

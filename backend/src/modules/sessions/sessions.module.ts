@@ -12,8 +12,10 @@ import { GoogleModule } from '../google/google.module';
 
 import { NotificationsModule } from '../notifications/notifications.module';
 
+import { EmailModule } from '../email/email.module';
+
 @Module({
-    imports: [EncryptionModule, PrismaModule, AiModule, GoogleModule, PaymentsModule, AuthModule, NotificationsModule],
+    imports: [EncryptionModule, PrismaModule, AiModule, GoogleModule, PaymentsModule, AuthModule, NotificationsModule, EmailModule],
     controllers: [SessionsController],
     providers: [SessionsService, SessionsGateway],
     exports: [SessionsService],

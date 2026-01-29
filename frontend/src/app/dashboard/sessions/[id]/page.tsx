@@ -11,7 +11,10 @@ import {
     MoreVertical,
     CheckCircle2,
     XCircle,
-    Brain
+    Brain,
+    Video,
+    Link,
+    Mail
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -62,6 +65,17 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const [isEditing, setIsEditing] = useState(false);
     const [isRecording, setIsRecording] = useState(false); // Validated: Lifted State
     const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false); // New state for modal
+    const [videoCallData, setVideoCallData] = useState<{ token: string; link: string } | null>(null);
+
+    // Sync from session if exists
+    useEffect(() => {
+        if (session && session.videoCallToken) {
+            setVideoCallData({
+                token: session.videoCallToken,
+                link: `${window.location.protocol}//${window.location.host}/video-call/${session.videoCallToken}`
+            });
+        }
+    }, [session]);
 
     const transcriptionRef = useRef<HTMLTextAreaElement>(null); // New Ref for auto-scroll
     // Connect to 'sessions' namespace
@@ -272,6 +286,25 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
         }
     };
 
+    const handleCreateVideoCall = async () => {
+        if (!session) return;
+        try {
+            const data = await SessionsAPI.createVideoCall(session.id);
+            setVideoCallData(data);
+            toast({
+                title: 'Videoconferencia Creada',
+                description: 'Se ha enviado un correo al paciente con el enlace.',
+            });
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: 'Error',
+                description: 'No se pudo crear la videollamada',
+                variant: 'destructive',
+            });
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-96">
@@ -325,6 +358,43 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                 <CheckCircle2 className="mr-2 h-4 w-4" /> Iniciar Sesión
                             </Button>
                         </>
+                    )}
+
+                    {(session.status === SessionStatus.SCHEDULED || session.status === SessionStatus.IN_PROGRESS) && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white ml-2">
+                                    <Video className="mr-2 h-4 w-4" /> Videoconf.
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-80">
+                                {videoCallData ? (
+                                    <div className="p-4 space-y-4">
+                                        <div className="space-y-2">
+                                            <p className="text-sm font-medium">Invitación enviada</p>
+                                            <p className="text-xs text-muted-foreground">Enlace para el paciente:</p>
+                                            <div className="flex items-center gap-2 p-2 bg-slate-100 rounded text-xs break-all">
+                                                {videoCallData.link}
+                                            </div>
+                                        </div>
+                                        <Button
+                                            className="w-full"
+                                            size="sm"
+                                            onClick={() => router.push(`/dashboard/sessions/${session.id}/video`)}
+                                        >
+                                            <Video className="mr-2 h-3 w-3" /> Unirse ahora
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="p-2">
+                                        <DropdownMenuItem onClick={handleCreateVideoCall} className="cursor-pointer">
+                                            <Mail className="mr-2 h-4 w-4" />
+                                            Enviar Invitación por Email
+                                        </DropdownMenuItem>
+                                    </div>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     )}
 
                     {session.status === SessionStatus.IN_PROGRESS && (

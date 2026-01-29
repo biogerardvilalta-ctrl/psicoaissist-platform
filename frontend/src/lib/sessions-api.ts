@@ -62,6 +62,7 @@ export interface Session {
         };
         disclaimer?: string;
     };
+    videoCallToken?: string;
 }
 
 export class SessionsAPI {
@@ -100,5 +101,9 @@ export class SessionsAPI {
             url += `&professionalId=${professionalId}`;
         }
         return httpClient.get<{ date: string; slots: string[] }>(url);
+    }
+
+    static async createVideoCall(id: string): Promise<{ token: string; link: string }> {
+        return httpClient.post<{ token: string; link: string }>(`${this.BASE_PATH}/${id}/video-call`, {});
     }
 }

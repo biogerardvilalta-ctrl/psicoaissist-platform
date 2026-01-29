@@ -185,6 +185,7 @@ model Session {
   startedAt              DateTime?     @map("started_at")
   reminderSent           Boolean       @default(false) @map("reminder_sent")
   googleEventId          String?       @map("google_event_id")
+  videoCallToken         String?       @unique @map("video_call_token")
   reports                Report[]
   client                 Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
   user                   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
