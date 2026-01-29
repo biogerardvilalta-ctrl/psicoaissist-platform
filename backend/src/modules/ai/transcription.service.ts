@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as fs from 'fs';
 import * as path from 'path';
 import { UsageLimitsService } from '../payments/usage-limits.service';
+import { getAudioDurationInSeconds } from 'get-audio-duration';
 
 @Injectable()
 export class TranscriptionService {
@@ -26,18 +27,17 @@ export class TranscriptionService {
             return "Error: Clave de API de Gemini no configurada.";
         }
 
+        const tempFilePath = path.join("/tmp", `audio_${Date.now()}_${file.originalname}`);
+
         try {
             // Write buffer to temporary file for upload
-            const tempFilePath = path.join("/tmp", `audio_${Date.now()}_${file.originalname}`);
             fs.writeFileSync(tempFilePath, file.buffer);
             console.log(`Saved temp file: ${tempFilePath}`);
 
             // Calculate duration to check limits
             try {
-                // Dynamically import music-metadata (ESM)
-                const { parseFile } = await import('music-metadata');
-                const metadata = await parseFile(tempFilePath);
-                const durationSeconds = metadata.format.duration || 0;
+                // Use get-audio-duration for better CJS/ESM compatibility
+                const durationSeconds = await getAudioDurationInSeconds(tempFilePath);
 
                 console.log(`Audio duration: ${durationSeconds} seconds`);
 
@@ -54,14 +54,12 @@ export class TranscriptionService {
 
             } catch (err) {
                 console.error("Error calculating duration or checking limits:", err);
-                // If we can't calculate duration (e.g. format issue), we might want to fail or proceed with caution.
-                // For now, let's allow it but log error, OR fail. Safety first -> Fail?
-                // But for robustness let's Log and Proceed if it's just duration calc error, 
-                // UNLESS it's ForbiddenException from checkTranscriptionLimit.
                 if (err.status === 403) throw err;
+                // Continue if just duration error, but log it
             }
 
             // Use GoogleAIFileManager to upload
+            // Dynamic import for ESM module
             const { GoogleAIFileManager } = await import("@google/generative-ai/server");
             const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
 
@@ -100,6 +98,7 @@ export class TranscriptionService {
             let fileState = await fileManager.getFile(uploadResponse.file.name);
             console.log(`Initial file state: ${fileState.state}`);
 
+            // Wait while processing
             while (fileState.state === "PROCESSING") {
                 console.log(`Waiting for file ${fileState.name} to process...`);
                 await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -125,12 +124,6 @@ export class TranscriptionService {
                 { text: "Transcribe el audio verbatim. FORMATO OBLIGATORIO: Identifica por contexto quién es el profesional y quién es el paciente. Usa las etiquetas 'Psicólogo/a:' y 'Paciente:' (o 'Paciente 1:', 'Paciente 2:' si hay varios). Si no estás seguro, usa 'Hablante 1:'. Separa intervenciones con saltos de línea." }
             ]);
 
-            // Clean up temp file
-            fs.unlinkSync(tempFilePath);
-
-            // Delete file from Gemini (optional, good practice)
-            // await fileManager.deleteFile(uploadResponse.file.name); 
-
             const response = await result.response;
             const text = response.text();
 
@@ -139,7 +132,18 @@ export class TranscriptionService {
 
         } catch (error) {
             console.error('Gemini Transcription failed:', error);
-            return `Error en la transcripción: ${(error as any).message}`;
+            // Return error message to client cleanly
+            throw new Error(`Error en la transcripción: ${(error as any).message}`);
+        } finally {
+            // Clean up temp file
+            if (fs.existsSync(tempFilePath)) {
+                try {
+                    fs.unlinkSync(tempFilePath);
+                    console.log(`Deleted temp file: ${tempFilePath}`);
+                } catch (e) {
+                    console.error("Error deleting temp file:", e);
+                }
+            }
         }
     }
 }
