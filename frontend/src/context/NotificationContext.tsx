@@ -91,7 +91,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         const fetchNotifications = async () => {
             try {
                 // IMPORTANT: Backend has global prefix /api/v1
-                const baseUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1`;
+                // Correct base URL construction: handles if env var already has /api/v1
+                let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+                // Remove trailing slash
+                baseUrl = baseUrl.replace(/\/$/, '');
+                // If the env URL DOES NOT end in /api/v1, populate it. If it does, leave it alone.
+                if (!baseUrl.endsWith('/api/v1')) {
+                    baseUrl = `${baseUrl}/api/v1`;
+                }
 
                 const res = await fetch(`${baseUrl}/notifications?limit=20`, {
                     headers: { Authorization: `Bearer ${tokens.accessToken}` }
@@ -124,7 +131,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     const markAsRead = async (id: string) => {
         try {
-            const baseUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1`;
+            let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+            baseUrl = baseUrl.replace(/\/$/, '');
+            if (!baseUrl.endsWith('/api/v1')) {
+                baseUrl = `${baseUrl}/api/v1`;
+            }
             await fetch(`${baseUrl}/notifications/${id}/read`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${tokens?.accessToken}` }
@@ -141,7 +152,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     const markAllAsRead = async () => {
         try {
-            const baseUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1`;
+            let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+            baseUrl = baseUrl.replace(/\/$/, '');
+            if (!baseUrl.endsWith('/api/v1')) {
+                baseUrl = `${baseUrl}/api/v1`;
+            }
             await fetch(`${baseUrl}/notifications/read-all`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${tokens?.accessToken}` }
@@ -156,7 +171,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     const sendTestNotification = async () => {
         try {
-            const baseUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1`;
+            let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+            baseUrl = baseUrl.replace(/\/$/, '');
+            if (!baseUrl.endsWith('/api/v1')) {
+                baseUrl = `${baseUrl}/api/v1`;
+            }
             await fetch(`${baseUrl}/notifications/test`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${tokens?.accessToken}` }
