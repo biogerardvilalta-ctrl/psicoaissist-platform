@@ -36,6 +36,8 @@ class HttpClient {
         ...(typeof window !== 'undefined'
           ? (() => {
             const token = localStorage.getItem('psychoai_access_token') || sessionStorage.getItem('psychoai_access_token');
+            if (token) console.log('🔑 Attaching auth token:', token.substring(0, 10) + '...');
+            else console.log('⚠️ No auth token found in storage');
             return token ? { 'Authorization': `Bearer ${token}` } : {};
           })()
           : {}) as any,
@@ -54,7 +56,10 @@ class HttpClient {
 
       if (!response.ok) {
         if (response.status === 401 && typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+          // Don't trigger global logout for auth check endpoint to avoid circular loops
+          if (!url.includes('/auth/me')) {
+            window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+          }
         }
         const errorData = await response.json().catch(() => ({}))
         console.error('❌ HTTP Error response:', errorData);

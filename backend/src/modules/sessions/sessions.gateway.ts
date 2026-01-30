@@ -290,38 +290,57 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody() data: { token?: string, sessionId?: string },
         @ConnectedSocket() client: Socket,
     ) {
+        console.log(`[SessionsGateway] join-video-room request from ${client.id}`, data);
         let roomId: string | null = null;
         let identity: 'host' | 'guest' = 'guest';
 
         if (data.sessionId) {
             // Authenticated User
+            // console.log(`[SessionsGateway] Processing as Host (SessionID provided)`);
             const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
             if (token) {
                 try {
                     const payload = this.jwtService.decode(token) as any;
+                    // console.log(`[SessionsGateway] Token decoded`, payload.sub);
                     if (payload && payload.sub) {
                         roomId = data.sessionId;
                         identity = 'host';
                     }
-                } catch (e) { }
+                } catch (e) {
+                    console.error(`[SessionsGateway] Token decode error`, e);
+                }
+            } else {
+                console.warn(`[SessionsGateway] No token provided for Host join`);
             }
         } else if (data.token) {
             // Patient / Guest
+            // console.log(`[SessionsGateway] Processing as Guest (Token provided)`);
             const session = await this.prisma.session.findUnique({ where: { videoCallToken: data.token } });
             if (session) {
                 roomId = session.id;
                 identity = 'guest';
+            } else {
+                console.warn(`[SessionsGateway] Session not found for token: ${data.token}`);
             }
         }
 
         if (roomId) {
             const roomName = `video_${roomId}`;
             client.join(roomName);
-            client.emit('room-joined', { identity, roomId });
+
+            // Get count of clients in room (excluding self if strictly needed, but Set size includes self now)
+            // Get count of clients in room (excluding self if strictly needed, but Set size includes self now)
+            const room = (this.server.adapter as any).rooms.get(roomName);
+            const peerCount = room ? room.size : 0;
+
+            console.log(`[SessionsGateway] Emitting room-joined to ${client.id}. Room: ${roomId}, Peers: ${peerCount}, Identity: ${identity}`);
+
+            client.emit('room-joined', { identity, roomId, peerCount });
             // Notify others
             client.to(roomName).emit('peer-joined', { identity });
-            this.logger.log(`Client ${client.id} joined video room ${roomId} as ${identity}`);
+            this.logger.log(`Client ${client.id} joined video room ${roomId} as ${identity}. Peers: ${peerCount}`);
         } else {
+            console.error(`[SessionsGateway] Failed to resolve RoomID for client ${client.id}`);
             client.emit('error', { message: 'Invalid video session' });
         }
     }
@@ -336,7 +355,8 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         client.to(roomName).emit('signal', {
             type: data.type,
             payload: data.payload,
-            sender: client.id
+            sender: client.id,
+            roomId: data.roomId // Pass roomId so receiver has context immediately
         });
     }
 }

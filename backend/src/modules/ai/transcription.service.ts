@@ -121,7 +121,7 @@ export class TranscriptionService {
                         fileUri: uploadResponse.file.uri
                     }
                 },
-                { text: "Transcribe el audio verbatim. FORMATO OBLIGATORIO: Identifica por contexto quién es el profesional y quién es el paciente. Usa las etiquetas 'Psicólogo/a:' y 'Paciente:' (o 'Paciente 1:', 'Paciente 2:' si hay varios). Si no estás seguro, usa 'Hablante 1:'. Separa intervenciones con saltos de línea." }
+                { text: "Eres un transcriptor experto. Tu tarea es transcribir el audio verbatim.\n\nREGLAS CRÍTICAS:\n1. Si el audio contiene SILENCIO, RUIDO DE FONDO o NO HAY VOZ CLARA: Devuelve una cadena VACÍA. NO inventes texto.\n2. NO alucines conversaciones si no son audibles.\n3. Identifica hablantes: 'Psicólogo/a:' y 'Paciente:'.\n4. Si no estás seguro del hablante, usa 'Hablante:'.\n5. Separa intervenciones con saltos de línea." }
             ]);
 
             const response = await result.response;

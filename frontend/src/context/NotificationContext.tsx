@@ -54,7 +54,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             auth: {
                 token: tokens.accessToken,
             },
-            transports: ['websocket'], // Force websocket
+
             reconnectionAttempts: 5,
         });
 

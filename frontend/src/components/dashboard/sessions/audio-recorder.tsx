@@ -7,9 +7,10 @@ interface AudioRecorderProps {
     onAudioData: (blob: Blob) => void;
     onStreamData?: (blob: Blob) => void; // New prop for chunks
     isProcessing?: boolean;
+    inputStream?: MediaStream | null; // New prop for external stream
 }
 
-export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false, onRecordingStatusChange, isLimitReached = false, onLimitReachedAction }: AudioRecorderProps & { onRecordingStatusChange?: (isRecording: boolean) => void, isLimitReached?: boolean, onLimitReachedAction?: () => void }) {
+export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false, onRecordingStatusChange, isLimitReached = false, onLimitReachedAction, inputStream }: AudioRecorderProps & { onRecordingStatusChange?: (isRecording: boolean) => void, isLimitReached?: boolean, onLimitReachedAction?: () => void }) {
     const [isRecording, setIsRecording] = useState(false);
 
     const [recordingTime, setRecordingTime] = useState(0);
@@ -55,7 +56,13 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
         }
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            let stream: MediaStream;
+
+            if (inputStream) {
+                stream = inputStream;
+            } else {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            }
 
             let mimeType = 'audio/webm';
             if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
@@ -92,13 +99,13 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
                     // Prevention: If limit reached, discard blob to avoid transcription error on empty/partial files
                     if (isLimitReachedRef.current) {
                         console.log('[AudioRecorder] Limit reached, discarding final blob to prevent transcription error.');
-                        stream.getTracks().forEach(track => track.stop());
+                        if (!inputStream) stream.getTracks().forEach(track => track.stop());
                         return;
                     }
 
                     const blob = new Blob(chunksRef.current, { type: mimeType });
                     onAudioData(blob);
-                    stream.getTracks().forEach(track => track.stop()); // Stop mic access
+                    if (!inputStream) stream.getTracks().forEach(track => track.stop()); // Stop mic access
                 }
             };
 

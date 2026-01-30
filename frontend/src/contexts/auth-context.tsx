@@ -234,9 +234,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return true;
 
       } catch (verifyError) {
-        console.warn('ℹ️ No valid backend session found:', verifyError);
-        // Backend actively rejected us (401) or network error, so clear any stale local state
-        clearSession();
+        console.warn('ℹ️ Backend session check failed. Attempting to restore from LocalStorage fallback...', verifyError);
+
+        // Fallback: Try to restore from LocalStorage even if backend check failed (resilience)
+        const accessToken = storage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+        const refreshToken = storage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+        const userStr = storage.getItem(STORAGE_KEYS.USER);
+        const encryptionKeyStr = storage.getItem(STORAGE_KEYS.ENCRYPTION_KEY);
+
+        if (accessToken && userStr) {
+          console.log('⚠️ Restoring offline/fallback session from storage.');
+          const user = JSON.parse(userStr);
+          const tokens: AuthTokens = { accessToken, refreshToken: refreshToken || '' };
+
+          let encryptionKey: EncryptionKey | undefined;
+          if (encryptionKeyStr) {
+            try { encryptionKey = JSON.parse(encryptionKeyStr); } catch (e) { }
+          }
+
+          dispatch({ type: 'RESTORE_SESSION', payload: { user, tokens, encryptionKey } });
+          return true;
+        } else {
+          // Only clear if we really have nothing
+          clearSession();
+        }
       }
 
     } catch (error) {

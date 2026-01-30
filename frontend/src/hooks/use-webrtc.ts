@@ -19,20 +19,29 @@ interface WebRTCProps {
 }
 
 export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps) {
+    const roomIdRef = useRef(roomId);
+
+    // Update ref when prop changes
+    useEffect(() => {
+        roomIdRef.current = roomId;
+    }, [roomId]);
+
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<'initial' | 'connecting' | 'connected' | 'disconnected'>('initial');
     const peerConnection = useRef<RTCPeerConnection | null>(null);
 
     // Initialize PeerConnection
-    const createPeerConnection = useCallback(() => {
+    const createPeerConnection = useCallback((overrideRoomId?: string) => {
         if (peerConnection.current) return peerConnection.current;
 
+        console.log("Creating new RTCPeerConnection");
         const pc = new RTCPeerConnection(ICE_SERVERS);
 
         pc.onicecandidate = (event) => {
-            if (event.candidate && socket && roomId) {
+            const targetRoomId = overrideRoomId || roomIdRef.current;
+            if (event.candidate && socket && targetRoomId) {
                 socket.emit('signal', {
-                    roomId,
+                    roomId: targetRoomId,
                     type: 'ice-candidate',
                     payload: event.candidate,
                 });
@@ -69,14 +78,17 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
 
         peerConnection.current = pc;
         return pc;
-    }, [socket, roomId, localStream]);
+    }, [socket, localStream]);
 
     // Handle Signaling
     useEffect(() => {
-        if (!socket || !roomId) return;
+        if (!socket) return; // Only block on socket, not roomId
 
-        const handleSignal = async (data: { type: string; payload: any; sender: string }) => {
-            if (!peerConnection.current) createPeerConnection();
+        const handleSignal = async (data: { type: string; payload: any; sender: string; roomId?: string }) => {
+            // Use roomId from data if available (race condition fix), else ref
+            const activeRoomId = data.roomId || roomIdRef.current || undefined;
+
+            if (!peerConnection.current) createPeerConnection(activeRoomId);
             const pc = peerConnection.current!;
 
             try {
@@ -85,11 +97,16 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
                     await pc.setRemoteDescription(new RTCSessionDescription(data.payload));
                     const answer = await pc.createAnswer();
                     await pc.setLocalDescription(answer);
-                    socket.emit('signal', {
-                        roomId,
-                        type: 'answer',
-                        payload: answer
-                    });
+
+                    if (activeRoomId) {
+                        socket.emit('signal', {
+                            roomId: activeRoomId,
+                            type: 'answer',
+                            payload: answer
+                        });
+                    } else {
+                        console.error("Cannot send answer: No Room ID available");
+                    }
                 } else if (data.type === 'answer') {
                     console.log("Received Answer");
                     await pc.setRemoteDescription(new RTCSessionDescription(data.payload));
@@ -112,25 +129,49 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
         const handlePeerJoined = async () => {
             console.log("Peer Joined. Identity:", identity);
             if (identity === 'host') {
-                console.log("Creating Offer...");
-                const pc = createPeerConnection();
+                console.log("Creating Offer (Peer Joined)...");
+                const roomIdToUse = roomIdRef.current;
+                if (roomIdToUse) {
+                    const pc = createPeerConnection(roomIdToUse);
+                    const offer = await pc.createOffer();
+                    await pc.setLocalDescription(offer);
+                    socket.emit('signal', {
+                        roomId: roomIdToUse,
+                        type: 'offer',
+                        payload: offer
+                    });
+                }
+            }
+        };
+
+        const handleRoomJoined = async (data: any) => {
+            console.log("[useWebRTC] Room Joined Event", data);
+
+            // If I am Host and there are already people here (peerCount > 1), I should offer.
+            if (identity === 'host' && data.peerCount > 1 && data.roomId) {
+                console.log("[useWebRTC] Creating Offer (Late Join Trigger)...");
+                const pc = createPeerConnection(data.roomId);
                 const offer = await pc.createOffer();
                 await pc.setLocalDescription(offer);
                 socket.emit('signal', {
-                    roomId,
+                    roomId: data.roomId,
                     type: 'offer',
                     payload: offer
                 });
+            } else {
+                console.log(`[useWebRTC] Not initiating offer. Identity: ${identity}, Peers: ${data.peerCount}`);
             }
         };
 
         socket.on('peer-joined', handlePeerJoined);
+        socket.on('room-joined', handleRoomJoined);
 
         return () => {
             socket.off('signal', handleSignal);
             socket.off('peer-joined', handlePeerJoined);
+            socket.off('room-joined', handleRoomJoined);
         };
-    }, [socket, roomId, identity, createPeerConnection]);
+    }, [socket, identity, createPeerConnection]); // Removed roomId dependency
 
     // Cleanup
     useEffect(() => {
