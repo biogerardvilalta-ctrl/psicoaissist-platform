@@ -90,13 +90,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         // Fetch initial notifications
         const fetchNotifications = async () => {
             try {
-                // IMPORTANT: Backend has global prefix /api/v1
-                // Correct base URL construction:                // Correct base URL construction: handles if env var already has /api/v1
+                // Correct base URL construction: handles if env var already has /api/v1
                 let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
-                baseUrl = baseUrl.replace(/\/$/, '');
-                if (!baseUrl.endsWith('/api/v1')) {
-                    baseUrl = `${baseUrl}/api/v1`;
-                }
                 // Remove trailing slash
                 baseUrl = baseUrl.replace(/\/$/, '');
                 // If the env URL DOES NOT end in /api/v1, populate it. If it does, leave it alone.
