@@ -13,7 +13,12 @@ import { ConfigService } from '@nestjs/config';
 
 @WebSocketGateway({
     cors: {
-        origin: '*',
+        origin: [
+            'https://psicoaissist.com',
+            'https://www.psicoaissist.com',
+            'http://localhost:3000',
+        ],
+        credentials: true,
     },
     namespace: 'notifications',
 })

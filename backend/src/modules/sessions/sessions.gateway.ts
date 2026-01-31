@@ -18,7 +18,12 @@ import { UsageLimitsService } from '../payments/usage-limits.service';
 
 @WebSocketGateway({
     cors: {
-        origin: '*', // Adjust in production
+        origin: [
+            'https://psicoaissist.com',
+            'https://www.psicoaissist.com',
+            'http://localhost:3000',
+        ],
+        credentials: true,
     },
     namespace: 'sessions', // Optional namespace
 })
