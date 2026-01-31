@@ -19,25 +19,17 @@ export class EmailService {
 
   private initializeTransporter() {
     const host = this.configService.get<string>('SMTP_HOST');
-    const port = parseInt(this.configService.get<string>('SMTP_PORT') || '587', 10);
+    const port = this.configService.get<number>('SMTP_PORT');
     const user = this.configService.get<string>('SMTP_USER');
     const pass = this.configService.get<string>('SMTP_PASS');
 
-    this.logger.log(`Initializing Email Service... Host: ${host}, Port: ${port}, User: ${user ? '***' : 'None'}`);
-
-    if (host && user && pass) {
+    if (host) {
       this.transporter = nodemailer.createTransport({
         host,
         port,
         secure: port === 465, // true for 465, false for other ports
-        auth: {
-          user,
-          pass,
-        },
+        auth: user ? { user, pass } : undefined,
       });
-      this.logger.log('✅ SMTP Transporter initialized successfully.');
-    } else {
-      this.logger.error('❌ SMTP Configuration MISSING or INCOMPLETE. Email sending will fail.');
     }
   }
 
@@ -105,8 +97,10 @@ export class EmailService {
 
   private async sendEmail(to: string, template: EmailTemplate): Promise<void> {
     if (!this.transporter) {
-      this.logger.error(`❌ Cannot send email (No Configuration): ${template.subject} -> ${to}`);
-      throw new Error('SMTP Configuration is missing. Cannot send email.');
+      this.logger.warn(`Email sending skipped (no configuration): ${template.subject} -> ${to}`);
+      // Fallback to console log for debugging if no transporter
+      console.log('📧 [MOCK] Sending email:', to, template.subject);
+      return;
     }
 
     const from = this.configService.get<string>('SMTP_FROM') || 'noreply@psicoaissist.com';
