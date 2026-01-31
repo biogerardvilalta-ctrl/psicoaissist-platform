@@ -1,16 +1,35 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, Square, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+
+export interface AudioRecorderHandle {
+    startRecording: () => void;
+    stopRecording: () => void;
+    isRecording: boolean;
+}
 
 interface AudioRecorderProps {
     onAudioData: (blob: Blob) => void;
     onStreamData?: (blob: Blob) => void; // New prop for chunks
     isProcessing?: boolean;
     inputStream?: MediaStream | null; // New prop for external stream
+    onRecordingStatusChange?: (isRecording: boolean) => void;
+    isLimitReached?: boolean;
+    onLimitReachedAction?: () => void;
+    hideControls?: boolean; // New prop to hide internal buttons
 }
 
-export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false, onRecordingStatusChange, isLimitReached = false, onLimitReachedAction, inputStream }: AudioRecorderProps & { onRecordingStatusChange?: (isRecording: boolean) => void, isLimitReached?: boolean, onLimitReachedAction?: () => void }) {
+export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>(({
+    onAudioData,
+    onStreamData,
+    isProcessing = false,
+    onRecordingStatusChange,
+    isLimitReached = false,
+    onLimitReachedAction,
+    inputStream,
+    hideControls = false
+}, ref) => {
     const [isRecording, setIsRecording] = useState(false);
 
     const [recordingTime, setRecordingTime] = useState(0);
@@ -27,6 +46,13 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
     useEffect(() => {
         isLimitReachedRef.current = isLimitReached;
     }, [isLimitReached]);
+
+    // Expose methods to parent
+    useImperativeHandle(ref, () => ({
+        startRecording: () => startRecording(),
+        stopRecording: () => stopRecording(),
+        isRecording: isRecording
+    }));
 
     useEffect(() => {
         return () => {
@@ -96,7 +122,7 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
                 } else {
                     // Final stop -> Save full blob
 
-                    // Prevention: If limit reached, discard blob to avoid transcription error on empty/partial files
+                    // Prevention: If limit reached, discard blob to prevent transcription error on empty/partial files
                     if (isLimitReachedRef.current) {
                         console.log('[AudioRecorder] Limit reached, discarding final blob to prevent transcription error.');
                         if (!inputStream) stream.getTracks().forEach(track => track.stop());
@@ -191,34 +217,38 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
                             <span className="font-mono text-sm font-medium">{formatTime(recordingTime)}</span>
                         </div>
                     ) : (
-                        <span className="text-sm text-slate-500">Listo para grabar</span>
+                        <span className="text-sm text-slate-500">
+                            {hideControls ? 'Lista para grabar (Usa controles arriba)' : 'Listo para grabar'}
+                        </span>
                     )}
                 </div>
 
-                <div className="flex gap-2">
-                    {!isRecording ? (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full gap-2 border-slate-300 hover:border-slate-400 hover:bg-slate-50"
-                            onClick={startRecording}
-                            disabled={isProcessing}
-                        >
-                            <Mic className="h-4 w-4 text-blue-500" />
-                            {isProcessing ? 'Procesando...' : 'Grabar Sesión'}
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            className="w-full gap-2"
-                            onClick={stopRecording}
-                        >
-                            <Square className="h-4 w-4 fill-current" />
-                            Detener
-                        </Button>
-                    )}
-                </div>
+                {!hideControls && (
+                    <div className="flex gap-2">
+                        {!isRecording ? (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full gap-2 border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+                                onClick={startRecording}
+                                disabled={isProcessing}
+                            >
+                                <Mic className="h-4 w-4 text-blue-500" />
+                                {isProcessing ? 'Procesando...' : 'Grabar Sesión'}
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                className="w-full gap-2"
+                                onClick={stopRecording}
+                            >
+                                <Square className="h-4 w-4 fill-current" />
+                                Detener
+                            </Button>
+                        )}
+                    </div>
+                )}
 
                 {isProcessing && (
                     <div className="flex items-center gap-2 text-xs text-blue-600 animate-pulse">
@@ -229,4 +259,6 @@ export function AudioRecorder({ onAudioData, onStreamData, isProcessing = false,
             </CardContent>
         </Card>
     );
-}
+});
+
+AudioRecorder.displayName = 'AudioRecorder';

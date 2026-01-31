@@ -3,33 +3,146 @@
 import { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Button } from '@/components/ui/button';
-import { Video, Mic, MicOff, VideoOff, PhoneOff, ArrowLeft } from 'lucide-react';
+import { Video, Mic, MicOff, VideoOff, PhoneOff, ArrowLeft, Circle, Square, CheckCircle2, Play, FileText, Brain } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
 import { useWebRTC } from '@/hooks/use-webrtc';
-import { AudioRecorder } from '@/components/dashboard/sessions/audio-recorder';
-import { AiAPI } from '@/lib/ai-api'; // Assuming this API exists
+import { AudioRecorder, AudioRecorderHandle } from '@/components/dashboard/sessions/audio-recorder';
+import { AiAssistantPanel } from '@/components/dashboard/sessions/ai-assistant-panel';
+import { AiAPI } from '@/lib/ai-api';
+import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function ProfessionalVideoPage({ params }: { params: { id: string } }) {
     const { tokens, isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
+    const { toast } = useToast();
+
+    // Session State
+    const [session, setSession] = useState<Session | null>(null);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [notes, setNotes] = useState('');
+    const [activeTab, setActiveTab] = useState('transcription');
+
+    // WebRTC & Socket State
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [status, setStatus] = useState('Conectando...');
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [roomId, setRoomId] = useState<string | null>(null);
-
     const [mixedStream, setMixedStream] = useState<MediaStream | null>(null);
+
+    // Refs
     const audioContextRef = useRef<AudioContext | null>(null);
     const audioDestinationRef = useRef<MediaStreamAudioDestinationNode | null>(null);
-
-    const [isRecording, setIsRecording] = useState(false);
-    const [transcription, setTranscription] = useState('');
-    const transcriptionRef = useRef<HTMLDivElement>(null);
-
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
+    const audioRecorderRef = useRef<AudioRecorderHandle>(null);
+    const transcriptionRef = useRef<HTMLDivElement>(null);
+
+    // Recording & Transcription State
+    const [isRecording, setIsRecording] = useState(false);
+    const [transcription, setTranscription] = useState('');
+
+    // Fetch Session
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const data = await SessionsAPI.getById(params.id);
+                setSession(data);
+                setNotes(data.notes || '');
+                setTranscription(data.transcription || '');
+
+                // Init timer if running
+                if (data.status === SessionStatus.IN_PROGRESS && data.startTime) {
+                    const start = new Date(data.startTime).getTime();
+                    const now = new Date().getTime();
+                    setElapsedTime(Math.floor((now - start) / 1000));
+                }
+            } catch (error) {
+                console.error("Error fetching session", error);
+                toast({ title: "Error", description: "No se pudo cargar la sesión", variant: "destructive" });
+            }
+        };
+        if (tokens?.accessToken) fetchSession();
+    }, [params.id, tokens, toast]);
+
+    // Timer Logic
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (session?.status === SessionStatus.IN_PROGRESS) {
+            interval = setInterval(() => {
+                setElapsedTime(prev => prev + 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [session?.status]);
+
+    const formatTime = (seconds: number) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
+
+    // Auto-save Notes (Simulated Debounce)
+    const notesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const handleNotesChange = (val: string) => {
+        setNotes(val);
+        if (notesTimeoutRef.current) clearTimeout(notesTimeoutRef.current);
+        notesTimeoutRef.current = setTimeout(async () => {
+            try {
+                await SessionsAPI.update(params.id, { notes: val });
+            } catch (e) { console.error("Error saving notes", e); }
+        }, 2000);
+    };
+
+    // Session Actions
+    const handleStartSession = async () => {
+        if (!session) return;
+        try {
+            const updated = await SessionsAPI.update(session.id, {
+                status: SessionStatus.IN_PROGRESS,
+                startTime: new Date().toISOString()
+            });
+            setSession(updated);
+            setElapsedTime(0);
+            toast({ title: "Sesión Iniciada", description: "El cronómetro ha comenzado." });
+        } catch (e) {
+            toast({ title: "Error", description: "No se pudo iniciar la sesión", variant: "destructive" });
+        }
+    };
+
+    const handleEndSession = async () => {
+        if (!session) return;
+        if (!confirm("¿Finalizar sesión y volver al detalle?")) return;
+
+        try {
+            // Stop recording logic if active
+            if (isRecording) {
+                handleStopRecording();
+                // Wait small delay for socket
+                await new Promise(r => setTimeout(r, 500));
+            }
+
+            const updated = await SessionsAPI.update(session.id, {
+                status: SessionStatus.COMPLETED,
+                endTime: new Date().toISOString(),
+                transcription,
+                notes
+            });
+
+            endCall(); // Clean up WebRTC
+
+            router.push(`/dashboard/sessions/${session.id}`);
+            toast({ title: "Sesión Finalizada", description: "Informe de IA generándose..." });
+        } catch (e) {
+            toast({ title: "Error", description: "No se pudo finalizar la sesión", variant: "destructive" });
+        }
+    };
 
     // Initialize WebRTC Hook
     const { remoteStream, connectionStatus } = useWebRTC({
@@ -152,9 +265,6 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                         localSource.connect(dest);
                         remoteSource.connect(dest);
 
-                        // We do NOT connect to ctx.destination here to avoid feedback/echo
-                        // as the <video> element plays the remote audio.
-
                         setMixedStream(dest.stream);
                         console.log("Audio streams mixed successfully");
                     } catch (e) {
@@ -191,155 +301,280 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
         if (socket) socket.disconnect();
         if (localStream) localStream.getTracks().forEach(track => track.stop());
         if (audioContextRef.current) audioContextRef.current.close();
-        router.back();
+        router.push(`/dashboard/sessions/${params.id}`); // Just go back without ending session logic here (unless ended via button)
     };
 
-    if (!isLoading && !tokens?.accessToken) {
+    const handleStartRecording = () => {
+        if (audioRecorderRef.current) {
+            audioRecorderRef.current.startRecording();
+        }
+    };
+
+    const handleStopRecording = () => {
+        if (audioRecorderRef.current) {
+            audioRecorderRef.current.stopRecording();
+        }
+    };
+
+    if ((!isLoading && !tokens?.accessToken) || !session) {
         return (
             <div className="h-[calc(100vh-6rem)] flex flex-col items-center justify-center p-4 bg-slate-950 rounded-lg text-white">
-                <Card className="p-8 bg-slate-900 border-slate-800 text-center max-w-md">
-                    <h2 className="text-xl font-semibold mb-4 text-red-400">Sesión Caducada</h2>
-                    <p className="text-slate-300 mb-6">
-                        Tu sesión ha expirado o no se encuentra el token de acceso. Por favor, inicia sesión nuevamente para continuar con la videollamada.
-                    </p>
-                    <Button
-                        className="w-full bg-blue-600 hover:bg-blue-700"
-                        onClick={() => router.push(`/auth/login?redirect=/dashboard/sessions/${params.id}/video`)}
-                    >
-                        Iniciar Sesión
-                    </Button>
-                </Card>
+                {!session ? (
+                    <div className="animate-pulse">Cargando sesión...</div>
+                ) : (
+                    <Card className="p-8 bg-slate-900 border-slate-800 text-center max-w-md">
+                        <h2 className="text-xl font-semibold mb-4 text-red-400">Sesión Caducada</h2>
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => router.push(`/auth/login`)}>Iniciar Sesión</Button>
+                    </Card>
+                )}
             </div>
         );
     }
 
     return (
-        <div className="h-[calc(100vh-6rem)] grid grid-cols-1 lg:grid-cols-4 gap-4 p-4 bg-slate-950 rounded-lg">
+        <div className="h-[calc(100vh-6rem)] flex flex-col gap-4 p-4 bg-slate-950 rounded-lg overflow-hidden">
 
-            {/* Left: Video Area */}
-            <div className="lg:col-span-3 flex flex-col">
-                <div className="mb-4 flex items-center gap-2 text-white">
-                    <Button variant="ghost" className="text-white hover:bg-white/10" onClick={endCall}>
-                        <ArrowLeft className="h-4 w-4 mr-2" /> Volver a Sesión
-                    </Button>
-                    <h1 className="text-lg font-semibold">Videoconferencia - Sala Profesional</h1>
+            {/* Top Bar: Header & Controls */}
+            <div className="flex flex-col md:flex-row items-center justify-between shrink-0 gap-4">
+
+                {/* Left: Timer */}
+                <div className="w-full md:w-auto flex justify-start">
+                    <div className="bg-blue-50/10 border border-blue-500/20 px-4 py-2 rounded-md font-mono text-xl font-bold text-blue-400 min-w-[120px] text-center shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                        {formatTime(elapsedTime)}
+                    </div>
                 </div>
 
-                <Card className="flex-1 bg-slate-900 border-slate-800 text-white overflow-hidden relative rounded-xl min-h-[400px]">
-                    {/* Main Video Area (Remote) */}
-                    <div className="absolute inset-0 bg-black flex items-center justify-center text-slate-500">
-                        {remoteStream ? (
-                            <video
-                                ref={remoteVideoRef}
-                                autoPlay
-                                playsInline
-                                className="w-full h-full object-cover"
-                            />
+                {/* Center: Session Controls */}
+                <div className="flex items-center gap-3">
+                    <div className="hidden md:flex bg-indigo-600 text-white px-4 py-2 rounded-md items-center gap-2 font-medium shadow-lg">
+                        <Video className="h-4 w-4" />
+                        Videoconf.
+                    </div>
+
+                    {session.status === SessionStatus.SCHEDULED && (
+                        <Button
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 shadow-lg shadow-emerald-900/20"
+                            onClick={handleStartSession}
+                        >
+                            <Play className="h-4 w-4 mr-2 fill-current" />
+                            Iniciar Sesión
+                        </Button>
+                    )}
+
+                    {session.status === SessionStatus.IN_PROGRESS && (
+                        <Button
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 shadow-lg shadow-emerald-900/20"
+                            onClick={handleEndSession}
+                        >
+                            <CheckCircle2 className="h-4 w-4 mr-2" />
+                            Finalizar Sesión
+                        </Button>
+                    )}
+                </div>
+
+
+                {/* Right: Recording Controls */}
+                <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+                    {mixedStream ? (
+                        !isRecording ? (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+                                onClick={handleStartRecording}
+                            >
+                                <Mic className="h-3 w-3 mr-2 text-blue-400" />
+                                Grabar Sesión
+                            </Button>
                         ) : (
-                            <div className="text-slate-500 animate-pulse">Esperando vídeo del paciente...</div>
-                        )}
-
-                        <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm text-white">
-                            {status} ({connectionStatus})
-                        </div>
-                    </div>
-
-                    {/* Self View PIP */}
-                    <div className="absolute top-4 right-4 w-40 h-28 bg-slate-800 rounded border border-slate-700 shadow-xl overflow-hidden z-10">
-                        <video
-                            ref={localVideoRef}
-                            autoPlay
-                            muted
-                            playsInline
-                            className={`w-full h-full object-cover transform scale-x-[-1] ${!isVideoEnabled ? 'hidden' : ''}`}
-                        />
-                        {!isVideoEnabled && (
-                            <div className="w-full h-full flex items-center justify-center bg-slate-800 text-slate-400">
-                                <VideoOff className="h-6 w-6" />
+                            <div className="flex items-center gap-3 bg-slate-900/80 p-1 pr-3 rounded-full border border-red-500/30">
+                                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 text-red-500">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                    </span>
+                                    <span className="text-xs font-mono font-bold">GRABANDO</span>
+                                </div>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-7 px-2 text-white hover:bg-white/10 hover:text-red-400"
+                                    onClick={handleStopRecording}
+                                >
+                                    <Square className="h-3 w-3 mr-2 fill-current" />
+                                    Detener
+                                </Button>
                             </div>
-                        )}
-                    </div>
-
-                    {/* Controls */}
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 bg-black/40 backdrop-blur-md p-3 rounded-full border border-white/10 z-20">
-                        <Button
-                            variant={isAudioEnabled ? "ghost" : "destructive"}
-                            size="icon"
-                            className={`rounded-full h-12 w-12 ${isAudioEnabled ? "bg-white/10 hover:bg-white/20" : ""} text-white`}
-                            onClick={toggleAudio}
-                        >
-                            {isAudioEnabled ? <Mic /> : <MicOff />}
-                        </Button>
-                        <Button
-                            variant={isVideoEnabled ? "ghost" : "destructive"}
-                            size="icon"
-                            className={`rounded-full h-12 w-12 ${isVideoEnabled ? "bg-white/10 hover:bg-white/20" : ""} text-white`}
-                            onClick={toggleVideo}
-                        >
-                            {isVideoEnabled ? <Video /> : <VideoOff />}
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            size="icon"
-                            className="rounded-full h-12 w-12 bg-red-500 hover:bg-red-600 border-transparent shadow-lg text-white"
-                            onClick={endCall}
-                        >
-                            <PhoneOff />
-                        </Button>
-                    </div>
-                </Card>
+                        )
+                    ) : (
+                        <div className="text-xs text-slate-500 italic px-2">Esperando audio...</div>
+                    )}
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" onClick={endCall}>
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                </div>
             </div>
 
-            {/* Right: Transcription Panel */}
-            <div className="lg:col-span-1 flex flex-col gap-4">
-                <Card className="flex-1 bg-slate-900 border-slate-800 text-slate-100 flex flex-col overflow-hidden">
-                    <div className="p-3 border-b border-slate-800 font-semibold text-sm flex items-center justify-between">
-                        <span>Transcripción en tiempo real</span>
-                        {isRecording && <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
-                    </div>
-                    <div
-                        ref={transcriptionRef}
-                        className="flex-1 p-3 overflow-y-auto text-xs space-y-2 font-mono"
-                    >
-                        {transcription ? (
-                            <p className="whitespace-pre-wrap">{transcription}</p>
-                        ) : (
-                            <p className="text-slate-500 italic text-center mt-10">
-                                La transcripción aparecerá aquí cuando inicies la grabación...
-                            </p>
-                        )}
-                    </div>
-                    <div className="p-3 bg-slate-950 border-t border-slate-800">
-                        {mixedStream && (
-                            <AudioRecorder
-                                inputStream={mixedStream}
-                                onRecordingStatusChange={(recording: boolean) => {
-                                    setIsRecording(recording);
-                                    if (socket && isConnected) {
-                                        if (recording) socket.emit('start_recording', { sessionId: params.id });
-                                        else socket.emit('stop_recording', { sessionId: params.id });
-                                    }
-                                }}
-                                onAudioData={(blob: Blob) => console.log('Final Blob', blob.size)}
-                                onStreamData={async (chunk: Blob) => {
-                                    try {
-                                        const { text } = await AiAPI.transcribe(chunk, true);
-                                        if (text) {
-                                            setTranscription(prev => prev + (prev ? '\n' : '') + text);
-                                        }
-                                    } catch (e) {
-                                        console.error(e);
-                                    }
-                                }}
-                            />
-                        )}
-                        {!mixedStream && (
-                            <div className="text-xs text-center text-slate-500">
-                                Esperando audio para habilitar grabación...
+            {/* Main Content Grid */}
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-0">
+
+                {/* Left: Video Area (3 cols) */}
+                <div className="lg:col-span-3 flex flex-col min-h-0">
+                    <Card className="flex-1 bg-slate-900 border-slate-800 text-white overflow-hidden relative rounded-xl shadow-2xl">
+                        {/* Main Video Area (Remote) */}
+                        <div className="absolute inset-0 bg-black flex items-center justify-center text-slate-500">
+                            {remoteStream ? (
+                                <video
+                                    ref={remoteVideoRef}
+                                    autoPlay
+                                    playsInline
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className="h-16 w-16 rounded-full border-2 border-slate-800 border-t-blue-500 animate-spin" />
+                                    <div className="text-slate-500 animate-pulse">Esperando vídeo del paciente...</div>
+                                </div>
+                            )}
+
+                            <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded-full text-xs backdrop-blur-sm text-slate-300 border border-white/5">
+                                {status} ({connectionStatus})
                             </div>
-                        )}
+                        </div>
+
+                        {/* Self View PIP */}
+                        <div className="absolute top-4 right-4 w-48 aspect-video bg-slate-800 rounded-lg border border-slate-700 shadow-2xl overflow-hidden z-10 transition-all hover:scale-105">
+                            <video
+                                ref={localVideoRef}
+                                autoPlay
+                                muted
+                                playsInline
+                                className={`w-full h-full object-cover transform scale-x-[-1] ${!isVideoEnabled ? 'hidden' : ''}`}
+                            />
+                            {!isVideoEnabled && (
+                                <div className="w-full h-full flex items-center justify-center bg-slate-800 text-slate-400">
+                                    <VideoOff className="h-6 w-6" />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Controls Overlay */}
+                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 bg-black/60 backdrop-blur-xl p-4 rounded-2xl border border-white/10 z-20 shadow-2xl transition-all hover:bg-black/80">
+                            <Button
+                                variant={isAudioEnabled ? "ghost" : "destructive"}
+                                size="icon"
+                                className={`rounded-full h-14 w-14 ${isAudioEnabled ? "bg-white/10 hover:bg-white/20" : ""} text-white transition-all`}
+                                onClick={toggleAudio}
+                            >
+                                {isAudioEnabled ? <Mic className="h-6 w-6" /> : <MicOff className="h-6 w-6" />}
+                            </Button>
+                            <Button
+                                variant={isVideoEnabled ? "ghost" : "destructive"}
+                                size="icon"
+                                className={`rounded-full h-14 w-14 ${isVideoEnabled ? "bg-white/10 hover:bg-white/20" : ""} text-white transition-all`}
+                                onClick={toggleVideo}
+                            >
+                                {isVideoEnabled ? <Video className="h-6 w-6" /> : <VideoOff className="h-6 w-6" />}
+                            </Button>
+                            <div className="w-px h-10 bg-white/20 mx-2 self-center" />
+                            <Button
+                                variant="destructive"
+                                size="icon"
+                                className="rounded-full h-14 w-14 bg-red-500 hover:bg-red-600 border-transparent shadow-lg text-white hover:scale-110 transition-all"
+                                onClick={endCall}
+                            >
+                                <PhoneOff className="h-6 w-6" />
+                            </Button>
+                        </div>
+                    </Card>
+                </div>
+
+                {/* Right: Sidebar (1 col) - Split View */}
+                <div className="lg:col-span-1 flex flex-col gap-4 min-h-0 h-full">
+
+                    {/* Top: AI Assistant (Flex Grow) */}
+                    <div className="flex-1 min-h-0 overflow-hidden rounded-xl shadow-lg">
+                        <AiAssistantPanel
+                            sessionId={params.id}
+                            isActive={isRecording}
+                            liveContext={transcription + '\n' + notes}
+                            socket={socket}
+                            isConnected={isConnected}
+                        />
                     </div>
-                </Card>
+
+                    {/* Bottom: Tabs (Approx 40% height) */}
+                    <Card className="h-[40%] min-h-[250px] bg-slate-900 border-slate-800 text-slate-100 flex flex-col overflow-hidden shrink-0">
+                        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+                            <div className="px-3 pt-2 border-b border-slate-800 bg-slate-950/50">
+                                <TabsList className="bg-slate-800/50 border border-slate-700/50 w-full grid grid-cols-2 h-8">
+                                    <TabsTrigger value="transcription" className="text-xs data-[state=active]:bg-slate-700 data-[state=active]:text-white">Transcripción</TabsTrigger>
+                                    <TabsTrigger value="notes" className="text-xs data-[state=active]:bg-slate-700 data-[state=active]:text-white">Notas Privadas</TabsTrigger>
+                                </TabsList>
+                            </div>
+
+                            <TabsContent value="transcription" className="flex-1 min-h-0 p-0 m-0 relative flex flex-col">
+                                <div className="absolute top-2 right-3 z-10">
+                                    {isRecording && <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
+                                </div>
+                                <div
+                                    ref={transcriptionRef}
+                                    className="flex-1 p-3 overflow-y-auto text-xs space-y-2 font-mono scroll-smooth"
+                                >
+                                    {transcription ? (
+                                        <p className="whitespace-pre-wrap text-slate-300 leading-relaxed">{transcription}</p>
+                                    ) : (
+                                        <div className="h-full flex flex-col items-center justify-center text-slate-600 gap-2">
+                                            <div className="w-8 h-0.5 bg-slate-800 rounded-full" />
+                                            <p className="italic text-[10px]">La transcripción aparecerá aquí...</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="notes" className="flex-1 min-h-0 p-0 m-0 flex flex-col">
+                                <Textarea
+                                    className="flex-1 bg-transparent border-none resize-none focus-visible:ring-0 p-3 text-sm text-slate-200"
+                                    placeholder="Escribe tus notas clínicas aquí..."
+                                    value={notes}
+                                    onChange={(e) => handleNotesChange(e.target.value)}
+                                />
+                                <div className="px-2 py-1 bg-slate-950 text-[10px] text-slate-600 border-t border-slate-800 text-right">
+                                    {notes ? 'Guardado automático' : 'Privado'}
+                                </div>
+                            </TabsContent>
+                        </Tabs>
+
+                        {/* Hidden Audio Recorder (Controlled via Ref) */}
+                        <div className="hidden">
+                            {mixedStream && (
+                                <AudioRecorder
+                                    ref={audioRecorderRef}
+                                    hideControls={true}
+                                    inputStream={mixedStream}
+                                    onRecordingStatusChange={(recording: boolean) => {
+                                        setIsRecording(recording);
+                                        if (socket && isConnected) {
+                                            if (recording) socket.emit('start_recording', { sessionId: params.id });
+                                            else socket.emit('stop_recording', { sessionId: params.id });
+                                        }
+                                    }}
+                                    onAudioData={(blob: Blob) => console.log('Final Blob', blob.size)}
+                                    onStreamData={async (chunk: Blob) => {
+                                        try {
+                                            const { text } = await AiAPI.transcribe(chunk, true);
+                                            if (text) {
+                                                setTranscription(prev => prev + (prev ? '\n' : '') + text);
+                                            }
+                                        } catch (e) {
+                                            console.error(e);
+                                        }
+                                    }}
+                                />
+                            )}
+                        </div>
+                    </Card>
+                </div>
             </div>
         </div>
     );
