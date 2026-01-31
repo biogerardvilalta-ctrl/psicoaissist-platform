@@ -2,9 +2,6 @@
 const nextConfig = {
   output: 'standalone',
   experimental: {
-    serverActions: {
-      allowedOrigins: ['psicoaissist.com', 'www.psicoaissist.com', 'localhost:3000'],
-    },
     turbo: {
       rules: {
         '*.svg': {

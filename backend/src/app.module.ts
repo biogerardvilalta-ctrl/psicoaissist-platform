@@ -41,7 +41,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [DatabaseConfig, JwtConfig, RedisConfig],
-      envFilePath: ['.env.production', '.env.local', '.env'],
+      envFilePath: ['.env.local', '.env'],
     }),
 
     // Cron Jobs
