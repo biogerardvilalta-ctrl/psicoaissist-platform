@@ -8,35 +8,33 @@ echo "🚀 Iniciando despliegue..."
 echo "📥 Descargando código..."
 git pull
 
-# 2. Reconstruir y reiniciar contenedores
-echo "🐳 Reconstruyendo contenedores..."
+# 2. Despliegue con Zero-Downtime (o casi cero)
+echo "🐳 Actualizando contenedores (Rolling Update)..."
 
-# Pre-limpieza: Asegurar que el puerto 3001 esté libre (evita error 500 por procesos zombies)
-if lsof -i :3001 -t >/dev/null; then
-    echo "⚠️  Detectado proceso ocupando puerto 3001. Intentando liberar..."
-    echo "    1. Deletiendo contenedores antiguos..."
-    docker compose down
-    
-    # Si sigue ocupado, es un proceso rogue (zombie)
-    if lsof -i :3001 -t >/dev/null; then
-        echo "    2. Matando proceso zombie en puerto 3001..."
-        kill -9 $(lsof -t -i:3001) || true
-    fi
+# Usamos 'up -d --build' directamete. Docker es inteligente:
+# 1. Si hay cambios, crea el nuevo contenedor
+# 2. Detiene el viejo
+# 3. Arranca el nuevo
+# SIN tirar toda la plataforma abajo primero.
+docker compose up -d --build --remove-orphans
+
+# 3. Validar que todo arrancó bien
+echo "🔍 Verificando salud del despliegue..."
+sleep 5
+
+if docker compose ps | grep "Exit"; then
+    echo "❌ ERROR: Algunos contenedores fallaron al arrancar."
+    docker compose ps
+    echo "📜 Logs recientes:"
+    docker compose logs --tail=20
+    exit 1
 fi
 
-# --build fuerza la reconstrucción para asegurar que los cambios de código se apliquen
-# -d lo ejecuta en segundo plano (detached)
-docker compose up -d --build
-
-# 3. Aplicar migraciones de base de datos
-echo "🔄 Aplicando migraciones de base de datos..."
-sleep 5 # Esperar un poco a que el backend arranque
-docker exec psicoaissist_beta_backend npx prisma migrate deploy
-
-# 3. Limpieza profunda (elimina imágenes no usadas, caché y contenedores detenidos)
-echo "🧹 Limpiando sistema Docker (imágenes antiguas, caché, etc)..."
-docker image prune -f
+# 4. Limpieza suave (solo si todo salió bien)
+echo "🧹 Limpiando imágenes antiguas..."
+docker image prune -f >/dev/null 2>&1
 
 echo "✅ ¡Despliegue completado con éxito!"
-echo "   Frontend: http://localhost:3000 (o tu IP)"
-echo "   Backend:  http://localhost:3001"
+echo "   Frontend: $FRONTEND_URL"
+echo "   Backend:  $API_URL"
+
