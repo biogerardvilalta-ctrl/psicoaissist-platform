@@ -119,77 +119,74 @@ export default function VideoCallPage({ params }: { params: { token: string } })
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
-            <Card className="w-full max-w-4xl bg-slate-800 border-slate-700 text-white overflow-hidden relative aspect-video">
-
-                {/* Main Video Area (Remote) */}
-                <div className="absolute inset-0 bg-black flex items-center justify-center">
-                    {remoteStream ? (
-                        <video
-                            ref={remoteVideoRef}
-                            autoPlay
-                            playsInline
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <div className="text-slate-500 animate-pulse">Esperando vídeo del profesional...</div>
-                    )}
-
-                    <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm">
-                        {status} ({connectionStatus})
-                    </div>
-                </div>
-
-                {/* Self View (PIP) */}
-                <div className="absolute top-4 right-4 w-32 h-24 bg-slate-700 rounded border border-slate-600 shadow-lg overflow-hidden z-20">
+        <div className="fixed inset-0 h-[100dvh] w-full bg-slate-900 overflow-hidden">
+            {/* Main Video Area (Remote) */}
+            <div className="absolute inset-0 bg-black flex items-center justify-center">
+                {remoteStream ? (
                     <video
-                        ref={localVideoRef}
+                        ref={remoteVideoRef}
                         autoPlay
-                        muted
                         playsInline
-                        className={`w-full h-full object-cover transform scale-x-[-1] ${!isVideoEnabled ? 'hidden' : ''}`}
+                        className="w-full h-full object-cover"
                     />
-                    {!isVideoEnabled && (
-                        <div className="w-full h-full flex items-center justify-center bg-slate-800 text-slate-400">
-                            <VideoOff className="h-6 w-6" />
-                        </div>
-                    )}
-                </div>
+                ) : (
+                    <div className="text-slate-500 animate-pulse">Esperando vídeo del profesional...</div>
+                )}
 
-                {/* Controls */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent flex justify-center gap-4 z-20">
+                <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm text-white z-10">
+                    {status} ({connectionStatus})
+                </div>
+            </div>
+
+            {/* Self View (PIP) */}
+            <div className="absolute top-4 right-4 w-32 h-24 sm:w-48 sm:h-36 bg-slate-700 rounded-lg border border-slate-600 shadow-xl overflow-hidden z-20">
+                <video
+                    ref={localVideoRef}
+                    autoPlay
+                    muted
+                    playsInline
+                    className={`w-full h-full object-cover transform scale-x-[-1] ${!isVideoEnabled ? 'hidden' : ''}`}
+                />
+                {!isVideoEnabled && (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-800 text-slate-400">
+                        <VideoOff className="h-6 w-6" />
+                    </div>
+                )}
+            </div>
+
+            {/* Controls */}
+            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-6 z-30 pointer-events-none">
+                <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 flex gap-4 shadow-2xl pointer-events-auto">
                     <Button
                         variant={isAudioEnabled ? "outline" : "destructive"}
                         size="icon"
-                        className={`rounded-full h-12 w-12 ${isAudioEnabled ? "bg-slate-700 border-transparent hover:bg-slate-600" : ""} text-white`}
+                        className={`rounded-full h-14 w-14 ${isAudioEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
                         onClick={toggleAudio}
                     >
-                        {isAudioEnabled ? <Mic /> : <MicOff />}
+                        {isAudioEnabled ? <Mic className="h-6 w-6" /> : <MicOff className="h-6 w-6" />}
                     </Button>
 
                     <Button
                         variant={isVideoEnabled ? "outline" : "destructive"}
                         size="icon"
-                        className={`rounded-full h-12 w-12 ${isVideoEnabled ? "bg-slate-700 border-transparent hover:bg-slate-600" : ""} text-white`}
+                        className={`rounded-full h-14 w-14 ${isVideoEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
                         onClick={toggleVideo}
                     >
-                        {isVideoEnabled ? <Video /> : <VideoOff />}
+                        {isVideoEnabled ? <Video className="h-6 w-6" /> : <VideoOff className="h-6 w-6" />}
                     </Button>
+
+                    <div className="w-px h-10 bg-slate-600/50 mx-2 self-center" />
 
                     <Button
                         variant="destructive"
                         size="icon"
-                        className="rounded-full h-12 w-12 bg-red-600 hover:bg-red-700 border-transparent"
+                        className="rounded-full h-14 w-14 bg-red-600 hover:bg-red-700 border-transparent shadow-lg hover:scale-105 transition-all"
                         onClick={endCall}
                     >
-                        <PhoneOff />
+                        <PhoneOff className="h-6 w-6" />
                     </Button>
                 </div>
-            </Card>
-
-            <p className="mt-4 text-slate-400 text-sm">
-                PsicoAIssist Secure Video Call
-            </p>
+            </div>
         </div>
     );
 }

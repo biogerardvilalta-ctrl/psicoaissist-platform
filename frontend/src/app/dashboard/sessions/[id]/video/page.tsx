@@ -332,20 +332,20 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
     }
 
     return (
-        <div className="h-[calc(100vh-6rem)] flex flex-col gap-4 p-4 bg-slate-950 rounded-lg overflow-hidden">
+        <div className="h-[100dvh] lg:h-[calc(100vh-6rem)] flex flex-col gap-2 lg:gap-4 p-2 lg:p-4 bg-slate-950 lg:rounded-lg overflow-hidden">
 
             {/* Top Bar: Header & Controls */}
-            <div className="flex flex-col md:flex-row items-center justify-between shrink-0 gap-4">
+            <div className="flex flex-row items-center justify-between shrink-0 gap-2 lg:gap-4 border-b border-slate-800/50 pb-2 lg:border-none lg:pb-0">
 
                 {/* Left: Timer */}
-                <div className="w-full md:w-auto flex justify-start">
-                    <div className="bg-blue-50/10 border border-blue-500/20 px-4 py-2 rounded-md font-mono text-xl font-bold text-blue-400 min-w-[120px] text-center shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                <div className="flex justify-start shrink-0">
+                    <div className="bg-blue-50/10 border border-blue-500/20 px-2 py-1 lg:px-4 lg:py-2 rounded-md font-mono text-xs lg:text-xl font-bold text-blue-400 min-w-[64px] lg:min-w-[120px] text-center shadow-[0_0_15px_rgba(59,130,246,0.2)]">
                         {formatTime(elapsedTime)}
                     </div>
                 </div>
 
                 {/* Center: Session Controls */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 lg:gap-3 flex-1 justify-center">
                     <div className="hidden md:flex bg-indigo-600 text-white px-4 py-2 rounded-md items-center gap-2 font-medium shadow-lg">
                         <Video className="h-4 w-4" />
                         Videoconf.
@@ -353,47 +353,49 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
 
                     {session.status === SessionStatus.SCHEDULED && (
                         <Button
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 shadow-lg shadow-emerald-900/20"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 lg:px-6 shadow-lg shadow-emerald-900/20 h-8 lg:h-10"
                             onClick={handleStartSession}
+                            size="sm"
                         >
-                            <Play className="h-4 w-4 mr-2 fill-current" />
-                            Iniciar Sesión
+                            <Play className="h-4 w-4 lg:mr-2 fill-current" />
+                            <span className="hidden lg:inline">Iniciar Sesión</span>
                         </Button>
                     )}
 
                     {session.status === SessionStatus.IN_PROGRESS && (
                         <Button
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 shadow-lg shadow-emerald-900/20"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 lg:px-6 shadow-lg shadow-emerald-900/20 h-8 lg:h-10"
                             onClick={handleEndSession}
+                            size="sm"
                         >
-                            <CheckCircle2 className="h-4 w-4 mr-2" />
-                            Finalizar Sesión
+                            <CheckCircle2 className="h-4 w-4 lg:mr-2" />
+                            <span className="hidden lg:inline">Finalizar</span>
                         </Button>
                     )}
                 </div>
 
 
                 {/* Right: Recording Controls */}
-                <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+                <div className="flex items-center gap-1 lg:gap-3 justify-end shrink-0">
                     {mixedStream ? (
                         !isRecording ? (
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+                                className="border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white px-3 lg:px-4 h-8 lg:h-10"
                                 onClick={handleStartRecording}
                             >
-                                <Mic className="h-3 w-3 mr-2 text-blue-400" />
-                                Grabar Sesión
+                                <Mic className="h-4 w-4 text-blue-400 lg:mr-2" />
+                                <span className="hidden lg:inline">Grabar</span>
                             </Button>
                         ) : (
-                            <div className="flex items-center gap-3 bg-slate-900/80 p-1 pr-3 rounded-full border border-red-500/30">
-                                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 text-red-500">
+                            <div className="flex items-center gap-1 lg:gap-3 bg-slate-900/80 p-0.5 lg:p-1 lg:pr-3 rounded-full border border-red-500/30">
+                                <div className="flex items-center gap-2 px-2 py-1 lg:py-1.5 rounded-full bg-red-500/10 text-red-500">
                                     <span className="relative flex h-2 w-2">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                                     </span>
-                                    <span className="text-xs font-mono font-bold">GRABANDO</span>
+                                    <span className="hidden lg:inline text-xs font-mono font-bold">GRABANDO</span>
                                 </div>
                                 <Button
                                     size="sm"
@@ -401,26 +403,26 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                                     className="h-7 px-2 text-white hover:bg-white/10 hover:text-red-400"
                                     onClick={handleStopRecording}
                                 >
-                                    <Square className="h-3 w-3 mr-2 fill-current" />
-                                    Detener
+                                    <Square className="h-3 w-3 lg:mr-2 fill-current" />
+                                    <span className="hidden lg:inline">Detener</span>
                                 </Button>
                             </div>
                         )
                     ) : (
-                        <div className="text-xs text-slate-500 italic px-2">Esperando audio...</div>
+                        <div className="hidden lg:block text-xs text-slate-500 italic px-2">Esperando audio...</div>
                     )}
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" onClick={endCall}>
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white h-8 w-8 lg:h-10 lg:w-10" onClick={endCall}>
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
                 </div>
             </div>
 
             {/* Main Content Grid */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-0">
+            <div className="flex-1 flex flex-col sm:grid sm:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-4 min-h-0 overflow-hidden">
 
-                {/* Left: Video Area (3 cols) */}
-                <div className="lg:col-span-3 flex flex-col min-h-0">
-                    <Card className="flex-1 bg-slate-900 border-slate-800 text-white overflow-hidden relative rounded-xl shadow-2xl">
+                {/* Left: Video Area (2 cols on sm, 3 cols on lg) */}
+                <div className="sm:col-span-2 lg:col-span-3 flex flex-col h-[35%] sm:h-auto min-h-0 shrink-0">
+                    <Card className="flex-1 bg-slate-900 border-slate-800 text-white overflow-hidden relative rounded-lg lg:rounded-xl shadow-2xl">
                         {/* Main Video Area (Remote) */}
                         <div className="absolute inset-0 bg-black flex items-center justify-center text-slate-500">
                             {remoteStream ? (
@@ -428,22 +430,22 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                                     ref={remoteVideoRef}
                                     autoPlay
                                     playsInline
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-contain"
                                 />
                             ) : (
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="h-16 w-16 rounded-full border-2 border-slate-800 border-t-blue-500 animate-spin" />
-                                    <div className="text-slate-500 animate-pulse">Esperando vídeo del paciente...</div>
+                                    <div className="text-slate-500 animate-pulse text-xs lg:text-base">Esperando vídeo del paciente...</div>
                                 </div>
                             )}
 
-                            <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded-full text-xs backdrop-blur-sm text-slate-300 border border-white/5">
+                            <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded-full text-[10px] lg:text-xs backdrop-blur-sm text-slate-300 border border-white/5">
                                 {status} ({connectionStatus})
                             </div>
                         </div>
 
                         {/* Self View PIP */}
-                        <div className="absolute top-4 right-4 w-48 aspect-video bg-slate-800 rounded-lg border border-slate-700 shadow-2xl overflow-hidden z-10 transition-all hover:scale-105">
+                        <div className="absolute top-2 right-2 lg:top-4 lg:right-4 w-24 lg:w-48 aspect-video bg-slate-800 rounded-lg border border-slate-700 shadow-2xl overflow-hidden z-10 transition-all hover:scale-105">
                             <video
                                 ref={localVideoRef}
                                 autoPlay
@@ -453,44 +455,44 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                             />
                             {!isVideoEnabled && (
                                 <div className="w-full h-full flex items-center justify-center bg-slate-800 text-slate-400">
-                                    <VideoOff className="h-6 w-6" />
+                                    <VideoOff className="h-4 w-4 lg:h-6 lg:w-6" />
                                 </div>
                             )}
                         </div>
 
                         {/* Controls Overlay */}
-                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 bg-black/60 backdrop-blur-xl p-4 rounded-2xl border border-white/10 z-20 shadow-2xl transition-all hover:bg-black/80">
+                        <div className="absolute bottom-4 lg:bottom-8 left-1/2 -translate-x-1/2 flex gap-3 lg:gap-4 bg-black/60 backdrop-blur-xl p-2 lg:p-4 rounded-xl lg:rounded-2xl border border-white/10 z-20 shadow-2xl transition-all hover:bg-black/80">
                             <Button
                                 variant={isAudioEnabled ? "ghost" : "destructive"}
                                 size="icon"
-                                className={`rounded-full h-14 w-14 ${isAudioEnabled ? "bg-white/10 hover:bg-white/20" : ""} text-white transition-all`}
+                                className={`rounded-full h-10 w-10 lg:h-14 lg:w-14 ${isAudioEnabled ? "bg-white/10 hover:bg-white/20" : ""} text-white transition-all`}
                                 onClick={toggleAudio}
                             >
-                                {isAudioEnabled ? <Mic className="h-6 w-6" /> : <MicOff className="h-6 w-6" />}
+                                {isAudioEnabled ? <Mic className="h-4 w-4 lg:h-6 lg:w-6" /> : <MicOff className="h-4 w-4 lg:h-6 lg:w-6" />}
                             </Button>
                             <Button
                                 variant={isVideoEnabled ? "ghost" : "destructive"}
                                 size="icon"
-                                className={`rounded-full h-14 w-14 ${isVideoEnabled ? "bg-white/10 hover:bg-white/20" : ""} text-white transition-all`}
+                                className={`rounded-full h-10 w-10 lg:h-14 lg:w-14 ${isVideoEnabled ? "bg-white/10 hover:bg-white/20" : ""} text-white transition-all`}
                                 onClick={toggleVideo}
                             >
-                                {isVideoEnabled ? <Video className="h-6 w-6" /> : <VideoOff className="h-6 w-6" />}
+                                {isVideoEnabled ? <Video className="h-4 w-4 lg:h-6 lg:w-6" /> : <VideoOff className="h-4 w-4 lg:h-6 lg:w-6" />}
                             </Button>
-                            <div className="w-px h-10 bg-white/20 mx-2 self-center" />
+                            <div className="w-px h-8 lg:h-10 bg-white/20 mx-1 lg:mx-2 self-center" />
                             <Button
                                 variant="destructive"
                                 size="icon"
-                                className="rounded-full h-14 w-14 bg-red-500 hover:bg-red-600 border-transparent shadow-lg text-white hover:scale-110 transition-all"
+                                className="rounded-full h-10 w-10 lg:h-14 lg:w-14 bg-red-500 hover:bg-red-600 border-transparent shadow-lg text-white hover:scale-110 transition-all"
                                 onClick={endCall}
                             >
-                                <PhoneOff className="h-6 w-6" />
+                                <PhoneOff className="h-4 w-4 lg:h-6 lg:w-6" />
                             </Button>
                         </div>
                     </Card>
                 </div>
 
                 {/* Right: Sidebar (1 col) - Split View */}
-                <div className="lg:col-span-1 flex flex-col gap-4 min-h-0 h-full">
+                <div className="sm:col-span-1 lg:col-span-1 flex flex-col gap-2 lg:gap-4 min-h-0 h-full flex-1">
 
                     {/* Top: AI Assistant (Flex Grow) */}
                     <div className="flex-1 min-h-0 overflow-hidden rounded-xl shadow-lg">
@@ -503,8 +505,8 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                         />
                     </div>
 
-                    {/* Bottom: Tabs (Approx 40% height) */}
-                    <Card className="h-[40%] min-h-[250px] bg-slate-900 border-slate-800 text-slate-100 flex flex-col overflow-hidden shrink-0">
+                    {/* Bottom: Tabs (Approx 30% height on mobile, 40% on sm+) */}
+                    <Card className="h-[30%] sm:h-[40%] min-h-[150px] lg:min-h-[250px] bg-slate-900 border-slate-800 text-slate-100 flex flex-col overflow-hidden shrink-0">
                         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
                             <div className="px-3 pt-2 border-b border-slate-800 bg-slate-950/50">
                                 <TabsList className="bg-slate-800/50 border border-slate-700/50 w-full grid grid-cols-2 h-8">

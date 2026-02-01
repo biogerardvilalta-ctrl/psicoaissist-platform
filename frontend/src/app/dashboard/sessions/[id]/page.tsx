@@ -320,7 +320,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
         <div className="p-4 md:p-6 max-w-[1600px] mx-auto space-y-4 md:space-y-6">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                 <div className="flex items-center gap-4 w-full lg:w-auto">
-                    <Button variant="ghost" size="icon" onClick={() => router.back()} className="-ml-2 lg:ml-0">
+                    <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard/sessions')} className="-ml-2 lg:ml-0">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
                     <div className="flex-1 lg:flex-none">
