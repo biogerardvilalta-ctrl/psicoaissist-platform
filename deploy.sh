@@ -5,8 +5,14 @@
 echo "🚀 Iniciando despliegue..."
 
 # 1. Bajar últimos cambios de la rama actual (normalmente main)
+echo "📦 Guardando posibles cambios locales..."
+git stash
+
 echo "📥 Descargando código..."
 git pull
+
+echo "♻️ Recuperando cambios locales..."
+git stash pop || echo "⚠️  No había cambios locales o hubo conflicto (eso es normal si tocaste lo mismo que nosotros)."
 
 # 2. Despliegue con Zero-Downtime (o casi cero)
 echo "🐳 Actualizando contenedores (Rolling Update)..."
