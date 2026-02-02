@@ -71,6 +71,24 @@ export default function ReportsPage() {
         }
     };
 
+    const handleDownloadWord = async (id: string, title: string, clientName?: string) => {
+        try {
+            const blob = await ReportsAPI.downloadWord(id);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            const safeTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const safeClient = clientName ? clientName.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'report';
+            const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            link.download = `${safeClient}_${safeTitle}_${dateStr}.docx`;
+            link.click();
+            window.URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error("Download Word failed", e);
+            toast({ title: "Error", description: "No se pudo descargar el Word", variant: "destructive" });
+        }
+    };
+
     const handleDelete = async (id: string) => {
         if (!confirm('¿Estás seguro de que quieres eliminar este informe?')) return;
         try {
@@ -199,13 +217,22 @@ export default function ReportsPage() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         {report.status === 'COMPLETED' ? (
-                                            <button
-                                                onClick={() => handleDownload(report.id, report.title, clientMap[report.clientId])}
-                                                className="text-primary hover:text-primary/80 mr-4"
-                                                title="Descargar PDF"
-                                            >
-                                                <Download className="w-5 h-5" />
-                                            </button>
+                                            <>
+                                                <button
+                                                    onClick={() => handleDownloadWord(report.id, report.title, clientMap[report.clientId])}
+                                                    className="text-blue-600 hover:text-blue-800 mr-4"
+                                                    title="Descargar Word"
+                                                >
+                                                    <FileText className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDownload(report.id, report.title, clientMap[report.clientId])}
+                                                    className="text-red-600 hover:text-red-800 mr-4"
+                                                    title="Descargar PDF"
+                                                >
+                                                    <Download className="w-5 h-5" />
+                                                </button>
+                                            </>
                                         ) : (
                                             <Link
                                                 href={`/dashboard/reports/new?edit=${report.id}`}

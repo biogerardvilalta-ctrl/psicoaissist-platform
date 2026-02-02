@@ -49,6 +49,19 @@ export class ReportsController {
         res.end(buffer);
     }
 
+    @Get(':id/download/word')
+    async downloadWord(@Request() req, @Param('id') id: string, @Res() res: Response) {
+        const buffer = await this.reportsService.downloadDocx(id, req.user.id);
+
+        res.set({
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition': `attachment; filename="informe-${id}.docx"`,
+            'Content-Length': buffer.length,
+        });
+
+        res.end(buffer);
+    }
+
     @Delete(':id')
     remove(@Request() req, @Param('id') id: string) {
         return this.reportsService.remove(id, req.user.id);

@@ -32,11 +32,12 @@ export class UsageLimitsService {
     if (user?.role) {
       const role = user.role.toString().toUpperCase();
       // Map roles to plans
-      if (role.includes('PREMIUM') || role.includes('PRO') || role.includes('TRIAL')) {
+      if (role.includes('PREMIUM') || role.includes('PRO') || role.includes('TRIAL') || role === 'ADMIN') {
         let planType = 'basic';
         if (role.includes('PREMIUM')) planType = 'premium';
         else if (role.includes('PRO')) planType = 'pro';
         else if (role.includes('TRIAL')) planType = 'pro'; // Trial acts as Pro
+        else if (role === 'ADMIN') planType = 'premium_plus'; // Admin gets everything
 
         // Return a virtual active subscription
         return {

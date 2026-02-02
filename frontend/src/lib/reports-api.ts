@@ -89,6 +89,12 @@ export class ReportsAPI {
         } as RequestInit);
     }
 
+    static async downloadWord(id: string): Promise<Blob> {
+        return httpClient.get<Blob>(`${this.BASE_PATH}/${id}/download/word`, {
+            responseType: 'blob'
+        } as RequestInit);
+    }
+
     static async generateDraft(data: GenerateDraftData): Promise<{ content: string }> {
         return httpClient.post<{ content: string }>(`${this.BASE_PATH}/generate-draft`, data);
     }

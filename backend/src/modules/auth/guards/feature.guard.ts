@@ -18,17 +18,18 @@ export class FeatureGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private prisma: PrismaService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredFeature = this.reflector.get<string>('required-feature', context.getHandler());
-    
+
     if (!requiredFeature) {
       return true; // No feature requirement
     }
 
     const request = context.switchToHttp().getRequest();
-    const userId = request.user?.sub;
+    // Support both 'id' (typical Passport) and 'sub' (JWT standard)
+    const userId = request.user?.id || request.user?.sub;
 
     if (!userId) {
       throw new ForbiddenException('Authentication required');
@@ -44,13 +45,18 @@ export class FeatureGuard implements CanActivate {
       throw new ForbiddenException('User not found');
     }
 
+    // ADMIN Override: Admins have access to all features
+    if (user.role === 'ADMIN') {
+      return true;
+    }
+
     // Check if user has active subscription
     if (!user.subscription || user.subscription.status !== 'active') {
       throw new ForbiddenException('Active subscription required');
     }
 
     // Get plan features
-    const planFeatures = PLAN_FEATURES[user.subscription.planType];
+    const planFeatures = PLAN_FEATURES[user.subscription.planType.toLowerCase()];
     if (!planFeatures) {
       throw new ForbiddenException('Invalid subscription plan');
     }
@@ -62,31 +68,31 @@ export class FeatureGuard implements CanActivate {
           throw new ForbiddenException('Advanced analytics requires Pro or Premium plan');
         }
         break;
-      
+
       case 'apiAccess':
         if (!planFeatures.apiAccess) {
           throw new ForbiddenException('API access requires Pro or Premium plan');
         }
         break;
-      
+
       case 'customBranding':
         if (!planFeatures.customBranding) {
           throw new ForbiddenException('Custom branding requires Premium plan');
         }
         break;
-      
+
       case 'ssoIntegration':
         if (!planFeatures.ssoIntegration) {
           throw new ForbiddenException('SSO integration requires Premium plan');
         }
         break;
-      
+
       case 'prioritySupport':
         if (!planFeatures.prioritySupport) {
           throw new ForbiddenException('Priority support requires Premium plan');
         }
         break;
-      
+
       default:
         // Unknown feature, allow by default
         return true;

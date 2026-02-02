@@ -7,6 +7,7 @@ import { ReportStatus, ReportType } from '@prisma/client';
 import { PSYCHOLOGICAL_REPORTS } from '../../config/psychological-reports.config';
 
 import { PdfService } from './pdf.service';
+import { WordService } from './word.service';
 import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '@prisma/client';
 import { UsageLimitsService } from '../payments/usage-limits.service';
@@ -18,6 +19,7 @@ export class ReportsService {
         private readonly encryption: EncryptionService,
         private readonly aiService: AiService,
         private readonly pdfService: PdfService,
+        private readonly wordService: WordService,
         private readonly auditService: AuditService,
         private readonly usageLimitsService: UsageLimitsService,
     ) { }
@@ -468,6 +470,57 @@ export class ReportsService {
         const professionalNumber = user?.professionalNumber || 'N/A';
 
         return this.pdfService.generateReportPdf({
+            title: report.title,
+            clientName: clientName,
+            type: report.reportType,
+            content: report.content,
+            psychologistName,
+            professionalNumber,
+            branding: (user as any)?.brandingConfig || {}
+        });
+    }
+
+    async downloadDocx(id: string, userId: string): Promise<Buffer> {
+        const report = await this.findOne(id, userId);
+
+        let clientName = "Paciente Confidencial";
+
+        if (report.clientId) {
+            const client = await this.prisma.client.findUnique({
+                where: { id: report.clientId }
+            });
+
+            if (client && client.encryptedPersonalData) {
+                try {
+                    const iv = client.encryptedPersonalData.subarray(0, 16).toString('base64');
+                    const tag = client.encryptedPersonalData.subarray(16, 32).toString('base64');
+                    const encryptedData = client.encryptedPersonalData.subarray(32);
+
+                    const result = await this.encryption.decryptData<{ firstName: string; lastName: string }>({
+                        encryptedData,
+                        iv,
+                        tag,
+                        keyId: client.encryptionKeyId
+                    });
+
+                    if (result.success) {
+                        clientName = `${result.data.firstName} ${result.data.lastName}`;
+                    }
+                } catch (error) {
+                    console.error('Error decrypting client data for Word:', error);
+                }
+            }
+        }
+
+        // Fetch Psychologist (User) details
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        const psychologistName = user ? `${user.firstName} ${user.lastName}` : 'Psicólogo';
+        const professionalNumber = user?.professionalNumber || 'N/A';
+
+        return this.wordService.generateReportDocx({
             title: report.title,
             clientName: clientName,
             type: report.reportType,

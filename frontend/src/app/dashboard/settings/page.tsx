@@ -153,7 +153,7 @@ export default function SettingsPage() {
     // Hide Agenda for Basic
     ...(user?.subscription?.planType?.toUpperCase() !== 'BASIC' ? [{ id: 'agenda', label: 'Agenda y Calendario', icon: CalendarIcon }] : []),
     // Solo mostrar Marca Personal si es PREMIUM
-    ...((user?.subscription?.planType === 'PREMIUM' || user?.role === 'ADMIN') ? [{ id: 'branding', label: 'Marca Personal', icon: Palette }] : []),
+    ...((user?.subscription?.planType?.toUpperCase() === 'PREMIUM' || user?.role === 'ADMIN') ? [{ id: 'branding', label: 'Marca Personal', icon: Palette }] : []),
     // Solo mostrar Gestores de Agenda si tiene el pack activado con agendaManagerEnabled o es ADMIN
     ...((user?.agendaManagerEnabled === true || user?.role === 'ADMIN') ? [{ id: 'managers', label: 'Gestores de Agenda', icon: Users }] : []),
     // Hide AI for Basic
