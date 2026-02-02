@@ -119,7 +119,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
     };
 
     return (
-        <div className="fixed inset-0 h-[100dvh] w-full bg-slate-900 overflow-hidden">
+        <div className="fixed inset-0 top-16 w-full bg-slate-900 overflow-hidden">
             {/* Main Video Area (Remote) */}
             <div className="absolute inset-0 bg-black flex items-center justify-center">
                 {remoteStream ? (
@@ -133,13 +133,13 @@ export default function VideoCallPage({ params }: { params: { token: string } })
                     <div className="text-slate-500 animate-pulse">Esperando vídeo del profesional...</div>
                 )}
 
-                <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm text-white z-10">
+                <div className="absolute top-4 left-4 landscape:left-auto landscape:right-4 lg:landscape:left-4 lg:landscape:right-auto bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm text-white z-10">
                     {status} ({connectionStatus})
                 </div>
             </div>
 
             {/* Self View (PIP) */}
-            <div className="absolute top-4 right-4 w-32 h-24 sm:w-48 sm:h-36 bg-slate-700 rounded-lg border border-slate-600 shadow-xl overflow-hidden z-20">
+            <div className="absolute top-4 right-4 landscape:right-auto landscape:left-4 lg:landscape:right-4 lg:landscape:left-auto w-32 h-24 sm:w-48 sm:h-36 bg-slate-700 rounded-lg border border-slate-600 shadow-xl overflow-hidden z-20">
                 <video
                     ref={localVideoRef}
                     autoPlay
@@ -154,36 +154,35 @@ export default function VideoCallPage({ params }: { params: { token: string } })
                 )}
             </div>
 
-            {/* Controls */}
-            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-6 z-30 pointer-events-none landscape:bottom-auto landscape:top-1/2 landscape:-translate-y-1/2 landscape:right-4 landscape:left-auto landscape:flex-col landscape:gap-4">
-                <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 flex gap-4 shadow-2xl pointer-events-auto landscape:flex-col landscape:p-2 landscape:gap-2">
+            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-6 z-30 pointer-events-none landscape:right-4 landscape:left-auto landscape:bottom-auto landscape:top-1/2 landscape:-translate-y-1/2 landscape:flex-col landscape:gap-3 lg:landscape:flex-row lg:landscape:bottom-6 lg:landscape:left-0 lg:landscape:right-0 lg:landscape:top-auto lg:landscape:translate-y-0 lg:landscape:gap-6">
+                <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 flex gap-4 shadow-2xl pointer-events-auto landscape:flex-col landscape:gap-2 landscape:p-3 lg:landscape:flex-row lg:landscape:gap-4 lg:landscape:p-4">
                     <Button
                         variant={isAudioEnabled ? "outline" : "destructive"}
                         size="icon"
-                        className={`rounded-full h-14 w-14 landscape:h-10 landscape:w-10 ${isAudioEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
+                        className={`rounded-full h-14 w-14 landscape:h-10 landscape:w-10 lg:landscape:h-14 lg:landscape:w-14 ${isAudioEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
                         onClick={toggleAudio}
                     >
-                        {isAudioEnabled ? <Mic className="h-6 w-6 landscape:h-4 landscape:w-4" /> : <MicOff className="h-6 w-6 landscape:h-4 landscape:w-4" />}
+                        {isAudioEnabled ? <Mic className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" /> : <MicOff className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" />}
                     </Button>
 
                     <Button
                         variant={isVideoEnabled ? "outline" : "destructive"}
                         size="icon"
-                        className={`rounded-full h-14 w-14 landscape:h-10 landscape:w-10 ${isVideoEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
+                        className={`rounded-full h-14 w-14 landscape:h-10 landscape:w-10 lg:landscape:h-14 lg:landscape:w-14 ${isVideoEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
                         onClick={toggleVideo}
                     >
-                        {isVideoEnabled ? <Video className="h-6 w-6 landscape:h-4 landscape:w-4" /> : <VideoOff className="h-6 w-6 landscape:h-4 landscape:w-4" />}
+                        {isVideoEnabled ? <Video className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" /> : <VideoOff className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" />}
                     </Button>
 
-                    <div className="w-px h-10 bg-slate-600/50 mx-2 self-center landscape:w-6 landscape:h-px landscape:my-1 landscape:mx-0" />
+                    <div className="w-px h-10 bg-slate-600/50 mx-2 self-center landscape:w-8 landscape:h-px landscape:my-1 lg:landscape:w-px lg:landscape:h-10 lg:landscape:mx-2 lg:landscape:my-0" />
 
                     <Button
                         variant="destructive"
                         size="icon"
-                        className="rounded-full h-14 w-14 landscape:h-10 landscape:w-10 bg-red-600 hover:bg-red-700 border-transparent shadow-lg hover:scale-105 transition-all"
+                        className="rounded-full h-14 w-14 landscape:h-10 landscape:w-10 lg:landscape:h-14 lg:landscape:w-14 bg-red-600 hover:bg-red-700 border-transparent shadow-lg hover:scale-105 transition-all"
                         onClick={endCall}
                     >
-                        <PhoneOff className="h-6 w-6 landscape:h-4 landscape:w-4" />
+                        <PhoneOff className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" />
                     </Button>
                 </div>
             </div>
