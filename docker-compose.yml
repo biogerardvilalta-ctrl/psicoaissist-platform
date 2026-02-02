@@ -22,6 +22,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: psicoaissist_beta_redis
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     restart: unless-stopped
     volumes:
       - redis_beta_data:/data

@@ -18,10 +18,10 @@ export class EmailService {
   }
 
   private initializeTransporter() {
-    const host = this.configService.get<string>('SMTP_HOST');
-    const port = this.configService.get<number>('SMTP_PORT');
-    const user = this.configService.get<string>('SMTP_USER');
-    const pass = this.configService.get<string>('SMTP_PASS');
+    const host = this.configService.get<string>('SMTP_HOST') || 'mail.psicoaissist.com';
+    const port = this.configService.get<number>('SMTP_PORT') || 587;
+    const user = this.configService.get<string>('SMTP_USER') || 'no-reply@psicoaissist.com';
+    const pass = this.configService.get<string>('SMTP_PASS') || 'S3gur420vintiDOS!!';
 
     if (host) {
       this.transporter = nodemailer.createTransport({
@@ -103,7 +103,7 @@ export class EmailService {
       return;
     }
 
-    const from = this.configService.get<string>('SMTP_FROM') || 'noreply@psicoaissist.com';
+    const from = this.configService.get<string>('SMTP_FROM') || '"PsicoAIssist" <no-reply@psicoaissist.com>';
 
     try {
       await this.transporter.sendMail({
