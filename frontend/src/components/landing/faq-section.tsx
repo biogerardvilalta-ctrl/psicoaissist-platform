@@ -19,7 +19,7 @@ const faqs = [
   {
     id: 3,
     question: '¿Puedo personalizar los informes generados?',
-    answer: 'Sí, completamente. Puedes crear plantillas personalizadas, ajustar el formato según tu práctica, añadir tu logo, modificar secciones y exportar en múltiples formatos (PDF, Word, etc.). Los informes se adaptan a tu estilo profesional.',
+    answer: 'Sí. Con el plan Premium puedes configurar tu "Marca Personal" en los ajustes. Esto te permite añadir tu logotipo, nombre de clínica y colores corporativos, que se aplicarán automáticamente a todos los informes PDF y Word generados para mantener tu imagen profesional.',
     category: 'Personalización'
   },
   {

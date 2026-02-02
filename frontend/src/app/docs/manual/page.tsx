@@ -650,12 +650,12 @@ export default function ManualPage() {
                                 <li><strong>Exportar:</strong> Las sesiones creadas en PsicoAIssist aparecen en su Google Calendar.</li>
                             </ol>
 
-                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🎨 Marca Personal (Solo Premium)</h3>
-                            <p>Personalice la apariencia de sus informes clínicos para reflejar su identidad corporativa.</p>
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🎨 Marca Personal y Personalización de Informes (Solo Premium)</h3>
+                            <p>Personalice la apariencia de sus informes clínicos (PDF y Word) para reflejar su identidad corporativa.</p>
                             <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">
-                                <li><strong>Nombre de la Empresa:</strong> Aparecerá en el encabezado de los informes.</li>
-                                <li><strong>Colores Corporativos:</strong> Defina un color primario y secundario para los elementos gráficos del PDF.</li>
-                                <li><strong>Logo:</strong> Active o desactive la visualización del icono de su marca.</li>
+                                <li><strong>Nombre de la Empresa:</strong> Aparecerá en el encabezado de todos los documentos generados.</li>
+                                <li><strong>Colores Corporativos:</strong> Defina un color primario y secundario que se aplicará a títulos y elementos gráficos del informe.</li>
+                                <li><strong>Logo:</strong> Suba su logotipo para que aparezca en la esquina superior de sus informes.</li>
                             </ul>
                             <p className="text-sm text-slate-500 mt-2"><i>Nota: Esta funcionalidad es exclusiva para usuarios con plan Premium o superior.</i></p>
 
