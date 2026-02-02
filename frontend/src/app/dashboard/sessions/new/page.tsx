@@ -63,7 +63,7 @@ export default function NewSessionPage() {
     const preselectedDateIso = searchParams.get('date');
 
     let defaultDate = format(new Date(), 'yyyy-MM-dd');
-    let defaultTime = format(new Date(), 'HH:mm');
+    let defaultTime = ''; // Default to empty to force selection (prevents "current time" issue)
 
     if (preselectedDateIso) {
         try {
@@ -285,6 +285,7 @@ export default function NewSessionPage() {
                                                     <Select
                                                         onValueChange={(val) => {
                                                             field.onChange(val);
+                                                            form.setValue('time', ''); // Reset time when professional changes
                                                         }}
                                                         value={managedProfessionals.find(p => p.id === field.value) ? field.value : ''}
                                                         disabled={isLoadingProfessionals}
@@ -376,7 +377,10 @@ export default function NewSessionPage() {
                                             <FormControl>
                                                 <div className="relative">
                                                     <CalendarIcon className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                                                    <Input type="date" className="pl-9" {...field} />
+                                                    <Input type="date" className="pl-9" {...field} onChange={(e) => {
+                                                        field.onChange(e);
+                                                        form.setValue('time', ''); // Reset time when date changes
+                                                    }} />
                                                 </div>
                                             </FormControl>
                                             <FormMessage />
