@@ -243,6 +243,7 @@ export default function UsersPage() {
   const searchParams = useSearchParams();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [localSearchQuery, setLocalSearchQuery] = useState(''); // Add local state for input
   const [statusFilter, setStatusFilter] = useState<UserFilters['status']>('ALL');
   const [roleFilter, setRoleFilter] = useState<UserFilters['role']>('ALL');
   const [planFilter, setPlanFilter] = useState<string>(searchParams.get('plan') || 'ALL');
@@ -499,15 +500,23 @@ export default function UsersPage() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               {/* Search */}
               <div className="relative flex-1 max-w-md">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-gray-400" />
+                <div
+                  className="absolute inset-y-0 left-0 pl-3 flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+                  onClick={() => handleSearch(localSearchQuery)}
+                >
+                  <Search className="h-4 w-4 text-gray-400 hover:text-blue-600" />
                 </div>
                 <input
                   type="text"
                   placeholder="Buscar por nombre o email..."
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
+                  value={localSearchQuery}
+                  onChange={(e) => setLocalSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch(localSearchQuery);
+                    }
+                  }}
                 />
               </div>
 
@@ -573,6 +582,7 @@ export default function UsersPage() {
                 <button
                   onClick={() => {
                     setSearchQuery('');
+                    setLocalSearchQuery(''); // Clear local state as well
                     setStatusFilter('ALL');
                     setRoleFilter('ALL');
                     setPlanFilter('ALL');
