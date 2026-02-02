@@ -1,13 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 
-const ICE_SERVERS = {
+// ICE Servers default (fallback)
+const DEFAULT_ICE_SERVERS = {
     iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        { urls: 'stun:stun3.l.google.com:19302' },
-        { urls: 'stun:stun4.l.google.com:19302' },
     ],
 };
 
@@ -28,14 +26,43 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
 
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<'initial' | 'connecting' | 'connected' | 'disconnected'>('initial');
+    const [iceConfig, setIceConfig] = useState<RTCConfiguration | null>(null);
     const peerConnection = useRef<RTCPeerConnection | null>(null);
+
+    // Fetch ICE Servers (TURN/STUN)
+    useEffect(() => {
+        const fetchIceConfig = async () => {
+            try {
+                // Adjust URL based on your env or proxy setup
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
+                const res = await fetch(`${apiUrl}/webrtc/ice-config`);
+                if (res.ok) {
+                    const data = await res.json();
+                    console.log("Fetched ICE Config:", data);
+                    setIceConfig(data);
+                } else {
+                    console.warn("Failed to fetch ICE config, using default STUN");
+                    setIceConfig(DEFAULT_ICE_SERVERS);
+                }
+            } catch (error) {
+                console.error("Error fetching ICE config:", error);
+                setIceConfig(DEFAULT_ICE_SERVERS);
+            }
+        };
+
+        fetchIceConfig();
+    }, []);
 
     // Initialize PeerConnection
     const createPeerConnection = useCallback((overrideRoomId?: string) => {
         if (peerConnection.current) return peerConnection.current;
+        if (!iceConfig) {
+            console.warn("createPeerConnection called before ICE config loaded. waiting...");
+            return null;
+        }
 
-        console.log("Creating new RTCPeerConnection");
-        const pc = new RTCPeerConnection(ICE_SERVERS);
+        console.log("Creating new RTCPeerConnection with config", iceConfig);
+        const pc = new RTCPeerConnection(iceConfig);
 
         pc.onicecandidate = (event) => {
             const targetRoomId = overrideRoomId || roomIdRef.current;
@@ -78,7 +105,7 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
 
         peerConnection.current = pc;
         return pc;
-    }, [socket, localStream]);
+    }, [socket, localStream, iceConfig]);
 
     // Handle Signaling
     useEffect(() => {
@@ -88,7 +115,10 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
             // Use roomId from data if available (race condition fix), else ref
             const activeRoomId = data.roomId || roomIdRef.current || undefined;
 
-            if (!peerConnection.current) createPeerConnection(activeRoomId);
+            if (!peerConnection.current) {
+                const pc = createPeerConnection(activeRoomId);
+                if (!pc) return; // Wait for ICE config
+            }
             const pc = peerConnection.current!;
 
             try {
@@ -133,6 +163,7 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
                 const roomIdToUse = roomIdRef.current;
                 if (roomIdToUse) {
                     const pc = createPeerConnection(roomIdToUse);
+                    if (!pc) return; // ICE config not ready
                     const offer = await pc.createOffer();
                     await pc.setLocalDescription(offer);
                     socket.emit('signal', {
@@ -151,6 +182,7 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
             if (identity === 'host' && data.peerCount > 1 && data.roomId) {
                 console.log("[useWebRTC] Creating Offer (Late Join Trigger)...");
                 const pc = createPeerConnection(data.roomId);
+                if (!pc) return;
                 const offer = await pc.createOffer();
                 await pc.setLocalDescription(offer);
                 socket.emit('signal', {

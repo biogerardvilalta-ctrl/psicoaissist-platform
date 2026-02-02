@@ -28,6 +28,7 @@ import { RemindersModule } from './modules/reminders/reminders.module';
 import { GoogleModule } from './modules/google/google.module';
 import { SimulatorModule } from './modules/simulator/simulator.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { WebRTCModule } from './modules/webrtc/webrtc.module';
 // import { HealthModule } from './modules/health/health.module';
 
 // Shared services
@@ -102,6 +103,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     GoogleModule,
     SimulatorModule, // Clinical Simulator
     NotificationsModule,
+    WebRTCModule,
     // HealthModule,
 
     // Static Files

@@ -34,6 +34,29 @@ services:
     ports:
       - "127.0.0.1:6379:6379" # Expose to Localhost Only
 
+  # TURN Server (Coturn)
+  coturn:
+    image: coturn/coturn
+    container_name: psicoaissist_beta_coturn
+    restart: unless-stopped
+    volumes:
+      - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    environment:
+      - TURN_SECRET=${TURN_SECRET}
+      - REALM=${TURN_REALM}
+      # IMPORTANT: Coturn needs to know its external IP. 
+      # We attempt to detect it or use a variable. 
+      # For AWS/Cloud environments, specific IP configuration is often needed.
+      # Here we assume the container can determine it or we pass it if known.
+    ports:
+      - "3478:3478/tcp"
+      - "3478:3478/udp"
+      - "49152-65535:49152-65535/udp"
+    command:
+      - -c /etc/coturn/turnserver.conf
+      - --static-auth-secret=${TURN_SECRET}
+      - --realm=${TURN_REALM}
+
   # Backend (NestJS)
   backend:
     build:
