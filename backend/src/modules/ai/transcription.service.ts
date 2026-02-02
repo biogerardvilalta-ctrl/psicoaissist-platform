@@ -121,7 +121,7 @@ export class TranscriptionService {
                         fileUri: uploadResponse.file.uri
                     }
                 },
-                { text: "Eres un transcriptor experto. Tu tarea es transcribir el audio verbatim.\n\nREGLAS CRÍTICAS:\n1. Si el audio contiene SILENCIO, RUIDO DE FONDO o NO HAY VOZ CLARA: Devuelve una cadena VACÍA. NO inventes texto.\n2. NO alucines conversaciones si no son audibles.\n3. Identifica hablantes: 'Psicólogo/a:' y 'Paciente:'.\n4. Si no estás seguro del hablante, usa 'Hablante:'.\n5. Separa intervenciones con saltos de línea." }
+                { text: "Eres un transcriptor experto multilingüe. Tu tarea es transcribir el audio literalmente (verbatim) en el idioma original en que se habla (principalmente Español o Catalán).\n\nREGLAS CRÍTICAS:\n1. NO TRADUZCAS NADA. MANTÉN EL IDIOMA ORIGINAL (Si hablan en Catalán, transcribe en Catalán. Si hablan en Español, en Español).\n2. Si el audio contiene SILENCIO, RUIDO DE FONDO o NO HAY VOZ CLARA: Devuelve una cadena VACÍA. NO inventes texto.\n3. NO alucines conversaciones si no son audibles.\n4. Identifica hablantes: 'Psicólogo/a:' y 'Paciente:'.\n5. Si no estás seguro del hablante, usa 'Hablante:'.\n6. Separa intervenciones con saltos de línea." }
             ]);
 
             const response = await result.response;
