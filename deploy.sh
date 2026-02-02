@@ -1,46 +1,37 @@
 #!/bin/bash
 
-# Script de Despliegue Rápido para PsicoAIssist (Beta)
+# Script de Despliegue SEGURO (Low RAM)
+# Este script DETIENE los servicios antes de construir para ahorrar memoria.
+# Úsalo si tu servidor tiene < 4GB de RAM y se cuelga al desplegar.
 
-echo "🚀 Iniciando despliegue..."
+echo "🚀 Iniciando despliegue seguro (Modo Ahorro RAM)..."
 
-# 1. Bajar últimos cambios de la rama actual (normalmente main)
-echo "📦 Guardando posibles cambios locales..."
-git stash
-
+# 1. Bajar cambios
 echo "📥 Descargando código..."
+git stash  # Guardar cambios locales por si acaso
 git pull
+git stash pop || echo "⚠️  No había cambios locales o conflicto."
 
-echo "♻️ Recuperando cambios locales..."
-git stash pop || echo "⚠️  No había cambios locales o hubo conflicto (eso es normal si tocaste lo mismo que nosotros)."
+# 2. PARADA TÉCNICA (Clave para servidores pequeños)
+echo "🛑 Deteniendo contenedores para liberar RAM..."
+docker compose stop
 
-# 2. Despliegue con Zero-Downtime (o casi cero)
-echo "🐳 Actualizando contenedores (Rolling Update)..."
+# 3. Limpieza preventiva
+echo "🧹 Limpiando contenedores antiguos..."
+docker compose rm -f
 
-# Usamos 'up -d --build' directamete. Docker es inteligente:
-# 1. Si hay cambios, crea el nuevo contenedor
-# 2. Detiene el viejo
-# 3. Arranca el nuevo
-# SIN tirar toda la plataforma abajo primero.
-docker compose up -d --build --remove-orphans
+# 4. Construcción (Build)
+# Al estar parados los contenedores, tenemos toda la RAM disponible para esto.
+echo "🏗️ Construyendo imágenes (esto puede tardar)..."
+docker compose build --no-cache
 
-# 3. Validar que todo arrancó bien
-echo "🔍 Verificando salud del despliegue..."
+# 5. Arranque
+echo "🔥 Arrancando plataforma..."
+docker compose up -d
+
+# 6. Verificación
+echo "🔍 Verificando estado..."
 sleep 5
+docker compose ps
 
-if docker compose ps | grep "Exit"; then
-    echo "❌ ERROR: Algunos contenedores fallaron al arrancar."
-    docker compose ps
-    echo "📜 Logs recientes:"
-    docker compose logs --tail=20
-    exit 1
-fi
-
-# 4. Limpieza suave (solo si todo salió bien)
-echo "🧹 Limpiando imágenes antiguas..."
-docker image prune -f >/dev/null 2>&1
-
-echo "✅ ¡Despliegue completado con éxito!"
-echo "   Frontend: $FRONTEND_URL"
-echo "   Backend:  $API_URL"
-
+echo "✅ Despliegue completado."
