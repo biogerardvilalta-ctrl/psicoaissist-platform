@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 
+type NetworkQuality = 'good' | 'fair' | 'poor' | 'unknown';
+
 // ICE Servers default (fallback)
 const DEFAULT_ICE_SERVERS = {
     iceServers: [
@@ -26,6 +28,7 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
 
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<'initial' | 'connecting' | 'connected' | 'disconnected'>('initial');
+    const [networkQuality, setNetworkQuality] = useState<NetworkQuality>('unknown');
     const [iceConfig, setIceConfig] = useState<RTCConfiguration | null>(null);
     const peerConnection = useRef<RTCPeerConnection | null>(null);
 
@@ -205,6 +208,63 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
         };
     }, [socket, identity, createPeerConnection]); // Removed roomId dependency
 
+    // Network Quality Monitoring
+    useEffect(() => {
+        if (connectionStatus !== 'connected' || !peerConnection.current) {
+            setNetworkQuality('unknown');
+            return;
+        }
+
+        const pc = peerConnection.current;
+        let lastPacketsLost = 0;
+        let lastTime = Date.now();
+
+        const interval = setInterval(async () => {
+            if (pc.connectionState !== 'connected') return;
+
+            try {
+                const stats = await pc.getStats();
+                let currentPacketsLost = 0;
+                let roundTripTime = 0;
+
+                stats.forEach(report => {
+                    if (report.type === 'inbound-rtp' && report.kind === 'video') {
+                        currentPacketsLost = report.packetsLost;
+                    }
+                    if (report.type === 'candidate-pair' && report.state === 'succeeded') {
+                        roundTripTime = report.currentRoundTripTime;
+                    }
+                });
+
+                const now = Date.now();
+                // Packets lost per second logic could be added here, 
+                // but for simplicity we rely on RTT and cumulative loss delta.
+
+                // Simple Heuristic:
+                // RTT > 300ms = Poor
+                // RTT > 150ms = Fair
+                // RTT <= 150ms = Good
+
+                // Also check packet loss delta ideally, but RTT is a good proxy for latency/congestion.
+
+                if (roundTripTime > 0.3) {
+                    setNetworkQuality('poor');
+                } else if (roundTripTime > 0.15) {
+                    setNetworkQuality('fair');
+                } else {
+                    setNetworkQuality('good');
+                }
+
+                // console.log(`RTT: ${roundTripTime}, Quality: ${networkQuality}`);
+
+            } catch (e) {
+                console.warn("Error getting stats", e);
+            }
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, [connectionStatus]);
+
     // Cleanup
     useEffect(() => {
         return () => {
@@ -217,6 +277,7 @@ export function useWebRTC({ socket, roomId, localStream, identity }: WebRTCProps
 
     return {
         remoteStream,
-        connectionStatus
+        connectionStatus,
+        networkQuality
     };
 }

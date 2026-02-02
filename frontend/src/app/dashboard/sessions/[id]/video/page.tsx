@@ -145,7 +145,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
     };
 
     // Initialize WebRTC Hook
-    const { remoteStream, connectionStatus } = useWebRTC({
+    const { remoteStream, connectionStatus, networkQuality } = useWebRTC({
         socket,
         roomId,
         localStream,
@@ -171,7 +171,18 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
     // 1. Get Local Stream First
     useEffect(() => {
         let currentLocalStream: MediaStream | null = null;
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 1920 },
+                height: { ideal: 1080 },
+                frameRate: { ideal: 30, max: 30 }
+            },
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true
+            }
+        })
             .then(stream => {
                 setLocalStream(stream);
                 currentLocalStream = stream;
@@ -441,6 +452,14 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
 
                             <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded-full text-[10px] lg:text-xs backdrop-blur-sm text-slate-300 border border-white/5">
                                 {status} ({connectionStatus})
+                                {networkQuality !== 'unknown' && (
+                                    <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold ${networkQuality === 'good' ? 'bg-green-500/20 text-green-400' :
+                                        networkQuality === 'fair' ? 'bg-yellow-500/20 text-yellow-400' :
+                                            'bg-red-500/20 text-red-400'
+                                        }`}>
+                                        {networkQuality === 'good' ? 'Conexión: Buena' : networkQuality === 'fair' ? 'Conexión: Regular' : 'Conexión: Mala'}
+                                    </span>
+                                )}
                             </div>
                         </div>
 
@@ -478,15 +497,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                             >
                                 {isVideoEnabled ? <Video className="h-4 w-4 lg:h-6 lg:w-6" /> : <VideoOff className="h-4 w-4 lg:h-6 lg:w-6" />}
                             </Button>
-                            <div className="w-px h-8 lg:h-10 bg-white/20 mx-1 lg:mx-2 self-center" />
-                            <Button
-                                variant="destructive"
-                                size="icon"
-                                className="rounded-full h-10 w-10 lg:h-14 lg:w-14 bg-red-500 hover:bg-red-600 border-transparent shadow-lg text-white hover:scale-110 transition-all"
-                                onClick={endCall}
-                            >
-                                <PhoneOff className="h-4 w-4 lg:h-6 lg:w-6" />
-                            </Button>
+
                         </div>
                     </Card>
                 </div>

@@ -18,7 +18,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
     // Initialize WebRTC Hook
-    const { remoteStream, connectionStatus } = useWebRTC({
+    const { remoteStream, connectionStatus, networkQuality } = useWebRTC({
         socket,
         roomId,
         localStream,
@@ -28,7 +28,18 @@ export default function VideoCallPage({ params }: { params: { token: string } })
     // 1. Get Media Stream First
     useEffect(() => {
         let currentLocalStream: MediaStream | null = null;
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 1920 },
+                height: { ideal: 1080 },
+                frameRate: { ideal: 30, max: 30 }
+            },
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true
+            }
+        })
             .then(stream => {
                 setLocalStream(stream);
                 currentLocalStream = stream;
@@ -135,6 +146,14 @@ export default function VideoCallPage({ params }: { params: { token: string } })
 
                 <div className="absolute top-4 left-4 landscape:left-auto landscape:right-4 lg:landscape:left-4 lg:landscape:right-auto bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm text-white z-10">
                     {status} ({connectionStatus})
+                    {networkQuality !== 'unknown' && (
+                        <span className={`ml-2 px-1.5 py-0.5 rounded textxs font-bold ${networkQuality === 'good' ? 'bg-green-500/20 text-green-400' :
+                                networkQuality === 'fair' ? 'bg-yellow-500/20 text-yellow-400' :
+                                    'bg-red-500/20 text-red-400'
+                            }`}>
+                            {networkQuality === 'good' ? 'Buena' : networkQuality === 'fair' ? 'Regular' : 'Mala'}
+                        </span>
+                    )}
                 </div>
             </div>
 
