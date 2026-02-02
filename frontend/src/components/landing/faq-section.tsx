@@ -25,7 +25,7 @@ const faqs = [
   {
     id: 4,
     question: '¿Qué pasa si cancelo mi suscripción?',
-    answer: 'Conservas acceso a todos tus datos durante 90 días. Puedes exportar todas las sesiones, informes y notas en cualquier momento. No hay penalizaciones por cancelación y puedes reactivar tu cuenta cuando desees.',
+    answer: 'Conservas acceso a todos tus datos durante 90 días. Puedes exportar todas las sesiones, informes y notas en cualquier momento. Si decides volver durante este periodo, simplemente inicia sesión con tus credenciales antiguas para reactivar tu cuenta automáticamente.',
     category: 'Facturación'
   },
 

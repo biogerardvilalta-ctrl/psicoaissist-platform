@@ -53,7 +53,7 @@ export class AuthService {
         throw new UnauthorizedException('Tu solicitud de registro ha sido rechazada.');
       }
 
-      if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED) {
+      if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED && user.status !== UserStatus.DELETED) {
         this.logger.warn(`Login attempt with inactive user: ${email}`);
         throw new UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
       }
@@ -124,6 +124,24 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
 
+    // Auto-Reactivation Logic
+    if (user.status === UserStatus.DELETED) {
+      this.logger.log(`Reactivating deleted user: ${user.email}`);
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { status: UserStatus.ACTIVE }
+      });
+      user.status = UserStatus.ACTIVE; // Update local object for token generation
+
+      await this.auditService.log({
+        userId: user.id,
+        action: AuditAction.UPDATE,
+        resourceType: 'USER',
+        resourceId: user.id,
+        details: 'Usuario reactivado automáticamente por Login',
+      });
+    }
+
     // Backfill Referral Code (Migration for existing users)
     if (!user.referralCode) {
       const newCode = await this.generateUniqueReferralCode(user.firstName);
@@ -188,6 +206,9 @@ export class AuthService {
       if (existingUser) {
         // Permitir re-registro si el usuario está marcado como eliminado o inactivo (soft delete previo)
         if (existingUser.status === UserStatus.INACTIVE || existingUser.status === UserStatus.DELETED) {
+          // New Behavior: Don't archive, tell them to login
+          throw new ConflictException('Tu cuenta está en periodo de gracia. Por favor inicia sesión para reactivarla.');
+          /*
           const newEmail = `archived_${Date.now()}_${existingUser.email}`;
           this.logger.log(`Archiving old inactive/deleted user to allow re-registration: ${existingUser.email} -> ${newEmail}`);
           await this.prisma.user.update({
@@ -197,6 +218,7 @@ export class AuthService {
               status: UserStatus.DELETED
             }
           });
+          */
           // Continue to create new user...
         } else {
           throw new ConflictException('El email ya está registrado');

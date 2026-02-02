@@ -673,11 +673,11 @@ export default function ManualPage() {
                                 Entendemos que su privacidad es fundamental. Si decide dar de baja su cuenta (desde <strong>Perfil {'>'} Eliminar Cuenta</strong>), el sistema iniciará un proceso seguro:
                             </p>
                             <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r">
-                                <h4 className="font-bold text-amber-900 mb-2">Proceso de Eliminación y Recuperación (30 días)</h4>
+                                <h4 className="font-bold text-amber-900 mb-2">Proceso de Eliminación y Recuperación (90 días)</h4>
                                 <ul className="list-disc pl-5 space-y-2 text-amber-800 text-sm">
                                     <li><strong>Inicio (Día 0):</strong> Su cuenta se marca como "Eliminada". Ya no podrá acceder, pero sus datos siguen encriptados en nuestros servidores.</li>
-                                    <li><strong>Periodo de Gracia (30 días):</strong> Durante este tiempo, si se arrepiente, puede contactar con soporte para reactivar su cuenta íntegramente.</li>
-                                    <li><strong>Borrado Definitivo (Día 31):</strong> El sistema ejecuta automáticamente un proceso de <strong>Anonimización Irreversible</strong>. Su nombre, email y datos de contacto se borran para siempre, cumpliendo con el RGPD.</li>
+                                    <li><strong>Periodo de Gracia (90 días):</strong> Durante este tiempo, si se arrepiente, simplemente <strong>inicie sesión</strong> de nuevo para reactivar su cuenta y todos sus datos automáticamente.</li>
+                                    <li><strong>Borrado Definitivo (Día 91):</strong> El sistema ejecuta automáticamente un proceso de <strong>Anonimización Irreversible</strong>. Su nombre, email y datos de contacto se borran para siempre, cumpliendo con el RGPD.</li>
                                 </ul>
                             </div>
                         </section>

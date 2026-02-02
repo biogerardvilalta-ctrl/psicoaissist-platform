@@ -287,7 +287,7 @@ export class UsersService {
         where: { id },
         data: {
           status: UserStatus.DELETED,
-          email: `deleted_${Date.now()}_${user.email}`,
+          // email: `deleted_${Date.now()}_${user.email}`, // Keep email for reactivation
           updatedAt: new Date(),
         },
       });
@@ -335,7 +335,7 @@ export class UsersService {
               where: { id: manager.id },
               data: {
                 status: UserStatus.DELETED,
-                email: `deleted_${Date.now()}_${manager.email}`,
+                // email: `deleted_${Date.now()}_${manager.email}`, // Keep email
                 updatedAt: new Date(),
               },
             });

@@ -14,15 +14,15 @@ export class UserCleanupService {
     ) { }
 
     /**
-     * Run every night at midnight to anonymize users deleted > 30 days ago
+     * Run every night at midnight to anonymize users deleted > 90 days ago
      */
     @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
     async handleCron() {
         this.logger.log('Running User Cleanup Job...');
 
-        // 30 days ago
+        // 90 days ago
         const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - 30);
+        cutoffDate.setDate(cutoffDate.getDate() - 90);
 
         try {
             // Find eligible users
