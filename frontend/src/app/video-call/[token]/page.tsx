@@ -155,35 +155,35 @@ export default function VideoCallPage({ params }: { params: { token: string } })
             </div>
 
             {/* Controls */}
-            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-6 z-30 pointer-events-none">
-                <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 flex gap-4 shadow-2xl pointer-events-auto">
+            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-6 z-30 pointer-events-none landscape:bottom-auto landscape:top-1/2 landscape:-translate-y-1/2 landscape:right-4 landscape:left-auto landscape:flex-col landscape:gap-4">
+                <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 flex gap-4 shadow-2xl pointer-events-auto landscape:flex-col landscape:p-2 landscape:gap-2">
                     <Button
                         variant={isAudioEnabled ? "outline" : "destructive"}
                         size="icon"
-                        className={`rounded-full h-14 w-14 ${isAudioEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
+                        className={`rounded-full h-14 w-14 landscape:h-10 landscape:w-10 ${isAudioEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
                         onClick={toggleAudio}
                     >
-                        {isAudioEnabled ? <Mic className="h-6 w-6" /> : <MicOff className="h-6 w-6" />}
+                        {isAudioEnabled ? <Mic className="h-6 w-6 landscape:h-4 landscape:w-4" /> : <MicOff className="h-6 w-6 landscape:h-4 landscape:w-4" />}
                     </Button>
 
                     <Button
                         variant={isVideoEnabled ? "outline" : "destructive"}
                         size="icon"
-                        className={`rounded-full h-14 w-14 ${isVideoEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
+                        className={`rounded-full h-14 w-14 landscape:h-10 landscape:w-10 ${isVideoEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
                         onClick={toggleVideo}
                     >
-                        {isVideoEnabled ? <Video className="h-6 w-6" /> : <VideoOff className="h-6 w-6" />}
+                        {isVideoEnabled ? <Video className="h-6 w-6 landscape:h-4 landscape:w-4" /> : <VideoOff className="h-6 w-6 landscape:h-4 landscape:w-4" />}
                     </Button>
 
-                    <div className="w-px h-10 bg-slate-600/50 mx-2 self-center" />
+                    <div className="w-px h-10 bg-slate-600/50 mx-2 self-center landscape:w-6 landscape:h-px landscape:my-1 landscape:mx-0" />
 
                     <Button
                         variant="destructive"
                         size="icon"
-                        className="rounded-full h-14 w-14 bg-red-600 hover:bg-red-700 border-transparent shadow-lg hover:scale-105 transition-all"
+                        className="rounded-full h-14 w-14 landscape:h-10 landscape:w-10 bg-red-600 hover:bg-red-700 border-transparent shadow-lg hover:scale-105 transition-all"
                         onClick={endCall}
                     >
-                        <PhoneOff className="h-6 w-6" />
+                        <PhoneOff className="h-6 w-6 landscape:h-4 landscape:w-4" />
                     </Button>
                 </div>
             </div>
