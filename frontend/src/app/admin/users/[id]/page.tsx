@@ -167,7 +167,7 @@ export default function AdminUserDetailPage() {
                                             const now = new Date();
                                             const diffTime = Math.abs(now.getTime() - deletionDate.getTime());
                                             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                                            const remainingDays = 30 - diffDays;
+                                            const remainingDays = 90 - diffDays;
 
                                             if (remainingDays > 0) {
                                                 return <p>Quedan <strong>{remainingDays} días</strong> para la anonimización irreversible.</p>;
