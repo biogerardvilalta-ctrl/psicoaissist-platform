@@ -98,4 +98,10 @@ export class ReportsAPI {
     static async generateDraft(data: GenerateDraftData): Promise<{ content: string }> {
         return httpClient.post<{ content: string }>(`${this.BASE_PATH}/generate-draft`, data);
     }
+
+    static async exportAllPdfs(): Promise<Blob> {
+        return httpClient.get<Blob>(`${this.BASE_PATH}/export/all`, {
+            responseType: 'blob'
+        } as any);
+    }
 }

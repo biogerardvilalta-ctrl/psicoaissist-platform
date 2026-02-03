@@ -835,6 +835,125 @@ export class UsersService {
 
 
   /**
+   * Export all user data (GDPR)
+   */
+  async exportData(userId: string): Promise<any> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          sessions: {
+            include: {
+              reports: true
+            }
+          },
+          clients: true,
+          subscription: true,
+          auditLogs: true // Include their actions
+        }
+      });
+
+      if (!user) throw new NotFoundException('Usuario no encontrado');
+
+      // Sanitize sensitive fields if needed (e.g. passwordHash is already excluded by default in some frameworks, but here we query raw Prisma)
+      const { passwordHash, googleRefreshToken, verificationToken, ...cleanUser } = user;
+
+      return {
+        profile: cleanUser,
+        exportDate: new Date(),
+        version: '1.0'
+      };
+    } catch (error) {
+      this.logger.error(`Error exporting data for user ${userId}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Exportar datos en CSV desencriptado
+   */
+  async exportDataCsv(userId: string): Promise<{ fileName: string, csv: string }> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          sessions: {
+            include: {
+              client: true
+            },
+            orderBy: { startTime: 'desc' }
+          }
+        }
+      });
+
+      if (!user) throw new NotFoundException('Usuario no encontrado');
+
+      // CSV Header
+      const header = 'ID Sesión,Fecha,Hora Inicio,Hora Fin,Tipo,Estado,Cliente (Desencriptado),Notas (Desencriptadas),Duración (min)\n';
+      let rows = '';
+
+      for (const session of user.sessions) {
+        // Decrypt Client Name
+        let clientName = 'Desconocido (Error desencriptación)';
+        if (session.client && session.client.encryptedPersonalData && session.client.encryptionKeyId) {
+          try {
+            const unpacked = this.unpackEncryptedData(session.client.encryptedPersonalData, session.client.encryptionKeyId);
+            const result = await this.encryptionService.decryptData<{ firstName: string; lastName: string }>(unpacked);
+            if (result.success && result.data) {
+              clientName = `${result.data.firstName} ${result.data.lastName}`;
+            }
+          } catch (e) {
+            clientName = 'Error desencriptando cliente';
+          }
+        } else {
+          clientName = 'Datos no disponibles';
+        }
+
+        // Decrypt Notes
+        let notes = '';
+        if (session.encryptedNotes && session.encryptionKeyId) {
+          try {
+            const unpacked = this.unpackEncryptedData(session.encryptedNotes, session.encryptionKeyId);
+            const result = await this.encryptionService.decryptData<{ notes: string }>(unpacked);
+            if (result.success && result.data) {
+              notes = result.data.notes || '';
+            }
+          } catch (e) {
+            notes = '[Error desencriptando notas]';
+          }
+        }
+
+        // Format Date/Time
+        const date = session.startTime ? session.startTime.toISOString().split('T')[0] : '';
+        const startTime = session.startTime ? session.startTime.toISOString().split('T')[1].substring(0, 5) : '';
+        const endTime = session.endTime ? session.endTime.toISOString().split('T')[1].substring(0, 5) : '';
+        const duration = session.duration ? Math.round(session.duration / 60) : 0;
+
+        // Escape CSV content (replace " with "")
+        const safeNotes = `"${notes.replace(/"/g, '""')}"`;
+        const safeClient = `"${clientName.replace(/"/g, '""')}"`;
+
+        rows += `${session.id},${date},${startTime},${endTime},${session.sessionType},${session.status},${safeClient},${safeNotes},${duration}\n`;
+      }
+
+      const fileName = `export_psicoaissist_${new Date().toISOString().split('T')[0]}.csv`;
+      return { fileName, csv: header + rows };
+
+    } catch (error) {
+      this.logger.error(`Error generating CSV export: ${error.message}`);
+      throw error;
+    }
+  }
+
+  private unpackEncryptedData(buffer: Buffer, keyId: string) {
+    if (!buffer || buffer.length < 32) throw new Error('Invalid encrypted buffer');
+    const iv = buffer.subarray(0, 16).toString('base64');
+    const tag = buffer.subarray(16, 32).toString('base64');
+    const encryptedData = buffer.subarray(32);
+    return { iv, tag, encryptedData, keyId };
+  }
+
+  /**
    * Verificar manualmente un usuario (Admin)
    */
   async verifyUser(id: string): Promise<UserResponseDto> {

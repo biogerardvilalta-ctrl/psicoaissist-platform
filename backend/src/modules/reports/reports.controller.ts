@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Res, BadRequestException } from '@nestjs/common';
 import { Response } from 'express';
 import { ReportsService } from './reports.service';
 import { CreateReportDto, UpdateReportDto } from './dto/reports.dto';
@@ -34,6 +34,27 @@ export class ReportsController {
     @RequireFeature('advancedAnalytics') // Only Pro/Premium can generate AI drafts
     generateDraft(@Request() req, @Body() generateReportDraftDto: any) { // Use valid DTO
         return this.reportsService.generateDraft(req.user.id, generateReportDraftDto);
+    }
+
+    @Get('export/all')
+    async exportAll(@Request() req, @Res() res: Response) {
+        try {
+            const buffer = await this.reportsService.exportAllPdfs(req.user.id);
+
+            res.set({
+                'Content-Type': 'application/zip',
+                'Content-Disposition': `attachment; filename="mis-informes-${new Date().toISOString().split('T')[0]}.zip"`,
+                'Content-Length': buffer.length,
+            });
+
+            res.end(buffer);
+        } catch (error) {
+            // Handle "No reports" or other errors
+            if (error.status === 404) {
+                throw error;
+            }
+            throw new BadRequestException('Error generating export');
+        }
     }
 
     @Get(':id/download')

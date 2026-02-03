@@ -39,7 +39,8 @@ export default function ManualPage() {
                                 <li><a href="#primeros-pasos" className="hover:text-blue-600 hover:underline">4. Primeros Pasos</a></li>
                                 <li><a href="#dashboard" className="hover:text-blue-600 hover:underline">5. El Dashboard</a></li>
                                 <li><a href="#funcionalidades" className="hover:text-blue-600 hover:underline">6. Funcionalidades Principales</a></li>
-                                <li><a href="#configuracion" className="hover:text-blue-600 hover:underline">7. Configuración Detallada</a></li>
+                                <li><a href="#exportacion" className="hover:text-blue-600 hover:underline">7. Privacidad y Exportación</a></li>
+                                <li><a href="#configuracion" className="hover:text-blue-600 hover:underline">8. Configuración Detallada</a></li>
                             </ul>
                         </nav>
 
@@ -630,9 +631,45 @@ export default function ManualPage() {
 
                         <hr className="my-8 border-slate-200" />
 
-                        <section id="configuracion" className="scroll-mt-24">
+
+
+                        <hr className="my-8 border-slate-200" />
+
+                        <section id="exportacion" className="scroll-mt-24">
                             <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
                                 <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">7</span>
+                                Privacidad y Exportación de Datos
+                            </h2>
+                            <p className="leading-relaxed text-lg text-slate-600 mb-6 font-medium">
+                                PsicoAIssist le permite descargar toda su información en cualquier momento, garantizando su derecho a la portabilidad de datos (RGPD).
+                            </p>
+
+                            <div className="grid md:grid-cols-2 gap-6 my-6 not-prose">
+                                <div className="p-6 bg-slate-50 rounded-xl border border-slate-200">
+                                    <h3 className="text-lg font-bold text-slate-900 mb-2">📊 Exportar Datos (CSV/Excel)</h3>
+                                    <p className="text-slate-600 text-sm mb-4">Descarga una hoja de cálculo con el listado completo de sus sesiones.</p>
+                                    <ul className="space-y-2 text-sm text-slate-700">
+                                        <li className="flex gap-2">✓ <strong>Datos Desencriptados:</strong> Nombres reales de clientes y contenido de notas.</li>
+                                        <li className="flex gap-2">✓ <strong>Formato:</strong> Compatible con Excel, Numbers y Google Sheets.</li>
+                                    </ul>
+                                </div>
+
+                                <div className="p-6 bg-slate-50 rounded-xl border border-slate-200">
+                                    <h3 className="text-lg font-bold text-slate-900 mb-2">📂 Exportar Informes (PDF)</h3>
+                                    <p className="text-slate-600 text-sm mb-4">Genera un archivo ZIP comprimido con todos sus documentos.</p>
+                                    <ul className="space-y-2 text-sm text-slate-700">
+                                        <li className="flex gap-2">✓ <strong>Todos los Informes:</strong> Incluye historial completo.</li>
+                                        <li className="flex gap-2">✓ <strong>Formato:</strong> Archivos PDF individuales organizados.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <hr className="my-8 border-slate-200" />
+
+                        <section id="configuracion" className="scroll-mt-24">
+                            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">
+                                <span className="bg-blue-600 text-white text-lg px-4 py-1 rounded-full shadow-sm font-mono">8</span>
                                 Configuración Detallada
                             </h2>
 
@@ -683,7 +720,7 @@ export default function ManualPage() {
                         </section>
                     </div>
                 </div>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 }

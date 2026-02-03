@@ -164,4 +164,24 @@ export class AuthAPI {
       throw error;
     }
   }
+
+  static async exportData(): Promise<any> {
+    try {
+      // Returns JSON
+      return await httpClient.get(`${this.BASE_URL.replace('/auth', '/users')}/me/export`);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async exportDataCsv(): Promise<Blob> {
+    try {
+      // Returns Blob (CSV)
+      return await httpClient.get(`${this.BASE_URL.replace('/auth', '/users')}/me/export/csv`, {
+        responseType: 'blob'
+      } as any);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

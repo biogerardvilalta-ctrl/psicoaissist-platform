@@ -11,6 +11,7 @@ import { WordService } from './word.service';
 import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '@prisma/client';
 import { UsageLimitsService } from '../payments/usage-limits.service';
+import * as archiver from 'archiver';
 
 @Injectable()
 export class ReportsService {
@@ -528,6 +529,60 @@ export class ReportsService {
             psychologistName,
             professionalNumber,
             branding: (user as any)?.brandingConfig || {}
+        });
+    }
+
+    async exportAllPdfs(userId: string): Promise<any> { // Returns a stream or buffer, handled by controller
+        const reports = await this.findAll(userId);
+
+        if (!reports.length) {
+            throw new NotFoundException('No hay informes para exportar.');
+        }
+
+        const archive = archiver('zip', {
+            zlib: { level: 9 } // Sets the compression level.
+        });
+
+        // We will collect buffers here, but archiver usually pipes to a writable stream.
+        // Since we want to return a buffer or stream to the controller to send to client:
+        // Option 1: Pass the Response object to this service (bad practice usually)
+        // Option 2: Collect chunks into a buffer (easiest for small-medium concurrent usage)
+
+        const chunks: Buffer[] = [];
+
+        return new Promise((resolve, reject) => {
+            archive.on('data', (chunk) => chunks.push(chunk));
+            archive.on('error', (err) => reject(err));
+            archive.on('end', () => {
+                const resultBuffer = Buffer.concat(chunks);
+                resolve(resultBuffer);
+            });
+
+            (async () => {
+                try {
+                    for (const report of reports) {
+                        try {
+                            // We reuse downloadPdf. 
+                            // Optimization: findAll fetches partial data? 
+                            // downloadPdf fetches 'findOne' which decrypts. 
+                            // It might be slightly inefficient to re-fetch but ensures logic consistency (decryption, etc).
+                            const pdfBuffer = await this.downloadPdf(report.id, userId);
+                            const filename = `informe-${report.id.substring(0, 8)}.pdf`;
+                            // Or better: sanitize title
+                            // const sanitizedTitle = report.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                            // const filename = `${sanitizedTitle}-${report.id.substring(0,8)}.pdf`;
+
+                            archive.append(pdfBuffer, { name: filename });
+                        } catch (e) {
+                            console.error(`Failed to generate PDF for report ${report.id} in bulk export`, e);
+                            // Skip or add error text file? Skip properly.
+                        }
+                    }
+                    await archive.finalize();
+                } catch (e) {
+                    reject(e);
+                }
+            })();
         });
     }
 }

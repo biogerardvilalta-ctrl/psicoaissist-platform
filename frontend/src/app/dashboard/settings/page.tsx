@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
-import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro, Users, Palette } from 'lucide-react';
+import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro, Users, Palette, FileJson } from 'lucide-react';
 import { AgendaManagersSettings } from '@/components/dashboard/settings/agenda-managers-settings';
 import { BrandingSettings } from '@/components/dashboard/settings/branding-settings';
 import { GoogleCalendarConnect } from "@/components/settings/GoogleCalendarConnect";
@@ -32,7 +32,7 @@ export default function SettingsPage() {
   const router = useRouter();
 
   // Navigation State
-  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'managers' | 'branding'>('agenda');
+  const [activeSection, setActiveSection] = useState<'agenda' | 'ai' | 'notifications' | 'managers' | 'branding' | 'privacy'>('agenda');
 
   // Form State
   // ... existing state ...
@@ -40,7 +40,7 @@ export default function SettingsPage() {
   // Sync URL with Active Section
   useEffect(() => {
     const section = searchParams.get('section');
-    if (section && ['agenda', 'ai', 'notifications', 'managers', 'branding'].includes(section)) {
+    if (section && ['agenda', 'ai', 'notifications', 'managers', 'branding', 'privacy'].includes(section)) {
       setActiveSection(section as any);
     }
   }, [searchParams]);
@@ -159,6 +159,7 @@ export default function SettingsPage() {
     // Hide AI for Basic
     ...(user?.subscription?.planType?.toUpperCase() !== 'BASIC' ? [{ id: 'ai', label: 'Inteligencia Artificial', icon: BrainCircuit }] : []),
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
+    { id: 'privacy', label: 'Privacidad y Datos', icon: FileJson },
   ];
 
   return (
@@ -493,6 +494,103 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <AgendaManagersSettings />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* PRIVACY SECTION */}
+        {activeSection === 'privacy' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Privacidad y Datos</CardTitle>
+              <CardDescription>Gestiona tus datos personales y exporta tu información (GDPR).</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between p-4 border rounded-lg bg-slate-50">
+                <div className="space-y-1">
+                  <h4 className="font-medium text-slate-900">Exportar mis datos</h4>
+                  <p className="text-sm text-slate-500">
+                    Descarga una copia completa de tu perfil, sesiones, notas y clientes en formato CSV (Compatible con Excel).
+                  </p>
+                </div>
+                <Button
+                  onClick={async () => {
+                    try {
+                      setLoading(true);
+                      const blob = await AuthAPI.exportDataCsv();
+
+                      // Create Download
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `psicoaissist_export_${new Date().toISOString().split('T')[0]}.csv`;
+                      document.body.appendChild(a);
+                      a.click();
+                      window.URL.revokeObjectURL(url);
+                      document.body.removeChild(a);
+
+                      toast({ title: 'Exportación completada', description: 'El archivo CSV se ha descargado correctamente.' });
+                    } catch (e) {
+                      console.error(e);
+                      toast({ title: 'Error', description: 'No se pudo exportar los datos.', variant: 'destructive' });
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <FileJson className="w-4 h-4" />
+                  {loading ? 'Exportando...' : 'Exportar Datos (CSV)'}
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 border rounded-lg bg-slate-50">
+                <div className="space-y-1">
+                  <h4 className="font-medium text-slate-900">Exportar Informes (PDF)</h4>
+                  <p className="text-sm text-slate-500">
+                    Descarga un archivo ZIP con todos tus informes generados en formato PDF.
+                  </p>
+                </div>
+                <Button
+                  onClick={async () => {
+                    try {
+                      setLoading(true);
+                      const { ReportsAPI } = await import('@/lib/reports-api');
+                      const blob = await ReportsAPI.exportAllPdfs();
+
+                      if (blob.size < 100) {
+                        // Small size usually indicates empty or error JSON response
+                        toast({ title: 'Aviso', description: 'No se encontraron informes para exportar o ocurrió un error.', variant: 'default' });
+                        return;
+                      }
+
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `mis-informes-${new Date().toISOString().split('T')[0]}.zip`;
+                      document.body.appendChild(a);
+                      a.click();
+                      window.URL.revokeObjectURL(url);
+                      document.body.removeChild(a);
+
+                      toast({ title: 'Exportación completada', description: 'El archivo ZIP se ha descargado correctamente.' });
+                    } catch (e) {
+                      console.error(e);
+                      toast({ title: 'Error', description: 'No se pudo exportar los informes.', variant: 'destructive' });
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <FileJson className="w-4 h-4" />
+                  Exportar Informes (PDF)
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}

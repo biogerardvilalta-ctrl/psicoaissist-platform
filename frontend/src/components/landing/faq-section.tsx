@@ -32,13 +32,13 @@ const faqs = [
   {
     id: 6,
     question: '¿Hay límite en el número de pacientes?',
-    answer: 'Depende del plan. El plan Básico incluye hasta 25 pacientes, el Pro permite pacientes ilimitados, y el Premium añade funciones avanzadas para clínicas. Puedes cambiar de plan en cualquier momento.',
+    answer: 'Depende del plan. El plan Básico incluye hasta 25 pacientes. Los planes Pro y Premium permiten pacientes ilimitados. El Premium añade funciones avanzadas como marca personal y mayor capacidad de IA. Para clínicas y hospitales disponemos de planes corporativos a medida.',
     category: 'Planes'
   },
   {
     id: 7,
     question: '¿Ofrecen soporte técnico en español?',
-    answer: 'Sí, nuestro equipo de soporte habla español y está disponible por chat, email y videollamada. También ofrecemos formación gratuita para nuevos usuarios y documentación completa en español.',
+    answer: 'Sí, nuestro equipo de soporte habla español, catalán e inglés y te atenderá por email. Las videollamadas están disponibles para el onboarding, planes superiores o si el equipo técnico lo considera necesario. También ofrecemos documentación completa en estos idiomas.',
     category: 'Soporte'
   },
   {

@@ -14,6 +14,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Res,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UsersService } from './users.service';
@@ -25,6 +26,7 @@ import { UserRole } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Response } from 'express';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -34,6 +36,27 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
 
   constructor(private readonly usersService: UsersService) { }
+
+  @ApiOperation({ summary: 'Exportar mis datos (GDPR) - CSV Desencriptado' })
+  @ApiResponse({ status: 200, description: 'Archivo CSV descargado' })
+  @Get('me/export/csv')
+  async exportCsv(@Req() req: any, @Res() res: Response) {
+    const { fileName, csv } = await this.usersService.exportDataCsv(req.user.id);
+
+    res.set({
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="${fileName}"`,
+    });
+
+    res.send(csv);
+  }
+
+  @ApiOperation({ summary: 'Exportar mis datos (GDPR) - JSON Legacy' })
+  @ApiResponse({ status: 200, description: 'Datos exportados en JSON' })
+  @Get('me/export')
+  async exportData(@Req() req: any) {
+    return this.usersService.exportData(req.user.id);
+  }
 
   @ApiOperation({ summary: 'Eliminar mi cuenta' })
   @ApiResponse({ status: 200, description: 'Cuenta eliminada exitosamente' })
