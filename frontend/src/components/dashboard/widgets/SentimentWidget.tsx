@@ -1,9 +1,12 @@
 import { Activity } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export function SentimentWidget({ data }: { data: any[] }) {
     const router = useRouter();
+    const t = useTranslations('Dashboard.Overview.Widgets');
+    const tCommon = useTranslations('Dashboard.Common');
 
     return (
         <div
@@ -12,8 +15,8 @@ export function SentimentWidget({ data }: { data: any[] }) {
         >
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-slate-800">Bienestar</h3>
-                    <p className="text-sm text-slate-500">Tendencia emocional</p>
+                    <h3 className="text-lg font-semibold text-slate-800">{t('sentimentWidget')}</h3>
+                    <p className="text-sm text-slate-500">{t('sentimentWidget_subtitle')}</p>
                 </div>
                 <Activity className="h-4 w-4 text-slate-400" />
             </div>
@@ -38,7 +41,7 @@ export function SentimentWidget({ data }: { data: any[] }) {
                     </ResponsiveContainer>
                 ) : (
                     <div className="h-full flex items-center justify-center text-slate-400 text-sm">
-                        Sin datos suficientes
+                        {tCommon('noDataSimple')}
                     </div>
                 )}
             </div>

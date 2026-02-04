@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +26,8 @@ export function GoogleCalendarConnect() {
         }
     }, [user]);
 
+    const t = useTranslations('Dashboard.Settings.GoogleCalendar');
+
     useEffect(() => {
         const handleCallback = async () => {
             const params = new URLSearchParams(window.location.search);
@@ -32,8 +36,8 @@ export function GoogleCalendarConnect() {
 
             if (error) {
                 toast({
-                    title: "Error de conexión",
-                    description: "No se pudo conectar con Google Calendar.",
+                    title: t('toasts.errorTitle'),
+                    description: t('toasts.errorDesc'),
                     variant: "destructive"
                 });
                 return;
@@ -47,8 +51,8 @@ export function GoogleCalendarConnect() {
                 try {
                     await httpClient.post('/api/v1/google/callback', { code });
                     toast({
-                        title: "Conectado",
-                        description: "Google Calendar se ha conectado correctamente.",
+                        title: t('toasts.connectedTitle'),
+                        description: t('toasts.connectedDesc'),
                     });
                     setIsConnected(true);
 
@@ -63,8 +67,8 @@ export function GoogleCalendarConnect() {
                 } catch (err) {
                     console.error(err);
                     toast({
-                        title: "Error",
-                        description: "Fallo al intercambiar el token con Google.",
+                        title: t('toasts.errorTitle'),
+                        description: t('toasts.errorDesc'),
                         variant: "destructive"
                     });
                 } finally {
@@ -74,7 +78,7 @@ export function GoogleCalendarConnect() {
         };
 
         handleCallback();
-    }, [updateUser, toast]);
+    }, [updateUser, toast, t]);
 
     const handleToggleImport = async (checked: boolean) => {
         setImportEnabled(checked);
@@ -82,13 +86,13 @@ export function GoogleCalendarConnect() {
             const updated = await AuthAPI.updateProfile({ googleImportCalendar: checked });
             updateUser(updated);
             toast({
-                title: "Configuración actualizada",
-                description: checked ? "Se importarán eventos de Google." : "Se ha desactivado la importación.",
+                title: t('toasts.updatedTitle'),
+                description: checked ? t('toasts.updatedDesc') : t('toasts.updatedDescOff'),
             });
         } catch (error) {
             console.error(error);
             setImportEnabled(!checked); // Revert
-            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar la configuración.' });
+            toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('toasts.errorDesc') });
         }
     };
 
@@ -104,8 +108,8 @@ export function GoogleCalendarConnect() {
         } catch (error) {
             console.error(error);
             toast({
-                title: "Error",
-                description: "Failed to initiate Google connection",
+                title: t('toasts.errorTitle'),
+                description: t('toasts.errorDesc'),
                 variant: "destructive"
             });
             setLoading(false);
@@ -115,17 +119,17 @@ export function GoogleCalendarConnect() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Integración con Google Calendar</CardTitle>
+                <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>
-                    Conecta tu calendario para sincronizar eventos automáticamente.
+                    {t('description')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1">
-                        <p className="text-sm font-medium">Estado</p>
+                        <p className="text-sm font-medium">{t('status')}</p>
                         <p className={`text-sm ${isConnected ? "text-green-600 font-bold" : "text-muted-foreground"}`}>
-                            {isConnected ? "Conectado" : "No conectado"}
+                            {isConnected ? t('connected') : t('disconnected')}
                         </p>
                     </div>
                     <Button
@@ -134,7 +138,7 @@ export function GoogleCalendarConnect() {
                         variant={isConnected ? "outline" : "default"}
                         className="w-full sm:w-auto"
                     >
-                        {loading ? "Conectando..." : isConnected ? "Conectado" : "Conectar Google Calendar"}
+                        {loading ? t('connecting') : isConnected ? t('connected') : t('connectButton')}
                     </Button>
                 </div>
 
@@ -145,7 +149,7 @@ export function GoogleCalendarConnect() {
                             checked={importEnabled}
                             onCheckedChange={handleToggleImport}
                         />
-                        <Label htmlFor="import-google">Importar eventos de Google Calendar a la plataforma</Label>
+                        <Label htmlFor="import-google">{t('importEvents')}</Label>
                     </div>
                 )}
             </CardContent>

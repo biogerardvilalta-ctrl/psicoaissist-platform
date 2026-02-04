@@ -1,11 +1,14 @@
 import { PieChart as PieChartIcon } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export function ThemesWidget({ data }: { data: any[] }) {
     const router = useRouter();
+    const t = useTranslations('Dashboard.Overview.Widgets');
+    const tCommon = useTranslations('Dashboard.Common');
 
     return (
         <div
@@ -14,8 +17,8 @@ export function ThemesWidget({ data }: { data: any[] }) {
         >
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-slate-800">Temas Recurrentes</h3>
-                    <p className="text-sm text-slate-500">Motivos de consulta</p>
+                    <h3 className="text-lg font-semibold text-slate-800">{t('themesWidget')}</h3>
+                    <p className="text-sm text-slate-500">{t('themesWidget_subtitle')}</p>
                 </div>
                 <PieChartIcon className="h-4 w-4 text-slate-400" />
             </div>
@@ -44,7 +47,7 @@ export function ThemesWidget({ data }: { data: any[] }) {
                     </ResponsiveContainer>
                 ) : (
                     <div className="h-full flex items-center justify-center text-slate-400 text-sm">
-                        Sin datos suficientes
+                        {tCommon('noDataSimple')}
                     </div>
                 )}
             </div>

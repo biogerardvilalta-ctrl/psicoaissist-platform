@@ -3,9 +3,11 @@ import { Gift, Copy, Check } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from 'next-intl';
 
 export function ReferralWidget() {
     const { user } = useAuth();
+    const t = useTranslations('Dashboard.Overview.Referral');
     const [copied, setCopied] = useState(false);
 
     const referralCode = user?.referralCode || 'GENERANDO...';
@@ -26,13 +28,15 @@ export function ReferralWidget() {
             <CardHeader className="pb-0 pt-4 px-4 relative z-10">
                 <CardTitle className="text-base font-bold flex items-center gap-2 text-white">
                     <Gift className="w-4 h-4" />
-                    Invita y Gana
+                    {t('title')}
                 </CardTitle>
             </CardHeader>
 
             <CardContent className="space-y-3 relative z-10 p-4 pt-2">
                 <p className="text-white/90 text-[11px] leading-tight">
-                    Recibe <strong>5 casos de simulador</strong> por cada profesional que invites.
+                    {t.rich('description', {
+                        strong: (chunks) => <strong>{chunks}</strong>
+                    })}
                 </p>
 
                 <div className="bg-white/20 backdrop-blur-md rounded-lg p-2 flex items-center justify-between border border-white/30 h-10">
@@ -51,7 +55,7 @@ export function ReferralWidget() {
                 </div>
 
                 <div className="pt-2 border-t border-white/20 flex justify-between items-center text-[10px] text-white/80 uppercase font-medium">
-                    <span>Referidos</span>
+                    <span>{t('referrals')}</span>
                     <span className="font-bold text-base">{referralsCount}</span>
                 </div>
             </CardContent>

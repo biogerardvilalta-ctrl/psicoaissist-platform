@@ -1,9 +1,11 @@
 import { TrendingUp } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export function SessionsChartWidget({ data }: { data: any[] }) {
     const router = useRouter();
+    const t = useTranslations('Dashboard.Overview.Charts');
 
     return (
         <div
@@ -12,8 +14,8 @@ export function SessionsChartWidget({ data }: { data: any[] }) {
         >
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-slate-800">Evolución</h3>
-                    <p className="text-sm text-slate-500">Últimos 30 días</p>
+                    <h3 className="text-lg font-semibold text-slate-800">{t('sessionsEvolution')}</h3>
+                    <p className="text-sm text-slate-500">{t('last30days')}</p>
                 </div>
                 <TrendingUp className="h-4 w-4 text-slate-400" />
             </div>

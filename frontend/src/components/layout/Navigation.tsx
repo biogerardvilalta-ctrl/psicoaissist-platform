@@ -1,11 +1,13 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { usePathname } from 'next/navigation';
 import { useRole } from '@/hooks/useRole';
 import { Heart, Home, Users, Settings, Shield, BarChart3, CreditCard, FileText, PieChart } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function Navigation() {
+  const t = useTranslations('Dashboard.Navigation');
   const pathname = usePathname();
   const { isAdmin, isPsychologist, isAuthenticated, isAgendaManager } = useRole();
 
@@ -16,7 +18,7 @@ export default function Navigation() {
   const navItems = [
     // Common items for all authenticated users
     {
-      name: 'Inicio',
+      name: t('home'),
       href: '/',
       icon: Home,
       show: true
@@ -24,19 +26,19 @@ export default function Navigation() {
 
     // Psychologist items
     {
-      name: 'Dashboard',
+      name: t('dashboard'),
       href: '/dashboard',
       icon: BarChart3,
       show: isPsychologist()
     },
     {
-      name: 'Informes',
+      name: t('reports'),
       href: '/dashboard/reports',
       icon: FileText,
       show: isPsychologist()
     },
     {
-      name: 'Estadísticas',
+      name: t('statistics'),
       href: '/dashboard/statistics',
       icon: PieChart,
       show: isPsychologist()
@@ -44,19 +46,19 @@ export default function Navigation() {
 
     // Admin items
     {
-      name: 'Admin Panel',
+      name: t('adminPanel'),
       href: '/admin',
       icon: Shield,
       show: isAdmin()
     },
     {
-      name: 'Usuarios',
+      name: t('users'),
       href: '/admin/users',
       icon: Users,
       show: isAdmin()
     },
     {
-      name: 'Pagos',
+      name: t('payments'),
       href: '/admin/payments',
       icon: CreditCard,
       show: isAdmin()
@@ -64,7 +66,7 @@ export default function Navigation() {
 
     // Common settings
     {
-      name: 'Configuración',
+      name: t('settings'),
       href: '/dashboard/settings',
       icon: Settings,
       show: !isAgendaManager()
@@ -92,7 +94,7 @@ export default function Navigation() {
                 const Icon = item.icon;
                 return (
                   <Link
-                    key={item.name}
+                    key={item.href} // Use href as key since names might be translated
                     href={item.href}
                     className={`px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2 transition-colors ${isActive(item.href)
                       ? 'bg-blue-100 text-blue-700'

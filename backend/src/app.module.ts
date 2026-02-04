@@ -7,6 +7,12 @@ import * as redisStore from 'cache-manager-redis-store';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import {
+  I18nModule,
+  QueryResolver,
+  AcceptLanguageResolver,
+  HeaderResolver
+} from 'nestjs-i18n';
 
 // Configuration
 import { DatabaseConfig } from './config/database.config';
@@ -110,6 +116,20 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
+    }),
+
+    // Internationalization
+    I18nModule.forRoot({
+      fallbackLanguage: 'es',
+      loaderOptions: {
+        path: join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+        new HeaderResolver(['x-custom-lang']),
+      ],
     }),
   ],
   controllers: [],

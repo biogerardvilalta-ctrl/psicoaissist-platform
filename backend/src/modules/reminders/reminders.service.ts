@@ -91,7 +91,7 @@ export class RemindersService {
                     date: dateStr,
                     time: timeStr,
                     type: session.sessionType
-                });
+                }, session.user.preferredLanguage);
 
                 // 2b. Notify Client by Email
                 // 2b. Notify Client by Email
@@ -159,7 +159,7 @@ export class RemindersService {
                 enableReminders: true,
                 status: 'ACTIVE'
             },
-            select: { id: true, email: true }
+            select: { id: true, email: true, preferredLanguage: true }
         });
 
         this.logger.log(`Found ${users.length} users with reminders enabled for daily summary.`);
@@ -217,7 +217,7 @@ export class RemindersService {
                 }
 
                 // 4. Send Email
-                await this.emailService.sendDailyUpcomingSessions(user.email, sessionSummaries);
+                await this.emailService.sendDailyUpcomingSessions(user.email, sessionSummaries, user.preferredLanguage);
                 this.logger.log(`Sent daily agenda summary to ${user.email} (${sessions.length} sessions)`);
 
             } catch (error) {

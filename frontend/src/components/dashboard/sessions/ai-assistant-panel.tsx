@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Socket } from 'socket.io-client';
+import { useTranslations } from 'next-intl';
+import { useAuth } from '@/contexts/auth-context';
 
 export interface AiAssistantPanelProps {
     sessionId: string;
@@ -16,9 +18,8 @@ export interface AiAssistantPanelProps {
     isAiLimitReached?: boolean;
 }
 
-import { useAuth } from '@/contexts/auth-context';
-
 export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestionClick, socket, isConnected, isAiLimitReached }: AiAssistantPanelProps) {
+    const t = useTranslations('Dashboard.AiAssistant');
     const { toast } = useToast();
     const { user } = useAuth();
 
@@ -66,7 +67,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                     // Simple toast notification for new content
                     setTimeout(() => {
                         toast({
-                            description: "Noves suggerències disponibles",
+                            description: t('actions.newSuggestions'),
                             className: "bg-blue-50 border-blue-200 text-blue-800",
                             duration: 2000,
                         });
@@ -92,7 +93,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
             socket.off('aiSuggestions', handleAiSuggestions);
             socket.off('debug_log', handleDebugLog);
         };
-    }, [socket, isActive, toast]);
+    }, [socket, isActive, toast, t]);
 
 
     // Emit updates when context changes (Throttled)
@@ -127,34 +128,34 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                         <div className="p-1.5 bg-indigo-100 rounded-lg">
                             <Sparkles className="h-4 w-4 text-indigo-600" />
                         </div>
-                        Asistente IA
+                        {t('title')}
                         {isLoading && hasAdvancedAnalytics && !isAiLimitReached && <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse ml-2" />}
                     </div>
                     {hasAdvancedAnalytics ? (
                         isAiLimitReached ? (
                             <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200 text-[10px] px-1.5 py-0 h-5">
                                 <AlertTriangle className="h-3 w-3 mr-1" />
-                                Límite alcanzado
+                                {t('limitReached')}
                             </Badge>
                         ) : isConnected ? (
                             <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] px-1.5 py-0 h-5">
                                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-1" />
-                                Live
+                                {t('status.live')}
                             </Badge>
                         ) : (
                             <Badge variant="outline" className="bg-slate-50 text-slate-400 border-slate-200 text-[10px] px-1.5 py-0 h-5">
                                 <div className="h-1.5 w-1.5 rounded-full bg-slate-400 mr-1" />
-                                Offline
+                                {t('status.offline')}
                             </Badge>
                         )
                     ) : (
                         <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200 text-[10px] px-1.5 py-0 h-5">
-                            Plan Básico
+                            {t('plan.basic')}
                         </Badge>
                     )}
                 </CardTitle>
                 <CardDescription className="text-slate-500 font-medium text-xs">
-                    Anàlisi en temps real • 100% Privat
+                    {t('subtitle')}
                     {/* SOCKET DEBUG LOG */}
                     <div className="text-[10px] text-red-500 font-mono mt-1 border-t pt-1 border-red-200">
                         SRV: {debugLog}
@@ -164,7 +165,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                 {isAiLimitReached && (
                     <div className="mt-2 p-2 bg-red-50 border border-red-100 rounded-lg text-xs text-red-700 flex items-start gap-2">
                         <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
-                        <p>Has consumido tus minutos de IA. La asistencia en vivo se ha detenido, pero puedes seguir tomando notas.</p>
+                        <p>{t('limitWarning')}</p>
                     </div>
                 )}
             </CardHeader>
@@ -176,7 +177,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                     <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                         <div className="flex items-center gap-2 mb-2">
                             <Zap className="h-3 w-3 text-amber-500" />
-                            <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Observacions</h4>
+                            <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('sections.observations')}</h4>
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {indicators.map((ind, i) => (
@@ -205,8 +206,8 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                         <div className="h-16 w-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 animate-pulse">
                             <Brain className="h-8 w-8 text-slate-400" />
                         </div>
-                        <p className="text-sm font-medium text-slate-500">Escoltant la sessió...</p>
-                        <p className="text-xs text-slate-400 mt-1">Parla o escriu per rebre suggeriments</p>
+                        <p className="text-sm font-medium text-slate-500">{t('listening.title')}</p>
+                        <p className="text-xs text-slate-400 mt-1">{t('listening.subtitle')}</p>
                     </div>
                 ) : (
                     <div className="space-y-6 pb-4">
@@ -215,7 +216,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
                                     <MessageSquare className="h-3 w-3 text-blue-500" />
-                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Preguntes Suggerides</h4>
+                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('sections.questions')}</h4>
                                 </div>
                                 <div className="space-y-3">
                                     {questions.map((q, index) => (
@@ -247,7 +248,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
 
                                             <div className="mt-3 flex items-center text-blue-500 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <PlusCircle className="h-3 w-3 mr-1" />
-                                                Afegir a notes
+                                                {t('actions.addToNotes')}
                                             </div>
                                         </div>
                                     ))}
@@ -260,7 +261,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
                                     <Lightbulb className="h-3 w-3 text-amber-500" />
-                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Consideracions</h4>
+                                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('sections.considerations')}</h4>
                                 </div>
                                 <div className="space-y-3">
                                     {considerations.map((c, index) => (
@@ -283,7 +284,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
 
             <div className="p-3 bg-slate-50/80 backdrop-blur-sm border-t border-slate-100 z-10">
                 <p className="text-[10px] text-center text-slate-400 font-medium">
-                    Ia Assistance © 2025 • PsicoAIssist
+                    {t('footer')}
                 </p>
             </div>
         </Card>

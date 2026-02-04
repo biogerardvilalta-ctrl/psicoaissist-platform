@@ -1,15 +1,9 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
-import {
-  HomeIcon,
-  UsersIcon,
-  ChartBarIcon,
-  CogIcon,
-} from '@heroicons/react/outline';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,10 +15,11 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { NotificationBell } from '@/components/ui/NotificationBell';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Menu, LogOut, LayoutDashboard, Users, FileText, Settings, Scale, Mail, ClipboardList, Sparkles, CreditCard, UserCircle } from 'lucide-react';
-
+import { Menu, LogOut, LayoutDashboard, Users, Settings, Mail, ClipboardList, Sparkles, CreditCard, UserCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function AdminHeader() {
+  const t = useTranslations('Dashboard.Header');
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -35,13 +30,13 @@ export default function AdminHeader() {
   };
 
   const navigationItems = [
-    { name: 'Panel', href: '/admin', icon: LayoutDashboard },
-    { name: 'Usuarios', href: '/admin/users', icon: Users },
-    { name: 'Tareas', href: '/admin/tasks', icon: Sparkles },
-    { name: 'Comunicaciones', href: '/admin/communications', icon: Mail },
-    { name: 'Facturación', href: '/admin/billing', icon: CreditCard },
-    { name: 'Logs', href: '/admin/audit-logs', icon: ClipboardList },
-    { name: 'Sistema', href: '/admin/system', icon: Settings },
+    { name: t('panel'), href: '/admin', icon: LayoutDashboard },
+    { name: t('users'), href: '/admin/users', icon: Users },
+    { name: t('tasks'), href: '/admin/tasks', icon: Sparkles },
+    { name: t('communications'), href: '/admin/communications', icon: Mail },
+    { name: t('billing'), href: '/admin/billing', icon: CreditCard },
+    { name: t('logs'), href: '/admin/audit-logs', icon: ClipboardList },
+    { name: t('system'), href: '/admin/system', icon: Settings },
   ];
 
   return (
@@ -56,10 +51,9 @@ export default function AdminHeader() {
               </div>
               <div className="hidden sm:block">
                 <span className="text-white font-semibold">PsicoAIssist</span>
-                <span className="text-gray-400 text-sm ml-2">Admin</span>
+                <span className="text-gray-400 text-sm ml-2">{t('adminLabel')}</span>
               </div>
             </Link>
-
 
 
             {/* Navegación */}
@@ -69,11 +63,11 @@ export default function AdminHeader() {
                 const isActive = pathname === item.href;
                 return (
                   <Link
-                    key={item.name}
+                    key={item.href}
                     href={item.href}
                     className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                        ? 'bg-gray-800 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                      ? 'bg-gray-800 text-white'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
                       }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -100,29 +94,35 @@ export default function AdminHeader() {
                   </Avatar>
                   <div className="hidden sm:block text-right">
                     <div className="text-white text-sm font-medium">{user?.firstName}</div>
-                    <div className="text-gray-400 text-xs">{user?.email}</div>
+                    <div className="text-gray-400 text-xs text-xs-custom-color">
+                      {user?.role === 'PSYCHOLOGIST_PREMIUM' ? t('roles.premium') :
+                        user?.role === 'PSYCHOLOGIST' ? t('roles.psychologist') :
+                          user?.role === 'MANAGER' || user?.role === 'AGENDA_MANAGER' ? t('roles.manager') :
+                            user?.role === 'ADMIN' ? t('roles.admin') :
+                              user?.role}
+                    </div>
                   </div>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="w-full cursor-pointer flex items-center">
                     <UserCircle className="mr-2 h-4 w-4" />
-                    <span>Perfil</span>
+                    <span>{t('profile')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Configuración</span>
+                    <span>{t('settings')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Cerrar Sesión</span>
+                  <span>{t('logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -139,7 +139,7 @@ export default function AdminHeader() {
                   <div className="flex flex-col h-full">
                     <div className="mb-8">
                       <SheetTitle className="text-xl font-bold text-gray-900 mb-2">PsicoAIssist</SheetTitle>
-                      <p className="text-sm text-gray-500">Panel de Administración</p>
+                      <p className="text-sm text-gray-500">{t('adminPanelTitle')}</p>
                     </div>
 
                     <nav className="flex-1 space-y-2">
@@ -151,8 +151,8 @@ export default function AdminHeader() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive
-                                ? 'bg-blue-50 text-blue-600 font-medium'
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                              ? 'bg-blue-50 text-blue-600 font-medium'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                               }`}
                           >
                             <Icon className="w-5 h-5" />
@@ -163,7 +163,7 @@ export default function AdminHeader() {
                     </nav>
 
                     <div className="pt-6 border-t border-gray-100 text-center text-xs text-gray-400">
-                      © 2024 PsicoAIssist
+                      {t('copyright')}
                     </div>
                   </div>
                 </SheetContent>

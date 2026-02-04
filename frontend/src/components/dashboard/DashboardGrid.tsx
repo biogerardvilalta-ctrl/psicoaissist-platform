@@ -18,6 +18,7 @@ import {
 import { SortableWidget } from './SortableWidget';
 import { Button } from '@/components/ui/button';
 import { Save, RotateCcw, Pencil, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface DashboardGridProps {
     items: string[];
@@ -28,6 +29,7 @@ interface DashboardGridProps {
 }
 
 export function DashboardGrid({ items: initialItems, renderItem, onSave, defaultItems, headerActions }: DashboardGridProps) {
+    const t = useTranslations('Dashboard.Grid');
     const [items, setItems] = useState<string[]>(initialItems);
     const [isEditMode, setIsEditMode] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
@@ -87,21 +89,21 @@ export function DashboardGrid({ items: initialItems, renderItem, onSave, default
                     <>
                         <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground">
                             <RotateCcw className="h-4 w-4 mr-2" />
-                            Reset
+                            {t('reset')}
                         </Button>
                         <Button variant="outline" size="sm" onClick={handleCancel}>
                             <X className="h-4 w-4 mr-2" />
-                            Cancelar
+                            {t('cancel')}
                         </Button>
                         <Button size="sm" onClick={handleSave} disabled={!hasChanges}>
                             <Save className="h-4 w-4 mr-2" />
-                            Guardar Diseño
+                            {t('save')}
                         </Button>
                     </>
                 ) : (
                     <Button variant="outline" size="sm" onClick={() => setIsEditMode(true)}>
                         <Pencil className="h-4 w-4 mr-2" />
-                        Editar Diseño
+                        {t('edit')}
                     </Button>
                 )}
             </div>

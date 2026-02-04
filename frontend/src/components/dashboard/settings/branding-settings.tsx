@@ -7,11 +7,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
 import { Palette, Building, Image as ImageIcon, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function BrandingSettings() {
     const { user, updateUser } = useAuth();
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
+    const t = useTranslations('Dashboard.Settings.branding');
+
 
     const [companyName, setCompanyName] = useState('');
     const [primaryColor, setPrimaryColor] = useState('#4F46E5');
@@ -44,10 +47,10 @@ export function BrandingSettings() {
             await AuthAPI.updateProfile({ brandingConfig: newConfig });
             updateUser({ ...user!, brandingConfig: newConfig } as any);
 
-            toast({ title: 'Configuración guardada', description: 'Tus ajustes de branding se han actualizado.' });
+            toast({ title: t('toasts.saved'), description: t('toasts.savedDesc') });
         } catch (error) {
             console.error(error);
-            toast({ title: 'Error', description: 'No se pudo guardar la configuración.', variant: 'destructive' });
+            toast({ title: t('toasts.error'), description: t('toasts.saveError'), variant: 'destructive' });
         } finally {
             setLoading(false);
         }
@@ -60,21 +63,21 @@ export function BrandingSettings() {
                     <div className="space-y-2">
                         <Label className="flex items-center gap-2">
                             <Building className="w-4 h-4" />
-                            Nombre de la Empresa / Clínica
+                            {t('companyName')}
                         </Label>
                         <Input
-                            placeholder="Ej: Clínica Psicológica Avanzada"
+                            placeholder={t('companyPlaceholder')}
                             value={companyName}
                             onChange={(e) => setCompanyName(e.target.value)}
                         />
-                        <p className="text-sm text-muted-foreground">Este nombre aparecerá en la cabecera de tus informes PDF.</p>
+                        <p className="text-sm text-muted-foreground">{t('companyHelp')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2">
                                 <Palette className="w-4 h-4" />
-                                Color Primario
+                                {t('primaryColor')}
                             </Label>
                             <div className="flex gap-2">
                                 <Input
@@ -93,7 +96,7 @@ export function BrandingSettings() {
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2">
                                 <Palette className="w-4 h-4" />
-                                Color Secundario
+                                {t('secondaryColor')}
                             </Label>
                             <div className="flex gap-2">
                                 <Input
@@ -114,7 +117,7 @@ export function BrandingSettings() {
                     <div className="space-y-2">
                         <Label className="flex items-center gap-2">
                             <ImageIcon className="w-4 h-4" />
-                            Logo de la Empresa
+                            {t('logoLabel')}
                         </Label>
 
                         <div className="flex items-center gap-4">
@@ -124,7 +127,7 @@ export function BrandingSettings() {
                                         type="button"
                                         onClick={() => setLogoUrl('')}
                                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-sm"
-                                        title="Eliminar logo"
+                                        title={t('deleteLogo')}
                                     >
                                         <X className="w-3 h-3" />
                                     </button>
@@ -154,10 +157,10 @@ export function BrandingSettings() {
                                         try {
                                             const res = await AuthAPI.uploadLogo(file);
                                             setLogoUrl(res.url);
-                                            toast({ title: 'Logo subido', description: 'El logo se ha cargado correctamente.' });
+                                            toast({ title: t('toasts.logoUploaded'), description: t('toasts.logoUploadedDesc') });
                                         } catch (error) {
                                             console.error(error);
-                                            toast({ title: 'Error', description: 'No se pudo subir el logo.', variant: 'destructive' });
+                                            toast({ title: t('toasts.error'), description: t('toasts.uploadError'), variant: 'destructive' });
                                         } finally {
                                             setLoading(false);
                                         }
@@ -165,7 +168,7 @@ export function BrandingSettings() {
                                     disabled={loading}
                                     className="h-auto py-2 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                                 />
-                                <p className="text-xs text-muted-foreground mt-1">Formatos: PNG, JPG. Máx 2MB. Recomendado fondo transparente.</p>
+                                <p className="text-xs text-muted-foreground mt-1">{t('logoHelp')}</p>
                             </div>
                         </div>
                     </div>
@@ -176,13 +179,13 @@ export function BrandingSettings() {
                             checked={showLogo}
                             onCheckedChange={(c) => setShowLogo(!!c)}
                         />
-                        <Label htmlFor="showLogo">Mostrar icono/logo en informes</Label>
+                        <Label htmlFor="showLogo">{t('showLogo')}</Label>
                     </div>
 
                 </div>
 
                 <Button onClick={handleSave} disabled={loading}>
-                    {loading ? 'Guardando...' : 'Guardar Cambios'}
+                    {loading ? t('saving') : t('save')}
                 </Button>
             </div>
         </div>

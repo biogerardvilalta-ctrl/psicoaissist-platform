@@ -1,10 +1,14 @@
+'use client';
+
 import {
   Mail,
   Shield,
   Heart
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function Footer() {
+  const t = useTranslations('Landing.Footer');
   const currentYear = new Date().getFullYear();
 
   return (
@@ -22,38 +26,36 @@ export function Footer() {
               <span className="text-xl font-bold">PsicoAIssist</span>
             </div>
             <p className="text-gray-300 leading-relaxed">
-              Transformando la práctica psicológica con inteligencia artificial.
-              Ayudamos a profesionales de la salud mental a optimizar su tiempo
-              y mejorar la atención a sus pacientes.
+              {t('description')}
             </p>
             <div className="flex items-center space-x-2 text-green-400">
               <Shield className="w-4 h-4" />
-              <span className="text-sm">100% Seguro y Confidencial</span>
+              <span className="text-sm">{t('security.secure')}</span>
             </div>
           </div>
 
           {/* Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Enlaces</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('links.title')}</h3>
             <ul className="space-y-3">
               <li>
                 <a href="/docs" className="text-gray-300 hover:text-white transition-colors">
-                  Documentación
+                  {t('links.docs')}
                 </a>
               </li>
               <li>
                 <a href="/legal?tab=gdpr" className="text-gray-300 hover:text-white transition-colors">
-                  Política de Privacidad
+                  {t('links.privacy')}
                 </a>
               </li>
               <li>
                 <a href="/legal?tab=terms" className="text-gray-300 hover:text-white transition-colors">
-                  Términos y Condiciones
+                  {t('links.terms')}
                 </a>
               </li>
               <li>
                 <a href="/legal?tab=cookies" className="text-gray-300 hover:text-white transition-colors">
-                  Política de Cookies
+                  {t('links.cookies')}
                 </a>
               </li>
             </ul>
@@ -61,7 +63,7 @@ export function Footer() {
 
           {/* Contact info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contacto</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('contact.title')}</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="w-4 h-4 text-gray-400" />
@@ -82,15 +84,15 @@ export function Footer() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-6 text-gray-400 text-sm">
-              <span>© {currentYear} PsicoAIssist. Todos los derechos reservados.</span>
+              <span>{t('copyright', { year: currentYear })}</span>
               <div className="flex items-center space-x-4 text-xs text-gray-500">
                 <div className="flex items-center space-x-1">
                   <Shield className="w-3 h-3" />
-                  <span>GDPR Compliant</span>
+                  <span>{t('security.gdpr')}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Shield className="w-3 h-3" />
-                  <span>AES-256 Encryption</span>
+                  <span>{t('security.encryption')}</span>
                 </div>
               </div>
             </div>

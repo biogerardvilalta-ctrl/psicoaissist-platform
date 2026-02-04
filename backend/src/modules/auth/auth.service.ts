@@ -258,11 +258,11 @@ export class AuthService {
           professionalNumber: registerDto.professionalNumber,
           country: registerDto.country,
           role: registerDto.role || UserRole.PSYCHOLOGIST,
-          status: UserStatus.ACTIVE, // Changed from PENDING_REVIEW for immediate access
-          createdAt: new Date(),
+          status: UserStatus.ACTIVE,
           updatedAt: new Date(),
           referralCode,
           referredBy: referredByUserId,
+          preferredLanguage: registerDto.preferredLanguage || 'es', // Default to 'es' if not provided
           // Developer Mode / Testing: Auto-assign Pro Plan to enable Simulator access
           // Subscription will be created via Checkout flow or default empty
 
@@ -300,7 +300,8 @@ export class AuthService {
           `${user.firstName} ${user.lastName}`,
           verificationToken,
           registerDto.plan,
-          registerDto.interval
+          registerDto.interval,
+          user.preferredLanguage
         );
       } catch (emailError) {
         this.logger.warn(`Failed to send verification email to ${user.email}: ${emailError.message}`);
@@ -523,7 +524,8 @@ export class AuthService {
     try {
       await this.emailService.sendWelcomeEmail(
         user.email,
-        `${user.firstName} ${user.lastName}`
+        `${user.firstName} ${user.lastName}`,
+        user.preferredLanguage
       );
     } catch (e) {
       this.logger.warn(`Could not send welcome email after verification: ${e.message}`);
@@ -835,7 +837,8 @@ export class AuthService {
       try {
         await this.emailService.sendWelcomeEmail(
           user.email,
-          `${user.firstName} ${user.lastName}`
+          `${user.firstName} ${user.lastName}`,
+          user.preferredLanguage
         );
       } catch (e) {
         this.logger.warn(`Could not send welcome email after Google register: ${e.message}`);

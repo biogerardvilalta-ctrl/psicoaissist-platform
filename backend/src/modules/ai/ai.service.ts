@@ -799,7 +799,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
     /**
      * Ask the AI for help based on documentation.
      */
-    async askHelp(question: string): Promise<string> {
+    async askHelp(question: string, locale: string = 'es'): Promise<string> {
         try {
             // Hardcoded path to artifacts for this specific environment/agent session
             const artifactsPath = '/home/ustec/.gemini/antigravity/brain/a5aaae08-9e71-4d91-967c-812d8d3d8817';
@@ -814,6 +814,8 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
                 context = 'Documentación no disponible. Responde basándote en que es una app para psicólogos llamada PsicoAIssist.';
             }
 
+            const languageName = locale === 'ca' ? 'Catalán' : locale === 'en' ? 'Inglés' : 'Español';
+
             const prompt = [
                 `Ets un assistent de suport tècnic per a PsicoAIssist (una plataforma per a psicòlegs).
                 
@@ -827,7 +829,7 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
                 - Respon de manera breu, amable i directa.
                 - Utilitza la informació del manual si és rellevant.
                 - Si no ho saps, digues que contactin amb suport@psicoaissist.com.
-                - Idioma: Respon en l'idioma de la pregunta (o Castellà per defecte).
+                - Idioma: Respon SEMPRE en ${languageName}.
                 `,
             ];
 

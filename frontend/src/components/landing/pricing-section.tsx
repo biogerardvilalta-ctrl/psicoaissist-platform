@@ -2,88 +2,36 @@
 
 import { Check, X, Star, Loader2, Users, Building, Zap, Book } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { useRouter } from 'next/navigation';
 import { usePayments } from '@/hooks/usePayments';
+import { useTranslations } from 'next-intl';
 
-const plans = [
+const plansConfig = [
   {
     id: 'basic',
-    name: 'Basic',
     price: 29,
-    description: 'Perfecto para psicólogos independientes que comienzan',
-    features: [
-      'Hasta 25 clientes activos',
-      '10 Horas Transcripción (solo texto)',
-      'Agenda y facturación básica',
-      'Notas clínicas manuales',
-      'Almacenamiento 5GB',
-    ],
-    limitations: [
-      'Sin IA Generativa (0 min/mes)',
-      'Sin Simulador Clínico',
-      'Sin Sincronización Google Calendar',
-    ],
-    cta: 'Contratar Basic',
     popular: false,
     color: 'border-slate-200',
     buttonColor: 'bg-white hover:bg-slate-50 text-slate-900 border border-slate-200',
   },
   {
     id: 'pro',
-    name: 'Pro',
     price: 59,
-    description: 'La opción más popular para práctica profesional',
-    features: [
-      'Pacientes ilimitados',
-      '15h (900 min) Transcripción + IA',
-      'Sincronización Google Calendar',
-      'Simulador Clínico (5 casos/mes)',
-      'Almacenamiento 50GB',
-      'Soporte Prioritario',
-    ],
-    limitations: [],
-    cta: 'Contratar Pro',
     popular: true,
     color: 'border-blue-500 ring-2 ring-blue-500 relative',
     buttonColor: 'bg-blue-600 hover:bg-blue-700 text-white',
   },
   {
     id: 'premium',
-    name: 'Premium',
     price: 99,
-    description: 'Para especialistas con alto volumen de trabajo',
-    features: [
-      'Todo lo incluido en Pro',
-      '50h (3.000 min) Transcripción + IA',
-      'Simulador Clínico Ilimitado',
-      'Almacenamiento 1TB',
-      'Soporte Prioritario + Videollamada',
-      'Branding Personalizado',
-    ],
-    limitations: [],
-    cta: 'Contratar Premium',
     popular: false,
     color: 'border-purple-500',
     buttonColor: 'bg-purple-600 hover:bg-purple-700 text-white',
   },
-
   {
     id: 'clinics',
-    name: 'Para Centros de Salud, Universidades y Hospitales',
     price: 'Custom',
-    description: 'Centros que priorizan formación y control',
-    features: [
-      'Usuarios ilimitados (a medida)',
-      'IA Corporativa (5.000+ min/mes)',
-      'Simulador Clínico (casos/mes a medida)',
-      'API Access (HIS integration)',
-      'Compliance Avanzado (Auditoría RGPD) y SSO',
-      'Onboarding dedicado',
-      'Facturación unificada',
-    ],
-    limitations: [],
-    cta: 'Contactar Ventas',
     popular: false,
     color: 'border-slate-800 bg-slate-50',
     buttonColor: 'bg-slate-900 hover:bg-slate-800 text-white',
@@ -91,6 +39,7 @@ const plans = [
 ];
 
 export default function PricingSection() {
+  const t = useTranslations('Landing.Pricing');
   const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
   const [isClient, setIsClient] = useState(false);
   const { createCheckoutSession, loading, error } = usePayments();
@@ -118,13 +67,13 @@ export default function PricingSection() {
         {/* Header */}
         <div className="text-center">
           <h2 className="text-base font-semibold text-blue-600 tracking-wide uppercase">
-            Precios
+            {t('badge')}
           </h2>
           <p className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
-            Planes diseñados para cada etapa profesional
+            {t('title')}
           </p>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
-            Empieza gratis con nuestro Plan Demo. Suscríbete cuando necesites más.
+            {t('description')}
           </p>
         </div>
 
@@ -138,7 +87,7 @@ export default function PricingSection() {
                 : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
-              Mensual
+              {t('billing.monthly')}
             </button>
             <button
               onClick={() => setBillingInterval('year')}
@@ -147,7 +96,7 @@ export default function PricingSection() {
                 : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
-              Anual <span className="text-green-600 font-bold text-xs ml-1">(2 meses gratis)</span>
+              {t('billing.yearly')} <span className="text-green-600 font-bold text-xs ml-1">{t('billing.save')}</span>
             </button>
           </div>
         </div>
@@ -161,15 +110,18 @@ export default function PricingSection() {
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {plans.filter(p => ['basic', 'pro', 'premium'].includes(p.id)).map((plan) => {
+            {plansConfig.filter(p => ['basic', 'pro', 'premium'].includes(p.id)).map((plan) => {
               const isAnnual = billingInterval === 'year';
               const price = typeof plan.price === 'number'
                 ? (isAnnual ? Math.round(plan.price * 10 / 12) : plan.price)
                 : plan.price;
 
+              const features = t.raw(`plans.${plan.id}.features`) as string[];
+              const limitations = (t.raw(`plans.${plan.id}`) as any).limitations as string[] || [];
+
               return (
                 <div
-                  key={plan.name}
+                  key={plan.id}
                   className={`relative bg-white rounded-2xl shadow-sm ${plan.color} border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col`}
                 >
                   {/* Popular badge */}
@@ -185,8 +137,8 @@ export default function PricingSection() {
                   <div className="p-6 flex-1 flex flex-col">
                     {/* Plan header */}
                     <div className="text-center mb-6">
-                      <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-                      <p className="mt-2 text-xs text-gray-600 h-10">{plan.description}</p>
+                      <h3 className="text-xl font-bold text-gray-900">{t(`plans.${plan.id}.name`)}</h3>
+                      <p className="mt-2 text-xs text-gray-600 h-10">{t(`plans.${plan.id}.description`)}</p>
                       <div className="mt-4 flex flex-col items-center justify-center h-16">
                         <div className="flex items-baseline">
                           <span className="text-3xl font-bold text-gray-900">{typeof price === 'number' ? `€${price}` : price}</span>
@@ -203,13 +155,13 @@ export default function PricingSection() {
                     {/* Features list */}
                     <div className="flex-1">
                       <ul className="space-y-3 mb-6">
-                        {plan.features.map((feature, featureIndex) => (
+                        {features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex items-start">
                             <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5" />
                             <span className="ml-3 text-xs text-gray-600">{feature}</span>
                           </li>
                         ))}
-                        {plan.limitations.map((limitation, limitationIndex) => (
+                        {limitations.map((limitation, limitationIndex) => (
                           <li key={`limitation-${limitationIndex}`} className="flex items-start">
                             <X className="flex-shrink-0 h-4 w-4 text-gray-400 mt-0.5" />
                             <span className="ml-3 text-xs text-gray-400">{limitation}</span>
@@ -231,7 +183,7 @@ export default function PricingSection() {
                             ...
                           </>
                         ) : (
-                          plan.cta
+                          t(`plans.${plan.id}.cta`)
                         )}
                       </button>
                     </div>
@@ -242,7 +194,7 @@ export default function PricingSection() {
           </div>
         </div>
         <p className="text-xs text-gray-400 text-center mt-4">
-          * Política de Uso Razonable (Fair Use) aplica al almacenamiento ilimitado (hasta 1TB) para garantizar la estabilidad del servicio.
+          {t('footer.fairuse')}
         </p>
 
         {/* Team/Corporate Plans Section */}
@@ -257,7 +209,8 @@ export default function PricingSection() {
                 <Building className="w-5 h-5 text-gray-500" />
                 Planes para Organizaciones
               </h3>
-              {plans.filter(p => p.id === 'clinics').map((plan) => {
+              {plansConfig.filter(p => p.id === 'clinics').map((plan) => {
+                const features = t.raw(`plans.${plan.id}.features`) as string[];
                 return (
                   <div
                     key={plan.id}
@@ -265,14 +218,14 @@ export default function PricingSection() {
                       }`}
                   >
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900">{plan.name}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">{t(`plans.${plan.id}.name`)}</h3>
                       <p className="mt-4 flex items-baseline text-gray-900">
                         <span className="text-4xl font-extrabold tracking-tight">Custom</span>
                       </p>
-                      <p className="mt-6 text-gray-500">{plan.description}</p>
+                      <p className="mt-6 text-gray-500">{t(`plans.${plan.id}.description`)}</p>
 
                       <ul role="list" className="mt-6 space-y-4">
-                        {plan.features.map((feature, featureIndex) => (
+                        {features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex">
                             <Check className="flex-shrink-0 h-4 w-4 text-green-500 mt-1" />
                             <span className="ml-3 text-sm text-gray-500">{feature}</span>
@@ -285,7 +238,7 @@ export default function PricingSection() {
                         href="mailto:ventas@psicoaissist.com"
                         className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors bg-slate-900 hover:bg-slate-800 text-white`}
                       >
-                        Contactar Ventas
+                        {t(`plans.${plan.id}.cta`)}
                       </a>
                     </div>
                   </div>
@@ -295,7 +248,7 @@ export default function PricingSection() {
 
             {/* Right Column: Extras (2/3) */}
             <div className="w-full lg:w-2/3">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Extras y Servicios Adicionales</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6">{t('extras.title')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Agenda Manager Add-on */}
                 <div className="bg-white p-6 rounded-xl border border-gray-200 hover:border-indigo-300 transition-colors">
@@ -304,7 +257,7 @@ export default function PricingSection() {
                       <Book className="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">Agenda Manager</h4>
+                      <h4 className="font-bold text-gray-900">{t('extras.agenda.title')}</h4>
                       <p className="text-sm text-gray-500">Solo para planes Pro+</p>
                     </div>
                     <div className="ml-auto text-right">
@@ -313,7 +266,7 @@ export default function PricingSection() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Delega la gestión de tus citas. Añade un usuario administrativo (secretario/a) que puede ver y gestionar tu calendario sin acceso a datos clínicos sensibles.
+                    {t('extras.agenda.description')}
                   </p>
                 </div>
 
@@ -324,7 +277,7 @@ export default function PricingSection() {
                       <Zap className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">Pack Minutos IA</h4>
+                      <h4 className="font-bold text-gray-900">{t('extras.minutes.title')}</h4>
                       <p className="text-sm text-gray-500">Solo para planes Pro+</p>
                     </div>
                     <div className="ml-auto text-right">
@@ -333,7 +286,7 @@ export default function PricingSection() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">
-                    ¿Un mes con muchos pacientes? No te quedes sin IA. Añade minutos extra a tu plan cuando lo necesites para cubrir picos de trabajo.
+                    {t('extras.minutes.description')}
                   </p>
                 </div>
 
@@ -344,7 +297,7 @@ export default function PricingSection() {
                       <Users className="w-6 h-6 text-purple-600" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">Sesión Onboarding</h4>
+                      <h4 className="font-bold text-gray-900">{t('extras.onboarding.title')}</h4>
                       <p className="text-sm text-gray-500">Puesta en marcha</p>
                     </div>
                     <div className="ml-auto text-right">
@@ -353,7 +306,7 @@ export default function PricingSection() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Configuramos tu cuenta contigo en 45 min: importación de pacientes, enlace con Google Calendar y personalización. Garantía de funcionamiento.
+                    {t('extras.onboarding.description')}
                   </p>
                 </div>
 
@@ -364,7 +317,7 @@ export default function PricingSection() {
                       <Star className="w-6 h-6 text-violet-600" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">Pack Simulador</h4>
+                      <h4 className="font-bold text-gray-900">{t('extras.simulator.title')}</h4>
                       <p className="text-sm text-gray-500">Solo para planes Pro+</p>
                     </div>
                     <div className="ml-auto text-right">
@@ -373,7 +326,7 @@ export default function PricingSection() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Amplía tu formación práctica. Añade un pack de 10 casos clínicos interactivos extra para practicar diagnósticos y entrevistas sin límites.
+                    {t('extras.simulator.description')}
                   </p>
                 </div>
               </div>
@@ -385,15 +338,15 @@ export default function PricingSection() {
           {/* Bottom note */}
           <div className="mt-12 text-center">
             <p className="text-base text-gray-600">
-              ¿Necesitas un plan a medida para una universidad u hospital?{' '}
+              {t('footer.contact')}{' '}
               <Link href="/contact" className="text-blue-600 hover:text-blue-700 font-medium">
                 Contáctanos
               </Link>
             </p>
             <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-gray-500">
               {/* <span>✓ 14 días gratis en todos los planes</span> */}
-              <span>✓ Cancela cuando quieras</span>
-              <span>✓ Datos siempre tuyos</span>
+              <span>✓ {t('footer.cancel')}</span>
+              <span>✓ {t('footer.data')}</span>
             </div>
           </div>
         </div>

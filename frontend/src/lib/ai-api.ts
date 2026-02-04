@@ -98,6 +98,10 @@ export const AiAPI = {
         return await httpClient.post('/api/v1/ai/suggestions', { context });
     },
 
+    chat: async (question: string, locale: string): Promise<{ answer: string }> => {
+        return await httpClient.post<{ answer: string }>('/api/v1/ai/help', { question, locale });
+    },
+
     transcribe: async (audioBlob: Blob, isLive?: boolean): Promise<{ text: string }> => {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'chunk.webm');

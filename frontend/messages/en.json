@@ -1,0 +1,2369 @@
+{
+    "AISettings": {
+        "helpText": "<p>This language will determine the wording of <strong>clinical reports, post-session analysis, and the patient simulator language</strong>.</p><p>Note: The <strong>Live Assistant</strong> will automatically detect the language you speak.</p>"
+    },
+    "FAQ": {
+        "title": "Frequently Asked Questions",
+        "subtitle": "We have answers",
+        "description": "Responses to the most common questions about PsicoAIssist.",
+        "items": {
+            "security": {
+                "question": "Is PsicoAIssist safe for confidential patient data?",
+                "answer": "Absolutely. PsicoAIssist complies with GDPR, LOPD-GDD, and international security standards. We use AES-256 encryption, servers in Europe, and never store unencrypted data. Each session is processed in an isolated and secure manner.",
+                "category": "Security"
+            },
+            "transcription": {
+                "question": "How does automatic transcription work?",
+                "answer": "Our AI system listens to the session in real-time and transcribes automatically. It recognizes speech in Spanish (including regional accents), Catalan, and English, identifies speakers (therapist/patient), and formats text professionally. Accuracy is 95%+. Audio is processed in real-time and is NEVER recorded or stored on our servers.",
+                "category": "Functionality"
+            },
+            "customization": {
+                "question": "Can I customize the generated reports?",
+                "answer": "Yes. With the Premium plan, you can configure your \"Personal Brand\" settings. This allows you to add your logo, clinic name, and corporate colors, which will be automatically applied to all PDF and Word reports generated to maintain your professional image.",
+                "category": "Customization"
+            },
+            "cancellation": {
+                "question": "What happens if I cancel my subscription?",
+                "answer": "You retain access to all your data for 90 days. You can export all sessions, reports, and notes at any time. If you decide to return during this period, simply log in with your old credentials to reactivate your account automatically.",
+                "category": "Billing"
+            },
+            "limits": {
+                "question": "Is there a limit on the number of patients?",
+                "answer": "It depends on the plan. The Basic plan includes up to 25 patients. Pro and Premium plans allow unlimited patients. Premium adds advanced features like personal branding and higher AI capacity. For clinics and hospitals, we have tailored corporate plans.",
+                "category": "Plans"
+            },
+            "support": {
+                "question": "Do you offer technical support?",
+                "answer": "Yes, our support team speaks Spanish, Catalan, and English and will assist you via email. Video calls are available for onboarding, higher plans, or if the technical team deems it necessary. We also offer full documentation in these languages.",
+                "category": "Support"
+            },
+            "integration": {
+                "question": "Can I integrate PsicoAIssist with my current system?",
+                "answer": "We offer APIs and integrations with major clinic management systems. You can also export data to import into your existing system. Our technical team can help you with the integration.",
+                "category": "Integration"
+            },
+            "languages": {
+                "question": "What languages does the system support?",
+                "answer": "Mainly Catalan, Spanish, and English with high accuracy. We also support French, Portuguese, and Italian. We are adding more languages based on user demand.",
+                "category": "Functionality"
+            },
+            "trial": {
+                "question": "Is there a free trial period?",
+                "answer": "We have a 14-day Demo Plan to try. You can test key functionalities at no cost before choosing your professional plan.",
+                "category": "Billing"
+            }
+        }
+    },
+    "Dashboard": {
+        "HelpWidget": {
+            "placeholder": "Ask something...",
+            "title": "PsicoAIssist Assistant",
+            "welcome": "Hello! I am your PsicoAIssist assistant. How can I help you today?",
+            "error": "Sorry, I had a connection problem. Please try again.",
+            "disclaimer": "AI can make mistakes. Verify important info.",
+            "openLabel": "Open help assistant"
+        },
+        "AiAssistant": {
+            "title": "AI Assistant",
+            "limitReached": "Limit reached",
+            "status": {
+                "live": "Live",
+                "offline": "Offline"
+            },
+            "plan": {
+                "basic": "Basic Plan"
+            },
+            "subtitle": "Real-time analysis • 100% Private",
+            "limitWarning": "You have used up your AI minutes. Live assistance has stopped, but you can continue taking notes.",
+            "sections": {
+                "observations": "Observations",
+                "questions": "Suggested Questions",
+                "considerations": "Considerations"
+            },
+            "listening": {
+                "title": "Listening to session...",
+                "subtitle": "Speak or type to receive suggestions"
+            },
+            "actions": {
+                "addToNotes": "Add to notes",
+                "newSuggestions": "New suggestions available"
+            },
+            "footer": "AI Assistance © 2025 • PsicoAIssist"
+        },
+        "Common": {
+            "noData": "No data available",
+            "noDataDesc": "Data will appear here when you start using the platform.",
+            "noDataSimple": "Not enough data"
+        },
+        "Navigation": {
+            "home": "Home",
+            "dashboard": "Dashboard",
+            "reports": "Reports",
+            "statistics": "Statistics",
+            "adminPanel": "Admin Panel",
+            "users": "Users",
+            "payments": "Payments",
+            "settings": "Settings",
+            "clients": "Patients",
+            "sessions": "Sessions",
+            "simulator": "Simulator",
+            "legal": "Legal"
+        },
+        "Header": {
+            "adminLabel": "Admin",
+            "panel": "Panel",
+            "users": "Users",
+            "tasks": "Tasks",
+            "communications": "Communications",
+            "billing": "Billing",
+            "logs": "Logs",
+            "system": "System",
+            "myAccount": "My Account",
+            "profile": "Profile",
+            "settings": "Settings",
+            "logout": "Logout",
+            "adminPanelTitle": "Administration Panel",
+            "copyright": "© 2024 PsicoAIssist",
+            "roles": {
+                "premium": "Premium Psychologist",
+                "psychologist": "Psychologist",
+                "manager": "Manager",
+                "admin": "Administrator"
+            }
+        },
+        "Overview": {
+            "welcome": "Hello, {name}",
+            "roles": {
+                "manager": "Manager",
+                "doctor": "Doctor"
+            },
+            "subtitle": {
+                "manager": "Manage the schedule and patients of your assigned professionals.",
+                "psychologist": "Welcome to your intelligent clinical assistant."
+            },
+            "alerts": {
+                "noProfessionals": {
+                    "title": "No professionals assigned",
+                    "description": "It seems you have the Agenda Manager role but no professionals assigned. Please ask a professional to link you from their control panel."
+                },
+                "paymentError": {
+                    "title": "Attention: Payment not completed",
+                    "description": "Your account has been created, but payment for the {plan} plan could not be initiated. Please update your subscription.",
+                    "button": "Complete Payment"
+                }
+            },
+            "Widgets": {
+                "themesWidget": "Recurring Themes",
+                "sentimentWidget": "Wellbeing",
+                "todaysSessions": "Today's Schedule",
+                "sessionsThisMonth": "Sessions (Month)",
+                "activePatients": "Active Patients",
+                "monthIncome": "Estimated Income",
+                "sessionsNextWeek": "Schedule (7 days)",
+                "attendanceRate": "Attendance Rate",
+                "cancellationRate": "Cancellation Rate",
+                "pendingNotes": "Pending Notes",
+                "sessionsChart": "Evolution Chart",
+                "weeklyChart": "Weekly Load Chart",
+                "sessionTypesWidget": "Session Types",
+                "testsWidget": "Tests Performed",
+                "techniquesWidget": "Therapeutic Techniques",
+                "referralWidget": "Invite & Earn",
+                "categories": {
+                    "Operational": "Operational",
+                    "Analytics": "Analytics",
+                    "Charts": "Charts",
+                    "Clinical": "Clinical Analytics",
+                    "Growth": "Growth"
+                },
+                "themesWidget_subtitle": "Consultation reasons",
+                "sentimentWidget_subtitle": "Emotional trend"
+            },
+            "Stats": {
+                "sessions": "Sessions",
+                "patients": "Patients",
+                "income": "Income (Est)",
+                "agenda7d": "Schedule (7d)",
+                "attendance": "Attendance",
+                "cancellations": "Cancellations",
+                "notes": "Notes",
+                "subtitles": {
+                    "thisMonth": "This Month",
+                    "active": "Active",
+                    "sessions": "Sessions",
+                    "globalRate": "Global Rate",
+                    "pending": "Pending",
+                    "suggested": "AI Suggested",
+                    "detected": "Detected",
+                    "distribution": "Distribution"
+                },
+                "trends": {
+                    "made": "Performed",
+                    "view": "View",
+                    "general": "General",
+                    "high": "High",
+                    "low": "Low",
+                    "review": "Review",
+                    "upToDate": "Up to date",
+                    "total": "Total"
+                }
+            },
+            "Library": {
+                "title": "Widget Library",
+                "description": "Enable or disable widgets you want to see on your dashboard.",
+                "add": "Add",
+                "hide": "Hide",
+                "openButton": "Widgets"
+            },
+            "Admin": {
+                "title": "Administration Panel",
+                "description": "Welcome to the management area. You have full access to manage users, billing, and system settings.",
+                "goToPanel": "Go to Admin Panel",
+                "myProfile": "My Profile"
+            },
+            "Manager": {
+                "assignedProfessionals": "Assigned Professionals",
+                "noAssigned": "You have no assigned professionals yet."
+            },
+            "Toasts": {
+                "errorLoading": "Error loading data",
+                "errorLoadingDesc": "Could not fetch statistics.",
+                "layoutSaved": "Layout saved",
+                "layoutSavedDesc": "Your dashboard configuration has been updated successfully.",
+                "errorSaving": "Error saving",
+                "errorSavingDesc": "Could not save configuration."
+            },
+            "TodaysSessions": {
+                "loading": "Loading schedule...",
+                "title": "Today's Agenda",
+                "description": "You have {count} sessions scheduled for today.",
+                "emptyTitle": "No sessions for today.",
+                "emptyDesc": "Enjoy your day off or schedule new appointments.",
+                "scheduleNew": "Schedule New",
+                "viewDetails": "View Details",
+                "start": "Start"
+            },
+            "Charts": {
+                "sessionsEvolution": "Evolution",
+                "last30days": "Last 30 days",
+                "weeklyLoad": "Weekly Load",
+                "sessionsRange": "Sessions (Mon-Sun)"
+            },
+            "Referral": {
+                "title": "Invite & Earn",
+                "description": "Get <strong>5 simulator cases</strong> for each professional you invite.",
+                "referrals": "Referrals"
+            }
+        },
+        "ai_help_text_v2": "This language will determine the wording of <strong>clinical reports, post-session analysis, and the patient simulator language</strong>.<br />Note: The <strong>Live Assistant</strong> will automatically detect the language you speak.",
+        "Settings": {
+            "title": "Settings",
+            "sections": {
+                "agenda": "Schedule and Calendar",
+                "ai": "Artificial Intelligence",
+                "notifications": "Notifications",
+                "managers": "Schedule Managers",
+                "branding": "Personal Branding",
+                "privacy": "Privacy and Data"
+            },
+            "agenda": {
+                "title": "Schedule and Calendar",
+                "subtitle": "Configure your preferences for new sessions and availability.",
+                "defaultDuration": "Default duration (minutes)",
+                "bufferTime": "Time between sessions (minutes)",
+                "hourlyRate": "Session/Hour Rate (€)",
+                "hourlyRateHelp": "Used to calculate estimated income.",
+                "weeklySchedule": {
+                    "title": "Weekly Schedule",
+                    "subtitle": "Configure availability for each day of the week.",
+                    "days": {
+                        "0": "Sunday",
+                        "1": "Monday",
+                        "2": "Tuesday",
+                        "3": "Wednesday",
+                        "4": "Thursday",
+                        "5": "Friday",
+                        "6": "Saturday"
+                    },
+                    "open": "Open",
+                    "closed": "Closed"
+                },
+                "blocks": {
+                    "title": "Blocks and Exceptions",
+                    "subtitle": "Add holidays or block specific hours.",
+                    "date": "Date",
+                    "start": "Start",
+                    "end": "End",
+                    "blockFullDay": "Block Full Day",
+                    "blockPartial": "Block Schedule",
+                    "holidays": "Holidays (Full Day)",
+                    "noHolidays": "No holidays configured.",
+                    "partialBlocks": "Partial Blocks"
+                }
+            },
+            "ai": {
+                "title": "Artificial Intelligence",
+                "subtitle": "Customize report generation, analysis, and patient simulator.",
+                "preferredLanguage": "Language for Reports and Analysis",
+                "selectLanguage": "Select a language",
+                "languages": {
+                    "es": "Español",
+                    "ca": "Català",
+                    "en": "English"
+                },
+                "syncLanguage": "Sync with Interface Language",
+                "syncLanguageHelp": "If enabled, the report language will automatically change when you switch the website language."
+            },
+            "notifications": {
+                "title": "Notifications",
+                "subtitle": "Manage your notification and reminder preferences.",
+                "enableReminders": "Enable email reminders",
+                "remindersHelp": "You will receive an email the day before at 8:00 PM with a summary of the next day's sessions."
+            },
+            "managers": {
+                "title": "Schedule Managers",
+                "subtitle": "Manage users who have access to your schedule and patients."
+            },
+            "branding": {
+                "title": "Personal Branding",
+                "subtitle": "Customize the appearance of your reports and documents with your corporate identity.",
+                "companyName": "Company / Clinic Name",
+                "companyPlaceholder": "Ex: Advanced Psychological Clinic",
+                "companyHelp": "This name will appear in the header of your PDF reports.",
+                "primaryColor": "Primary Color",
+                "secondaryColor": "Secondary Color",
+                "logoLabel": "Company Logo",
+                "deleteLogo": "Remove logo",
+                "logoHelp": "Formats: PNG, JPG. Max 2MB. Transparent background recommended.",
+                "showLogo": "Show icon/logo in reports",
+                "save": "Save Changes",
+                "saving": "Saving...",
+                "toasts": {
+                    "saved": "Settings saved",
+                    "savedDesc": "Your branding settings have been updated.",
+                    "logoUploaded": "Logo uploaded",
+                    "logoUploadedDesc": "The logo has been uploaded successfully.",
+                    "error": "Error",
+                    "uploadError": "Could not upload the logo.",
+                    "saveError": "Could not save settings."
+                }
+            },
+            "privacy": {
+                "title": "Privacy and Data",
+                "subtitle": "Manage your personal data and export your information (GDPR).",
+                "exportData": {
+                    "title": "Export my data",
+                    "description": "Download a complete copy of your profile, sessions, notes, and clients in CSV format (Excel compatible).",
+                    "button": "Export Data (CSV)",
+                    "loading": "Exporting...",
+                    "success": "Export completed",
+                    "successDesc": "The CSV file has been downloaded successfully.",
+                    "error": "Could not export data."
+                },
+                "exportReports": {
+                    "title": "Export Reports (PDF)",
+                    "description": "Download a ZIP file with all your generated reports in PDF format.",
+                    "button": "Export Reports (PDF)",
+                    "warning": "No reports found to export or an error occurred.",
+                    "success": "Export completed",
+                    "successDesc": "The ZIP file has been downloaded successfully.",
+                    "error": "Could not export reports."
+                }
+            },
+            "toasts": {
+                "updateSuccess": "Settings updated",
+                "updateSuccessDesc": "Your preferences have been saved successfully.",
+                "updateError": "Error",
+                "updateErrorDesc": "Could not update settings.",
+                "holidayAdded": "Day blocked",
+                "holidayAddedDesc": "The holiday has been added.",
+                "holidayExists": "Info",
+                "holidayExistsDesc": "This day is already blocked.",
+                "blockAdded": "Block added",
+                "blockAddedDesc": "The schedule block has been added.",
+                "blockError": "Error",
+                "blockErrorDesc": "Complete date and times.",
+                "blockTimeError": "Start time must be before end time."
+            },
+            "GoogleCalendar": {
+                "title": "Google Calendar Integration",
+                "description": "Connect your calendar to automatically sync events.",
+                "status": "Status",
+                "connected": "Connected",
+                "disconnected": "Not connected",
+                "connectButton": "Connect Google Calendar",
+                "connecting": "Connecting...",
+                "importEvents": "Import Google Calendar events to platform",
+                "toasts": {
+                    "connectedTitle": "Connected",
+                    "connectedDesc": "Google Calendar successfully connected.",
+                    "errorTitle": "Error",
+                    "errorDesc": "Failed to connect to Google.",
+                    "updatedTitle": "Settings updated",
+                    "updatedDesc": "Google events will be imported.",
+                    "updatedDescOff": "Event import disabled."
+                }
+            }
+        },
+        "Profile": {
+            "title": "My Profile",
+            "personalInfo": {
+                "title": "Personal Information",
+                "subtitle": "View and update your personal data.",
+                "firstName": "First Name",
+                "lastName": "Last Name",
+                "email": "Email",
+                "emailNote": "Email cannot be changed.",
+                "editButton": "Edit Profile",
+                "saveButton": "Save Changes",
+                "savingButton": "Saving...",
+                "cancelButton": "Cancel"
+            },
+            "subscription": {
+                "title": "Subscription",
+                "subtitle": "Details of your current plan and billing.",
+                "currentPlan": "Current Plan",
+                "planDemo": "Demo Plan",
+                "paymentMonthly": "Monthly Payment",
+                "paymentAnnual": "Annual Payment",
+                "paymentFree": "Free",
+                "statusActive": "Active",
+                "expirationDate": "Expiration Date",
+                "nextRenewal": "Next Renewal",
+                "unlimited": "Unlimited",
+                "status": "Status",
+                "statusOk": "Your subscription is up to date.",
+                "statusProblem": "There is a problem with your subscription.",
+                "limitsTitle": "Plan Limits and Usage",
+                "activePatients": "Active Patients",
+                "unlimitedPatients": "Unlimited Patients",
+                "patientsCount": "{count} of {max} patients",
+                "patientsActive": "Active",
+                "transcriptionMinutes": "Transcription Minutes (AI)",
+                "transcriptionUnlimited": "Unlimited",
+                "transcriptionRemaining": "{remaining} min remaining of {limit}",
+                "transcriptionRemainingExtra": "{remaining} min remaining of {baseLimit} + {extra} (Extra)",
+                "transcriptionCalculating": "Calculating...",
+                "transcriptionUsed": "{used} Min Used",
+                "basePlan": "Base Plan",
+                "extraPack": "Extra Pack",
+                "demoExpires": "* Your trial period ends on {date}.",
+                "limitsReset": "* Monthly limits reset on {date}.",
+                "addonsTitle": "Active Add-ons",
+                "agendaManager": "Agenda Manager",
+                "agendaManagerDesc": "Delegated agenda and patient management",
+                "onboardingPack": "On-boarding Pack",
+                "onboardingPackDesc": "We set up your account with you in 45 min: patient import, Google Calendar link and customization. Functionality guarantee.",
+                "activated": "Activated",
+                "inProgress": "In Progress / Active",
+                "renewal": "Renewal: {date}",
+                "checkSupport": "Check status in support",
+                "managePayments": "Manage Payments and Invoices",
+                "loading": "Loading...",
+                "changePlan": "Change Plan / Buy Pack"
+            },
+            "security": {
+                "title": "Security",
+                "subtitle": "Manage your password and sessions.",
+                "changePassword": "Change Password"
+            },
+            "dangerZone": {
+                "title": "Danger Zone",
+                "subtitle": "Irreversible actions on your account.",
+                "cancelSubscription": "Cancel Subscription",
+                "deleteAccount": "Delete Account"
+            },
+            "dialogs": {
+                "cancelSubscription": {
+                    "title": "Cancel Subscription?",
+                    "description": "You will lose access to your plan features at the end of the current period. This action does not delete your account.",
+                    "back": "Back",
+                    "confirm": "Confirm Cancellation"
+                },
+                "deleteAccount": {
+                    "title": "Delete Account Permanently",
+                    "description": "This action is irreversible. All your associated data, patients, and sessions will be deleted.",
+                    "confirmText": "Type {text} below to confirm.",
+                    "deleteWord": "DELETE",
+                    "placeholder": "Type DELETE to confirm",
+                    "cancel": "Cancel",
+                    "confirm": "Delete Permanently",
+                    "deleting": "Deleting..."
+                },
+                "changePassword": {
+                    "title": "Change Password",
+                    "description": "Enter your current password and the desired new password.",
+                    "currentPassword": "Current Password",
+                    "newPassword": "New Password",
+                    "confirmPassword": "Confirm New Password",
+                    "cancel": "Cancel",
+                    "update": "Update Password",
+                    "updating": "Updating..."
+                }
+            },
+            "toasts": {
+                "profileUpdated": "Profile updated",
+                "profileUpdatedDesc": "Your data has been saved successfully.",
+                "profileError": "Error",
+                "profileErrorDesc": "Could not update profile.",
+                "passwordMismatch": "Validation error",
+                "passwordMismatchDesc": "The new passwords do not match.",
+                "passwordUpdated": "Password updated",
+                "passwordUpdatedDesc": "Your password has been changed successfully.",
+                "passwordError": "Error",
+                "passwordErrorDesc": "Could not change password. Verify your current password.",
+                "accountDeleted": "Account deleted",
+                "accountDeletedDesc": "Your account has been deleted successfully.",
+                "accountDeleteError": "Error",
+                "accountDeleteErrorDesc": "Could not delete account.",
+                "subscriptionCanceled": "Subscription canceled",
+                "subscriptionCanceledDesc": "Your subscription has been canceled successfully."
+            }
+        },
+        "Statistics": {
+            "title": "Global Analytics",
+            "titleClient": "Analytics: {clientName}",
+            "subtitle": "Explore detailed metrics and trends.",
+            "loading": "Loading analytics data...",
+            "selectView": "Select view...",
+            "globalView": "Global View (All patients)",
+            "tabs": {
+                "overview": "Overview",
+                "clinical": "Clinical Detail",
+                "patients": "Patients and Adherence",
+                "themes": "Themes and Trends"
+            },
+            "timeRange": {
+                "label": "Period",
+                "1m": "Last Month (Daily)",
+                "3m": "Last 3 Months (Weekly)",
+                "6m": "Last 6 Months (Monthly)",
+                "1y": "Last Year (Monthly)"
+            },
+            "alert": {
+                "clientTitle": "Confidential Clinical Record",
+                "clientDesc": "This data is part of the patient's clinical history and is protected by professional secrecy. Exclusive use for diagnosis and therapeutic follow-up.",
+                "globalTitle": "Privacy and Clinical Use",
+                "globalDesc": "Aggregated and anonymized data. This tool provides statistical support for practice management. Does not contain personally identifiable information in this view."
+            },
+            "overview": {
+                "analyticsTitle": "Evolution and Metrics",
+                "analyticsSubtitle": "Click to see detailed chart.",
+                "managementTitle": "Schedule and Management",
+                "managementSubtitle": "Quick actions and administrative status.",
+                "weeklyLoadTitle": "Weekly Load",
+                "weeklyLoadDesc": "Distribution of sessions in the next 7 days"
+            },
+            "metrics": {
+                "sessions": "Sessions (Month)",
+                "sessionsSubtitle": "Total Completed",
+                "sessionsTotal": "Total",
+                "vsLastMonth": "vs previous month",
+                "stable": "Stable",
+                "income": "Income (Est)",
+                "incomeSubtitle": "This Month",
+                "incomeRate": "60€/h",
+                "patients": "Active Patients",
+                "patientsSubtitle": "Total",
+                "agenda": "Schedule (7d)",
+                "agendaSubtitle": "Next Week",
+                "agendaView": "View",
+                "pendingNotes": "Pending Notes",
+                "pendingNotesSubtitle": "Admin",
+                "pendingNotesTasks": "Tasks",
+                "attendance": "Attendance Rate",
+                "attendanceSubtitle": "Completed vs Scheduled",
+                "attendanceQuality": "Quality",
+                "cancellation": "Cancellation Rate",
+                "cancellationSubtitle": "Canceled + No Show",
+                "cancellationRisk": "Risk"
+            },
+            "charts": {
+                "sessionsTitle": "Sessions Evolution",
+                "sessionsDesc": "Session volume in the last 6 months",
+                "incomeTitle": "Income Trend",
+                "incomeDesc": "Estimated income based on base rate",
+                "patientsTitle": "New Patients",
+                "patientsDesc": "Patients added per month",
+                "attendanceTitle": "Attendance Rate",
+                "attendanceDesc": "Percentage of completed appointments",
+                "attendanceEvolution": "Attendance Evolution",
+                "attendanceEvolutionDesc": "Percentage of completed sessions",
+                "cancellationTitle": "Cancellation Rate",
+                "cancellationDesc": "Percentage of canceled appointments",
+                "cancellationEvolution": "Cancellation Rate Evolution",
+                "cancellationEvolutionDesc": "Percentage of canceled sessions"
+            },
+            "clinical": {
+                "title": "Advanced Clinical Detail",
+                "sessionTypes": "Sessions by Type",
+                "tests": "Tests Performed",
+                "testsTrend": "AI suggested",
+                "techniques": "Therapeutic Techniques",
+                "techniquesTrend": "detected"
+            },
+            "patientsTab": {
+                "title": "Patient Metrics"
+            },
+            "themes": {
+                "recurrentTitle": "Recurrent Themes",
+                "recurrentDesc": "Analysis of the most frequent consultation reasons detected by Artificial Intelligence. This chart helps to quickly visualize recurring problems in sessions.",
+                "wellbeingTitle": "Wellbeing Trend",
+                "wellbeingDesc": "Evolution of positive sentiment over time. This line shows how the emotional tone of sessions changes, allowing detection of improvements or relapses."
+            }
+        },
+        "Simulator": {
+            "title": "Clinical Simulator",
+            "subtitle": "Practice your skills with AI-generated patients.",
+            "tabs": {
+                "simulator": "Simulator",
+                "history": "History and Progress"
+            },
+            "timer": "Time remaining",
+            "endSession": "End Session",
+            "idle": {
+                "title": "Configure Your Simulation",
+                "description": "Select the difficulty level. The system will generate a patient with a random pathology and personality.",
+                "difficulty": {
+                    "easy": "Easy",
+                    "medium": "Medium",
+                    "hard": "Hard"
+                },
+                "nonVerbalCues": "Show Micro-behaviors (Non-verbal)",
+                "startButton": "Start Simulation",
+                "disclaimer": "* Patients are synthetically generated. They do not correspond to real people."
+            },
+            "loading": "Generating patient profile...",
+            "active": {
+                "patientProfile": "Patient Profile",
+                "reasonForConsultation": "Reason for Consultation",
+                "context": "Context",
+                "traits": "Traits",
+                "chatPlaceholder": "The patient has entered the room. You can greet them.",
+                "inputPlaceholder": "Type your response...",
+                "sendButton": "Send",
+                "voiceSettings": "Adjust Voice",
+                "speed": "Speed",
+                "pitch": "Pitch",
+                "stopAndSend": "Stop and Send",
+                "speak": "Speak (Hold or click)"
+            },
+            "finished": {
+                "newSimulation": "New Simulation",
+                "metrics": {
+                    "empathy": "Empathy",
+                    "effectiveness": "Clinical Effectiveness",
+                    "professionalism": "Professionalism"
+                },
+                "reportTitle": "Detailed Supervision Report",
+                "reportSubtitle": "Generated by AI Clinical Supervisor"
+            },
+            "history": {
+                "evolutionTitle": "Your Evolution",
+                "reportsTitle": "Archived Reports",
+                "period": "Period",
+                "week": "Last Week",
+                "month": "Last Month",
+                "year": "Last Year",
+                "all": "All History",
+                "allReports": "All",
+                "clearFilters": "Clear filters",
+                "loadingStats": "Loading statistics...",
+                "loadingHistory": "Loading history...",
+                "emptyCharts": "Not enough data to show evolution.",
+                "emptyReports": "No archived reports for this period.",
+                "charts": {
+                    "title": "Skills Evolution",
+                    "empathy": "Empathy",
+                    "effectiveness": "Effectiveness"
+                },
+                "badges": {
+                    "hard": "Hard",
+                    "medium": "Medium",
+                    "easy": "Easy"
+                }
+            },
+            "reportModal": {
+                "title": "Session Report",
+                "difficulty": "Difficulty",
+                "empathy": "Empathy",
+                "effectiveness": "Effectiveness",
+                "professionalism": "Professionalism"
+            },
+            "toasts": {
+                "started": "Simulation started",
+                "startedDesc": "The patient is waiting.",
+                "timeExpired": "Time Expired",
+                "timeExpiredDesc": "The session has ended automatically (45 min).",
+                "sessionEnded": "Session Ended",
+                "sessionEndedDesc": "You have reached the 45-minute limit for this session.",
+                "error": "Error",
+                "errorStart": "Error starting simulation.",
+                "errorResponse": "Error getting response.",
+                "errorFeedback": "Error generating feedback.",
+                "errorHistory": "Could not load history."
+            }
+        },
+        "Compliance": {
+            "title": "Compliance",
+            "back": "Back",
+            "print": "Print / Save PDF",
+            "tabs": {
+                "legal": "AI Justification",
+                "gdpr": "Privacy Policy/GDPR",
+                "cookies": "Cookies",
+                "terms": "Terms"
+            },
+            "footer": "Informative document generated by PsicoAIssist Platform • Compliance 2024-2025"
+        },
+        "Activity": {
+            "title": "Recent Activity",
+            "subtitle": "Latest actions in your account",
+            "viewAll": "View all",
+            "empty": "No recent activity",
+            "emptyDesc": "Actions you take will appear here.",
+            "actions": {
+                "CREATE": "New record",
+                "UPDATE": "Update",
+                "DELETE": "Deletion",
+                "LOGIN": "Login",
+                "LOGIN_SUCCESS": "Successful Login",
+                "CREATE_SESSION": "Session Scheduled",
+                "UPDATE_SESSION": "Session Updated",
+                "DELETE_SESSION": "Session Deleted",
+                "CREATE_CLIENT": "New Patient",
+                "UPDATE_CLIENT": "Patient Data",
+                "CREATE_REPORT": "Report Created",
+                "CREATE_REPORT_DRAFT": "AI Draft Generated"
+            }
+        },
+        "Grid": {
+            "edit": "Edit Layout",
+            "save": "Save Layout",
+            "cancel": "Cancel",
+            "reset": "Reset"
+        }
+    },
+    "Reports": {
+        "title": "Clinical Reports",
+        "subtitle": "Manage and write legal and evolution reports.",
+        "defaultTitles": {
+            "evolution": "Evolution Report",
+            "discharge": "Discharge Report"
+        },
+        "newReport": "New Report",
+        "searchPlaceholder": "Search by title or patient...",
+        "filters": {
+            "allTypes": "All Types",
+            "allStatuses": "All Statuses",
+            "completed": "Completed",
+            "drafts": "Drafts"
+        },
+        "table": {
+            "columns": {
+                "titlePatient": "Title / Patient",
+                "type": "Type",
+                "date": "Date",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "unknownPatient": "Unknown Patient",
+            "status": {
+                "completed": "Completed",
+                "draft": "Draft"
+            },
+            "actions": {
+                "downloadWord": "Download Word",
+                "downloadPdf": "Download PDF",
+                "edit": "Edit Draft",
+                "delete": "Delete",
+                "deleteConfirm": "Are you sure you want to delete this report?",
+                "deleteSuccess": "Report deleted",
+                "deleteSuccessDesc": "The report has been moved to the trash.",
+                "deleteError": "Delete failed",
+                "deleteErrorDesc": "Could not delete report"
+            },
+            "empty": {
+                "title": "No reports found",
+                "description": "Try adjusting filters or create a new report."
+            }
+        },
+        "types": {
+            "INITIAL_EVALUATION": "Initial Evaluation",
+            "PROGRESS": "Progress",
+            "DISCHARGE": "Discharge",
+            "REFERRAL": "Referral",
+            "LEGAL": "Legal / Forensic",
+            "INSURANCE": "Insurance Report",
+            "CUSTOM": "Custom"
+        },
+        "errors": {
+            "loadFailed": "Error loading data",
+            "loadFailedDesc": "Could not load reports.",
+            "downloadFailed": "Download failed",
+            "downloadPdfFailed": "Could not download PDF",
+            "downloadWordFailed": "Could not download Word"
+        }
+    },
+    "Patients": {
+        "title": "Patients",
+        "subtitle": "Manage your patient list and clinical records.",
+        "newPatient": "New Patient",
+        "alerts": {
+            "noDataTitle": "Attention: No visible data",
+            "noDataDesc": "No patients shown because you have no assigned professionals."
+        },
+        "tabs": {
+            "active": "Active",
+            "archived": "Archived"
+        },
+        "lists": {
+            "activeTitle": "Active Patients List",
+            "archivedTitle": "Archived Patients",
+            "activeDesc": "You have a total of {count} active patients.",
+            "archivedDesc": "You have a total of {count} archived patients."
+        },
+        "filters": {
+            "searchPlaceholder": "Search by name or email...",
+            "professional": "Filter by Professional",
+            "allProfessionals": "All professionals"
+        },
+        "status": {
+            "loading": "Loading patients...",
+            "noActiveFound": "No active patients found.",
+            "noArchivedFound": "No archived patients found.",
+            "noDiagnosis": "No diagnosis",
+            "active": "Active",
+            "archived": "Archived",
+            "never": "Never"
+        },
+        "riskLevels": {
+            "LOW": "Low",
+            "MEDIUM": "Medium",
+            "HIGH": "High",
+            "CRITICAL": "Critical"
+        },
+        "table": {
+            "headers": {
+                "patient": "Patient",
+                "statusRisk": "Status / Risk",
+                "contact": "Contact",
+                "lastSession": "Last Session",
+                "actions": "Actions"
+            }
+        },
+        "actions": {
+            "viewFile": "View File",
+            "scheduleSession": "Schedule Session",
+            "statistics": "Statistics",
+            "edit": "Edit",
+            "archive": "Archive",
+            "restore": "Restore",
+            "deletePermanent": "Delete Permanently",
+            "archiveConfirm": "Are you sure you want to archive this patient?",
+            "deleteConfirm": "Are you sure you want to PERMANENTLY delete this patient? This action CANNOT be undone and will delete all their history, sessions, and associated notes."
+        },
+        "toasts": {
+            "archivedSuccess": "Patient archived",
+            "archivedDesc": "The patient has been archived successfully.",
+            "restoredSuccess": "Patient restored",
+            "restoredDesc": "The patient has been restored and moved to the active list.",
+            "deletedSuccess": "Patient deleted",
+            "deletedDesc": "The patient and all their data have been permanently deleted.",
+            "errorArchive": "Could not archive patient",
+            "errorRestore": "Could not restore patient",
+            "errorDelete": "Could not delete patient",
+            "errorLoad": "Could not load patients"
+        }
+    },
+    "Calendar": {
+        "title": "Sessions",
+        "subtitle": "Manage your agenda and therapy tracking.",
+        "newSession": "Schedule New Session",
+        "alerts": {
+            "noDataTitle": "Attention: No visible data",
+            "noDataDesc": "No sessions shown because you have no assigned professionals."
+        },
+        "tabs": {
+            "list": "List",
+            "calendar": "Calendar"
+        },
+        "list": {
+            "title": "Session Agenda",
+            "description": "{count} sessions registered in total."
+        },
+        "filters": {
+            "date": "Date",
+            "patient": "Patient",
+            "patientPlaceholder": "Search patient...",
+            "type": "Type",
+            "status": "Status",
+            "professional": "Filter by Professional",
+            "allProfessionals": "All",
+            "allTypes": "All",
+            "allStatuses": "All"
+        },
+        "table": {
+            "headers": {
+                "dateTime": "Date & Time",
+                "patient": "Patient",
+                "type": "Type",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "loading": "Loading sessions...",
+            "noData": "No sessions found.",
+            "unknownClient": "Unknown Client"
+        },
+        "status": {
+            "SCHEDULED": "Scheduled",
+            "COMPLETED": "Completed",
+            "CANCELLED": "Cancelled",
+            "IN_PROGRESS": "In Progress",
+            "NO_SHOW": "No Show"
+        },
+        "types": {
+            "INDIVIDUAL": "Individual",
+            "GROUP": "Group",
+            "FAMILY": "Family",
+            "COUPLE": "Couple",
+            "CONSULTATION": "Consultation",
+            "EMERGENCY": "Emergency"
+        },
+        "actions": {
+            "startSession": "Start Session",
+            "viewDetails": "View Details",
+            "cancelSession": "Cancel Session",
+            "delete": "Delete",
+            "cancelConfirm": "Are you sure you want to cancel this session?",
+            "deleteConfirm": "Are you sure you want to delete this session?",
+            "deleteConfirmPermanent": "Delete this session permanently?"
+        },
+        "toasts": {
+            "loadError": "Error",
+            "loadErrorDesc": "Could not load sessions",
+            "cancelSuccess": "Session cancelled",
+            "cancelSuccessDesc": "The session has been cancelled successfully.",
+            "cancelError": "Could not cancel session",
+            "deleteSuccess": "Session deleted",
+            "deleteError": "Could not delete session"
+        },
+        "calendarView": {
+            "title": "Calendar",
+            "subtitle": "Monthly and weekly view of your sessions",
+            "actionsTitle": "Session Actions",
+            "actionsDesc": "As a manager, you can cancel or delete this session.",
+            "cancelBtn": "Cancel Session",
+            "deleteBtn": "Delete Session"
+        }
+    },
+    "Admin": {
+        "Dashboard": {
+            "Common": {
+                "noData": "No data available",
+                "noDataDesc": "Data will appear here when you start using the platform.",
+                "noDataSimple": "Not enough data"
+            },
+            "title": "Administration Panel",
+            "subtitle": "Manage PsicoAIssist users and subscriptions",
+            "loading": "Loading administration panel...",
+            "error": "Access Error",
+            "retry": "Retry",
+            "stats": {
+                "activeUsers": "Active Users",
+                "subscriptions": "Subscriptions",
+                "managers": "Managers",
+                "viewUsers": "View users",
+                "estimatedRevenue": "Estimated Revenue",
+                "monthlyRecurring": "Monthly recurring billing",
+                "viewBilling": "View billing",
+                "totalSessions": "Total Sessions",
+                "sessionsCompleted": "Sessions completed",
+                "reportsGenerated": "Reports Generated",
+                "aiReports": "AI-generated reports",
+                "resourceUsage": "Resource Usage",
+                "aiConsumption": "AI Consumption",
+                "transcribedMinutes": "min transcribed",
+                "simulatorSessions": "simulator sessions"
+            }
+        },
+        "Users": {
+            "title": "User Management",
+            "subtitle": "Manage all platform users",
+            "search": "Search by name or email...",
+            "filters": {
+                "all": "All",
+                "active": "Active",
+                "inactive": "Inactive",
+                "role": "Role",
+                "subscription": "Subscription"
+            },
+            "table": {
+                "name": "Name",
+                "email": "Email",
+                "role": "Role",
+                "subscription": "Subscription",
+                "status": "Status",
+                "registered": "Registered",
+                "actions": "Actions"
+            },
+            "roles": {
+                "admin": "Administrator",
+                "professional": "Professional",
+                "agenda_manager": "Agenda Manager"
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive",
+                "verified": "Verified",
+                "pending": "Pending"
+            },
+            "actions": {
+                "view": "View details",
+                "edit": "Edit",
+                "delete": "Delete",
+                "suspend": "Suspend",
+                "activate": "Activate"
+            },
+            "detail": {
+                "title": "User Details",
+                "personalInfo": "Personal Information",
+                "subscriptionInfo": "Subscription Information",
+                "activityLog": "Activity Log",
+                "save": "Save Changes",
+                "cancel": "Cancel"
+            }
+        },
+        "Tasks": {
+            "title": "Administrative Tasks",
+            "subtitle": "Manage system tasks and reminders",
+            "new": "New Task",
+            "filters": {
+                "all": "All",
+                "pending": "Pending",
+                "completed": "Completed",
+                "priority": "Priority"
+            },
+            "priority": {
+                "high": "High",
+                "medium": "Medium",
+                "low": "Low"
+            },
+            "table": {
+                "title": "Title",
+                "description": "Description",
+                "priority": "Priority",
+                "status": "Status",
+                "dueDate": "Due Date",
+                "actions": "Actions"
+            }
+        },
+        "Communications": {
+            "title": "Communications",
+            "subtitle": "Send messages to users",
+            "sendEmail": "Send Email",
+            "recipients": "Recipients",
+            "subject": "Subject",
+            "message": "Message",
+            "send": "Send",
+            "selectUsers": "Select users...",
+            "allUsers": "All users",
+            "activeSubscribers": "Active subscribers",
+            "history": "Sending History"
+        },
+        "Billing": {
+            "title": "Billing",
+            "subtitle": "Manage subscriptions and payments",
+            "overview": {
+                "title": "Billing Overview",
+                "totalRevenue": "Total Revenue",
+                "monthlyRecurring": "Monthly Recurring",
+                "activeSubscriptions": "Active Subscriptions",
+                "churnRate": "Churn Rate"
+            },
+            "subscriptions": {
+                "title": "Subscriptions",
+                "plan": "Plan",
+                "user": "User",
+                "status": "Status",
+                "amount": "Amount",
+                "nextBilling": "Next Billing"
+            },
+            "plans": {
+                "free": "Free",
+                "basic": "Basic",
+                "professional": "Professional",
+                "premium": "Premium"
+            }
+        },
+        "AuditLogs": {
+            "title": "Audit Log",
+            "subtitle": "System action history",
+            "filters": {
+                "all": "All actions",
+                "user": "User",
+                "admin": "Administrator",
+                "system": "System",
+                "dateRange": "Date range"
+            },
+            "table": {
+                "timestamp": "Date/Time",
+                "user": "User",
+                "action": "Action",
+                "details": "Details",
+                "ipAddress": "IP"
+            },
+            "actions": {
+                "login": "Login",
+                "logout": "Logout",
+                "create": "Creation",
+                "update": "Update",
+                "delete": "Deletion"
+            }
+        },
+        "System": {
+            "title": "System Configuration",
+            "subtitle": "General platform settings",
+            "general": {
+                "title": "General",
+                "siteName": "Site Name",
+                "siteUrl": "Site URL",
+                "supportEmail": "Support Email",
+                "timezone": "Timezone"
+            },
+            "features": {
+                "title": "Features",
+                "enableRegistration": "Enable Registration",
+                "enableSimulator": "Enable Simulator",
+                "enableTranscription": "Enable Transcription",
+                "maintenanceMode": "Maintenance Mode"
+            },
+            "limits": {
+                "title": "System Limits",
+                "maxUsers": "Maximum Users",
+                "maxSessions": "Maximum Sessions",
+                "maxStorage": "Maximum Storage"
+            },
+            "save": "Save Changes",
+            "saved": "Changes saved successfully"
+        }
+    },
+    "Landing": {
+        "Hero": {
+            "badge": "Ethical AI for Psychologists",
+            "title": {
+                "p1": "Empower your",
+                "p2": "psychology practice",
+                "p3": "with responsible AI"
+            },
+            "description": "Automatic transcription, intelligent analysis, and secure client management. Designed by psychologists, for psychologists. Full GDPR compliance.",
+            "features": {
+                "confidential": "100% Confidential",
+                "realtime": "Real-time AI",
+                "analysis": "Intelligent Analysis",
+                "easy": "Easy to Use"
+            },
+            "cta": {
+                "start": "Start for Free",
+                "simulator": "Try Simulator",
+                "clinics": "Representing an institution? See solutions for clinics"
+            },
+            "stats": {
+                "sessions": "Sessions",
+                "uptime": "Uptime",
+                "psychologists": "Psychologists"
+            }
+        },
+        "Features": {
+            "badge": "Features",
+            "title": "Everything you need for a modern practice",
+            "description": "Designed specifically for psychologists, with tools that respect professional ethics.",
+            "items": {
+                "transcription": {
+                    "title": "Automatic Transcription",
+                    "description": "Convert your spoken sessions into text with 95% accuracy. Compatible with Spanish, Catalan, and English."
+                },
+                "analysis": {
+                    "title": "Ethical AI Analysis",
+                    "description": "Intelligent suggestions based on validated therapeutic techniques. Without replacing your professional judgment."
+                },
+                "reports": {
+                    "title": "Automatic Reports",
+                    "description": "Generate professional reports following psychological standards. Customizable to your practice."
+                },
+                "security": {
+                    "title": "Total Security",
+                    "description": "AES-256 encryption, GDPR compliance. Your data and your clients' data are protected."
+                },
+                "analytics": {
+                    "title": "Smart Analytics",
+                    "description": "Visualize your clients' progress with objective metrics and interactive charts."
+                },
+                "clients": {
+                    "title": "Client Management",
+                    "description": "Organize files, clinical history, and sessions in an intuitive and secure system."
+                },
+                "time": {
+                    "title": "Save Time",
+                    "description": "Reduce administrative time by 70%. More time for what really matters."
+                },
+                "privacy": {
+                    "title": "Absolute Privacy",
+                    "description": "Only you have access to your information. Even we cannot see your clinical data."
+                }
+            },
+            "bottom": {
+                "trial": "14-day free trial",
+                "card": "No credit card required",
+                "support": "Support in Spanish/English"
+            }
+        },
+        "Pricing": {
+            "badge": "Pricing",
+            "title": "Plans designed for every career stage",
+            "description": "Start for free with our Demo Plan. Subscribe when you need more.",
+            "billing": {
+                "monthly": "Monthly",
+                "yearly": "Yearly",
+                "save": "(2 months free)"
+            },
+            "plans": {
+                "basic": {
+                    "name": "Basic",
+                    "description": "Perfect for independent psychologists just starting",
+                    "cta": "Get Basic",
+                    "features": [
+                        "Up to 25 active clients",
+                        "10 Hours Transcription (text only)",
+                        "Basic booking and invoicing",
+                        "Manual clinical notes",
+                        "5GB Storage"
+                    ],
+                    "limitations": [
+                        "No Generative AI (0 min/month)",
+                        "No Clinical Simulator",
+                        "No Google Calendar Synchronization"
+                    ]
+                },
+                "pro": {
+                    "name": "Pro",
+                    "description": "Most popular option for professional practice",
+                    "cta": "Get Pro",
+                    "features": [
+                        "Unlimited patients",
+                        "15h (900 min) Transcription + AI",
+                        "Google Calendar Synchronization",
+                        "Clinical Simulator (5 cases/month)",
+                        "50GB Storage",
+                        "Priority Support"
+                    ]
+                },
+                "premium": {
+                    "name": "Premium",
+                    "description": "For specialists with high workload",
+                    "cta": "Get Premium",
+                    "features": [
+                        "Everything in Pro",
+                        "50h (3,000 min) Transcription + AI",
+                        "Unlimited Clinical Simulator",
+                        "1TB Storage",
+                        "Priority Support + Video Call",
+                        "Custom Branding"
+                    ]
+                },
+                "clinics": {
+                    "name": "For Health Centers, Universities, and Hospitals",
+                    "description": "Centers prioritizing training and control",
+                    "cta": "Contact Sales",
+                    "features": [
+                        "Unlimited users (custom)",
+                        "Corporate AI (5,000+ min/month)",
+                        "Clinical Simulator (custom cases/month)",
+                        "API Access (HIS integration)",
+                        "Advanced Compliance (GDPR Audit) and SSO",
+                        "Dedicated Onboarding",
+                        "Unified Billing"
+                    ]
+                }
+            },
+            "extras": {
+                "title": "Extras and Additional Services",
+                "agenda": {
+                    "title": "Agenda Manager",
+                    "description": "Delegate your appointment management. Add an administrative user."
+                },
+                "minutes": {
+                    "title": "AI Minute Pack",
+                    "description": "A month with many patients? Add extra minutes to your plan."
+                },
+                "onboarding": {
+                    "title": "Onboarding Session",
+                    "description": "We set up your account with you in 45 min. Operation guarantee."
+                },
+                "simulator": {
+                    "title": "Simulator Pack",
+                    "description": "Expand your practical training. Add a pack of 10 clinical cases."
+                }
+            },
+            "footer": {
+                "contact": "Need a custom plan? Contact us",
+                "cancel": "Cancel anytime",
+                "data": "Data always yours",
+                "fairuse": "* Fair Use Policy applies to unlimited storage."
+            }
+        },
+        "Testimonials": {
+            "badge": "Testimonials",
+            "title": "Over 500 psychologists trust us",
+            "description": "Discover how PsicoAIssist is transforming psychological practice.",
+            "stats": {
+                "psychologists": "Active Psychologists",
+                "sessions": "Transcribed Sessions",
+                "satisfaction": "Satisfaction",
+                "rating": "Average Rating"
+            },
+            "cta": {
+                "title": "Want to be the next success story?",
+                "trial": "14-day free trial",
+                "cases": "View Case Studies"
+            },
+            "items": [
+                {
+                    "quote": "PsicoAIssist has revolutionized my practice. Automatic transcription saves me 3 hours daily.",
+                    "role": "Clinical Psychologist",
+                    "highlight": "Saves 3 hours daily"
+                },
+                {
+                    "quote": "What I like most is the security. Confidentiality is crucial and PsicoAIssist complies.",
+                    "role": "Educational Psychologist",
+                    "highlight": "Maximum security"
+                }
+            ]
+        },
+        "FinalCTA": {
+            "badge": "Limited Offer: 50% discount first month",
+            "title": {
+                "p1": "Ready to transform",
+                "p2": "your psychology practice?"
+            },
+            "description": "Join over 500 psychologists who are already saving 3+ hours daily.",
+            "features": {
+                "setup": "Instant Setup",
+                "secure": "100% Secure",
+                "support": "24/7 Support",
+                "cancel": "No Commitment"
+            },
+            "cta": {
+                "start": "Start for Free Now",
+                "demo": "View Live Demo"
+            },
+            "trust": "No credit card required • Free setup • Support included",
+            "countdown": {
+                "title": "Special Launch Offer",
+                "days": "Days",
+                "hours": "Hours",
+                "minutes": "Minutes",
+                "seconds": "Seconds",
+                "description": "Get 50% discount on your first subscription"
+            }
+        },
+        "Header": {
+            "nav": {
+                "features": "Features",
+                "simulator": "Simulator",
+                "pricing": "Pricing",
+                "testimonials": "Testimonials",
+                "docs": "Documentation",
+                "blog": "Blog",
+                "legal": "Legal"
+            },
+            "cta": {
+                "clinics": "For Clinics",
+                "login": "Log in",
+                "tryFree": "Try free"
+            }
+        },
+        "Footer": {
+            "description": "Transforming psychological practice with artificial intelligence. We help mental health professionals optimize their time and improve patient care.",
+            "links": {
+                "title": "Links",
+                "docs": "Documentation",
+                "privacy": "Privacy Policy",
+                "terms": "Terms and Conditions",
+                "cookies": "Cookie Policy"
+            },
+            "contact": {
+                "title": "Contact"
+            },
+            "security": {
+                "secure": "100% Secure and Confidential",
+                "gdpr": "GDPR Compliant",
+                "encryption": "AES-256 Encryption"
+            },
+            "copyright": "© {year} PsicoAIssist. All rights reserved."
+        }
+    },
+    "Auth": {
+        "Login": {
+            "title": "Welcome back",
+            "subtitle": "Access your PsicoAIssist account",
+            "google": "Continue with Google",
+            "divider": "Or continue with email",
+            "email": "Email",
+            "emailPlaceholder": "you@email.com",
+            "password": "Password",
+            "passwordPlaceholder": "Your password",
+            "rememberMe": "Remember me",
+            "forgotPassword": "Forgot your password?",
+            "submit": "Log in",
+            "submitting": "Logging in...",
+            "noAccount": "Don't have an account?",
+            "registerLink": "Sign up for free",
+            "errorTitle": "Login Error",
+            "accountNotFoundTitle": "Account not found",
+            "accountNotFoundMessage": "No account exists with this email. Please sign up.",
+            "successMessage": "Registration successful! You can now log in."
+        },
+        "Register": {
+            "title": "Join PsicoAIssist",
+            "subtitle": "Create your account and start transforming your psychological practice",
+            "google": "Sign up with Google",
+            "divider": "Or sign up with email",
+            "firstName": "First Name",
+            "firstNamePlaceholder": "Your first name",
+            "lastName": "Last Name",
+            "lastNamePlaceholder": "Your last name",
+            "email": "Professional Email",
+            "emailPlaceholder": "you@email.com",
+            "professionalNumber": "Professional / License No.",
+            "professionalNumberPlaceholder": "Ex: License / Assoc. / Tax ID",
+            "country": "Country",
+            "countryPlaceholder": "Selection",
+            "password": "Password",
+            "passwordPlaceholder": "Minimum 8 characters",
+            "confirmPassword": "Confirm Password",
+            "confirmPasswordPlaceholder": "Repeat your password",
+            "referralCode": "Referral Code (Optional)",
+            "referralCodePlaceholder": "If you have a code, enter it here",
+            "liabilityLabel": "Professional Certification Statement",
+            "liabilityText": "I certify that the <bold>professional/license number</bold> entered is truthful and current. I understand that falsifying this data constitutes professional intrusion and document forgery, entailing corresponding <bold>criminal responsibilities</bold> according to current regulations.",
+            "termsLabel": "I accept the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>",
+            "disclaimer": "This tool offers clinical support guidance exclusively for psychologists. It does not perform diagnoses nor replace clinical judgment.",
+            "submitFree": "Create free account",
+            "submitPaid": "Continue to Payment",
+            "submittingFree": "Creating account...",
+            "submittingPaid": "Preparing payment...",
+            "footerText": "By signing up, you accept our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>",
+            "alreadyAccount": "Already have an account?",
+            "loginLink": "Log in",
+            "successTitle": "Registration successful!",
+            "successMessage": "We have sent a verification email to <bold>{email}</bold>. Please check your inbox (and spam) and click the link to activate your account.",
+            "successButton": "Go to Login"
+        }
+    },
+    "Legal": {
+        "Terms": {
+            "title": "Terms and Conditions of Use",
+            "subtitle": "Service agreement for mental health professionals",
+            "cardTitle": "Contractual Relationship",
+            "sections": {
+                "nature": {
+                    "title": "1. Nature of Service",
+                    "text": "This application is an Artificial Intelligence-based <b>clinical decision support tool</b>. Its goal is to assist the professional in session management and document draft generation.",
+                    "warning": "The tool DOES NOT replace professional judgment, nor does it perform automated diagnoses, nor dictate medical or pharmacological treatments."
+                },
+                "responsibility": {
+                    "title": "2. Professional Responsibility",
+                    "text": "The user (accredited mental health professional) acknowledges and accepts that:",
+                    "list": {
+                        "1": "They are solely responsible for verifying AI-generated information before using it or including it in clinical records.",
+                        "2": "They are responsible for obtaining informed consent from patients for the use of session support tools.",
+                        "3": "They maintain final responsibility for any clinical decision made regarding their patients."
+                    }
+                },
+                "ownership": {
+                    "title": "3. Data Ownership",
+                    "text": "All clinical data, session notes, and patient information entered into the platform are the <b>exclusive property of the professional and/or the patient</b>, as applicable. The platform acts as a data processor, limited to safeguarding and processing information according to user instructions."
+                },
+                "usage": {
+                    "title": "4. Acceptable Use",
+                    "text": "The user commits to ethical use of the platform, respecting the profession's Code of Ethics and current regulations. Using the system for illicit, discriminatory purposes or those that violate human dignity is prohibited."
+                },
+                "ethics": {
+                    "title": "5. Ethical and Professional Limits",
+                    "intro": "Platform use is subject to the following unbreakable ethical limits, aligned with current deontological regulations:",
+                    "alerts": {
+                        "diagnosis": {
+                            "title": "AUTOMATED DIAGNOSIS PROHIBITION",
+                            "text": "Using AI outputs as definitive clinical diagnoses is strictly prohibited. AI is a guidance support tool; diagnosis is an act exclusive to the human professional."
+                        },
+                        "emergency": {
+                            "title": "DUTY OF EMERGENCY",
+                            "text": "The application IS NOT an emergency or crisis intervention device. In situations of imminent risk of suicide or harm to others, the professional must act according to conventional emergency protocols, without relying on tool processing."
+                        },
+                        "transparency": {
+                            "title": "TRANSPARENCY WITH THE PATIENT",
+                            "text": "It is the professional's ethical obligation to inform the patient about the use of technological support tools during the session and guarantee that this use does not interfere with the quality of the therapeutic alliance."
+                        }
+                    }
+                },
+                "fairUse": {
+                    "title": "6. Fair Use Policy",
+                    "text": "To ensure system stability and service quality for all users, plans with 'Unlimited' features are subject to the following monthly security caps:",
+                    "stats": {
+                        "activePatients": {
+                            "label": "Active Patients",
+                            "unit": "files"
+                        },
+                        "transcription": {
+                            "label": "AI Transcription",
+                            "unit": "hours/mo"
+                        },
+                        "reports": {
+                            "label": "Report Generation",
+                            "unit": "reports/mo"
+                        },
+                        "simulator": {
+                            "label": "Clinical Simulator",
+                            "unit": "cases/mo",
+                            "note": "Max 45 min/session"
+                        }
+                    },
+                    "warning": "* Use exceeding these limits is considered abusive and may result in temporary account suspension or support contact."
+                },
+                "plans": {
+                    "title": "7. Subscription Plans and Features",
+                    "intro": "Below are the available plans and their contractual features. Prices may be subject to applicable taxes.",
+                    "policy": "<b>Monthly Reset Policy:</b> All quotas included in plans (transcription minutes, simulator cases, etc.) reset automatically at the start of each billing cycle. <u>Unused resources during the current month do not roll over to the next month.</u>",
+                    "items": {
+                        "demo": {
+                            "subtitle": "Free / Limited",
+                            "badge": "14-day Trial",
+                            "includes": {
+                                "title": "Includes:",
+                                "list": [
+                                    "3 Active Patients max",
+                                    "30 Min Transcription + AI (Trial)",
+                                    "5 Reports monthly",
+                                    "Basic platform access"
+                                ]
+                            },
+                            "excludes": {
+                                "title": "Limitations:",
+                                "list": [
+                                    "No Clinical Simulator",
+                                    "Auto-expiry after 14 days",
+                                    "No calendar sync",
+                                    "No personal support"
+                                ]
+                            }
+                        },
+                        "basic": {
+                            "price": "29€ / mo",
+                            "includes": {
+                                "list": [
+                                    "25 Total Active Patients",
+                                    "10 Hours Transcription (Literal)",
+                                    "5GB Storage",
+                                    "Basic Appointment Mgmt"
+                                ]
+                            },
+                            "excludes": {
+                                "list": [
+                                    "Advanced AI Analysis",
+                                    "Clinical Simulator",
+                                    "Google Calendar Sync",
+                                    "Priority Support"
+                                ]
+                            }
+                        },
+                        "pro": {
+                            "price": "59€ / mo",
+                            "includes": {
+                                "list": [
+                                    "Unlimited Patients",
+                                    "15 Hours (900 min) Total AI",
+                                    "Google Calendar Sync (Bi-directional)",
+                                    "Advanced AI Analysis (Insights)",
+                                    "50GB Storage",
+                                    "Simulator (5 cases/mo)"
+                                ]
+                            },
+                            "excludes": {
+                                "list": [
+                                    "Unlimited Simulator",
+                                    "Custom Branding (Logo)",
+                                    "Support Video Call"
+                                ]
+                            }
+                        },
+                        "premium": {
+                            "price": "99€ / mo",
+                            "includes": {
+                                "list": [
+                                    "50 Hours (3,000 min) AI",
+                                    "Unlimited Simulator",
+                                    "Custom Branding",
+                                    "Priority Support + Video Call",
+                                    "1TB Storage"
+                                ]
+                            },
+                            "excludes": {
+                                "list": [
+                                    "Team Management (Multi-user)",
+                                    "API / HIS Integration"
+                                ]
+                            }
+                        },
+                        "clinics": {
+                            "title": "For Health Centers, Universities and Hospitals",
+                            "consult": "Contact Us",
+                            "includes": [
+                                "Unlimited Users",
+                                "Clinical Simulator (custom cases/mo)",
+                                "API / HIS & Compliance",
+                                "Guaranteed SLA"
+                            ]
+                        }
+                    },
+                    "extras": {
+                        "title": "Additional Services (Extras)",
+                        "items": {
+                            "agenda": {
+                                "desc": "Additional administrative user for appointment management. No access to clinical records."
+                            },
+                            "aiPack": {
+                                "title": "AI Minutes Pack",
+                                "desc": "500 additional AI processing minutes. One-time payment, do not expire while subscription is active."
+                            },
+                            "onboarding": {
+                                "title": "Assisted Onboarding",
+                                "price": "50€ (one-time)",
+                                "desc": "45 min session with a specialist for initial setup and data import."
+                            },
+                            "simPack": {
+                                "title": "Simulator Pack",
+                                "desc": "Pack of 10 additional interactive clinical cases for practice. Includes detailed AI feedback."
+                            }
+                        }
+                    }
+                },
+                "liability": {
+                    "title": "8. Limitation of Liability",
+                    "text": "The platform is not responsible for possible errors in transcription or AI suggestions, as it is a probabilistic technology. Human verification is indispensable in all cases."
+                },
+                "footer": {
+                    "text": "Last update: December 2025"
+                }
+            }
+        },
+        "title": "Legal Center",
+        "loading": "Loading...",
+        "header": {
+            "back": "Back to home",
+            "print": "Print"
+        },
+        "tabs": {
+            "privacy": "Privacy Policy",
+            "privacyShort": "Privacy",
+            "terms": "Terms",
+            "cookies": "Cookies",
+            "aiJustification": "AI Justification",
+            "aiJustificationShort": "AI Legal"
+        },
+        "footer": "Informative document generated by PsicoAIssist Platform • Regulatory Compliance 2024-2025",
+        "redirect": {
+            "title": "Redirecting...",
+            "message": "We are taking you to our new unified legal section."
+        },
+        "AIJustification": {
+            "title": "Legal and Regulatory Documentation",
+            "subtitle": "AI Act Ready • GDPR Compliant • Professional Ethics",
+            "badges": {
+                "auditable": "Auditable",
+                "transparent": "Transparent",
+                "supervised": "Supervised"
+            },
+            "tabs": {
+                "general": "General Justification",
+                "compliance": "Regulatory Compliance Document"
+            },
+            "General": {
+                "title": "AI Support System for Mental Health Guidance",
+                "sections": {
+                    "nature": {
+                        "title": "Nature of the System",
+                        "text": "The artificial intelligence system acts exclusively as a <b>support tool for professionals</b>, without the capacity for diagnosis, prescription, or automated clinical decision-making."
+                    },
+                    "classification": {
+                        "title": "Classification under the AI Act",
+                        "text": "The system falls within high-risk AI systems as <b>support for decision-making</b>, but <b>does not make automated decisions</b>, in accordance with Articles 14 and 22 of the GDPR and the European AI Act framework."
+                    },
+                    "humanControl": {
+                        "title": "Effective Human Control",
+                        "outputs": "All outputs are:",
+                        "outputsList": [
+                            "Guidance-only",
+                            "Non-prescriptive",
+                            "Editable or ignorable"
+                        ],
+                        "professionalControl": "The professional maintains control over:",
+                        "controlList": [
+                            "Instrument selection",
+                            "Application",
+                            "Interpretation of results"
+                        ]
+                    },
+                    "limitations": {
+                        "title": "Functional Limitation",
+                        "intro": "The system:",
+                        "list": [
+                            "Does not suggest instruments in real-time.",
+                            "Only shows options at the end of the session.",
+                            "Explicitly limits the number of themes and instruments.",
+                            "Uses predefined professional catalogs."
+                        ]
+                    },
+                    "traceability": {
+                        "title": "Traceability and Auditability",
+                        "text": "Each instrument suggestion includes a descriptive justification (<code>why_this_test_was_suggested</code>) based on:",
+                        "list": [
+                            "Verbalized content",
+                            "Emerging themes",
+                            "Static correspondence map"
+                        ],
+                        "footer": "There is no opaque decision or non-explainable model."
+                    },
+                    "minors": {
+                        "title": "Protection of Minors",
+                        "intro": "When the system is used with minors:",
+                        "list": [
+                            "Additional restrictions are activated.",
+                            "Only age-appropriate instruments are shown.",
+                            "Developmental and non-diagnostic language is used.",
+                            "The final decision always rests with the responsible adult and the professional."
+                        ]
+                    },
+                    "compliance": {
+                        "title": "Regulatory Compliance",
+                        "items": [
+                            "General Data Protection Regulation (GDPR)",
+                            "European Artificial Intelligence Act (AI Act)",
+                            "Ethical principles of psychological testing usage"
+                        ]
+                    }
+                }
+            },
+            "Compliance": {
+                "title": "Regulatory Compliance Document",
+                "subtitle": "Artificial intelligence system for professional report generation",
+                "sections": {
+                    "object": {
+                        "title": "Purpose of the Document",
+                        "text1": "This document aims to describe and accredit the regulatory, technical, and ethical compliance of the artificial intelligence system (hereinafter, <b>the system</b>) used exclusively as a tool to support the drafting of professional reports in the field of mental health.",
+                        "text2": "The types of reports covered by the system are:",
+                        "list": [
+                            "Initial evaluation report",
+                            "Progress report",
+                            "Clinical discharge report",
+                            "Referral report",
+                            "Legal-forensic report",
+                            "Insurance report",
+                            "Custom report"
+                        ],
+                        "alert": "The system <b>does not adopt automated decisions</b>, <b>does not issue clinical diagnoses</b>, <b>does not establish causalities</b> nor <b>substitute professional judgment</b>, and operates under <b>mandatory human supervision</b> in all phases."
+                    },
+                    "framework": {
+                        "title": "Applicable Regulatory Framework",
+                        "intro": "The design, development, and use of the system comply with the following regulatory framework:",
+                        "list": [
+                            "Regulation (EU) 2016/679, of April 27, 2016 (General Data Protection Regulation – GDPR).",
+                            "European Artificial Intelligence Act (AI Act).",
+                            "Professional and deontological regulations applicable to professional practice.",
+                            "Ethical principles regarding the use of technological tools in the preparation of professional reports."
+                        ]
+                    },
+                    "description": {
+                        "title": "General System Description",
+                        "text": "The system is an AI-based drafting assistance tool that generates structured report drafts from:",
+                        "list1": [
+                            "Session transcripts.",
+                            "Clinical notes written by the professional.",
+                            "Explicit parameters defined by the professional (report type, structure, linguistic profile)."
+                        ],
+                        "featuresTitle": "Main Features:",
+                        "featuresList": [
+                            "Strictly assistive and drafting function.",
+                            "Total absence of autonomous decision-making capacity.",
+                            "Exclusive dependence on provided data.",
+                            "Explicit prohibition of generating unfounded content.",
+                            "Guidance-only and non-binding results."
+                        ]
+                    },
+                    "risk": {
+                        "title": "Risk Classification under the AI Act",
+                        "text": "Given the nature of the generated reports and their possible impact on the rights and interests of natural persons, the system is classified as a <b>high-risk AI system</b> under the European Artificial Intelligence Act.",
+                        "intro": "Consequently, the system incorporates the guarantees required for this category, including:",
+                        "list": [
+                            "Effective and documented human supervision.",
+                            "Transparency in the use of AI.",
+                            "Complete traceability of the generation process.",
+                            "Technical measures to prevent errors, biases, and misuse.",
+                            "Reinforced controls for especially sensitive uses (legal-forensic reports)."
+                        ]
+                    },
+                    "supervision": {
+                        "title": "Human Supervision and Professional Responsibility",
+                        "sub1": {
+                            "title": "5.1. Mandatory Supervision",
+                            "text": "All reports generated with system support mandatorily require:",
+                            "list": [
+                                "Full review of content by a qualified professional.",
+                                "Express validation before any external use or communication to third parties.",
+                                "Explicit confirmation of human review before marking a report as finalized."
+                            ],
+                            "note": "In the case of legal-forensic reports, a reinforced supervision mode applies, preventing report finalization without specific human validation."
+                        },
+                        "sub2": {
+                            "title": "5.2. Responsibility",
+                            "text1": "Responsibility for the final content of the report lies exclusively with the professional who reviews, validates, and signs it.",
+                            "text2": "The system cannot be considered author, co-author, or responsible for the content of any report."
+                        }
+                    },
+                    "gdpr": {
+                        "title": "GDPR Compliance",
+                        "sub1": {
+                            "title": "6.1. Legal Basis",
+                            "list": [
+                                "Informed, explicit, and verifiable consent of the data subject.",
+                                "Compliance with professional and legal obligations."
+                            ]
+                        },
+                        "sub2": {
+                            "title": "6.2. Minimization",
+                            "list": [
+                                "Only strictly necessary data.",
+                                "No unnecessary personal identifiers required.",
+                                "The system does not infer additional data."
+                            ]
+                        },
+                        "sub3": {
+                            "title": "6.3. Treatment of Special Data",
+                            "list": [
+                                "Reinforced technical security measures (encryption, access control).",
+                                "Data not used to train AI models.",
+                                "Retention limited to necessary time."
+                            ]
+                        },
+                        "sub4": {
+                            "title": "6.4. Exercise of Rights",
+                            "text": "The exercise of rights of access, rectification, erasure, limitation of processing, and information on the use of AI is guaranteed."
+                        }
+                    },
+                    "transparency": {
+                        "title": "Transparency and Information to Data Subjects",
+                        "text": "All generated reports incorporate an explicit statement indicating:",
+                        "list": [
+                            "That they have been drafted with the support of an AI tool.",
+                            "That the content is not the result of an automated decision.",
+                            "That the report has been reviewed and validated by a responsible professional."
+                        ]
+                    },
+                    "ethics": {
+                        "title": "Applied Ethical Principles",
+                        "text": "The design and use of the system respects the following principles:",
+                        "tags": [
+                            "Non-maleficence",
+                            "Interpretative prudence",
+                            "Absence of stigmatization",
+                            "Respect for dignity",
+                            "Proportionality and context adequacy"
+                        ],
+                        "avoidTitle": "The system expressly avoids:",
+                        "avoidList": [
+                            "Automated diagnoses.",
+                            "Personal labeling.",
+                            "Predictions of future conduct or evolution.",
+                            "Unfounded causal affirmations."
+                        ]
+                    },
+                    "forensic": {
+                        "title": "Specific Controls for Legal-Forensic Reports",
+                        "text": "Legal-forensic reports are subject to a reinforced security mode (<b>Safe Forensic Mode</b>) which includes:",
+                        "list": [
+                            "Technical prohibition of categorical or causal affirmations.",
+                            "Obligation to explicitly differentiate between observed facts and patient statements.",
+                            "Conditional and strictly descriptive language.",
+                            "Automated content validations before allowing finalization.",
+                            "Express confirmation of reinforced human review."
+                        ]
+                    },
+                    "traceability_control": {
+                        "title": "Traceability and Control",
+                        "text": "The system maintains auditable internal records regarding:",
+                        "list": [
+                            "Date and time of generation of each draft.",
+                            "Report type.",
+                            "System version and AI model utilized.",
+                            "Identity of the responsible professional.",
+                            "Confirmation of human review."
+                        ]
+                    },
+                    "limitations": {
+                        "title": "System Limitations",
+                        "list": [
+                            "The system does not substitute professional evaluation or judgment.",
+                            "Generated reports have guidance character until validated.",
+                            "Use outside professional context or without human supervision constitutes misuse."
+                        ]
+                    },
+                    "declaration": {
+                        "title": "Final Declaration of Compliance",
+                        "text": "The artificial intelligence system described in this document has been designed and implemented in accordance with applicable legal, technical, and ethical requirements under current European regulations, and incorporates specific guarantees for responsible, transparent, traceable use under effective human control."
+                    },
+                    "footer": "*Document prepared for purposes of justifying regulatory compliance before competent authorities, internal or external audits, and inspection processes.*"
+                }
+            }
+        },
+        "Cookies": {
+            "title": "Cookie Policy",
+            "subtitle": "Information about the use of cookies and similar technologies",
+            "sections": {
+                "what": {
+                    "title": "1. What are cookies?",
+                    "text": "A cookie is a small text file that is stored in your browser when you visit almost any webpage. Its utility is for the web to be able to remember your visit when you browse that page again."
+                },
+                "used": {
+                    "title": "2. Cookies used by this website",
+                    "text": "This application exclusively uses <b>technical and session cookies</b> necessary for the operation of the service.",
+                    "types": {
+                        "auth": {
+                            "title": "Authentication Cookies",
+                            "text": "Used to identify the user once logged in, allowing access to private areas and ensuring the session remains active securely."
+                        },
+                        "pref": {
+                            "title": "Preference Cookies",
+                            "text": "Store user interface preferences (such as language or font size) to personalize your experience."
+                        },
+                        "sec": {
+                            "title": "Security Cookies",
+                            "text": "Help prevent security attacks and protect user data against unauthorized access."
+                        }
+                    }
+                },
+                "third": {
+                    "title": "3. Third-party Cookies",
+                    "text": "Currently, <b>we do not use advertising or tracking cookies</b> from third parties (such as Google Analytics or Facebook Pixel) within the private area of the application. The privacy of the professional and patient is a priority."
+                },
+                "deactivate": {
+                    "title": "4. How to deactivate cookies?",
+                    "text": "You can restrict, block, or delete browser cookies at any time. Consult your browser's help to know how to do it. Please note that deactivating technical cookies could prevent the correct functioning of the application."
+                }
+            },
+            "cardTitle": "Use of Cookies"
+        },
+        "GDPR": {
+            "title": "Privacy Policy and GDPR",
+            "subtitle": "Commitment to the protection of personal and sensitive data",
+            "cardTitle": "Personal Data Processing",
+            "update": "Last updated: December 12, 2025",
+            "sections": {
+                "controller": {
+                    "title": "1. Data Controller",
+                    "text": "The data controller is <b>PsicoAIssist</b>. We are committed to treating patient and professional data with maximum confidentiality, in accordance with Regulation (EU) 2016/679 (GDPR)."
+                },
+                "info": {
+                    "title": "2. Information We Collect",
+                    "sub1": {
+                        "title": "2.1 Personal Data",
+                        "text": "We collect information that you provide directly to us, including:",
+                        "list": [
+                            "Full name and contact information",
+                            "Professional license number",
+                            "Medical specialty",
+                            "Billing and payment information"
+                        ]
+                    },
+                    "sub2": {
+                        "title": "2.2 Clinical Data",
+                        "text": "Patient clinical data is processed under strict security measures:",
+                        "list": [
+                            "Session transcripts (ephemerally encrypted)",
+                            "Clinical notes",
+                            "Generated reports",
+                            "Audio files (optional, encrypted)"
+                        ]
+                    }
+                },
+                "purpose": {
+                    "title": "3. Purpose of Processing",
+                    "text": "We use the collected information to:",
+                    "list": [
+                        "Provide transcription and AI services (generate reports, analysis).",
+                        "Manage clinical history and professional agenda.",
+                        "Process payments and manage subscriptions.",
+                        "Provide technical support and improve our algorithms (with anonymized data)."
+                    ],
+                    "note": "<b>We do not use data for advertising purposes nor do we cede it to third parties</b> without explicit consent, except for legal obligation or service providers under confidentiality agreement."
+                },
+                "legal": {
+                    "title": "4. Legal Basis of Processing",
+                    "text": "We process data under the following GDPR legal bases:",
+                    "list": [
+                        "<b>Consent:</b> For optional functionalities.",
+                        "<b>Contractual execution:</b> To provide our services.",
+                        "<b>Legitimate interest:</b> To improve service quality.",
+                        "<b>Legal compliance:</b> For regulatory and fiscal obligations."
+                    ]
+                },
+                "security": {
+                    "title": "5. Minimization and Security (Data Protection)",
+                    "list": [
+                        "<b>Minimization:</b> Audio transcripts are processed ephemerally whenever possible.",
+                        "<b>Encryption:</b> AES-256 for data at rest and TLS 1.3 for data in transit. Keys rotated periodically.",
+                        "<b>Access Control:</b> Two-factor authentication, role-based access, and complete audit logs."
+                    ],
+                    "alertTitle": "Important Note on AI",
+                    "alertText": "Despite security measures, we remind you that no system is invulnerable. The use of artificial intelligence implies data processing on secure servers. We guarantee that patient data is not used for training public models."
+                },
+                "sharing": {
+                    "title": "6. Sharing Information",
+                    "text": "<b>We do not sell, rent, or share</b> your personal data with third parties, except:",
+                    "list": [
+                        "Necessary service providers (under strict confidentiality agreements).",
+                        "When required by law.",
+                        "With your explicit consent."
+                    ]
+                },
+                "rights": {
+                    "title": "7. Rights of Data Subjects",
+                    "text": "Both professionals and patients have the right to:",
+                    "list": [
+                        "<b>Access:</b> Obtain copies of their data.",
+                        "<b>Rectification:</b> Correct inaccurate data.",
+                        "<b>Erasure:</b> Request deletion of their data (Right to be forgotten).",
+                        "<b>Limitation:</b> Restrict processing.",
+                        "<b>Opposition:</b> Object to processing.",
+                        "<b>Portability:</b> Receive their data in structured format."
+                    ]
+                },
+                "retention": {
+                    "title": "8. Data Retention",
+                    "list": [
+                        "<b>Account data:</b> As long as the account remains active. In case of cancellation request, data will be kept blocked for 30 days (grace period) before being permanently anonymized.",
+                        "<b>Clinical data:</b> According to applicable medical regulations.",
+                        "<b>Billing data:</b> 7 years (fiscal requirement).",
+                        "<b>Audit logs:</b> 3 years."
+                    ]
+                },
+                "transfers": {
+                    "title": "9. International Transfers",
+                    "text": "All data is processed and stored on servers located within the European Union. We do not perform international data transfers outside the European Economic Area (EEA) without adequate GDPR guarantees."
+                },
+                "contact": {
+                    "title": "10. Contact",
+                    "text": "To exercise your rights or make privacy inquiries:",
+                    "dpoTitle": "Data Protection Officer (DPO)",
+                    "email": "Email: hola@psicoaissist.com"
+                },
+                "authority": {
+                    "title": "11. Control Authority",
+                    "text": "You have the right to file a complaint with the Data Protection Authority if you consider that the processing of your personal data does not comply with current regulations."
+                }
+            }
+        }
+    },
+    "Payment": {
+        "Cancel": {
+            "title": "Payment Cancelled",
+            "message": "No charges have been processed. Your subscription has not been activated.",
+            "reasons": {
+                "title": "Possible reasons:",
+                "cancelled": "You cancelled the payment process",
+                "paymentError": "There was an error with your payment method",
+                "sessionExpired": "The session expired",
+                "connectivity": "Connectivity issues"
+            },
+            "actions": {
+                "retry": "Try again",
+                "backHome": "Back to home"
+            },
+            "help": {
+                "title": "Need help?",
+                "message": "If you have payment issues or need assistance, we're here to help.",
+                "liveChat": "💬 Live chat"
+            }
+        },
+        "Success": {
+            "title": "Payment Completed!",
+            "message": "Your subscription to <strong>{plan}</strong> has been successfully activated. You can now access all PsicoAIssist features.",
+            "plans": {
+                "basic": "Basic Plan",
+                "pro": "Pro Plan",
+                "premium": "Premium Plan",
+                "selected": "Selected plan"
+            },
+            "demo": {
+                "title": "Demo Mode",
+                "message": "This is a payment simulation for testing purposes"
+            },
+            "next": {
+                "title": "What's next?",
+                "dashboard": "Access your personal dashboard",
+                "profile": "Configure your professional profile",
+                "firstSession": "Start your first session",
+                "exploreAI": "Explore AI features"
+            },
+            "actions": {
+                "goToDashboard": "Go to Dashboard",
+                "backHome": "Back to home"
+            },
+            "support": {
+                "message": "Need help?",
+                "link": "Contact support"
+            }
+        }
+    },
+    "VideoCall": {
+        "status": {
+            "connecting": "Connecting...",
+            "mediaError": "Error accessing camera/microphone"
+        },
+        "waitingVideo": "Waiting for professional video...",
+        "quality": {
+            "good": "Good",
+            "fair": "Fair",
+            "bad": "Bad"
+        }
+    },
+    "Clinics": {
+        "Hero": {
+            "badge": "For Health Centers, Universities, and Hospitals",
+            "title": "Standardize <highlight>Clinical Excellence</highlight> <br /> in your Organization",
+            "description": "The comprehensive platform to manage teams, audit care quality, and train your new professionals with AI.",
+            "cta": "Request Demo",
+            "more": "See features"
+        },
+        "Features": {
+            "mainTitle": "Everything a Clinical Director Needs",
+            "mainDescription": "Stop managing your clinic with spreadsheets and disconnected tools. Centralize operations, training, and quality control.",
+            "trainingTitle": "Unlimited Continuous Training",
+            "trainingDesc": "New hires? Have them practice with our <strong>Unlimited Clinical Simulator</strong> before seeing real patients. Expose them to complex cases (suicide, grief, BPD) in a safe environment.",
+            "complianceTitle": "Compliance and Audit",
+            "complianceDesc": "Detailed log of access to medical records. Granular roles (Administrator, Supervisor, Professional, Agenda Manager) to comply with the strictest GDPR regulations.",
+            "apiTitle": "API Integration (HIS)",
+            "apiDesc": "Connect PsicoAIssist with your hospital management software (SAP, Salesforce Health, etc.). Synchronize patients and schedules automatically."
+        },
+        "Agenda": {
+            "badge": "Team Management",
+            "title": "The \"Agenda Manager\" Role:",
+            "subtitle": "Organization without compromising privacy",
+            "description": "We know that coordination is key in a clinic, but confidentiality is sacred. That's why we created a unique role for your administrative staff.",
+            "accessTitle": "Secure Granular Access",
+            "accessDesc": "Your managers can handle appointments, payments, and schedules for the entire team <strong>without accessing the content of clinical notes</strong> or confidential reports.",
+            "groupsTitle": "Professional Groups",
+            "groupsDesc": "Multiple locations? Child and Adult teams? Create \"Groups\" so each manager can filter and view only relevant schedules with a single click."
+        },
+        "Simulator": {
+            "title": "The \"Flight Simulator\" for Psychologists",
+            "description": "The only platform that includes a 24/7 active AI trainer. Your professionals can practice difficult interventions and receive immediate feedback on empathy, treatment adherence, and CBT techniques.",
+            "feature1": "Create custom scenarios (e.g., Resistance to change)",
+            "feature2": "Automatic feedback based on clinical guidelines",
+            "feature3": "No cost per minute (Flat Training Rate)",
+            "cta": "Talk to an expert"
+        },
+        "CTA": {
+            "title": "Ready to scale your clinic?",
+            "description": "Let's talk about your specific needs. We offer custom plans, assisted data migration, and on-site training.",
+            "button": "Contact Sales"
+        }
+    },
+    "Clients": {
+        "Form": {
+            "submitDefault": "Save Patient",
+            "validation": {
+                "firstNameMin": "First name must be at least 2 characters.",
+                "lastNameMin": "Last name must be at least 2 characters.",
+                "emailInvalid": "Invalid email.",
+                "consentDataRequired": "You must obtain consent for data processing.",
+                "consentAIRequired": "You must inform about the use of AI systems."
+            },
+            "sections": {
+                "personal": {
+                    "title": "Personal Information",
+                    "description": "Confidential patient data. This information will be encrypted."
+                },
+                "clinical": {
+                    "title": "Initial Clinical Information"
+                },
+                "communication": {
+                    "title": "Communication Preferences",
+                    "description": "Configure how appointment reminders will be sent."
+                },
+                "consent": {
+                    "title": "Informed Consent (GDPR)",
+                    "description": "It is mandatory to register the patient's explicit consent before processing their data."
+                }
+            },
+            "fields": {
+                "professional": "Professional *",
+                "firstName": "First Name *",
+                "lastName": "Last Name *",
+                "email": "Email",
+                "phone": "Phone",
+                "emergencyContact": "Emergency Contact",
+                "diagnosis": "Preliminary Diagnosis",
+                "riskLevel": "Risk Level",
+                "notes": "Initial Notes",
+                "emailReminders": "Email Reminders",
+                "emailRemindersDesc": "Send automatic reminders to the registered email address.",
+                "consentData": "Personal Data Processing",
+                "consentDataDesc": "The patient authorizes the storage and processing of their personal and health data on the platform.",
+                "consentAI": "Processing via AI",
+                "consentAIDesc": "The patient has been informed that Artificial Intelligence systems will be used to support the session."
+            },
+            "placeholders": {
+                "selectProfessional": "Select professional",
+                "firstName": "Ex. John",
+                "lastName": "Ex. Doe",
+                "email": "mail@example.com",
+                "phone": "+1 555 000 000",
+                "emergencyContact": "Name and phone",
+                "diagnosis": "Ex. Anxiety disorder",
+                "selectRisk": "Select a level",
+                "notes": "Important observations, reason for consultation..."
+            },
+            "risk": {
+                "low": "Low",
+                "medium": "Medium",
+                "high": "High",
+                "critical": "Critical"
+            },
+            "buttons": {
+                "cancel": "Cancel",
+                "saving": "Saving..."
+            },
+            "error": {
+                "generic": "An error occurred while saving the client."
+            }
+        },
+        "New": {
+            "title": "New Patient",
+            "subtitle": "Enter basic information to open a new file.",
+            "errors": {
+                "selectProfessional": "You must select a professional."
+            },
+            "success": {
+                "title": "Client created successfully",
+                "description": "The new patient file has been created."
+            },
+            "submitLabel": "Save Patient"
+        },
+        "Edit": {
+            "title": "Edit Patient",
+            "subtitle": "Modify file data for {name}.",
+            "errors": {
+                "loadFailed": "Could not load patient information."
+            },
+            "success": {
+                "title": "Client updated",
+                "description": "Patient information has been saved successfully."
+            },
+            "submitLabel": "Update Patient"
+        },
+        "Detail": {
+            "loading": "Loading information...",
+            "notFound": "Patient not found",
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive"
+            },
+            "actions": {
+                "newSession": "New Session",
+                "edit": "Edit"
+            },
+            "tabs": {
+                "info": "General Information",
+                "sessions": "Sessions",
+                "notes": "Notes and Documents"
+            },
+            "cards": {
+                "contact": {
+                    "title": "Contact Data",
+                    "notRegistered": "Not registered"
+                },
+                "clinical": {
+                    "title": "Clinical Information",
+                    "diagnosis": "Main Diagnosis",
+                    "notSpecified": "Not specified",
+                    "lastSession": "Last Session",
+                    "noSessions": "No previous sessions"
+                },
+                "privateNotes": {
+                    "title": "Private Notes",
+                    "description": "Notes visible only to you.",
+                    "empty": "No notes registered for this patient."
+                }
+            },
+            "sessions": {
+                "historyTitle": "Session History",
+                "historyDescription": "Sessions conducted with {name}.",
+                "empty": "No sessions registered.",
+                "table": {
+                    "date": "Date",
+                    "type": "Type",
+                    "status": "Status",
+                    "actions": "Actions",
+                    "view": "View Detail"
+                }
+            },
+            "documents": {
+                "title": "Documents and Files",
+                "empty": "No attached documents."
+            }
+        }
+    },
+    "Blog": {
+        "title": "Blog and Resources",
+        "subtitle": "Practical tips on digitalization, AI ethics, and efficient clinic management.",
+        "readMore": "Read"
+    },
+    "Docs": {
+        "title": "Documentation Center",
+        "description": "Everything you need to know to get the most out of PsicoAIssist. Detailed guides, quick tutorials, and complete references.",
+        "cards": {
+            "manual": {
+                "title": "User Manual",
+                "description": "Complete documentation on all platform functionalities. Learn about roles, patient management, billing, and AI analysis.",
+                "link": "Read Manual"
+            },
+            "quickGuide": {
+                "title": "Quick Guide",
+                "description": "In a hurry? Find out how to perform common tasks in less than a minute. Create appointments, add patients, and synchronize calendars.",
+                "link": "View Quick Guide"
+            },
+            "tutorials": {
+                "title": "Video Tutorials",
+                "description": "Step-by-step visual guides. From initial setup to advanced use of AI statistics.",
+                "link": "View Tutorials"
+            },
+            "reference": {
+                "title": "Reference and Glossary",
+                "description": "Definitions of AI metrics, user roles, and technical documentation for integrations (API).",
+                "link": "View Reference"
+            }
+        },
+        "contact": {
+            "text": "Can't find what you're looking for?",
+            "link": "Contact support"
+        }
+    },
+    "Metadata": {
+        "title": {
+            "default": "PsicoAIssist - AI Assistant for Psychologists",
+            "template": "%s | PsicoAIssist"
+        },
+        "description": "Empower your psychological practice with responsible AI. Automated transcription, professional reports, and intelligent analysis. GDPR compliant.",
+        "keywords": "psychologist, AI, transcription, sessions, GDPR, artificial intelligence, clinical reports, psychological practice, virtual assistant, automated transcription, session analysis, psychology software"
+    }
+}

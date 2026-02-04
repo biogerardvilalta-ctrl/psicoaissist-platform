@@ -1,9 +1,11 @@
 import { CalendarDays } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export function WeeklyChartWidget({ data }: { data: any[] }) {
     const router = useRouter();
+    const t = useTranslations('Dashboard.Overview.Charts');
 
     return (
         <div
@@ -12,8 +14,8 @@ export function WeeklyChartWidget({ data }: { data: any[] }) {
         >
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-slate-800">Carga Semanal</h3>
-                    <p className="text-sm text-slate-500">Sesiones (L-D)</p>
+                    <h3 className="text-lg font-semibold text-slate-800">{t('weeklyLoad')}</h3>
+                    <p className="text-sm text-slate-500">{t('sessionsRange')}</p>
                 </div>
                 <CalendarDays className="h-4 w-4 text-slate-400" />
             </div>

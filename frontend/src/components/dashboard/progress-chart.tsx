@@ -1,6 +1,7 @@
 'use client';
 
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ProgressChartProps {
   title: string;
@@ -19,6 +20,7 @@ interface ChartDataPoint {
 }
 
 export default function ProgressChart({ title, data, totalValue, trend }: ProgressChartProps) {
+  const t = useTranslations('Dashboard.Common');
   const maxValue = Math.max(...data.map(d => d.value));
 
   return (
@@ -70,8 +72,8 @@ export default function ProgressChart({ title, data, totalValue, trend }: Progre
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
             <TrendingUp className="w-8 h-8 text-gray-400" />
           </div>
-          <p className="text-sm text-gray-500">No hay datos disponibles</p>
-          <p className="text-xs text-gray-400">Los datos aparecerán aquí cuando comiences a usar la plataforma</p>
+          <p className="text-sm text-gray-500">{t('noData')}</p>
+          <p className="text-xs text-gray-400">{t('noDataDesc')}</p>
         </div>
       )}
     </div>

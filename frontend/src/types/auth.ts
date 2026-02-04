@@ -4,7 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   createdAt: string;
-  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP';
+  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP' | 'PSYCHOLOGIST_PREMIUM' | 'MANAGER';
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   subscription?: {
     id: string;
@@ -39,6 +39,7 @@ export interface User {
     secondaryColor?: string;
     logoUrl?: string;
     showLogo?: boolean;
+    syncAiLanguage?: boolean;
   };
   usage?: {
     clientsCount: number;

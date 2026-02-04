@@ -1,20 +1,23 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, Scale, FileText, CheckCircle2, ChevronRight, BookOpen } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from 'next-intl';
 
 export function LegalJustificationContent() {
+    const t = useTranslations('Legal.AIJustification');
+
     return (
         <div className="space-y-8 max-w-4xl mx-auto">
             <div className="text-center space-y-4">
                 <div className="flex justify-center">
                     <ShieldCheck className="h-16 w-16 text-blue-600" />
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight text-blue-900">Documentación Legal y Normativa</h1>
-                <p className="text-lg text-muted-foreground">AI Act Ready • GDPR Compliant • Ética Profesional</p>
+                <h1 className="text-3xl font-bold tracking-tight text-blue-900">{t('title')}</h1>
+                <p className="text-lg text-muted-foreground">{t('subtitle')}</p>
                 <div className="flex justify-center gap-4 text-sm font-medium text-slate-600">
-                    <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4 text-green-600" /> Auditable</span>
-                    <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4 text-green-600" /> Transparente</span>
-                    <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4 text-green-600" /> Supervisado</span>
+                    <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4 text-green-600" /> {t('badges.auditable')}</span>
+                    <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4 text-green-600" /> {t('badges.transparent')}</span>
+                    <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4 text-green-600" /> {t('badges.supervised')}</span>
                 </div>
             </div>
 
@@ -22,11 +25,11 @@ export function LegalJustificationContent() {
                 <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-8 bg-slate-100 p-1 h-auto">
                     <TabsTrigger value="general" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                         <FileText className="h-4 w-4" />
-                        Justificación General
+                        {t('tabs.general')}
                     </TabsTrigger>
                     <TabsTrigger value="compliance" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                         <BookOpen className="h-4 w-4" />
-                        Documento de Cumplimiento Normativo
+                        {t('tabs.compliance')}
                     </TabsTrigger>
                 </TabsList>
 
@@ -35,7 +38,7 @@ export function LegalJustificationContent() {
                         <CardHeader className="bg-slate-50 border-b border-slate-100">
                             <CardTitle className="text-xl flex items-center gap-2 text-slate-800">
                                 <FileText className="h-5 w-5 text-blue-600" />
-                                Sistema de IA de apoyo orientativo en contexto de salud mental
+                                {t('General.title')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 md:p-8 space-y-8">
@@ -43,43 +46,47 @@ export function LegalJustificationContent() {
                             <section className="space-y-3">
                                 <h2 className="text-lg font-bold text-blue-900 flex items-center gap-2">
                                     <span className="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
-                                    Naturaleza del sistema
+                                    {t('General.sections.nature.title')}
                                 </h2>
                                 <p className="text-slate-700 leading-relaxed pl-4 md:pl-8">
-                                    El sistema de inteligencia artificial actúa exclusivamente como <strong>herramienta de apoyo orientativo para profesionales</strong>, sin capacidad de diagnóstico, prescripción ni toma de decisiones clínicas automatizadas.
+                                    {t.rich('General.sections.nature.text', {
+                                        b: (chunks) => <strong>{chunks}</strong>
+                                    })}
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-lg font-bold text-blue-900 flex items-center gap-2">
                                     <span className="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
-                                    Clasificación según la AI Act
+                                    {t('General.sections.classification.title')}
                                 </h2>
                                 <p className="text-slate-700 leading-relaxed pl-4 md:pl-8">
-                                    El sistema se enmarca dentro de los sistemas de IA de alto riesgo como <strong>apoyo a la toma de decisiones</strong>, pero <strong>no realiza decisiones automatizadas</strong>, de acuerdo con los artículos 14 y 22 del RGPD y el marco del Reglamento Europeo de IA.
+                                    {t.rich('General.sections.classification.text', {
+                                        b: (chunks) => <strong>{chunks}</strong>
+                                    })}
                                 </p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-lg font-bold text-blue-900 flex items-center gap-2">
                                     <span className="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">3</span>
-                                    Control humano efectivo
+                                    {t('General.sections.humanControl.title')}
                                 </h2>
                                 <div className="pl-4 md:pl-8 grid md:grid-cols-2 gap-6">
                                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                                        <h3 className="font-semibold text-slate-800 mb-2">Todas las salidas son:</h3>
+                                        <h3 className="font-semibold text-slate-800 mb-2">{t('General.sections.humanControl.outputs')}</h3>
                                         <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
-                                            <li>Orientativas</li>
-                                            <li>No prescriptivas</li>
-                                            <li>Editables o ignorables</li>
+                                            <li>{t('General.sections.humanControl.outputsList.0')}</li>
+                                            <li>{t('General.sections.humanControl.outputsList.1')}</li>
+                                            <li>{t('General.sections.humanControl.outputsList.2')}</li>
                                         </ul>
                                     </div>
                                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                                        <h3 className="font-semibold text-slate-800 mb-2">El profesional mantiene el control sobre:</h3>
+                                        <h3 className="font-semibold text-slate-800 mb-2">{t('General.sections.humanControl.professionalControl')}</h3>
                                         <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
-                                            <li>Selección de instrumentos</li>
-                                            <li>Aplicación</li>
-                                            <li>Interpretación de resultados</li>
+                                            <li>{t('General.sections.humanControl.controlList.0')}</li>
+                                            <li>{t('General.sections.humanControl.controlList.1')}</li>
+                                            <li>{t('General.sections.humanControl.controlList.2')}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -88,45 +95,45 @@ export function LegalJustificationContent() {
                             <section className="space-y-3">
                                 <h2 className="text-lg font-bold text-blue-900 flex items-center gap-2">
                                     <span className="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">4</span>
-                                    Limitación funcional
+                                    {t('General.sections.limitations.title')}
                                 </h2>
-                                <p className="text-slate-700 pl-4 md:pl-8">El sistema:</p>
+                                <p className="text-slate-700 pl-4 md:pl-8">{t('General.sections.limitations.intro')}</p>
                                 <ul className="list-disc pl-6 md:pl-12 text-slate-700 space-y-1">
-                                    <li>No sugiere instrumentos en tiempo real.</li>
-                                    <li>Solo muestra opciones al final de la sesión.</li>
-                                    <li>Limita explícitamente el número de temas e instrumentos.</li>
-                                    <li>Utiliza catálogos profesionales predefinidos.</li>
+                                    <li>{t('General.sections.limitations.list.0')}</li>
+                                    <li>{t('General.sections.limitations.list.1')}</li>
+                                    <li>{t('General.sections.limitations.list.2')}</li>
+                                    <li>{t('General.sections.limitations.list.3')}</li>
                                 </ul>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-lg font-bold text-blue-900 flex items-center gap-2">
                                     <span className="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">5</span>
-                                    Trazabilidad y auditabilidad
+                                    {t('General.sections.traceability.title')}
                                 </h2>
                                 <p className="text-slate-700 leading-relaxed pl-4 md:pl-8">
-                                    Cada sugerencia de instrumento incluye una justificación descriptiva (<code>why_this_test_was_suggested</code>) basada en:
+                                    {t.rich('General.sections.traceability.text', { code: (chunks) => <code>{chunks}</code> })}
                                 </p>
                                 <ul className="list-disc pl-6 md:pl-12 text-slate-700 space-y-1">
-                                    <li>Contenido verbalizado</li>
-                                    <li>Temas emergentes</li>
-                                    <li>Mapa estático de correspondencia</li>
+                                    <li>{t('General.sections.traceability.list.0')}</li>
+                                    <li>{t('General.sections.traceability.list.1')}</li>
+                                    <li>{t('General.sections.traceability.list.2')}</li>
                                 </ul>
-                                <p className="text-slate-700 pl-4 md:pl-8 mt-2 italic">No hay ninguna decisión opaca ni modelo no explicable.</p>
+                                <p className="text-slate-700 pl-4 md:pl-8 mt-2 italic">{t('General.sections.traceability.footer')}</p>
                             </section>
 
                             <section className="space-y-3">
                                 <h2 className="text-lg font-bold text-blue-900 flex items-center gap-2">
                                     <span className="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">6</span>
-                                    Protección de menores
+                                    {t('General.sections.minors.title')}
                                 </h2>
                                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 ml-4 md:ml-8">
-                                    <p className="text-slate-700 mb-2">Cuando el sistema se utiliza con menores:</p>
+                                    <p className="text-slate-700 mb-2">{t('General.sections.minors.intro')}</p>
                                     <ul className="list-disc list-inside text-sm text-slate-700 space-y-1">
-                                        <li>Se activan restricciones adicionales.</li>
-                                        <li>Solo se muestran instrumentos adecuados a la edad.</li>
-                                        <li>Se utiliza lenguaje evolutivo y no diagnóstico.</li>
-                                        <li>La decisión final corresponde siempre al adulto responsable y al profesional.</li>
+                                        <li>{t('General.sections.minors.list.0')}</li>
+                                        <li>{t('General.sections.minors.list.1')}</li>
+                                        <li>{t('General.sections.minors.list.2')}</li>
+                                        <li>{t('General.sections.minors.list.3')}</li>
                                     </ul>
                                 </div>
                             </section>
@@ -134,21 +141,15 @@ export function LegalJustificationContent() {
                             <section className="space-y-3">
                                 <h2 className="text-lg font-bold text-blue-900 flex items-center gap-2">
                                     <span className="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">7</span>
-                                    Cumplimiento normativo
+                                    {t('General.sections.compliance.title')}
                                 </h2>
                                 <div className="pl-4 md:pl-8 grid gap-4">
-                                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded border border-green-100">
-                                        <Scale className="h-5 w-5 text-green-700" />
-                                        <span className="text-green-900 font-medium">Reglamento General de Protección de Datos (RGPD)</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded border border-green-100">
-                                        <Scale className="h-5 w-5 text-green-700" />
-                                        <span className="text-green-900 font-medium">Reglamento Europeo sobre Inteligencia Artificial (Ley de IA)</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded border border-green-100">
-                                        <Scale className="h-5 w-5 text-green-700" />
-                                        <span className="text-green-900 font-medium">Principios éticos del uso de pruebas psicológicas</span>
-                                    </div>
+                                    {[0, 1, 2].map((i) => (
+                                        <div key={i} className="flex items-center gap-3 p-3 bg-green-50 rounded border border-green-100">
+                                            <Scale className="h-5 w-5 text-green-700" />
+                                            <span className="text-green-900 font-medium">{t(`General.sections.compliance.items.${i}`)}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </section>
 
@@ -160,210 +161,199 @@ export function LegalJustificationContent() {
                     <Card className="border-slate-200 shadow-lg print:shadow-none print:border-none">
                         <CardHeader className="bg-slate-50 border-b border-slate-100 print:bg-white print:border-b-2 print:border-black">
                             <CardTitle className="text-xl flex flex-col gap-2 text-slate-900">
-                                <span className="text-sm font-medium text-slate-500 uppercase tracking-widest">Documento de Cumplimiento Normativo</span>
-                                <span>Sistema de inteligencia artificial para la generación de informes profesionales</span>
+                                <span className="text-sm font-medium text-slate-500 uppercase tracking-widest">{t('Compliance.title')}</span>
+                                <span>{t('Compliance.subtitle')}</span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 md:p-8 space-y-8 text-justify leading-relaxed text-slate-800">
 
+                            {/* 1. Object */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">1</span>
-                                    Objeto del documento
+                                    {t('Compliance.sections.object.title')}
                                 </h3>
                                 <p className="mb-4">
-                                    Este documento tiene por objeto describir y acreditar el cumplimiento normativo, técnico y ético del sistema de inteligencia artificial (en adelante, <strong>el sistema</strong>) utilizado exclusivamente como herramienta de apoyo a la redacción de informes profesionales en el ámbito de la salud mental.
+                                    {t.rich('Compliance.sections.object.text1', { b: (chunks) => <strong>{chunks}</strong> })}
                                 </p>
-                                <p className="mb-2 text-sm text-slate-700 font-semibold">Los tipos de informe cubiertos por el sistema son:</p>
+                                <p className="mb-2 text-sm text-slate-700 font-semibold">{t('Compliance.sections.object.text2')}</p>
                                 <ul className="list-disc pl-6 space-y-1 mb-4 text-slate-700">
-                                    <li>Informe de evaluación inicial</li>
-                                    <li>Informe de evolución</li>
-                                    <li>Informe de alta clínica</li>
-                                    <li>Informe de derivación</li>
-                                    <li>Informe legal-forense</li>
-                                    <li>Informe para aseguradoras</li>
-                                    <li>Informe personalizado</li>
+                                    {[0, 1, 2, 3, 4, 5, 6].map(i => (
+                                        <li key={i}>{t(`Compliance.sections.object.list.${i}`)}</li>
+                                    ))}
                                 </ul>
                                 <p className="bg-blue-50 p-4 rounded-md border-l-4 border-blue-500 text-blue-900 leading-relaxed">
-                                    El sistema <strong>no adopta decisiones automatizadas</strong>, <strong>no emite diagnósticos clínicos</strong>, <strong>no establece causalidades</strong> ni <strong>sustituye el juicio profesional</strong>, y opera bajo <strong>supervisión humana obligatoria</strong> en todas las fases.
+                                    {t.rich('Compliance.sections.object.alert', { b: (chunks) => <strong>{chunks}</strong> })}
                                 </p>
                             </div>
 
                             <hr className="border-slate-100" />
 
+                            {/* 2. Framework */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">2</span>
-                                    Marco normativo aplicable
+                                    {t('Compliance.sections.framework.title')}
                                 </h3>
-                                <p className="mb-4">El diseño, desarrollo y uso del sistema se ajusta al marco normativo siguiente:</p>
+                                <p className="mb-4">{t('Compliance.sections.framework.intro')}</p>
                                 <ul className="space-y-2">
-                                    <li className="flex items-start gap-2">
-                                        <ChevronRight className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                        <span>Reglamento (UE) 2016/679, de 27 de abril de 2016 (Reglamento General de Protección de Datos – RGPD).</span>
-                                    </li>
-                                    <li className="flex items-start gap-2">
-                                        <ChevronRight className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                        <span>Reglamento Europeo de Inteligencia Artificial (Artificial Intelligence Act – AI Act).</span>
-                                    </li>
-                                    <li className="flex items-start gap-2">
-                                        <ChevronRight className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                        <span>Normativa profesional y deontológica aplicable al ejercicio profesional.</span>
-                                    </li>
-                                    <li className="flex items-start gap-2">
-                                        <ChevronRight className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                        <span>Principios éticos relativos al uso de herramientas tecnológicas en la elaboración de informes profesionales.</span>
-                                    </li>
+                                    {[0, 1, 2, 3].map(i => (
+                                        <li key={i} className="flex items-start gap-2">
+                                            <ChevronRight className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                                            <span>{t(`Compliance.sections.framework.list.${i}`)}</span>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
 
                             <hr className="border-slate-100" />
 
+                            {/* 3. Description */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">3</span>
-                                    Descripción general del sistema
+                                    {t('Compliance.sections.description.title')}
                                 </h3>
-                                <p className="mb-4">
-                                    El sistema es una herramienta de asistencia a la redacción basada en inteligencia artificial que genera borradores estructurados de informes a partir de:
-                                </p>
+                                <p className="mb-4">{t('Compliance.sections.description.text')}</p>
                                 <ul className="list-disc pl-6 mb-4 space-y-1 text-slate-700">
-                                    <li>Transcripciones de sesiones.</li>
-                                    <li>Notas clínicas redactadas por el profesional.</li>
-                                    <li>Parámetros explícitos definidos por el/la profesional (tipo de informe, estructura, perfil lingüístico).</li>
+                                    {[0, 1, 2].map(i => (
+                                        <li key={i}>{t(`Compliance.sections.description.list1.${i}`)}</li>
+                                    ))}
                                 </ul>
-                                <p className="font-semibold mb-2">Características principales:</p>
+                                <p className="font-semibold mb-2">{t('Compliance.sections.description.featuresTitle')}</p>
                                 <ul className="grid sm:grid-cols-2 gap-2 text-sm">
-                                    <li className="flex items-center gap-2 p-2 bg-slate-50 rounded"><CheckCircle2 className="h-4 w-4 text-green-600" /> Función estrictamente asistencial y redactora.</li>
-                                    <li className="flex items-center gap-2 p-2 bg-slate-50 rounded"><CheckCircle2 className="h-4 w-4 text-green-600" /> Ausencia total de capacidad decisoria autónoma.</li>
-                                    <li className="flex items-center gap-2 p-2 bg-slate-50 rounded"><CheckCircle2 className="h-4 w-4 text-green-600" /> Dependencia exclusiva de los datos proporcionados.</li>
-                                    <li className="flex items-center gap-2 p-2 bg-slate-50 rounded"><CheckCircle2 className="h-4 w-4 text-green-600" /> Prohibición explícita de generar contenido no fundamentado.</li>
-                                    <li className="flex items-center gap-2 p-2 bg-slate-50 rounded col-span-2"><CheckCircle2 className="h-4 w-4 text-green-600" /> Resultados de carácter orientativo y no vinculante.</li>
+                                    {[0, 1, 2, 3, 4].map(i => (
+                                        <li key={i} className={`flex items-center gap-2 p-2 bg-slate-50 rounded ${i === 4 ? 'col-span-2' : ''}`}>
+                                            <CheckCircle2 className="h-4 w-4 text-green-600" /> {t(`Compliance.sections.description.featuresList.${i}`)}
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
 
                             <hr className="border-slate-100" />
 
+                            {/* 4. Risk */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">4</span>
-                                    Clasificación del riesgo según el Reglamento de IA
+                                    {t('Compliance.sections.risk.title')}
                                 </h3>
                                 <p className="mb-4">
-                                    Dada la naturaleza de los informes generados y su posible impacto sobre derechos e intereses de personas físicas, el sistema se clasifica como <strong>sistema de IA de alto riesgo</strong> según el Reglamento Europeo de Inteligencia Artificial.
+                                    {t.rich('Compliance.sections.risk.text', { b: (chunks) => <strong>{chunks}</strong> })}
                                 </p>
-                                <p className="mb-2">En consecuencia, el sistema incorpora las garantías exigidas para esta categoría, incluyendo:</p>
+                                <p className="mb-2">{t('Compliance.sections.risk.intro')}</p>
                                 <ul className="list-disc pl-6 space-y-1 text-slate-700">
-                                    <li>Supervisión humana efectiva y documentada.</li>
-                                    <li>Transparencia en el uso de IA.</li>
-                                    <li>Trazabilidad completa del proceso de generación.</li>
-                                    <li>Medidas técnicas de prevención de errores, sesgos y usos indebidos.</li>
-                                    <li>Controles reforzados para usos especialmente sensibles (informes legal-forenses).</li>
+                                    {[0, 1, 2, 3, 4].map(i => (
+                                        <li key={i}>{t(`Compliance.sections.risk.list.${i}`)}</li>
+                                    ))}
                                 </ul>
                             </div>
 
                             <hr className="border-slate-100" />
 
+                            {/* 5. Supervision */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">5</span>
-                                    Supervisión humana y responsabilidad profesional
+                                    {t('Compliance.sections.supervision.title')}
                                 </h3>
                                 <div className="space-y-6">
                                     <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
-                                        <h4 className="font-bold text-amber-900 mb-2">5.1. Supervisión obligatoria</h4>
-                                        <p className="text-amber-800 mb-2">Todos los informes generados con apoyo del sistema requieren obligatoriamente:</p>
+                                        <h4 className="font-bold text-amber-900 mb-2">{t('Compliance.sections.supervision.sub1.title')}</h4>
+                                        <p className="text-amber-800 mb-2">{t('Compliance.sections.supervision.sub1.text')}</p>
                                         <ul className="list-disc pl-6 space-y-1 text-amber-900 list-inside">
-                                            <li>Revisión íntegra del contenido por parte de un/a profesional cualificado/a.</li>
-                                            <li>Validación expresa antes de cualquier uso externo o comunicación a terceros.</li>
-                                            <li>Confirmación explícita de revisión humana antes de marcar un informe como finalizado.</li>
+                                            {[0, 1, 2].map(i => (
+                                                <li key={i}>{t(`Compliance.sections.supervision.sub1.list.${i}`)}</li>
+                                            ))}
                                         </ul>
                                         <p className="mt-4 text-sm text-amber-900 italic">
-                                            En el caso de los informes legal-forenses, se aplica un modo de supervisión reforzada, que impide la finalización del informe sin una validación humana específica.
+                                            {t('Compliance.sections.supervision.sub1.note')}
                                         </p>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-900 mb-2">5.2. Responsabilidad</h4>
-                                        <p className="mb-2">La responsabilidad del contenido final del informe recae exclusivamente en el/la profesional que lo revisa, valida y firma.</p>
-                                        <p className="font-medium text-slate-700">El sistema no puede ser considerado autor, coautor ni responsable del contenido de ningún informe.</p>
+                                        <h4 className="font-bold text-slate-900 mb-2">{t('Compliance.sections.supervision.sub2.title')}</h4>
+                                        <p className="mb-2">{t('Compliance.sections.supervision.sub2.text1')}</p>
+                                        <p className="font-medium text-slate-700">{t('Compliance.sections.supervision.sub2.text2')}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <hr className="border-slate-100" />
 
+                            {/* 6. GDPR */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">6</span>
-                                    Cumplimiento del Reglamento General de Protección de Datos (RGPD)
+                                    {t('Compliance.sections.gdpr.title')}
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div>
-                                        <h4 className="font-bold text-slate-900 mb-2">6.1. Base jurídica</h4>
+                                        <h4 className="font-bold text-slate-900 mb-2">{t('Compliance.sections.gdpr.sub1.title')}</h4>
                                         <ul className="list-disc pl-4 space-y-1 text-sm text-slate-700">
-                                            <li>Consentimiento informado, explícito y verificable de la persona interesada.</li>
-                                            <li>Cumplimiento de obligaciones profesionales y legales.</li>
+                                            <li>{t('Compliance.sections.gdpr.sub1.list.0')}</li>
+                                            <li>{t('Compliance.sections.gdpr.sub1.list.1')}</li>
                                         </ul>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-900 mb-2">6.2. Minimización</h4>
+                                        <h4 className="font-bold text-slate-900 mb-2">{t('Compliance.sections.gdpr.sub2.title')}</h4>
                                         <ul className="list-disc pl-4 space-y-1 text-sm text-slate-700">
-                                            <li>Solo datos estrictamente necesarios.</li>
-                                            <li>No se requieren identificadores personales innecesarios.</li>
-                                            <li>El sistema no infiere datos adicionales.</li>
+                                            <li>{t('Compliance.sections.gdpr.sub2.list.0')}</li>
+                                            <li>{t('Compliance.sections.gdpr.sub2.list.1')}</li>
+                                            <li>{t('Compliance.sections.gdpr.sub2.list.2')}</li>
                                         </ul>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-900 mb-2">6.3. Tratamiento de datos especiales</h4>
+                                        <h4 className="font-bold text-slate-900 mb-2">{t('Compliance.sections.gdpr.sub3.title')}</h4>
                                         <ul className="list-disc pl-4 space-y-1 text-sm text-slate-700">
-                                            <li>Medidas de seguridad técnicas reforzadas (cifrado, control de acceso).</li>
-                                            <li>Datos no utilizados para entrenar modelos de IA.</li>
-                                            <li>Conservación limitada al tiempo necesario.</li>
+                                            <li>{t('Compliance.sections.gdpr.sub3.list.0')}</li>
+                                            <li>{t('Compliance.sections.gdpr.sub3.list.1')}</li>
+                                            <li>{t('Compliance.sections.gdpr.sub3.list.2')}</li>
                                         </ul>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-900 mb-2">6.4. Ejercicio de derechos</h4>
-                                        <p className="text-sm text-slate-700">Se garantiza el ejercicio de los derechos de acceso, rectificación, supresión, limitación del tratamiento e información sobre el uso de IA.</p>
+                                        <h4 className="font-bold text-slate-900 mb-2">{t('Compliance.sections.gdpr.sub4.title')}</h4>
+                                        <p className="text-sm text-slate-700">{t('Compliance.sections.gdpr.sub4.text')}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <hr className="border-slate-100" />
 
+                            {/* 7. Transparency */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">7</span>
-                                    Transparencia e información a las personas interesadas
+                                    {t('Compliance.sections.transparency.title')}
                                 </h3>
-                                <p className="mb-4">Todos los informes generados incorporan una declaración explícita indicando:</p>
+                                <p className="mb-4">{t('Compliance.sections.transparency.text')}</p>
                                 <ul className="list-disc pl-6 space-y-1 text-slate-700">
-                                    <li>Que han sido redactados con el apoyo de una herramienta de inteligencia artificial.</li>
-                                    <li>Que el contenido no es resultado de una decisión automatizada.</li>
-                                    <li>Que el informe ha sido revisado y validado por un/a profesional responsable.</li>
+                                    {[0, 1, 2].map(i => (
+                                        <li key={i}>{t(`Compliance.sections.transparency.list.${i}`)}</li>
+                                    ))}
                                 </ul>
                             </div>
 
                             <hr className="border-slate-100" />
 
+                            {/* 8. Ethics */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">8</span>
-                                    Principios éticos aplicados
+                                    {t('Compliance.sections.ethics.title')}
                                 </h3>
                                 <div className="space-y-4">
-                                    <p>El diseño y uso del sistema respeta los principios siguientes:</p>
+                                    <p>{t('Compliance.sections.ethics.text')}</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {['No maleficencia', 'Prudencia interpretativa', 'Ausencia de estigmatización', 'Respeto a la dignidad', 'Proporcionalidad y adecuación al contexto'].map((tag, i) => (
-                                            <span key={i} className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-700 font-medium">{tag}</span>
+                                        {[0, 1, 2, 3, 4].map((i) => (
+                                            <span key={i} className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-700 font-medium">{t(`Compliance.sections.ethics.tags.${i}`)}</span>
                                         ))}
                                     </div>
                                     <div className="bg-red-50 p-4 rounded-lg border border-red-100">
-                                        <p className="font-semibold text-red-900 mb-2">El sistema evita expresamente:</p>
+                                        <p className="font-semibold text-red-900 mb-2">{t('Compliance.sections.ethics.avoidTitle')}</p>
                                         <ul className="grid sm:grid-cols-2 gap-x-4 gap-y-1 list-disc pl-6 text-red-800">
-                                            <li>Diagnósticos automáticos.</li>
-                                            <li>Etiquetajes personales.</li>
-                                            <li>Predicciones de conducta o evolución futura.</li>
-                                            <li>Afirmaciones causales no fundamentadas.</li>
+                                            {[0, 1, 2, 3].map(i => (
+                                                <li key={i}>{t(`Compliance.sections.ethics.avoidList.${i}`)}</li>
+                                            ))}
                                         </ul>
                                     </div>
                                 </div>
@@ -371,65 +361,64 @@ export function LegalJustificationContent() {
 
                             <hr className="border-slate-100" />
 
+                            {/* 9. Forensic */}
                             <div>
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                     <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">9</span>
-                                    Controles específicos para informes legal-forenses
+                                    {t('Compliance.sections.forensic.title')}
                                 </h3>
                                 <p className="mb-4 text-slate-700">
-                                    Los informes legal-forenses están sujetos a un modo de seguridad reforzado (<strong>Safe Forensic Mode</strong>) que incluye:
+                                    {t.rich('Compliance.sections.forensic.text', { b: (chunks) => <strong>{chunks}</strong> })}
                                 </p>
                                 <ul className="list-disc pl-6 space-y-2 text-slate-700">
-                                    <li>Prohibición técnica de afirmaciones categóricas o causales.</li>
-                                    <li>Obligación de diferenciación explícita entre hechos observados y manifestaciones del/la paciente.</li>
-                                    <li>Lenguaje condicional y estrictamente descriptivo.</li>
-                                    <li>Validaciones automáticas del contenido antes de permitir la finalización.</li>
-                                    <li>Confirmación expresa de revisión humana reforzada.</li>
+                                    {[0, 1, 2, 3, 4].map(i => (
+                                        <li key={i}>{t(`Compliance.sections.forensic.list.${i}`)}</li>
+                                    ))}
                                 </ul>
                             </div>
 
                             <hr className="border-slate-100" />
 
+                            {/* 10. Traceability & 11. Limitations */}
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div>
                                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                         <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">10</span>
-                                        Trazabilidad y control
+                                        {t('Compliance.sections.traceability_control.title')}
                                     </h3>
-                                    <p className="mb-2">El sistema mantiene registros internos auditables sobre:</p>
+                                    <p className="mb-2">{t('Compliance.sections.traceability_control.text')}</p>
                                     <ul className="list-disc pl-6 space-y-1 text-slate-700 text-sm">
-                                        <li>Fecha y hora de generación de cada borrador.</li>
-                                        <li>Tipo de informe.</li>
-                                        <li>Versión del sistema y del modelo de IA utilizado.</li>
-                                        <li>Identidad del/la profesional responsable.</li>
-                                        <li>Confirmación de revisión humana.</li>
+                                        {[0, 1, 2, 3, 4].map(i => (
+                                            <li key={i}>{t(`Compliance.sections.traceability_control.list.${i}`)}</li>
+                                        ))}
                                     </ul>
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-800">
                                         <span className="bg-blue-100 text-blue-800 w-8 h-8 rounded-lg flex items-center justify-center text-sm">11</span>
-                                        Limitaciones del sistema
+                                        {t('Compliance.sections.limitations.title')}
                                     </h3>
                                     <ul className="list-disc pl-6 space-y-1 text-slate-700 text-sm">
-                                        <li>El sistema no sustituye la evaluación ni el criterio profesional.</li>
-                                        <li>Los informes generados tienen carácter orientativo hasta su validación.</li>
-                                        <li>El uso fuera del contexto profesional o sin supervisión humana constituye un uso indebido.</li>
+                                        {[0, 1, 2].map(i => (
+                                            <li key={i}>{t(`Compliance.sections.limitations.list.${i}`)}</li>
+                                        ))}
                                     </ul>
                                 </div>
                             </div>
 
+                            {/* 12. Declaration */}
                             <div className="bg-slate-900 text-slate-50 p-6 rounded-xl mt-8">
                                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                                     <span className="bg-slate-700 text-white w-8 h-8 rounded-lg flex items-center justify-center text-sm">12</span>
-                                    Declaración final de cumplimiento
+                                    {t('Compliance.sections.declaration.title')}
                                 </h3>
                                 <p className="leading-relaxed text-slate-300">
-                                    El sistema de inteligencia artificial descrito en este documento ha sido diseñado e implementado conforme a los requisitos legales, técnicos y éticos exigibles según la normativa europea vigente, e incorpora garantías específicas para un uso responsable, transparente, trazable y bajo control humano efectivo.
+                                    {t('Compliance.sections.declaration.text')}
                                 </p>
                             </div>
 
                             <p className="text-center text-sm text-slate-500 italic mt-8 pt-8 border-t">
-                                *Documento elaborado a efectos de justificación de cumplimiento normativo ante autoridades competentes, auditorías internas o externas y procesos de inspección.*
+                                {t('Compliance.sections.footer')}
                             </p>
 
                         </CardContent>

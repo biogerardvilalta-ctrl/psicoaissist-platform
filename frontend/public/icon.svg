@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Background Circle (Optional, cleaner without for favicon usually, but good for app icon) -->
+  <circle cx="256" cy="256" r="240" fill="url(#mainGradient)" />
+
+  <!-- Abstract Heart/Brain Shape -->
+  <g transform="translate(106, 106) scale(0.6)" fill="white">
+    <!-- Brain Left Hemisphere (Logic) -->
+    <path d="M160 40 C 100 40, 40 90, 40 160 C 40 210, 70 250, 110 270 L 110 320 L 160 320 C 180 320, 200 310, 210 290" 
+          stroke="white" stroke-width="25" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Heart Right Side (Empathy) - Intertwining -->
+    <path d="M340 40 C 400 40, 460 90, 460 160 C 460 240, 360 340, 250 440 C 140 340, 150 240, 150 240" 
+          stroke="white" stroke-width="25" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          
+    <!-- Synaptic Connections / Circuitry details to emphasize AI/Brain -->
+    <circle cx="160" cy="120" r="15" fill="white" />
+    <circle cx="120" cy="180" r="12" fill="white" />
+    <circle cx="200" cy="180" r="10" fill="white" />
+    
+    <!-- Central Connection node -->
+    <circle cx="250" cy="130" r="20" fill="white" opacity="0.9" />
+  </g>
+</svg>

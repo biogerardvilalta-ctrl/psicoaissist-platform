@@ -29,15 +29,18 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { UpgradeModal } from '@/components/shared/UpgradeModal';
 
-const formSchema = z.object({
+import { useTranslations } from 'next-intl';
+
+// Schema generator function to allow translations
+const createFormSchema = (t: any) => z.object({
     professionalId: z.string().optional(), // Required for Agenda Managers
     firstName: z.string().min(2, {
-        message: "El nombre debe tener al menos 2 caracteres.",
+        message: t('validation.firstNameMin'),
     }),
     lastName: z.string().min(2, {
-        message: "El apellido debe tener al menos 2 caracteres.",
+        message: t('validation.lastNameMin'),
     }),
-    email: z.string().email().optional().or(z.literal('')),
+    email: z.string().email({ message: t('validation.emailInvalid') }).optional().or(z.literal('')),
     phone: z.string().optional(),
     birthDate: z.string().optional(),
     emergencyContact: z.string().optional(),
@@ -46,14 +49,14 @@ const formSchema = z.object({
     notes: z.string().optional(),
     sendEmailReminders: z.boolean().default(true),
     consentData: z.boolean().default(false).refine(val => val === true, {
-        message: "Debes obtener el consentimiento para el tratamiento de datos.",
+        message: t('validation.consentDataRequired'),
     }),
     consentAI: z.boolean().default(false).refine(val => val === true, {
-        message: "Debes informar sobre el uso de sistemas de IA.",
+        message: t('validation.consentAIRequired'),
     }),
 });
 
-type ClientFormValues = z.infer<typeof formSchema>;
+type ClientFormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface ClientFormProps {
     initialData?: Partial<ClientFormValues>;
@@ -64,7 +67,15 @@ interface ClientFormProps {
     isAgendaManager?: boolean;
 }
 
-export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Guardar Paciente", managedProfessionals = [], isAgendaManager = false }: ClientFormProps) {
+export function ClientForm({ initialData, onSubmit, onCancel, submitLabel, managedProfessionals = [], isAgendaManager = false }: ClientFormProps) {
+    const t = useTranslations('Clients.Form');
+    // Using t('submitLabel') as default is not possible here directly if submitLabel is prop, 
+    // but the parent passes translated label. If not, we use fallback.
+    const finalSubmitLabel = submitLabel || t('submitDefault');
+
+    // Create schema with translations
+    const formSchema = createFormSchema(t);
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -86,7 +97,6 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
             consentAI: false,
         },
     });
-
 
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [limitType, setLimitType] = useState<'clients' | 'reports' | 'transcription' | 'simulator'>('clients');
@@ -116,7 +126,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                 return;
             }
 
-            setError(err.message || "Ocurrió un error al guardar el cliente.");
+            setError(err.message || t('error.generic'));
         } finally {
             setIsSubmitting(false);
         }
@@ -145,10 +155,10 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <BookUser className="h-5 w-5 text-blue-600" />
-                                Información Personal
+                                {t('sections.personal.title')}
                             </CardTitle>
                             <CardDescription>
-                                Datos confidenciales del paciente. Esta información será cifrada.
+                                {t('sections.personal.description')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-6">
@@ -159,14 +169,14 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                     name="professionalId"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Profesional *</FormLabel>
+                                            <FormLabel>{t('fields.professional')}</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 value={field.value}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Seleccionar profesional" />
+                                                        <SelectValue placeholder={t('placeholders.selectProfessional')} />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -189,9 +199,9 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                     name="firstName"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nombre *</FormLabel>
+                                            <FormLabel>{t('fields.firstName')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Ej. Juan" {...field} />
+                                                <Input placeholder={t('placeholders.firstName')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -202,9 +212,9 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                     name="lastName"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Apellidos *</FormLabel>
+                                            <FormLabel>{t('fields.lastName')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Ej. Pérez" {...field} />
+                                                <Input placeholder={t('placeholders.lastName')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -218,9 +228,9 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                     name="email"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel>{t('fields.email')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="correo@ejemplo.com" {...field} />
+                                                <Input placeholder={t('placeholders.email')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -231,9 +241,9 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                     name="phone"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Teléfono</FormLabel>
+                                            <FormLabel>{t('fields.phone')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="+34 600 000 000" {...field} />
+                                                <Input placeholder={t('placeholders.phone')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -261,7 +271,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <AlertCircle className="h-5 w-5 text-orange-600" />
-                                Información Clínica Inicial
+                                {t('sections.clinical.title')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="grid gap-6">
@@ -271,9 +281,9 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                     name="diagnosis"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Diagnóstico Preliminar</FormLabel>
+                                            <FormLabel>{t('fields.diagnosis')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Ej. Trastorno de ansiedad" {...field} />
+                                                <Input placeholder={t('placeholders.diagnosis')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -284,18 +294,18 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                     name="riskLevel"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nivel de Riesgo</FormLabel>
+                                            <FormLabel>{t('fields.riskLevel')}</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Selecciona un nivel" />
+                                                        <SelectValue placeholder={t('placeholders.selectRisk')} />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="LOW">Bajo</SelectItem>
-                                                    <SelectItem value="MEDIUM">Medio</SelectItem>
-                                                    <SelectItem value="HIGH">Alto</SelectItem>
-                                                    <SelectItem value="CRITICAL">Crítico</SelectItem>
+                                                    <SelectItem value="LOW">{t('risk.low')}</SelectItem>
+                                                    <SelectItem value="MEDIUM">{t('risk.medium')}</SelectItem>
+                                                    <SelectItem value="HIGH">{t('risk.high')}</SelectItem>
+                                                    <SelectItem value="CRITICAL">{t('risk.critical')}</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -328,10 +338,10 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <BookUser className="h-5 w-5 text-green-600" />
-                                Preferencias de Comunicación
+                                {t('sections.communication.title')}
                             </CardTitle>
                             <CardDescription>
-                                Configura cómo se enviarán los recordatorios de citas.
+                                {t('sections.communication.description')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-6">
@@ -341,9 +351,9 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                 render={({ field }) => (
                                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                         <div className="space-y-0.5">
-                                            <FormLabel className="text-base">Recordatorios por Email</FormLabel>
+                                            <FormLabel className="text-base">{t('fields.emailReminders')}</FormLabel>
                                             <CardDescription>
-                                                Enviar recordatorios automáticos a la dirección de correo registrada.
+                                                {t('fields.emailRemindersDesc')}
                                             </CardDescription>
                                         </div>
                                         <FormControl>
@@ -364,10 +374,10 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                         <CardHeader className="bg-blue-50/50">
                             <CardTitle className="flex items-center gap-2 text-blue-900">
                                 <ShieldCheck className="h-5 w-5 text-blue-600" />
-                                Consentimiento Informado (GDPR)
+                                {t('sections.consent.title')}
                             </CardTitle>
                             <CardDescription>
-                                Es obligatorio registrar el consentimiento explícito del paciente antes de procesar sus datos.
+                                {t('sections.consent.description')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4 pt-6">
@@ -386,10 +396,10 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                         </FormControl>
                                         <div className="space-y-1 leading-none">
                                             <FormLabel>
-                                                Tratamiento de Datos Personales
+                                                {t('fields.consentData')}
                                             </FormLabel>
                                             <FormDescription>
-                                                El paciente autoriza el almacenamiento y tratamiento de sus datos personales y de salud en la plataforma.
+                                                {t('fields.consentDataDesc')}
                                             </FormDescription>
                                             <FormMessage />
                                         </div>
@@ -411,10 +421,10 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
                                         </FormControl>
                                         <div className="space-y-1 leading-none">
                                             <FormLabel>
-                                                Procesamiento mediante IA
+                                                {t('fields.consentAI')}
                                             </FormLabel>
                                             <FormDescription>
-                                                El paciente ha sido informado de que se utilizarán sistemas de Inteligencia Artificial como soporte a la sesión.
+                                                {t('fields.consentAIDesc')}
                                             </FormDescription>
                                             <FormMessage />
                                         </div>
@@ -426,14 +436,14 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel = "Gua
 
                     <div className="flex justify-end gap-4">
                         <Button variant="outline" type="button" onClick={onCancel}>
-                            Cancelar
+                            {t('buttons.cancel')}
                         </Button>
                         <Button type="submit" disabled={isSubmitting}>
                             {isSubmitting ? (
-                                <>Guardando...</>
+                                <>{t('buttons.saving')}</>
                             ) : (
                                 <>
-                                    <Save className="mr-2 h-4 w-4" /> {submitLabel}
+                                    <Save className="mr-2 h-4 w-4" /> {finalSubmitLabel}
                                 </>
                             )}
                         </Button>

@@ -1,0 +1,2369 @@
+{
+    "AISettings": {
+        "helpText": "<p>Aquest idioma definirà la redacció dels <strong>informes clínics, l'anàlisi post-sessió i l'idioma del simulador de pacients</strong>.</p><p>Nota: <strong>L'Assistent en Viu</strong> detectarà automàticament l'idioma que parlis.</p>"
+    },
+    "FAQ": {
+        "title": "Preguntes Freqüents",
+        "subtitle": "Resolem els teus dubtes",
+        "description": "Les respostes a les preguntes més habituals sobre PsicoAIssist.",
+        "items": {
+            "security": {
+                "question": "És PsicoAIssist segur per a dades confidencials de pacients?",
+                "answer": "Absolutament. PsicoAIssist compleix amb GDPR, LOPD-GDD i estàndards internacionals de seguretat. Utilitzem encriptació AES-256, servidors a Europa, i mai emmagatzemem dades sense encriptar. Cada sessió es processa de forma aïllada i segura.",
+                "category": "Seguretat"
+            },
+            "transcription": {
+                "question": "Com funciona la transcripció automàtica?",
+                "answer": "El nostre sistema d'IA escolta la sessió en temps real i transcriu automàticament. Reconeix la parla en espanyol (incloent accents regionals) i català, identifica qui parla (terapeuta/pacient) i formateja el text de manera professional. La precisió és del 95%+. L'àudio es processa en temps real i NO es grava ni emmagatzema mai als nostres servidors.",
+                "category": "Funcionalitat"
+            },
+            "customization": {
+                "question": "Puc personalitzar els informes generats?",
+                "answer": "Sí. Amb el pla Premium pots configurar la teva \"Marca Personal\" als ajustos. Això et permet afegir el teu logotip, nom de clínica i colors corporatius, que s'aplicaran automàticament a tots els informes PDF i Word generats per mantenir la teva imatge professional.",
+                "category": "Personalització"
+            },
+            "cancellation": {
+                "question": "Què passa si cancel·lo la meva subscripció?",
+                "answer": "Conserves l'accés a totes les teves dades durant 90 dies. Pots exportar totes les sessions, informes i notes en qualsevol moment. Si decideixes tornar durant aquest període, simplement inicia sessió amb les teves credencials antigues per reactivar el teu compte automàticament.",
+                "category": "Facturació"
+            },
+            "limits": {
+                "question": "Hi ha límit en el nombre de pacients?",
+                "answer": "Depèn del pla. El pla Bàsic inclou fins a 25 pacients. Els plans Pro i Premium permeten pacients il·limitats. El Premium afegeix funcions avançades com marca personal i major capacitat d'IA. Per a clíniques i hospitals disposem de plans corporatius a mida.",
+                "category": "Plans"
+            },
+            "support": {
+                "question": "Ofereixen suport tècnic en espanyol?",
+                "answer": "Sí, el nostre equip de suport parla espanyol, català i anglès i t'atendrà per email. Les videotrucades estan disponibles per a l'onboarding, plans superiors o si l'equip tècnic ho considera necessari. També oferim documentació completa en aquests idiomes.",
+                "category": "Suport"
+            },
+            "integration": {
+                "question": "Puc integrar PsicoAIssist amb el meu sistema actual?",
+                "answer": "Oferim APIs i integracions amb els principals sistemes de gestió de clíniques. També pots exportar dades per importar al teu sistema existent. El nostre equip tècnic pot ajudar-te amb la integració.",
+                "category": "Integració"
+            },
+            "languages": {
+                "question": "Quins idiomes suporta el sistema?",
+                "answer": "Principalment Català, Espanyol i Anglès amb alta precisió. També suportem francès, portuguès i italià. Estem afegint més idiomes basant-nos en la demanda dels nostres usuaris.",
+                "category": "Funcionalitat"
+            },
+            "trial": {
+                "question": "Hi ha període de prova gratuït?",
+                "answer": "Disposem d'un Pla Demo de prova de 14 dies. Pots provar les funcionalitats principals sense cost abans de triar el teu pla professional.",
+                "category": "Facturació"
+            }
+        }
+    },
+    "Dashboard": {
+        "HelpWidget": {
+            "placeholder": "Pregunta alguna cosa...",
+            "title": "Assistent PsicoAIssist",
+            "welcome": "Hola! Sóc el teu assistent de PsicoAIssist. En què et puc ajudar avui?",
+            "error": "Ho sento, he tingut un problema de connexió. Torna-ho a provar.",
+            "disclaimer": "La IA pot cometre errors. Verifica la informació important.",
+            "openLabel": "Obrir assistent d'ajuda"
+        },
+        "AiAssistant": {
+            "title": "Assistent IA",
+            "limitReached": "Límit assolit",
+            "status": {
+                "live": "En viu",
+                "offline": "Desconnectat"
+            },
+            "plan": {
+                "basic": "Pla Bàsic"
+            },
+            "subtitle": "Anàlisi en temps real • 100% Privat",
+            "limitWarning": "Has consumit els teus minuts d'IA. L'assistència en viu s'ha aturat, però pots seguir prenent notes.",
+            "sections": {
+                "observations": "Observacions",
+                "questions": "Preguntes Suggerides",
+                "considerations": "Consideracions"
+            },
+            "listening": {
+                "title": "Escoltant la sessió...",
+                "subtitle": "Parla o escriu per rebre suggeriments"
+            },
+            "actions": {
+                "addToNotes": "Afegir a notes",
+                "newSuggestions": "Noves suggerències disponibles"
+            },
+            "footer": "Assistència IA © 2025 • PsicoAIssist"
+        },
+        "Common": {
+            "noData": "No hi ha dades disponibles",
+            "noDataDesc": "Les dades apareixeran aquí quan comencis a utilitzar la plataforma.",
+            "noDataSimple": "Sense dades suficients"
+        },
+        "Navigation": {
+            "home": "Inici",
+            "dashboard": "Tauler",
+            "reports": "Informes",
+            "statistics": "Estadístiques",
+            "adminPanel": "Tauler Admin",
+            "users": "Usuaris",
+            "payments": "Pagaments",
+            "settings": "Configuració",
+            "clients": "Pacients",
+            "sessions": "Sessions",
+            "simulator": "Simulador",
+            "legal": "Legal"
+        },
+        "Header": {
+            "adminLabel": "Admin",
+            "panel": "Tauler",
+            "users": "Usuaris",
+            "tasks": "Tasques",
+            "communications": "Comunicacions",
+            "billing": "Facturació",
+            "logs": "Registres",
+            "system": "Sistema",
+            "myAccount": "El meu compte",
+            "profile": "Perfil",
+            "settings": "Configuració",
+            "logout": "Tancar sessió",
+            "adminPanelTitle": "Tauler d'Administració",
+            "copyright": "© 2024 PsicoAIssist",
+            "roles": {
+                "premium": "Psicòleg Premium",
+                "psychologist": "Psicòleg",
+                "manager": "Gestor",
+                "admin": "Administrador"
+            }
+        },
+        "Overview": {
+            "welcome": "Hola, {name}",
+            "roles": {
+                "manager": "Gestor/a",
+                "doctor": "Doctor/a"
+            },
+            "subtitle": {
+                "manager": "Gestiona l'agenda i pacients dels teus professionals assignats.",
+                "psychologist": "Benvingut al teu assistent clínic intel·ligent."
+            },
+            "alerts": {
+                "noProfessionals": {
+                    "title": "Sense professionals assignats",
+                    "description": "Sembla que tens el rol de Gestor d'Agenda però no tens professionals assignats. Si us plau, demana a un professional que et vinculi des del seu panell de control."
+                },
+                "paymentError": {
+                    "title": "Atenció: Pagament no completat",
+                    "description": "El teu compte s'ha creat, però el pagament del pla {plan} no s'ha pogut iniciar. Si us plau, actualitza la teva subscripció.",
+                    "button": "Completar Pagament"
+                }
+            },
+            "Widgets": {
+                "themesWidget": "Temes Recurrents",
+                "sentimentWidget": "Benestar",
+                "todaysSessions": "Agenda d'Avui",
+                "sessionsThisMonth": "Sessions (Mes)",
+                "activePatients": "Pacients Actius",
+                "monthIncome": "Ingressos Estimats",
+                "sessionsNextWeek": "Agenda (7 dies)",
+                "attendanceRate": "Taxa Assistència",
+                "cancellationRate": "Taxa Cancel·lació",
+                "pendingNotes": "Notes Pendents",
+                "sessionsChart": "Gràfic Evolució",
+                "weeklyChart": "Gràfic Càrrega Setmanal",
+                "sessionTypesWidget": "Tipus de Sessió",
+                "testsWidget": "Proves Realitzades",
+                "techniquesWidget": "Tècniques Terapèutiques",
+                "referralWidget": "Convida i Guanya",
+                "categories": {
+                    "Operational": "Operatiu",
+                    "Analytics": "Analítica",
+                    "Charts": "Gràfics",
+                    "Clinical": "Analítica Clínica",
+                    "Growth": "Creixement"
+                },
+                "themesWidget_subtitle": "Motius de consulta",
+                "sentimentWidget_subtitle": "Tendència emocional"
+            },
+            "Stats": {
+                "sessions": "Sessions",
+                "patients": "Pacients",
+                "income": "Ingressos (Est)",
+                "agenda7d": "Agenda (7d)",
+                "attendance": "Assistència",
+                "cancellations": "Cancel·lacions",
+                "notes": "Notes",
+                "subtitles": {
+                    "thisMonth": "Aquest Mes",
+                    "active": "Actius",
+                    "sessions": "Sessions",
+                    "globalRate": "Taxa Global",
+                    "pending": "Pendents",
+                    "suggested": "IA suggerides",
+                    "detected": "Detectades",
+                    "distribution": "Distribució"
+                },
+                "trends": {
+                    "made": "Realitzades",
+                    "view": "Vista",
+                    "general": "General",
+                    "high": "Alta",
+                    "low": "Baixa",
+                    "review": "Revisar",
+                    "upToDate": "Al dia",
+                    "total": "Total"
+                }
+            },
+            "Library": {
+                "title": "Llibreria de Widgets",
+                "description": "Activa o desactiva els widgets que vols veure al teu tauler.",
+                "add": "Afegir",
+                "hide": "Amagar",
+                "openButton": "Widgets"
+            },
+            "Admin": {
+                "title": "Panell d'Administració",
+                "description": "Benvingut a l'àrea de gestió. Tens accés complet per administrar usuaris, facturació i configuracions del sistema.",
+                "goToPanel": "Anar al Panell Admin",
+                "myProfile": "El meu Perfil"
+            },
+            "Manager": {
+                "assignedProfessionals": "Professionals Assignats",
+                "noAssigned": "No tens professionals assignats encara."
+            },
+            "Toasts": {
+                "errorLoading": "Error al carregar dades",
+                "errorLoadingDesc": "No s'han pogut obtenir les estadístiques.",
+                "layoutSaved": "Disseny guardat",
+                "layoutSavedDesc": "La teva configuració de tauler s'ha actualitzat correctament.",
+                "errorSaving": "Error al guardar",
+                "errorSavingDesc": "No s'ha pogut guardar la configuració."
+            },
+            "TodaysSessions": {
+                "loading": "Carregant agenda...",
+                "title": "Agenda d'Avui",
+                "description": "Tens {count} sessions programades per avui.",
+                "emptyTitle": "No hi ha sessions per avui.",
+                "emptyDesc": "Gaudeix del teu dia lliure o planifica noves cites.",
+                "scheduleNew": "Agendar Nova",
+                "viewDetails": "Veure Detall",
+                "start": "Iniciar"
+            },
+            "Charts": {
+                "sessionsEvolution": "Evolució",
+                "last30days": "Últims 30 dies",
+                "weeklyLoad": "Càrrega Setmanal",
+                "sessionsRange": "Sessions (Dl-Dg)"
+            },
+            "Referral": {
+                "title": "Convida i Guanya",
+                "description": "Rep <strong>5 casos de simulador</strong> per cada professional que convidis.",
+                "referrals": "Referits"
+            }
+        },
+        "Settings": {
+            "title": "Configuració",
+            "sections": {
+                "agenda": "Agenda i Calendari",
+                "ai": "Intel·ligència Artificial",
+                "notifications": "Notificacions",
+                "managers": "Gestors d'Agenda",
+                "branding": "Marca Personal",
+                "privacy": "Privacitat i Dades"
+            },
+            "agenda": {
+                "title": "Agenda i Calendari",
+                "subtitle": "Configura les teves preferències per a noves sessions i disponibilitat.",
+                "defaultDuration": "Durada per defecte (minuts)",
+                "bufferTime": "Temps entre sessions (minuts)",
+                "hourlyRate": "Preu Sessió/Hora (€)",
+                "hourlyRateHelp": "Utilitzat per calcular ingressos estimats.",
+                "weeklySchedule": {
+                    "title": "Horari Setmanal",
+                    "subtitle": "Configura la disponibilitat per a cada dia de la setmana.",
+                    "days": {
+                        "0": "Diumenge",
+                        "1": "Dilluns",
+                        "2": "Dimarts",
+                        "3": "Dimecres",
+                        "4": "Dijous",
+                        "5": "Divendres",
+                        "6": "Dissabte"
+                    },
+                    "open": "Obert",
+                    "closed": "Tancat"
+                },
+                "blocks": {
+                    "title": "Bloquejos i Excepcions",
+                    "subtitle": "Afegeix dies festius o bloqueja hores específiques.",
+                    "date": "Data",
+                    "start": "Inici",
+                    "end": "Fi",
+                    "blockFullDay": "Bloquejar Dia Complet",
+                    "blockPartial": "Bloquejar Horari",
+                    "holidays": "Dies Festius (Dia Complet)",
+                    "noHolidays": "No hi ha dies festius configurats.",
+                    "partialBlocks": "Bloquejos Parcials"
+                }
+            },
+            "ai": {
+                "title": "Intel·ligència Artificial",
+                "subtitle": "Personalitza la generació d'informes, anàlisi i el simulador de pacients.",
+                "preferredLanguage": "Idioma per a Informes i Anàlisi",
+                "selectLanguage": "Selecciona un idioma",
+                "languages": {
+                    "es": "Español",
+                    "ca": "Català",
+                    "en": "English"
+                },
+                "syncLanguage": "Sincronitzar amb l'idioma de la interfície",
+                "syncLanguageHelp": "Si actives això, l'idioma dels informes canviarà automàticament en canviar l'idioma de la web."
+            },
+            "notifications": {
+                "title": "Notificacions",
+                "subtitle": "Gestiona les teves preferències de notificacions i recordatoris.",
+                "enableReminders": "Activar recordatoris per email",
+                "remindersHelp": "Rebràs un correu el dia anterior a les 20:00h amb el resum de les sessions de la jornada següent."
+            },
+            "managers": {
+                "title": "Gestors d'Agenda",
+                "subtitle": "Gestiona els usuaris que tenen accés a la teva agenda i pacients."
+            },
+            "branding": {
+                "title": "Marca Personal",
+                "subtitle": "Personalitza l'aspecte dels teus informes i documents amb la teva identitat corporativa.",
+                "companyName": "Nom de l'Empresa / Clínica",
+                "companyPlaceholder": "Ex: Clínica Psicològica Avançada",
+                "companyHelp": "Aquest nom apareixerà a la capçalera dels teus informes PDF.",
+                "primaryColor": "Color Primari",
+                "secondaryColor": "Color Secundari",
+                "logoLabel": "Logo de l'Empresa",
+                "deleteLogo": "Eliminar logo",
+                "logoHelp": "Formats: PNG, JPG. Màx 2MB. Recomanat fons transparent.",
+                "showLogo": "Mostrar icona/logo als informes",
+                "save": "Desar Canvis",
+                "saving": "Desant...",
+                "toasts": {
+                    "saved": "Configuració desada",
+                    "savedDesc": "Els teus paràmetres de marca s'han actualitzat.",
+                    "logoUploaded": "Logo pujat",
+                    "logoUploadedDesc": "El logo s'ha carregat correctament.",
+                    "error": "Error",
+                    "uploadError": "No s'ha pogut pujar el logo.",
+                    "saveError": "No s'ha pogut desar la configuració."
+                }
+            },
+            "privacy": {
+                "title": "Privacitat i Dades",
+                "subtitle": "Gestiona les teves dades personals i exporta la teva informació (GDPR).",
+                "exportData": {
+                    "title": "Exportar les meves dades",
+                    "description": "Descarrega una còpia completa del teu perfil, sessions, notes i clients en format CSV (Compatible amb Excel).",
+                    "button": "Exportar Dades (CSV)",
+                    "loading": "Exportant...",
+                    "success": "Exportació completada",
+                    "successDesc": "L'arxiu CSV s'ha descarregat correctament.",
+                    "error": "No s'han pogut exportar les dades."
+                },
+                "exportReports": {
+                    "title": "Exportar Informes (PDF)",
+                    "description": "Descarrega un arxiu ZIP amb tots els teus informes generats en format PDF.",
+                    "button": "Exportar Informes (PDF)",
+                    "warning": "No s'han trobat informes per exportar o ha ocorregut un error.",
+                    "success": "Exportació completada",
+                    "successDesc": "L'arxiu ZIP s'ha descarregat correctament.",
+                    "error": "No s'han pogut exportar els informes."
+                }
+            },
+            "toasts": {
+                "updateSuccess": "Configuració actualitzada",
+                "updateSuccessDesc": "Les teves preferències s'han desat correctament.",
+                "updateError": "Error",
+                "updateErrorDesc": "No s'ha pogut actualitzar la configuració.",
+                "holidayAdded": "Dia bloquejat",
+                "holidayAddedDesc": "S'ha afegit el dia festiu.",
+                "holidayExists": "Info",
+                "holidayExistsDesc": "Aquest dia ja està bloquejat.",
+                "blockAdded": "Bloqueig afegit",
+                "blockAddedDesc": "S'ha afegit el bloqueig horari.",
+                "blockError": "Error",
+                "blockErrorDesc": "Completa data i hores.",
+                "blockTimeError": "L'hora d'inici ha de ser anterior a la final."
+            },
+            "GoogleCalendar": {
+                "title": "Integració amb Google Calendar",
+                "description": "Connecta el teu calendari per sincronitzar esdeveniments automàticament.",
+                "status": "Estat",
+                "connected": "Connectat",
+                "disconnected": "No connectat",
+                "connectButton": "Connectar Google Calendar",
+                "connecting": "Connectant...",
+                "importEvents": "Importar esdeveniments de Google Calendar a la plataforma",
+                "toasts": {
+                    "connectedTitle": "Connectat",
+                    "connectedDesc": "Google Calendar s'ha connectat correctament.",
+                    "errorTitle": "Error",
+                    "errorDesc": "No s'ha pogut connectar amb Google.",
+                    "updatedTitle": "Configuració actualitzada",
+                    "updatedDesc": "S'importaran esdeveniments de Google.",
+                    "updatedDescOff": "S'ha desactivat la importació."
+                }
+            }
+        },
+        "Profile": {
+            "title": "El Meu Perfil",
+            "personalInfo": {
+                "title": "Informació Personal",
+                "subtitle": "Visualitza i actualitza les teves dades personals.",
+                "firstName": "Nom",
+                "lastName": "Cognom",
+                "email": "Email",
+                "emailNote": "L'email no es pot canviar.",
+                "editButton": "Editar Perfil",
+                "saveButton": "Desar Canvis",
+                "savingButton": "Desant...",
+                "cancelButton": "Cancel·lar"
+            },
+            "subscription": {
+                "title": "Subscripció",
+                "subtitle": "Detalls del teu pla actual i facturació.",
+                "currentPlan": "Pla Actual",
+                "planDemo": "Pla Demo",
+                "paymentMonthly": "Pagament Mensual",
+                "paymentAnnual": "Pagament Anual",
+                "paymentFree": "Gratuït",
+                "statusActive": "Actiu",
+                "expirationDate": "Data de Caducitat",
+                "nextRenewal": "Propera Renovació",
+                "unlimited": "Il·limitat",
+                "status": "Estat",
+                "statusOk": "La teva subscripció està al corrent de pagament.",
+                "statusProblem": "Hi ha un problema amb la teva subscripció.",
+                "limitsTitle": "Límits i Ús del Pla",
+                "activePatients": "Pacients Actius",
+                "unlimitedPatients": "Pacients Il·limitats",
+                "patientsCount": "{count} de {max} pacients",
+                "patientsActive": "Actius",
+                "transcriptionMinutes": "Minuts de Transcripció (IA)",
+                "transcriptionUnlimited": "Il·limitat",
+                "transcriptionRemaining": "{remaining} min restants de {limit}",
+                "transcriptionRemainingExtra": "{remaining} min restants de {baseLimit} + {extra} (Extra)",
+                "transcriptionCalculating": "Calculant...",
+                "transcriptionUsed": "{used} Min Usats",
+                "basePlan": "Pla Base",
+                "extraPack": "Pack Extra",
+                "demoExpires": "* El teu període de prova finalitza el {date}.",
+                "limitsReset": "* Els límits mensuals es reinicien el {date}.",
+                "addonsTitle": "Complements Actius",
+                "agendaManager": "Agenda Manager",
+                "agendaManagerDesc": "Gestió delegada d'agenda i pacients",
+                "onboardingPack": "Pack On-boarding",
+                "onboardingPackDesc": "Configurem el teu compte amb tu en 45 min: importació de pacients, enllaç amb Google Calendar i personalització. Garantia de funcionament.",
+                "activated": "Activat",
+                "inProgress": "En Procés / Actiu",
+                "renewal": "Renovació: {date}",
+                "checkSupport": "Consulta l'estat en suport",
+                "managePayments": "Gestionar Pagaments i Factures",
+                "loading": "Carregant...",
+                "changePlan": "Canviar Pla / Comprar Pack"
+            },
+            "security": {
+                "title": "Seguretat",
+                "subtitle": "Gestiona la teva contrasenya i sessions.",
+                "changePassword": "Canviar Contrasenya"
+            },
+            "dangerZone": {
+                "title": "Zona de Perill",
+                "subtitle": "Accions irreversibles sobre el teu compte.",
+                "cancelSubscription": "Cancel·lar Subscripció",
+                "deleteAccount": "Eliminar Compte"
+            },
+            "dialogs": {
+                "cancelSubscription": {
+                    "title": "Cancel·lar Subscripció?",
+                    "description": "Perdràs accés a les funcions del teu pla al final del període actual. Aquesta acció no elimina el teu compte.",
+                    "back": "Tornar",
+                    "confirm": "Confirmar Cancel·lació"
+                },
+                "deleteAccount": {
+                    "title": "Eliminar Compte Permanentment",
+                    "description": "Aquesta acció és irreversible. S'eliminaran totes les teves dades associades, pacients i sessions.",
+                    "confirmText": "Escriu {text} a sota per confirmar.",
+                    "deleteWord": "ESBORRAR",
+                    "placeholder": "Escriu ESBORRAR per confirmar",
+                    "cancel": "Cancel·lar",
+                    "confirm": "Eliminar Definitivament",
+                    "deleting": "Eliminant..."
+                },
+                "changePassword": {
+                    "title": "Canviar Contrasenya",
+                    "description": "Introdueix la teva contrasenya actual i la nova contrasenya desitjada.",
+                    "currentPassword": "Contrasenya Actual",
+                    "newPassword": "Nova Contrasenya",
+                    "confirmPassword": "Confirmar Nova Contrasenya",
+                    "cancel": "Cancel·lar",
+                    "update": "Actualitzar Contrasenya",
+                    "updating": "Actualitzant..."
+                }
+            },
+            "toasts": {
+                "profileUpdated": "Perfil actualitzat",
+                "profileUpdatedDesc": "Les teves dades s'han desat correctament.",
+                "profileError": "Error",
+                "profileErrorDesc": "No s'ha pogut actualitzar el perfil.",
+                "passwordMismatch": "Error de validació",
+                "passwordMismatchDesc": "Les noves contrasenyes no coincideixen.",
+                "passwordUpdated": "Contrasenya actualitzada",
+                "passwordUpdatedDesc": "La teva contrasenya ha estat canviada exitosament.",
+                "passwordError": "Error",
+                "passwordErrorDesc": "No s'ha pogut canviar la contrasenya. Verifica la teva contrasenya actual.",
+                "accountDeleted": "Compte eliminat",
+                "accountDeletedDesc": "El teu compte ha estat eliminat correctament.",
+                "accountDeleteError": "Error",
+                "accountDeleteErrorDesc": "No s'ha pogut eliminar el compte.",
+                "subscriptionCanceled": "Subscripció cancel·lada",
+                "subscriptionCanceledDesc": "La teva subscripció ha estat cancel·lada correctament."
+            }
+        },
+        "Statistics": {
+            "title": "Analítica Global",
+            "titleClient": "Analítica: {clientName}",
+            "subtitle": "Explora mètriques detallades i tendències.",
+            "loading": "Carregant dades analítiques...",
+            "selectView": "Seleccionar vista...",
+            "globalView": "Vista Global (Tots els pacients)",
+            "tabs": {
+                "overview": "Resum General",
+                "clinical": "Detall Clínic",
+                "patients": "Pacients i Adherència",
+                "themes": "Temes i Tendències"
+            },
+            "timeRange": {
+                "label": "Període",
+                "1m": "Últim Mes (Diari)",
+                "3m": "Últims 3 Mesos (Setmanal)",
+                "6m": "Últims 6 Mesos (Mensual)",
+                "1y": "Últim Any (Mensual)"
+            },
+            "alert": {
+                "clientTitle": "Expedient Clínic Confidencial",
+                "clientDesc": "Aquestes dades formen part de la història clínica del pacient i estan protegides per secret professional. Ús exclusiu per al diagnòstic i seguiment terapèutic.",
+                "globalTitle": "Privacitat i Ús Clínic",
+                "globalDesc": "Dades agregades i anonimitzades. Aquesta eina ofereix suport estadístic per a la gestió de la consulta. No conté dades personals identificables en aquesta vista."
+            },
+            "overview": {
+                "analyticsTitle": "Evolució i Mètriques",
+                "analyticsSubtitle": "Fes clic per veure el gràfic detallat.",
+                "managementTitle": "Agenda i Gestió",
+                "managementSubtitle": "Accions ràpides i estat administratiu.",
+                "weeklyLoadTitle": "Càrrega Setmanal",
+                "weeklyLoadDesc": "Distribució de sessions en els propers 7 dies"
+            },
+            "metrics": {
+                "sessions": "Sessions (Mes)",
+                "sessionsSubtitle": "Total Realitzades",
+                "sessionsTotal": "Total",
+                "vsLastMonth": "vs mes anterior",
+                "stable": "Estable",
+                "income": "Ingressos (Est)",
+                "incomeSubtitle": "Aquest Mes",
+                "incomeRate": "60€/h",
+                "patients": "Pacients Actius",
+                "patientsSubtitle": "Total",
+                "agenda": "Agenda (7d)",
+                "agendaSubtitle": "Propera Setmana",
+                "agendaView": "Vista",
+                "pendingNotes": "Notes Pendents",
+                "pendingNotesSubtitle": "Admin",
+                "pendingNotesTasks": "Tasques",
+                "attendance": "Taxa d'Assistència",
+                "attendanceSubtitle": "Completades vs Programades",
+                "attendanceQuality": "Qualitat",
+                "cancellation": "Taxa de Cancel·lació",
+                "cancellationSubtitle": "Cancel·lades + No Show",
+                "cancellationRisk": "Risc"
+            },
+            "charts": {
+                "sessionsTitle": "Evolució de Sessions",
+                "sessionsDesc": "Volum de sessions en els últims 6 mesos",
+                "incomeTitle": "Tendència d'Ingressos",
+                "incomeDesc": "Ingressos estimats segons tarifa base",
+                "patientsTitle": "Nous Pacients",
+                "patientsDesc": "Pacients afegits per mes",
+                "attendanceTitle": "Taxa d'Assistència",
+                "attendanceDesc": "Percentatge de cites completades",
+                "attendanceEvolution": "Evolució d'Assistència",
+                "attendanceEvolutionDesc": "Percentatge de sessions completades",
+                "cancellationTitle": "Taxa de Cancel·lació",
+                "cancellationDesc": "Percentatge de cites cancel·lades",
+                "cancellationEvolution": "Evolució Taxa de Cancel·lació",
+                "cancellationEvolutionDesc": "Percentatge de sessions cancel·lades"
+            },
+            "clinical": {
+                "title": "Detall Clínic Avançat",
+                "sessionTypes": "Sessions per Tipus",
+                "tests": "Proves Realitzades",
+                "testsTrend": "IA suggerides",
+                "techniques": "Tècniques Terapèutiques",
+                "techniquesTrend": "detectades"
+            },
+            "patientsTab": {
+                "title": "Mètriques de Pacient"
+            },
+            "themes": {
+                "recurrentTitle": "Temes Recurrents",
+                "recurrentDesc": "Anàlisi dels motius de consulta més freqüents detectats per la Intel·ligència Artificial. Aquest gràfic ajuda a visualitzar ràpidament els problemes recurrents en les sessions.",
+                "wellbeingTitle": "Tendència de Benestar",
+                "wellbeingDesc": "Evolució del sentiment positiu al llarg del temps. Aquesta línia mostra com canvia el to emocional de les sessions, permetent detectar millores o recaigudes."
+            }
+        },
+        "Simulator": {
+            "title": "Simulador Clínic",
+            "subtitle": "Practica les teves habilitats amb pacients generats per IA.",
+            "tabs": {
+                "simulator": "Simulador",
+                "history": "Historial i Progrés"
+            },
+            "timer": "Temps restant",
+            "endSession": "Finalitzar Sessió",
+            "idle": {
+                "title": "Configura la teva Simulació",
+                "description": "Selecciona el nivell de dificultat. El sistema generarà un pacient amb una patologia i personalitat aleatòria.",
+                "difficulty": {
+                    "easy": "Fàcil",
+                    "medium": "Mitjà",
+                    "hard": "Difícil"
+                },
+                "nonVerbalCues": "Mostrar Micro-comportaments (No verbals)",
+                "startButton": "Començar Simulació",
+                "disclaimer": "* Els pacients són generats sintèticament. No corresponen a persones reals."
+            },
+            "loading": "Generant perfil de pacient...",
+            "active": {
+                "patientProfile": "Perfil del Pacient",
+                "reasonForConsultation": "Motiu de Consulta",
+                "context": "Context",
+                "traits": "Trets",
+                "chatPlaceholder": "El pacient ha entrat a la sala. Pots saludar.",
+                "inputPlaceholder": "Escriu la teva resposta...",
+                "sendButton": "Enviar",
+                "voiceSettings": "Ajustar Veu",
+                "speed": "Velocitat",
+                "pitch": "To",
+                "stopAndSend": "Aturar i Enviar",
+                "speak": "Parlar (Mantenir premut o clic)"
+            },
+            "finished": {
+                "newSimulation": "Nova Simulació",
+                "metrics": {
+                    "empathy": "Empatia",
+                    "effectiveness": "Eficàcia Clínica",
+                    "professionalism": "Professionalitat"
+                },
+                "reportTitle": "Informe de Supervisió Detallat",
+                "reportSubtitle": "Generat per Supervisor Clínic IA"
+            },
+            "history": {
+                "evolutionTitle": "La teva Evolució",
+                "reportsTitle": "Informes Arxivats",
+                "period": "Període",
+                "week": "Última Setmana",
+                "month": "Últim Mes",
+                "year": "Últim Any",
+                "all": "Tot l'Historial",
+                "allReports": "Tot",
+                "clearFilters": "Netejar filtres",
+                "loadingStats": "Carregant estadístiques...",
+                "loadingHistory": "Carregant historial...",
+                "emptyCharts": "No hi ha dades suficients per mostrar l'evolució.",
+                "emptyReports": "No hi ha informes arxivats per a aquest període.",
+                "charts": {
+                    "title": "Evolució d'Habilitats",
+                    "empathy": "Empatia",
+                    "effectiveness": "Eficàcia"
+                },
+                "badges": {
+                    "hard": "Difícil",
+                    "medium": "Mitjà",
+                    "easy": "Fàcil"
+                }
+            },
+            "reportModal": {
+                "title": "Informe de Sessió",
+                "difficulty": "Dificultat",
+                "empathy": "Empatia",
+                "effectiveness": "Eficàcia",
+                "professionalism": "Professionalitat"
+            },
+            "toasts": {
+                "started": "Simulació iniciada",
+                "startedDesc": "El pacient està esperant.",
+                "timeExpired": "Temps Esgotat",
+                "timeExpiredDesc": "La sessió ha finalitzat automàticament (45 min).",
+                "sessionEnded": "Sessió Finalitzada",
+                "sessionEndedDesc": "Has assolit el límit de 45 minuts per a aquesta sessió.",
+                "error": "Error",
+                "errorStart": "Error en iniciar la simulació.",
+                "errorResponse": "Error en obtenir resposta.",
+                "errorFeedback": "Error en generar feedback.",
+                "errorHistory": "No s'ha pogut carregar l'historial."
+            }
+        },
+        "Compliance": {
+            "title": "Compliment Normatiu",
+            "back": "Tornar",
+            "print": "Imprimir / Guardar PDF",
+            "tabs": {
+                "legal": "Justificació IA",
+                "gdpr": "Política de Privacitat/RGPD",
+                "cookies": "Cookies",
+                "terms": "Termes"
+            },
+            "footer": "Document informatiu generat per PsicoAIssist Platform • Compliment Normatiu 2024-2025"
+        },
+        "Activity": {
+            "title": "Activitat Recent",
+            "subtitle": "Últimes accions al teu compte",
+            "viewAll": "Veure tot",
+            "empty": "No hi ha activitat recent",
+            "emptyDesc": "Les accions que realitzis apareixeran aquí.",
+            "actions": {
+                "CREATE": "Nou registre",
+                "UPDATE": "Actualització",
+                "DELETE": "Eliminació",
+                "LOGIN": "Inici de sessió",
+                "LOGIN_SUCCESS": "Inici de sessió correcte",
+                "CREATE_SESSION": "Sessió Programada",
+                "UPDATE_SESSION": "Sessió Actualitzada",
+                "DELETE_SESSION": "Sessió Eliminada",
+                "CREATE_CLIENT": "Nou Pacient",
+                "UPDATE_CLIENT": "Dades de Pacient",
+                "CREATE_REPORT": "Informe Creat",
+                "CREATE_REPORT_DRAFT": "Esborrany IA Generat"
+            }
+        },
+        "Grid": {
+            "edit": "Editar Disseny",
+            "save": "Guardar Disseny",
+            "cancel": "Cancel·lar",
+            "reset": "Reset"
+        }
+    },
+    "Reports": {
+        "title": "Informes Clínics",
+        "subtitle": "Gestiona i redacta informes legals i d'evolució.",
+        "defaultTitles": {
+            "evolution": "Informe d'Evolució",
+            "discharge": "Informe d'Alta"
+        },
+        "newReport": "Nou Informe",
+        "searchPlaceholder": "Cercar per títol o pacient...",
+        "filters": {
+            "allTypes": "Tots els Tipus",
+            "allStatuses": "Tots els Estats",
+            "completed": "Completats",
+            "drafts": "Esborranys"
+        },
+        "table": {
+            "columns": {
+                "titlePatient": "Títol / Pacient",
+                "type": "Tipus",
+                "date": "Data",
+                "status": "Estat",
+                "actions": "Accions"
+            },
+            "unknownPatient": "Pacient desconegut",
+            "status": {
+                "completed": "Completat",
+                "draft": "Esborrany"
+            },
+            "actions": {
+                "downloadWord": "Descarregar Word",
+                "downloadPdf": "Descarregar PDF",
+                "edit": "Editar Esborrany",
+                "delete": "Eliminar",
+                "deleteConfirm": "Estàs segur que vols eliminar aquest informe?",
+                "deleteSuccess": "Informe eliminat",
+                "deleteSuccessDesc": "L'informe s'ha mogut a la paperera.",
+                "deleteError": "Error a l'eliminar",
+                "deleteErrorDesc": "No s'ha pogut eliminar l'informe"
+            },
+            "empty": {
+                "title": "No s'han trobat informes",
+                "description": "Intenta ajustar els filtres o crea un nou informe."
+            }
+        },
+        "types": {
+            "INITIAL_EVALUATION": "Avaluació Inicial",
+            "PROGRESS": "Evolució",
+            "DISCHARGE": "Alta Clínica",
+            "REFERRAL": "Derivació",
+            "LEGAL": "Legal / Forense",
+            "INSURANCE": "Informe per a Assegurances",
+            "CUSTOM": "Personalitzat"
+        },
+        "errors": {
+            "loadFailed": "Error al carregar dades",
+            "loadFailedDesc": "No s'han pogut carregar els informes.",
+            "downloadFailed": "Error de descàrrega",
+            "downloadPdfFailed": "No s'ha pogut descarregar el PDF",
+            "downloadWordFailed": "No s'ha pogut descarregar el Word"
+        }
+    },
+    "Patients": {
+        "title": "Pacients",
+        "subtitle": "Gestiona la teva llista de pacients i les seves històries clíniques.",
+        "newPatient": "Nou Pacient",
+        "alerts": {
+            "noDataTitle": "Atenció: Sense dades visibles",
+            "noDataDesc": "No es mostren pacients perquè no tens professionals assignats."
+        },
+        "tabs": {
+            "active": "Actius",
+            "archived": "Arxivats"
+        },
+        "lists": {
+            "activeTitle": "Llistat de Pacients Actius",
+            "archivedTitle": "Pacients Arxivats",
+            "activeDesc": "Tens un total de {count} pacients actius.",
+            "archivedDesc": "Tens un total de {count} pacients arxivats."
+        },
+        "filters": {
+            "searchPlaceholder": "Cercar per nom o email...",
+            "professional": "Filtrar per Professional",
+            "allProfessionals": "Tots els professionals"
+        },
+        "status": {
+            "loading": "Carregant pacients...",
+            "noActiveFound": "No s'han trobat pacients actius.",
+            "noArchivedFound": "No s'han trobat pacients arxivats.",
+            "noDiagnosis": "Sense diagnòstic",
+            "active": "Actiu",
+            "archived": "Arxivat",
+            "never": "Mai"
+        },
+        "riskLevels": {
+            "LOW": "Baix",
+            "MEDIUM": "Mitjà",
+            "HIGH": "Alt",
+            "CRITICAL": "Crític"
+        },
+        "table": {
+            "headers": {
+                "patient": "Pacient",
+                "statusRisk": "Estat / Risc",
+                "contact": "Contacte",
+                "lastSession": "Última Sessió",
+                "actions": "Accions"
+            }
+        },
+        "actions": {
+            "viewFile": "Veure expedient",
+            "scheduleSession": "Agendar sessió",
+            "statistics": "Estadístiques",
+            "edit": "Editar",
+            "archive": "Arxivar",
+            "restore": "Restaurar",
+            "deletePermanent": "Eliminar definitivament",
+            "archiveConfirm": "Estàs segur que vols arxivar aquest pacient?",
+            "deleteConfirm": "Estàs segur que vols eliminar DEFINITIVAMENT aquest pacient? aquesta acció NO es pot desfer i esborrarà tot el seu historial, sessions i notes associades."
+        },
+        "toasts": {
+            "archivedSuccess": "Pacient arxivat",
+            "archivedDesc": "El pacient ha estat arxivat correctament.",
+            "restoredSuccess": "Pacient restaurat",
+            "restoredDesc": "El pacient ha estat restaurat i mogut a la llista d'actius.",
+            "deletedSuccess": "Pacient eliminat",
+            "deletedDesc": "El pacient i totes les seves dades han estat eliminats permanentment.",
+            "errorArchive": "No s'ha pogut arxivar el pacient",
+            "errorRestore": "No s'ha pogut restaurar el pacient",
+            "errorDelete": "No s'ha pogut eliminar el pacient",
+            "errorLoad": "No s'han pogut carregar els pacients"
+        }
+    },
+    "Calendar": {
+        "title": "Sessions",
+        "subtitle": "Gestiona la teva agenda i el seguiment de teràpies.",
+        "newSession": "Agendar Nova Sessió",
+        "alerts": {
+            "noDataTitle": "Atenció: Sense dades visibles",
+            "noDataDesc": "No es mostren sessions perquè no tens professionals assignats."
+        },
+        "tabs": {
+            "list": "Llista",
+            "calendar": "Calendari"
+        },
+        "list": {
+            "title": "Agenda de Sessions",
+            "description": "{count} sessions registrades en total."
+        },
+        "filters": {
+            "date": "Data",
+            "patient": "Pacient",
+            "patientPlaceholder": "Cercar pacient...",
+            "type": "Tipus",
+            "status": "Estat",
+            "professional": "Filtrar per Professional",
+            "allProfessionals": "Tots",
+            "allTypes": "Tots",
+            "allStatuses": "Tots"
+        },
+        "table": {
+            "headers": {
+                "dateTime": "Data i Hora",
+                "patient": "Pacient",
+                "type": "Tipus",
+                "status": "Estat",
+                "actions": "Accions"
+            },
+            "loading": "Carregant sessions...",
+            "noData": "No s'han trobat sessions.",
+            "unknownClient": "Client desconegut"
+        },
+        "status": {
+            "SCHEDULED": "Programada",
+            "COMPLETED": "Completada",
+            "CANCELLED": "Cancel·lada",
+            "IN_PROGRESS": "En Curs",
+            "NO_SHOW": "No ha assistit"
+        },
+        "types": {
+            "INDIVIDUAL": "Individual",
+            "GROUP": "Grupal",
+            "FAMILY": "Familiar",
+            "COUPLE": "Parella",
+            "CONSULTATION": "Consulta",
+            "EMERGENCY": "Urgència"
+        },
+        "actions": {
+            "startSession": "Iniciar sessió",
+            "viewDetails": "Veure detalls",
+            "cancelSession": "Cancel·lar sessió",
+            "delete": "Eliminar",
+            "cancelConfirm": "Estàs segur que vols cancel·lar aquesta sessió?",
+            "deleteConfirm": "Estàs segur que vols eliminar aquesta sessió?",
+            "deleteConfirmPermanent": "Eliminar aquesta sessió permanentment?"
+        },
+        "toasts": {
+            "loadError": "Error",
+            "loadErrorDesc": "No s'han pogut carregar les sessions",
+            "cancelSuccess": "Sessió cancel·lada",
+            "cancelSuccessDesc": "La sessió ha estat cancel·lada correctament.",
+            "cancelError": "No s'ha pogut cancel·lar la sessió",
+            "deleteSuccess": "Sessió eliminada",
+            "deleteSuccessDesc": "La sessió ha estat eliminada correctament.",
+            "deleteError": "No s'ha pogut eliminar la sessió"
+        },
+        "calendarView": {
+            "title": "Calendari",
+            "subtitle": "Vista mensual i setmanal de les teves sessions",
+            "actionsTitle": "Accions de Sessió",
+            "actionsDesc": "Com a gestor, pots cancel·lar o eliminar aquesta sessió.",
+            "cancelBtn": "Cancel·lar Sessió",
+            "deleteBtn": "Eliminar Sessió"
+        }
+    },
+    "Admin": {
+        "Dashboard": {
+            "Common": {
+                "noData": "No hi ha dades disponibles",
+                "noDataDesc": "Les dades apareixeran aquí quan comencis a utilitzar la plataforma.",
+                "noDataSimple": "Sense dades suficients"
+            },
+            "title": "Panell d'Administració",
+            "subtitle": "Gestiona usuaris i subscripcions de PsicoAIssist",
+            "loading": "Carregant panell d'administració...",
+            "error": "Error d'accés",
+            "retry": "Tornar a intentar",
+            "stats": {
+                "activeUsers": "Usuaris Actius",
+                "subscriptions": "Subscripcions",
+                "managers": "Gestors",
+                "viewUsers": "Veure usuaris",
+                "estimatedRevenue": "Ingressos Estimats",
+                "monthlyRecurring": "Facturació mensual recurrent",
+                "viewBilling": "Veure facturació",
+                "totalSessions": "Sessions Totals",
+                "sessionsCompleted": "Sessions realitzades",
+                "reportsGenerated": "Informes Generats",
+                "aiReports": "Informes generats per IA",
+                "resourceUsage": "Ús de Recursos",
+                "aiConsumption": "Consum IA",
+                "transcribedMinutes": "min transcrits",
+                "simulatorSessions": "sessions simulador"
+            }
+        },
+        "Users": {
+            "title": "Gestió d'Usuaris",
+            "subtitle": "Administra tots els usuaris de la plataforma",
+            "search": "Cercar per nom o email...",
+            "filters": {
+                "all": "Tots",
+                "active": "Actius",
+                "inactive": "Inactius",
+                "role": "Rol",
+                "subscription": "Subscripció"
+            },
+            "table": {
+                "name": "Nom",
+                "email": "Email",
+                "role": "Rol",
+                "subscription": "Subscripció",
+                "status": "Estat",
+                "registered": "Registrat",
+                "actions": "Accions"
+            },
+            "roles": {
+                "admin": "Administrador",
+                "professional": "Professional",
+                "agenda_manager": "Gestor d'Agenda"
+            },
+            "status": {
+                "active": "Actiu",
+                "inactive": "Inactiu",
+                "verified": "Verificat",
+                "pending": "Pendent"
+            },
+            "actions": {
+                "view": "Veure detalls",
+                "edit": "Editar",
+                "delete": "Eliminar",
+                "suspend": "Suspendre",
+                "activate": "Activar"
+            },
+            "detail": {
+                "title": "Detalls de l'Usuari",
+                "personalInfo": "Informació Personal",
+                "subscriptionInfo": "Informació de Subscripció",
+                "activityLog": "Registre d'Activitat",
+                "save": "Guardar Canvis",
+                "cancel": "Cancel·lar"
+            }
+        },
+        "Tasks": {
+            "title": "Tasques Administratives",
+            "subtitle": "Gestiona tasques i recordatoris del sistema",
+            "new": "Nova Tasca",
+            "filters": {
+                "all": "Totes",
+                "pending": "Pendents",
+                "completed": "Completades",
+                "priority": "Prioritat"
+            },
+            "priority": {
+                "high": "Alta",
+                "medium": "Mitjana",
+                "low": "Baixa"
+            },
+            "table": {
+                "title": "Títol",
+                "description": "Descripció",
+                "priority": "Prioritat",
+                "status": "Estat",
+                "dueDate": "Data Límit",
+                "actions": "Accions"
+            }
+        },
+        "Communications": {
+            "title": "Comunicacions",
+            "subtitle": "Envia missatges a usuaris",
+            "sendEmail": "Enviar Email",
+            "recipients": "Destinataris",
+            "subject": "Assumpte",
+            "message": "Missatge",
+            "send": "Enviar",
+            "selectUsers": "Seleccionar usuaris...",
+            "allUsers": "Tots els usuaris",
+            "activeSubscribers": "Subscriptors actius",
+            "history": "Historial d'Enviaments"
+        },
+        "Billing": {
+            "title": "Facturació",
+            "subtitle": "Gestiona subscripcions i pagaments",
+            "overview": {
+                "title": "Resum de Facturació",
+                "totalRevenue": "Ingressos Totals",
+                "monthlyRecurring": "Recurrent Mensual",
+                "activeSubscriptions": "Subscripcions Actives",
+                "churnRate": "Taxa de Cancel·lació"
+            },
+            "subscriptions": {
+                "title": "Subscripcions",
+                "plan": "Pla",
+                "user": "Usuari",
+                "status": "Estat",
+                "amount": "Import",
+                "nextBilling": "Propera Facturació"
+            },
+            "plans": {
+                "free": "Gratuït",
+                "basic": "Bàsic",
+                "professional": "Professional",
+                "premium": "Premium"
+            }
+        },
+        "AuditLogs": {
+            "title": "Registre d'Auditoria",
+            "subtitle": "Historial d'accions del sistema",
+            "filters": {
+                "all": "Totes les accions",
+                "user": "Usuari",
+                "admin": "Administrador",
+                "system": "Sistema",
+                "dateRange": "Rang de dates"
+            },
+            "table": {
+                "timestamp": "Data/Hora",
+                "user": "Usuari",
+                "action": "Acció",
+                "details": "Detalls",
+                "ipAddress": "IP"
+            },
+            "actions": {
+                "login": "Inici de sessió",
+                "logout": "Tancament de sessió",
+                "create": "Creació",
+                "update": "Actualització",
+                "delete": "Eliminació"
+            }
+        },
+        "System": {
+            "title": "Configuració del Sistema",
+            "subtitle": "Ajustos generals de la plataforma",
+            "general": {
+                "title": "General",
+                "siteName": "Nom del Lloc",
+                "siteUrl": "URL del Lloc",
+                "supportEmail": "Email de Suport",
+                "timezone": "Zona Horària"
+            },
+            "features": {
+                "title": "Funcionalitats",
+                "enableRegistration": "Permetre Registre",
+                "enableSimulator": "Habilitar Simulador",
+                "enableTranscription": "Habilitar Transcripció",
+                "maintenanceMode": "Mode Manteniment"
+            },
+            "limits": {
+                "title": "Límits del Sistema",
+                "maxUsers": "Màxim d'Usuaris",
+                "maxSessions": "Màxim de Sessions",
+                "maxStorage": "Màxim d'Emmagatzematge"
+            },
+            "save": "Guardar Canvis",
+            "saved": "Canvis guardats correctament"
+        }
+    },
+    "Landing": {
+        "Hero": {
+            "badge": "IA Ètica per a Psicòlegs",
+            "title": {
+                "p1": "Potencia la teva",
+                "p2": "pràctica psicològica",
+                "p3": "amb IA responsable"
+            },
+            "description": "Transcripció automàtica, anàlisi intel·ligent i gestió segura de clients. Dissenyat per psicòlegs, per a psicòlegs. Compliment total amb GDPR.",
+            "features": {
+                "confidential": "100% Confidencial",
+                "realtime": "IA en Temps Real",
+                "analysis": "Anàlisi Intel·ligent",
+                "easy": "Fàcil d'Utilitzar"
+            },
+            "cta": {
+                "start": "Començar gratis",
+                "simulator": "Provar Simulador",
+                "clinics": "Representes una institució? Veure solucions per a clíniques"
+            },
+            "stats": {
+                "sessions": "Sessions",
+                "uptime": "Uptime",
+                "psychologists": "Psicòlegs"
+            }
+        },
+        "Features": {
+            "badge": "Característiques",
+            "title": "Tot el que necessites per a una pràctica moderna",
+            "description": "Dissenyat específicament per a psicòlegs, amb eines que respecten l'ètica professional.",
+            "items": {
+                "transcription": {
+                    "title": "Transcripció Automàtica",
+                    "description": "Converteix les teves sessions parlades en text amb 95% de precisió. Compatible amb espanyol, català i anglès."
+                },
+                "analysis": {
+                    "title": "Anàlisi IA Ètic",
+                    "description": "Suggeriments intel·ligents basats en tècniques terapèutiques validades. Sense reemplaçar el teu criteri professional."
+                },
+                "reports": {
+                    "title": "Informes Automàtics",
+                    "description": "Genera informes professionals seguint estàndards psicològics. Personalitzable segons la teva pràctica."
+                },
+                "security": {
+                    "title": "Seguretat Total",
+                    "description": "Xifratge AES-256, compliment GDPR. Les teves dades i les dels teus clients estan protegides."
+                },
+                "analytics": {
+                    "title": "Analytics Intel·ligents",
+                    "description": "Visualitza el progrés dels teus clients amb mètriques objectives i gràfics interactius."
+                },
+                "clients": {
+                    "title": "Gestió de Clients",
+                    "description": "Organitza expedients, historial clínic i sessions en un sistema intuïtiu i segur."
+                },
+                "time": {
+                    "title": "Estalvia Temps",
+                    "description": "Redueix el temps administratiu en un 70%. Més temps per al que realment importa."
+                },
+                "privacy": {
+                    "title": "Privacitat Absoluta",
+                    "description": "Només tu tens accés a la teva informació. Ni nosaltres podem veure les teves dades clíniques."
+                }
+            },
+            "bottom": {
+                "trial": "14 dies de prova gratuïta",
+                "card": "Sense targeta de crèdit",
+                "support": "Suport en espanyol/català"
+            }
+        },
+        "Pricing": {
+            "badge": "Preus",
+            "title": "Plans dissenyats per a cada etapa professional",
+            "description": "Comença gratis amb el nostre Pla Demo. Subscriu-te quan necessitis més.",
+            "billing": {
+                "monthly": "Mensual",
+                "yearly": "Anual",
+                "save": "(2 mesos gratis)"
+            },
+            "plans": {
+                "basic": {
+                    "name": "Basic",
+                    "description": "Perfecte per a psicòlegs independents que comencen",
+                    "cta": "Contractar Basic",
+                    "features": [
+                        "Fins a 25 clients actius",
+                        "10 Hores Transcripció (només text)",
+                        "Agenda i facturació bàsica",
+                        "Notes clíniques manuals",
+                        "Emmagatzematge 5GB"
+                    ],
+                    "limitations": [
+                        "Sense IA Generativa (0 min/mes)",
+                        "Sense Simulador Clínic",
+                        "Sense Sincronització Google Calendar"
+                    ]
+                },
+                "pro": {
+                    "name": "Pro",
+                    "description": "L'opció més popular per a pràctica professional",
+                    "cta": "Contractar Pro",
+                    "features": [
+                        "Pacients il·limitats",
+                        "15h (900 min) Transcripció + IA",
+                        "Sincronització Google Calendar",
+                        "Simulador Clínic (5 casos/mes)",
+                        "Emmagatzematge 50GB",
+                        "Suport Prioritari"
+                    ]
+                },
+                "premium": {
+                    "name": "Premium",
+                    "description": "Per a especialistes amb alt volum de feina",
+                    "cta": "Contractar Premium",
+                    "features": [
+                        "Tot l'inclòs en Pro",
+                        "50h (3.000 min) Transcripció + IA",
+                        "Simulador Clínic Il·limitat",
+                        "Emmagatzematge 1TB",
+                        "Suport Prioritari + Videotrucada",
+                        "Branding Personalitzat"
+                    ]
+                },
+                "clinics": {
+                    "name": "Per a Centres de Salut, Universitats i Hospitals",
+                    "description": "Centres que prioritzen formació i control",
+                    "cta": "Contactar Vendes",
+                    "features": [
+                        "Usuaris il·limitats (a mida)",
+                        "IA Corporativa (5.000+ min/mes)",
+                        "Simulador Clínic (casos/mes a mida)",
+                        "API Access (HIS integration)",
+                        "Compliance Avançat (Auditoria RGPD) i SSO",
+                        "Onboarding dedicat",
+                        "Facturació unificada"
+                    ]
+                }
+            },
+            "extras": {
+                "title": "Extres i Serveis Addicionals",
+                "agenda": {
+                    "title": "Agenda Manager",
+                    "description": "Delega la gestió de les teves cites. Afegeix un usuari administratiu."
+                },
+                "minutes": {
+                    "title": "Pack Minuts IA",
+                    "description": "Un mes amb molts pacients? Afegeix minuts extra al teu pla."
+                },
+                "onboarding": {
+                    "title": "Sessió Onboarding",
+                    "description": "Configurem el teu compte amb tu en 45 min. Garantia de funcionament."
+                },
+                "simulator": {
+                    "title": "Pack Simulador",
+                    "description": "Amplia la teva formació pràctica. Afegeix un pack de 10 casos clínics."
+                }
+            },
+            "footer": {
+                "contact": "Necessites un pla a mida? Contacta'ns",
+                "cancel": "Cancel·la quan vulguis",
+                "data": "Dades sempre teves",
+                "fairuse": "* Política d'Ús Raonable (Fair Use) aplica a l'emmagatzematge il·limitat."
+            }
+        },
+        "Testimonials": {
+            "badge": "Testimonis",
+            "title": "Més de 500 psicòlegs confien en nosaltres",
+            "description": "Descobreix com PsicoAIssist està transformant la pràctica psicològica.",
+            "stats": {
+                "psychologists": "Psicòlegs actius",
+                "sessions": "Sessions transcrites",
+                "satisfaction": "Satisfacció",
+                "rating": "Valoració mitjana"
+            },
+            "cta": {
+                "title": "Vols ser el pròxim testimoni d'èxit?",
+                "trial": "Prova gratis 14 dies",
+                "cases": "Veure casos d'estudi"
+            },
+            "items": [
+                {
+                    "quote": "PsicoAIssist ha revolucionat la meva pràctica. La transcripció automàtica m'estalvia 3 hores diàries.",
+                    "role": "Psicòloga Clínica",
+                    "highlight": "Estalvia 3 hores diàries"
+                },
+                {
+                    "quote": "El que més m'agrada és la seguretat. La confidencialitat és crucial i PsicoAIssist compleix.",
+                    "role": "Psicòleg Educatiu",
+                    "highlight": "Màxima seguretat"
+                }
+            ]
+        },
+        "FinalCTA": {
+            "badge": "Oferta limitada: 50% descompte primer mes",
+            "title": {
+                "p1": "Llest per transformar",
+                "p2": "la teva pràctica psicològica?"
+            },
+            "description": "Uneix-te a més de 500 psicòlegs que ja estan estalviant 3+ hores diàries.",
+            "features": {
+                "setup": "Setup Instantani",
+                "secure": "100% Segur",
+                "support": "Suport 24/7",
+                "cancel": "Sense Compromís"
+            },
+            "cta": {
+                "start": "Començar gratis ara",
+                "demo": "Veure demo en viu"
+            },
+            "trust": "Sense targeta de crèdit necessària • Configuració gratuïta • Suport inclòs",
+            "countdown": {
+                "title": "Oferta especial de llançament",
+                "days": "Dies",
+                "hours": "Hores",
+                "minutes": "Minuts",
+                "seconds": "Segons",
+                "description": "Aconsegueix 50% de descompte en la teva primera subscripció"
+            }
+        },
+        "Header": {
+            "nav": {
+                "features": "Característiques",
+                "simulator": "Simulador",
+                "pricing": "Preus",
+                "testimonials": "Testimonis",
+                "docs": "Documentació",
+                "blog": "Blog",
+                "legal": "Legal"
+            },
+            "cta": {
+                "clinics": "Per a Clíniques",
+                "login": "Inicia sessió",
+                "tryFree": "Prova gratis"
+            }
+        },
+        "Footer": {
+            "description": "Transformant la pràctica psicològica amb intel·ligència artificial. Ajudem a professionals de la salut mental a optimitzar el seu temps i millorar l'atenció als seus pacients.",
+            "links": {
+                "title": "Enllaços",
+                "docs": "Documentació",
+                "privacy": "Política de Privacitat",
+                "terms": "Termes i Condicions",
+                "cookies": "Política de Cookies"
+            },
+            "contact": {
+                "title": "Contacte"
+            },
+            "security": {
+                "secure": "100% Segur i Confidencial",
+                "gdpr": "GDPR Compliant",
+                "encryption": "AES-256 Encryption"
+            },
+            "copyright": "© {year} PsicoAIssist. Tots els drets reservats."
+        }
+    },
+    "Auth": {
+        "Login": {
+            "title": "Benvingut de nou",
+            "subtitle": "Accedeix al teu compte de PsicoAIssist",
+            "google": "Continua amb Google",
+            "divider": "O continua amb correu",
+            "email": "Correu electrònic",
+            "emailPlaceholder": "el@teu-email.com",
+            "password": "Contrasenya",
+            "passwordPlaceholder": "La teva contrasenya",
+            "rememberMe": "Recorda'm",
+            "forgotPassword": "Has oblidat la contrasenya?",
+            "submit": "Inicia sessió",
+            "submitting": "Iniciant sessió...",
+            "noAccount": "No tens compte?",
+            "registerLink": "Registra't gratis",
+            "errorTitle": "Error d'inici de sessió",
+            "accountNotFoundTitle": "Compte no trobat",
+            "accountNotFoundMessage": "No existeix cap compte amb aquest correu. Si us plau, registra't.",
+            "successMessage": "Registre exitós! Ara pots iniciar sessió."
+        },
+        "Register": {
+            "title": "Uneix-te a PsicoAIssist",
+            "subtitle": "Crea el teu compte i comença a transformar la teva pràctica psicològica",
+            "google": "Registrar-se amb Google",
+            "divider": "O registra't amb correu",
+            "firstName": "Nom",
+            "firstNamePlaceholder": "El teu nom",
+            "lastName": "Cognom",
+            "lastNamePlaceholder": "El teu cognom",
+            "email": "Correu professional",
+            "emailPlaceholder": "el@teu-email.com",
+            "professionalNumber": "Nº Professional / Col·legiat",
+            "professionalNumberPlaceholder": "Ex: Col·legiat / Assoc. / CIF",
+            "country": "País",
+            "countryPlaceholder": "Selecció",
+            "password": "Contrasenya",
+            "passwordPlaceholder": "Mínim 8 caràcters",
+            "confirmPassword": "Confirmar contrasenya",
+            "confirmPasswordPlaceholder": "Repeteix la teva contrasenya",
+            "referralCode": "Codi de referit (Opcional)",
+            "referralCodePlaceholder": "Si tens un codi, introdueix-lo aquí",
+            "liabilityLabel": "Certificació d'Habilitació Professional",
+            "liabilityText": "Certifico que el <bold>número professional/col·legiat</bold> introduït és verídic i es troba vigent. Entenc que la falsedat en aquesta dada constitueix un delicte d'intrusisme professional i falsedat documental, comportant les <bold>responsabilitats penals</bold> corresponents segons la normativa vigent.",
+            "termsLabel": "Accepto els <terms>Termes de Servei</terms> i la <privacy>Política de Privacitat</privacy>",
+            "disclaimer": "Aquesta eina ofereix suport clínic orientatiu exclusivament per a psicòlegs. No realitza diagnòstics ni substitueix el criteri clínic.",
+            "submitFree": "Crear compte gratuït",
+            "submitPaid": "Continuar al Pagament",
+            "submittingFree": "Creant compte...",
+            "submittingPaid": "Preparant pagament...",
+            "footerText": "En registrar-te, acceptes els nostres <terms>Termes de Servei</terms> i <privacy>Política de Privacitat</privacy>",
+            "alreadyAccount": "Ja tens compte?",
+            "loginLink": "Inicia sessió",
+            "successTitle": "Registre exitós!",
+            "successMessage": "Hem enviat un correu de verificació a <bold>{email}</bold>. Si us plau, revisa la teva safata d'entrada (i spam) i fes clic a l'enllaç per activar el teu compte.",
+            "successButton": "Anar a Iniciar Sessió"
+        }
+    },
+    "Legal": {
+        "Terms": {
+            "title": "Termes i Condicions d'Ús",
+            "subtitle": "Acord de servei per a professionals de la salut mental",
+            "cardTitle": "Relació Contractual",
+            "sections": {
+                "nature": {
+                    "title": "1. Naturalesa del Servei",
+                    "text": "Aquesta aplicació és una <b>eina de suport a la decisió clínica</b> basada en Intel·ligència Artificial. El seu objectiu és assistir al professional en la gestió de sessions i la generació d'esborranys documentals.",
+                    "warning": "L'eina NO substitueix el criteri professional, ni realitza diagnòstics automàtics, ni prescriu tractaments mèdics o farmacològics."
+                },
+                "responsibility": {
+                    "title": "2. Responsabilitat del Professional",
+                    "text": "L'usuari (professional de la salut mental acreditat/da) reconeix i accepta que:",
+                    "list": {
+                        "1": "És l'únic responsable de verificar la informació generada per la IA abans d'utilitzar-la o incloure-la a la història clínica.",
+                        "2": "És responsable d'obtenir el consentiment informat dels pacients per a l'ús d'eines de suport a la sessió.",
+                        "3": "Manté la responsabilitat final sobre qualsevol decisió clínica presa respecte als seus pacients."
+                    }
+                },
+                "ownership": {
+                    "title": "3. Propietat de les Dades",
+                    "text": "Totes les dades clíniques, notes de sessió i informació dels pacients introduïda a la plataforma són <b>propietat exclusiva del professional i/o del pacient</b>, segons correspongui. La plataforma actua com a encarregada del tractament, limitant-se a custodiar i processar la informació segons les instruccions de l'usuari."
+                },
+                "usage": {
+                    "title": "4. Ús Acceptable",
+                    "text": "L'usuari es compromet a fer un ús ètic de la plataforma, respectant el Codi Deontològic de la professió i la normativa vigent. Queda prohibit utilitzar el sistema per a fins il·lícits, discriminatoris o que atemptin contra la dignitat de les persones."
+                },
+                "ethics": {
+                    "title": "5. Límits Ètics i Professionals",
+                    "intro": "L'ús de la plataforma està subjecte als següents límits ètics inquebrantables, alineats amb la normativa deontològica vigent:",
+                    "alerts": {
+                        "diagnosis": {
+                            "title": "PROHIBICIÓ DE DIAGNÒSTIC AUTOMATITZAT",
+                            "text": "Queda estrictament prohibit utilitzar les sortides de la IA com a diagnòstics clínics definitius. La IA és una eina de suport orientatiu; el diagnòstic és acte exclusiu del professional humà."
+                        },
+                        "emergency": {
+                            "title": "DEURE D'EMERGÈNCIA",
+                            "text": "L'aplicació NO és un dispositiu d'emergència ni d'intervenció en crisi. En situacions de risc imminent de suïcidi o dany a tercers, el professional ha d'actuar segons els protocols d'emergència convencionals, sense dependre del processament de l'eina."
+                        },
+                        "transparency": {
+                            "title": "TRANSPARÈNCIA AMB EL PACIENT",
+                            "text": "És obligació ètica del professional informar el pacient sobre l'ús d'eines tecnològiques de suport durant la sessió i garantir que aquest ús no interfereix en la qualitat de l'aliança terapèutica."
+                        }
+                    }
+                },
+                "fairUse": {
+                    "title": "6. Política d'Ús Raonable (Fair Use Policy)",
+                    "text": "Per garantir l'estabilitat del sistema i la qualitat del servei per a tots els usuaris, els plans amb característiques 'Il·limitades' estan subjectes als següents topalls de seguretat mensual:",
+                    "stats": {
+                        "activePatients": {
+                            "label": "Pacients Actius",
+                            "unit": "expedients"
+                        },
+                        "transcription": {
+                            "label": "Transcripció IA",
+                            "unit": "hores/mes"
+                        },
+                        "reports": {
+                            "label": "Generació Informes",
+                            "unit": "informes/mes"
+                        },
+                        "simulator": {
+                            "label": "Simulador Clínic",
+                            "unit": "casos/mes",
+                            "note": "Màx 45 min/sessió"
+                        }
+                    },
+                    "warning": "* L'ús per sobre d'aquests límits es considera abusiu i pot comportar la suspensió temporal del compte o contacte per part de suport."
+                },
+                "plans": {
+                    "title": "7. Plans de Subscripció i Característiques",
+                    "intro": "A continuació es detallen els plans disponibles i les seves característiques contractuals. Els preus poden estar subjectes a impostos aplicables.",
+                    "policy": "<b>Política de Reinici Mensual:</b> Totes les quotes incloses als plans (minuts de transcripció, casos de simulador, etc.) es reinicien automàticament a l'inici de cada cicle de facturació mensual. <u>Els recursos no utilitzats durant el mes en curs no són acumulables per al mes següent.</u>",
+                    "items": {
+                        "demo": {
+                            "subtitle": "Gratuït / Limitada",
+                            "badge": "Prova 14 dies",
+                            "includes": {
+                                "title": "Inclou:",
+                                "list": [
+                                    "3 Pacients Actius màxim",
+                                    "30 Minuts Transcripció + IA (Prova)",
+                                    "5 Informes mensuals",
+                                    "Accés bàsic a la plataforma"
+                                ]
+                            },
+                            "excludes": {
+                                "title": "Limitacions:",
+                                "list": [
+                                    "Sense Simulador Clínic",
+                                    "Caducitat automàtica als 14 dies",
+                                    "Sense sincronització de calendari",
+                                    "Sense suport personalitzat"
+                                ]
+                            }
+                        },
+                        "basic": {
+                            "price": "29€ / mes",
+                            "includes": {
+                                "list": [
+                                    "25 Pacients Actius totals",
+                                    "10 Hores Transcripció (Literal)",
+                                    "Emmagatzematge 5GB",
+                                    "Gestió de Cites Bàsica"
+                                ]
+                            },
+                            "excludes": {
+                                "list": [
+                                    "Anàlisi IA Avançat",
+                                    "Simulador Clínic",
+                                    "Google Calendar Sync",
+                                    "Suport Prioritari"
+                                ]
+                            }
+                        },
+                        "pro": {
+                            "price": "59€ / mes",
+                            "includes": {
+                                "list": [
+                                    "Pacients Il·limitats",
+                                    "15 Hores (900 min) IA Total",
+                                    "Google Calendar Sync (Bidireccional)",
+                                    "Anàlisi IA Avançat (Insights)",
+                                    "Emmagatzematge 50GB",
+                                    "Simulador (5 casos/mes)"
+                                ]
+                            },
+                            "excludes": {
+                                "list": [
+                                    "Simulador Il·limitat",
+                                    "Branding Personalitzat (Logo)",
+                                    "Videotrucada de Suport"
+                                ]
+                            }
+                        },
+                        "premium": {
+                            "price": "99€ / mes",
+                            "includes": {
+                                "list": [
+                                    "50 Hores (3.000 min) IA",
+                                    "Simulador Il·limitat",
+                                    "Branding Personalitzat",
+                                    "Suport Prioritari + Videotrucada",
+                                    "Emmagatzematge 1TB"
+                                ]
+                            },
+                            "excludes": {
+                                "list": [
+                                    "Gestió d'Equips (Multi-usuari)",
+                                    "API / Integració HIS"
+                                ]
+                            }
+                        },
+                        "clinics": {
+                            "title": "Per a Centres de Salut, Universitats i Hospitals",
+                            "consult": "Consultar",
+                            "includes": [
+                                "Usuaris il·limitats",
+                                "Simulador Clínic (casos/mes a mida)",
+                                "API / HIS & Compliance",
+                                "SLA Garantit"
+                            ]
+                        }
+                    },
+                    "extras": {
+                        "title": "Serveis Addicionals (Extras)",
+                        "items": {
+                            "agenda": {
+                                "desc": "Usuari administratiu addicional per a gestió de cites. Sense accés a històries clíniques."
+                            },
+                            "aiPack": {
+                                "title": "Pack Minuts IA",
+                                "desc": "500 minuts addicionals de processament IA. Pagament únic, no caduquen mentre la subscripció estigui activa."
+                            },
+                            "onboarding": {
+                                "title": "Onboarding Assistit",
+                                "price": "50€ (pagament únic)",
+                                "desc": "Sessió de 45 min amb un especialista per a configuració inicial i importació de dades."
+                            },
+                            "simPack": {
+                                "title": "Pack Simulador",
+                                "desc": "Pack de 10 casos clínics interactius addicionals per a pràctica. Inclou feedback detallat de la IA."
+                            }
+                        }
+                    }
+                },
+                "liability": {
+                    "title": "8. Limitació de Responsabilitat",
+                    "text": "La plataforma no es fa responsable de possibles errors en la transcripció o en els suggeriments de la IA, atès que es tracta d'una tecnologia probabilística. La verificació humana és indispensable en tots els casos."
+                },
+                "footer": {
+                    "text": "Última actualització: Desembre 2025"
+                }
+            }
+        },
+        "title": "Centre Legal",
+        "loading": "Carregant...",
+        "header": {
+            "back": "Tornar a l'inici",
+            "print": "Imprimir"
+        },
+        "tabs": {
+            "privacy": "Pol. Privacitat",
+            "privacyShort": "Privacitat",
+            "terms": "Termes",
+            "cookies": "Cookies",
+            "aiJustification": "Justificació IA",
+            "aiJustificationShort": "Legal IA"
+        },
+        "footer": "Document informatiu generat per PsicoAIssist Platform • Compliment Normatiu 2024-2025",
+        "redirect": {
+            "title": "Redirigint...",
+            "message": "T'estem portant a la nostra nova secció legal unificada."
+        },
+        "AIJustification": {
+            "title": "Documentació Legal i Normativa",
+            "subtitle": "AI Act Ready • GDPR Compliant • Ètica Professional",
+            "badges": {
+                "auditable": "Auditable",
+                "transparent": "Transparent",
+                "supervised": "Supervisat"
+            },
+            "tabs": {
+                "general": "Justificació General",
+                "compliance": "Document de Compliment Normatiu"
+            },
+            "General": {
+                "title": "Sistema d'IA de suport orientatiu en context de salut mental",
+                "sections": {
+                    "nature": {
+                        "title": "Naturalesa del sistema",
+                        "text": "El sistema d'intel·ligència artificial actua exclusivament com a <b>eina de suport orientatiu per a professionals</b>, sense capacitat de diagnòstic, prescripció ni presa de decisions clíniques automatitzades."
+                    },
+                    "classification": {
+                        "title": "Classificació segons l'AI Act",
+                        "text": "El sistema s'emmarca dins dels sistemes d'IA d'alt risc com a <b>suport a la presa de decisions</b>, però <b>no realitza decisions automatitzades</b>, d'acord amb els articles 14 i 22 del RGPD i el marc del Reglament Europeu d'IA."
+                    },
+                    "humanControl": {
+                        "title": "Control humà efectiu",
+                        "outputs": "Totes les sortides són:",
+                        "outputsList": [
+                            "Orientatives",
+                            "No prescriptives",
+                            "Editables o ignorables"
+                        ],
+                        "professionalControl": "El professional manté el control sobre:",
+                        "controlList": [
+                            "Selecció d'instruments",
+                            "Aplicació",
+                            "Interpretació de resultats"
+                        ]
+                    },
+                    "limitations": {
+                        "title": "Limitació funcional",
+                        "intro": "El sistema:",
+                        "list": [
+                            "No suggereix instruments en temps real.",
+                            "Només mostra opcions al final de la sessió.",
+                            "Limita explícitament el nombre de temes i instruments.",
+                            "Utilitza catàlegs professionals predefinits."
+                        ]
+                    },
+                    "traceability": {
+                        "title": "Traçabilitat i auditabilitat",
+                        "text": "Cada suggeriment d'instrument inclou una justificació descriptiva (<code>why_this_test_was_suggested</code>) basada en:",
+                        "list": [
+                            "Contingut verbalitzat",
+                            "Temes emergents",
+                            "Mapa estàtic de correspondència"
+                        ],
+                        "footer": "No hi ha cap decisió opaca ni model no explicable."
+                    },
+                    "minors": {
+                        "title": "Protecció de menors",
+                        "intro": "Quan el sistema s'utilitza amb menors:",
+                        "list": [
+                            "S'activen restriccions addicionals.",
+                            "Només es mostren instruments adequats a l'edat.",
+                            "S'utilitza llenguatge evolutiu i no diagnòstic.",
+                            "La decisió final correspon sempre a l'adult responsable i al professional."
+                        ]
+                    },
+                    "compliance": {
+                        "title": "Compliment normatiu",
+                        "items": [
+                            "Reglament General de Protecció de Dades (RGPD)",
+                            "Reglament Europeu sobre Intel·ligència Artificial (Llei d'IA)",
+                            "Principis ètics de l'ús de proves psicològiques"
+                        ]
+                    }
+                }
+            },
+            "Compliance": {
+                "title": "Document de Compliment Normatiu",
+                "subtitle": "Sistema d'intel·ligència artificial per a la generació d'informes professionals",
+                "sections": {
+                    "object": {
+                        "title": "Objecte del document",
+                        "text1": "Aquest document té per objecte descriure i acreditar el compliment normatiu, tècnic i ètic del sistema d'intel·ligència artificial (en endavant, <b>el sistema</b>) utilitzat exclusivament com a eina de suport a la redacció d'informes professionals en l'àmbit de la salut mental.",
+                        "text2": "Els tipus d'informe coberts pel sistema són:",
+                        "list": [
+                            "Informe d'avaluació inicial",
+                            "Informe d'evolució",
+                            "Informe d'alta clínica",
+                            "Informe de derivació",
+                            "Informe legal-forense",
+                            "Informe per a asseguradores",
+                            "Informe personalitzat"
+                        ],
+                        "alert": "El sistema <b>no adopta decisions automatitzades</b>, <b>no emet diagnòstics clínics</b>, <b>no estableix causalitats</b> ni <b>substitueix el judici professional</b>, i opera sota <b>supervisió humana obligatòria</b> en totes les fases."
+                    },
+                    "framework": {
+                        "title": "Marc normatiu aplicable",
+                        "intro": "El disseny, desenvolupament i ús del sistema s'ajusta al marc normatiu següent:",
+                        "list": [
+                            "Reglament (UE) 2016/679, de 27 d'abril de 2016 (Reglament General de Protecció de Dades – RGPD).",
+                            "Reglament Europeu d'Intel·ligència Artificial (Artificial Intelligence Act – AI Act).",
+                            "Normativa professional i deontològica aplicable a l'exercici professional.",
+                            "Principis ètics relatius a l'ús d'eines tecnològiques en l'elaboració d'informes professionals."
+                        ]
+                    },
+                    "description": {
+                        "title": "Descripció general del sistema",
+                        "text": "El sistema és una eina d'assistència a la redacció basada en intel·ligència artificial que genera esborranys estructurats d'informes a partir de:",
+                        "list1": [
+                            "Transcripcions de sessions.",
+                            "Notes clíniques redactades per el/la professional.",
+                            "Paràmetres explícits definits per el/la professional (tipus d'informe, estructura, perfil lingüístic)."
+                        ],
+                        "featuresTitle": "Característiques principals:",
+                        "featuresList": [
+                            "Funció estrictament assistencial i redactora.",
+                            "Absència total de capacitat decisòria autònoma.",
+                            "Dependència exclusiva de les dades proporcionades.",
+                            "Prohibició explícita de generar contingut no fonamentat.",
+                            "Resultats de caràcter orientatiu i no vinculant."
+                        ]
+                    },
+                    "risk": {
+                        "title": "Classificació del risc segons el Reglament d'IA",
+                        "text": "Atesa la naturalesa dels informes generats i el seu possible impacte sobre drets i interessos de persones físiques, el sistema es classifica com a <b>sistema d'IA d'alt risc</b> segons el Reglament Europeu d'Intel·ligència Artificial.",
+                        "intro": "En conseqüència, el sistema incorpora les garanties exigides per a aquesta categoria, incloent:",
+                        "list": [
+                            "Supervisió humana efectiva i documentada.",
+                            "Transparència en l'ús d'IA.",
+                            "Traçabilitat completa del procés de generació.",
+                            "Mesures tècniques de prevenció d'errors, biaixos i usos indeguts.",
+                            "Controls reforçats per a usos especialment sensibles (informes legal-forenses)."
+                        ]
+                    },
+                    "supervision": {
+                        "title": "Supervisió humana i responsabilitat professional",
+                        "sub1": {
+                            "title": "5.1. Supervisió obligatòria",
+                            "text": "Tots els informes generats amb suport del sistema requereixen obligatòriament:",
+                            "list": [
+                                "Revisió íntegra del contingut per part d'un/a professional qualificat/da.",
+                                "Validació expressa abans de qualsevol ús extern o comunicació a tercers.",
+                                "Confirmació explícita de revisió humana abans de marcar un informe com a finalitzat."
+                            ],
+                            "note": "En el cas dels informes legal-forenses, s'aplica un mode de supervisió reforçada, que impedeix la finalització de l'informe sense una validació humana específica."
+                        },
+                        "sub2": {
+                            "title": "5.2. Responsabilitat",
+                            "text1": "La responsabilitat del contingut final de l'informe recau exclusivament en el/la professional que el revisa, valida i signa.",
+                            "text2": "El sistema no pot ser considerat autor, coautor ni responsable del contingut de cap informe."
+                        }
+                    },
+                    "gdpr": {
+                        "title": "Compliment del Reglament General de Protecció de Dades (RGPD)",
+                        "sub1": {
+                            "title": "6.1. Base jurídica",
+                            "list": [
+                                "Consentiment informat, explícit i verificable de la persona interessada.",
+                                "Compliment d'obligacions professionals i legals."
+                            ]
+                        },
+                        "sub2": {
+                            "title": "6.2. Minimització",
+                            "list": [
+                                "Només dades estrictament necessàries.",
+                                "No es requereixen identificadors personals innecessaris.",
+                                "El sistema no infereix dades addicionals."
+                            ]
+                        },
+                        "sub3": {
+                            "title": "6.3. Tractament de dades especials",
+                            "list": [
+                                "Mesures de seguretat tècniques reforçades (xifrat, control d'accés).",
+                                "Dades no utilitzades per entrenar models d'IA.",
+                                "Conservació limitada al temps necessari."
+                            ]
+                        },
+                        "sub4": {
+                            "title": "6.4. Exercici de drets",
+                            "text": "Es garanteix l'exercici dels drets d'accés, rectificació, supressió, limitació del tractament i informació sobre l'ús d'IA."
+                        }
+                    },
+                    "transparency": {
+                        "title": "Transparència i informació a les persones interessades",
+                        "text": "Tots els informes generats incorporen una declaració explícita indicant:",
+                        "list": [
+                            "Que han estat redactats amb el suport d'una eina d'intel·ligència artificial.",
+                            "Que el contingut no és resultat d'una decisió automatitzada.",
+                            "Que l'informe ha estat revisat i validat per un/a professional responsable."
+                        ]
+                    },
+                    "ethics": {
+                        "title": "Principis ètics aplicats",
+                        "text": "El disseny i ús del sistema respecta els principis següents:",
+                        "tags": [
+                            "No maleficència",
+                            "Prudència interpretativa",
+                            "Absència d'estigmatització",
+                            "Respecte a la dignitat",
+                            "Proporcionalitat i adequació al context"
+                        ],
+                        "avoidTitle": "El sistema evita expressament:",
+                        "avoidList": [
+                            "Diagnòstics automàtics.",
+                            "Etichetatges personals.",
+                            "Prediccions de conducta o evolució futura.",
+                            "Afirmacions causals no fonamentades."
+                        ]
+                    },
+                    "forensic": {
+                        "title": "Controls específics per a informes legal-forenses",
+                        "text": "Els informes legal-forenses estan subjectes a un mode de seguretat reforçat (<b>Safe Forensic Mode</b>) que inclou:",
+                        "list": [
+                            "Prohibició tècnica d'afirmacions categòriques o causals.",
+                            "Obligació de diferenciació explícita entre fets observats i manifestacions del/la pacient.",
+                            "Llenguatge condicional i estrictament descriptiu.",
+                            "Validacions automàtiques del contingut abans de permetre la finalització.",
+                            "Confirmació expressa de revisió humana reforçada."
+                        ]
+                    },
+                    "traceability_control": {
+                        "title": "Traçabilitat i control",
+                        "text": "El sistema manté registres interns auditables sobre:",
+                        "list": [
+                            "Data i hora de generació de cada esborrany.",
+                            "Tipus d'informe.",
+                            "Versió del sistema i del model d'IA utilitzat.",
+                            "Identitat del/la professional responsable.",
+                            "Confirmació de revisió humana."
+                        ]
+                    },
+                    "limitations": {
+                        "title": "Limitacions del sistema",
+                        "list": [
+                            "El sistema no substitueix l'avaluació ni el criteri professional.",
+                            "Els informes generats tenen caràcter orientatiu fins a la seva validació.",
+                            "L'ús fora del context professional o sense supervisió humana constitueix un ús indegut."
+                        ]
+                    },
+                    "declaration": {
+                        "title": "Declaració final de compliment",
+                        "text": "El sistema d'intel·ligència artificial descrit en aquest document ha estat dissenyat e implementat conforme als requisits legals, tècnics i ètics exigibles segons la normativa europea vigent, i incorpora garanties específiques per a un ús responsable, transparent, traçable i sota control humà efectiu."
+                    },
+                    "footer": "*Document elaborat a efectes de justificació de compliment normatiu davant autoritats competents, auditories internes o externes i processos d'inspecció.*"
+                }
+            }
+        },
+        "Cookies": {
+            "title": "Política de Cookies",
+            "subtitle": "Informació sobre l'ús de cookies i tecnologies similars",
+            "sections": {
+                "what": {
+                    "title": "1. Què són les cookies?",
+                    "text": "Una cookie és un petit fitxer de text que s'emmagatzema al vostre navegador quan visiteu gairebé qualsevol pàgina web. La seva utilitat és que la web sigui capaç de recordar la vostra visita quan torneu a navegar per aquesta pàgina."
+                },
+                "used": {
+                    "title": "2. Cookies que utilitza aquest lloc web",
+                    "text": "Aquesta aplicació utilitza exclusivament <b>cookies tècniques i de sessió</b> necessàries pel funcionament del servei.",
+                    "types": {
+                        "auth": {
+                            "title": "Cookies d'autenticació",
+                            "text": "S'utilitzen per identificar l'usuari un cop ha iniciat sessió, permetent l'accés a les àrees privades i assegurant que la sessió es manté activa de manera segura."
+                        },
+                        "pref": {
+                            "title": "Cookies de preferències",
+                            "text": "Emmagatzemen preferències de la interfície d'usuari (com l'idioma o la mida de la font) per personalitzar la vostra experiència."
+                        },
+                        "sec": {
+                            "title": "Cookies de seguretat",
+                            "text": "Ajuden a prevenir atacs de seguretat i protegir les dades de l'usuari contra accessos no autoritzats."
+                        }
+                    }
+                },
+                "third": {
+                    "title": "3. Cookies de tercers",
+                    "text": "Actualment, <b>no utilitzem cookies publicitàries ni de seguiment</b> de tercers (com Google Analytics o Facebook Pixel) dins de l'àrea privada de l'aplicació. La privacitat del professional i del pacient és prioritària."
+                },
+                "deactivate": {
+                    "title": "4. Com desactivar les cookies?",
+                    "text": "Podeu restringir, bloquejar o esborrar les cookies del navegador en qualsevol moment. Consulteu l'ajuda del vostre navegador per saber com fer-ho. Tingueu en compte que desactivar les cookies tècniques podria impedir el correcte funcionament de l'aplicació."
+                }
+            },
+            "cardTitle": "Ús de Cookies"
+        },
+        "GDPR": {
+            "title": "Política de Privacitat i RGPD",
+            "subtitle": "Compromís amb la protecció de dades personals i sensibles",
+            "cardTitle": "Tractament de Dades Personals",
+            "update": "Última actualització: 12 de desembre de 2025",
+            "sections": {
+                "controller": {
+                    "title": "1. Responsable del Tractament",
+                    "text": "El responsable del tractament de les dades és <b>PsicoAIssist</b>. Ens comprometem a tractar les dades dels pacients i professionals amb la màxima confidencialitat, d'acord amb el Reglament (UE) 2016/679 (RGPD)."
+                },
+                "info": {
+                    "title": "2. Informació que Recopilem",
+                    "sub1": {
+                        "title": "2.1 Dades Personals",
+                        "text": "Recopilem informació que vós ens proporcioneu directament, incloent:",
+                        "list": [
+                            "Nom complet i informació de contacte",
+                            "Número de col·legiat professional",
+                            "Especialitat mèdica",
+                            "Informació de facturació i pagament"
+                        ]
+                    },
+                    "sub2": {
+                        "title": "2.2 Dades Clíniques",
+                        "text": "Les dades clíniques de pacients es processen sota estrictes mesures de seguretat:",
+                        "list": [
+                            "Transcripcions de sessions (xifrades efímerament)",
+                            "Notes clíniques",
+                            "Informes generats",
+                            "Arxius d'àudio (opcional, xifrats)"
+                        ]
+                    }
+                },
+                "purpose": {
+                    "title": "3. Finalitat del Tractament",
+                    "text": "Utilitzem la informació recopilada per a:",
+                    "list": [
+                        "Proporcionar serveis de transcripció i IA (generar informes, anàlisi).",
+                        "Gestionar l'historial clínic i l'agenda del professional.",
+                        "Processar pagaments i gestionar subscripcions.",
+                        "Proporcionar suport tècnic i millorar els nostres algorismes (amb dades anonimitzades)."
+                    ],
+                    "note": "<b>No utilitzem les dades per a fins publicitaris ni les cedim a tercers</b> sense consentiment explícit, excepte per obligació legal o proveïdors de servei sota contracte de confidencialitat."
+                },
+                "legal": {
+                    "title": "4. Base Legal del Tractament",
+                    "text": "Tractem les dades sota les següents bases legals del RGPD:",
+                    "list": [
+                        "<b>Consentiment:</b> Per a funcionalitats opcionals.",
+                        "<b>Execució contractual:</b> Per proporcionar els nostres serveis.",
+                        "<b>Interès legítim:</b> Per millorar la qualitat del servei.",
+                        "<b>Compliment legal:</b> Per a obligacions regulatòries i fiscals."
+                    ]
+                },
+                "security": {
+                    "title": "5. Minimització i Seguretat (Protecció de Dades)",
+                    "list": [
+                        "<b>Minimització:</b> Les transcripcions d'àudio es processen de manera efímera sempre que és possible.",
+                        "<b>Xifratge:</b> AES-256 per a dades en repòs i TLS 1.3 per a dades en trànsit. Claus rotades periòdicament.",
+                        "<b>Control d'Accés:</b> Autenticació de dos factors, accés basat en rols i logs d'auditoria complets."
+                    ],
+                    "alertTitle": "Nota Important sobre IA",
+                    "alertText": "Malgrat les mesures de seguretat, recordem que cap sistema és invulnerable. L'ús d'intel·ligència artificial implica el processament de dades en servidors segurs. Garantim que no s'utilitzen dades dels pacients per a l'entrenament de models públics."
+                },
+                "sharing": {
+                    "title": "6. Compartir Informació",
+                    "text": "<b>No venem, lloguem o compartim</b> les vostres dades personals amb tercers, excepte:",
+                    "list": [
+                        "Proveïdors de serveis necessaris (sota estrictes acords de confidencialitat).",
+                        "Quan sigui requerit per llei.",
+                        "Amb el vostre consentiment explícit."
+                    ]
+                },
+                "rights": {
+                    "title": "7. Drets dels Interessats",
+                    "text": "Tant professionals com pacients tenen dret a:",
+                    "list": [
+                        "<b>Accés:</b> Obtenir còpies de les seves dades.",
+                        "<b>Rectificació:</b> Corregir dades inexactes.",
+                        "<b>Supressió:</b> Sol·licitar l'eliminació de les seves dades (Dret a l'oblit).",
+                        "<b>Limitació:</b> Restringir el tractament.",
+                        "<b>Oposició:</b> Oposar-se al tractament.",
+                        "<b>Portabilitat:</b> Rebre les seves dades en format estructurat."
+                    ]
+                },
+                "retention": {
+                    "title": "8. Retenció de Dades",
+                    "list": [
+                        "<b>Dades de compte:</b> Mentre es mantingui el compte actiu. En cas de sol·licitar la baixa, les dades es mantindran bloquejades durant 30 dies (període de gràcia) abans de ser anonimitzades permanentment.",
+                        "<b>Dades clíniques:</b> Segons les regulacions mèdiques aplicables.",
+                        "<b>Dades de facturació:</b> 7 anys (requisit fiscal).",
+                        "<b>Logs d'auditoria:</b> 3 anys."
+                    ]
+                },
+                "transfers": {
+                    "title": "9. Transferències Internacionals",
+                    "text": "Totes les dades es processen i emmagatzemen en servidors ubicats a la Unió Europea. No realitzem transferències internacionals de dades fora de l'Espai Econòmic Europeu (EEE) sense les garanties adequades del RGPD."
+                },
+                "contact": {
+                    "title": "10. Contacte",
+                    "text": "Per exercir els vostres drets o realitzar consultes sobre privacitat:",
+                    "dpoTitle": "Delegat de Protecció de Dades (DPO)",
+                    "email": "Email: hola@psicoaissist.com"
+                },
+                "authority": {
+                    "title": "11. Autoritat de Control",
+                    "text": "Teniu dret a presentar una reclamació davant l'Agència Espanyola de Protecció de Dades (AEPD) si considereu que el tractament de les vostres dades personals no compleix amb la normativa vigent."
+                }
+            }
+        }
+    },
+    "Payment": {
+        "Cancel": {
+            "title": "Pagament Cancel·lat",
+            "message": "No s'ha processat cap càrrec. La teva subscripció no ha estat activada.",
+            "reasons": {
+                "title": "Possibles motius:",
+                "cancelled": "Has cancel·lat el procés de pagament",
+                "paymentError": "Hi ha hagut un error amb el teu mètode de pagament",
+                "sessionExpired": "La sessió ha expirat",
+                "connectivity": "Problemes de connectivitat"
+            },
+            "actions": {
+                "retry": "Intentar novament",
+                "backHome": "Tornar a l'inici"
+            },
+            "help": {
+                "title": "Necessites ajuda?",
+                "message": "Si tens problemes amb el pagament o necessites assistència, estem aquí per ajudar-te.",
+                "liveChat": "💬 Xat en viu"
+            }
+        },
+        "Success": {
+            "title": "Pagament Completat!",
+            "message": "La teva subscripció al <strong>{plan}</strong> ha estat activada amb èxit. Ja pots accedir a totes les funcions de PsicoAIssist.",
+            "plans": {
+                "basic": "Pla Bàsic",
+                "pro": "Pla Pro",
+                "premium": "Pla Premium",
+                "selected": "Pla seleccionat"
+            },
+            "demo": {
+                "title": "Mode Demo",
+                "message": "Aquesta és una simulació de pagament amb fins de prova"
+            },
+            "next": {
+                "title": "Què segueix?",
+                "dashboard": "Accedeix al teu dashboard personal",
+                "profile": "Configura el teu perfil professional",
+                "firstSession": "Comença la teva primera sessió",
+                "exploreAI": "Explora les funcions d'IA"
+            },
+            "actions": {
+                "goToDashboard": "Anar al Dashboard",
+                "backHome": "Tornar a l'inici"
+            },
+            "support": {
+                "message": "Necessites ajuda?",
+                "link": "Contacta suport"
+            }
+        }
+    },
+    "VideoCall": {
+        "status": {
+            "connecting": "Connectant...",
+            "mediaError": "Error accedint a càmera/micròfon"
+        },
+        "waitingVideo": "Esperant vídeo del professional...",
+        "quality": {
+            "good": "Bona",
+            "fair": "Regular",
+            "bad": "Dolenta"
+        }
+    },
+    "Clinics": {
+        "Hero": {
+            "badge": "Per a Centres de Salut, Universitats i Hospitals",
+            "title": "Estandaritza l'<highlight>Excel·lència Clínica</highlight> <br /> a la teva Organització",
+            "description": "La plataforma integral per gestionar equips, auditar la qualitat assistencial i formar els teus nous professionals amb IA.",
+            "cta": "Sol·licitar Demo",
+            "more": "Veure funcionalitats"
+        },
+        "Features": {
+            "mainTitle": "Tot el que un Director Clínic necessita",
+            "mainDescription": "Deixa de gestionar la teva clínica amb fulls de càlcul i eines desconnectades. Centralitza l'operació, la formació i el control de qualitat.",
+            "trainingTitle": "Formació Contínua Il·limitada",
+            "trainingDesc": "Nous fitxatges? Fes que practiquin amb el nostre <strong>Simulador Clínic Il·limitat</strong> abans de veure pacients reals. Exposa'ls a casos complexos (suïcidi, dol, TLP) en un entorn segur.",
+            "complianceTitle": "Compliance i Auditoria",
+            "complianceDesc": "Registre detallat d'accessos a històries clíniques. rols granulars (Administrador, Supervisor, Professional, Agenda Manager) per complir amb la LOPD/GDPR més estricta.",
+            "apiTitle": "Integració API (HIS)",
+            "apiDesc": "Connecta PsicoAIssist amb el teu programari de gestió hospitalària (SAP, Salesforce Health, etc.). Sincronitza pacients i agendes automàticament."
+        },
+        "Agenda": {
+            "badge": "Gestió d'Equips",
+            "title": "El Rol \"Agenda Manager\":",
+            "subtitle": "Organització sense comprometre la privacitat",
+            "description": "Sabem que en una clínica la coordinació és clau, però la confidencialitat és sagrada. Per això hem creat un rol únic per al teu personal administratiu.",
+            "accessTitle": "Accés Granular Segur",
+            "accessDesc": "Els teus managers poden gestionar cites, cobraments i calendaris de tot l'equip <strong>sense tenir accés al contingut de les notes clíniques</strong> ni als informes confidencials.",
+            "groupsTitle": "Grups de Professionals",
+            "groupsDesc": "Tens múltiples seus? Equip d'Infantil i Adults? Crea \"Grups\" perquè cada manager filtri i vegi només les agendes rellevants amb un sol clic."
+        },
+        "Simulator": {
+            "title": "El \"Simulador de Vol\" per a Psicòlegs",
+            "description": "L'única plataforma que inclou un entrenador d'IA actiu 24/7. Els teus professionals poden practicar intervencions difícils i rebre feedback immediat sobre empatia, adherència al tractament i tècniques CBT.",
+            "feature1": "Crea escenaris a mida (ex: Resistència al canvi)",
+            "feature2": "Feedback automàtic basat en guies clíniques",
+            "feature3": "Sense cost per minut (Tarifa Plana d'Entrenament)",
+            "cta": "Parlar amb un expert"
+        },
+        "CTA": {
+            "title": "A punt per escalar la teva clínica?",
+            "description": "Parlem de les teves necessitats específiques. Oferim plans personalitzats, migració de dades assistida i formació presencial.",
+            "button": "Contactar amb Vendes"
+        }
+    },
+    "Clients": {
+        "Form": {
+            "submitDefault": "Desar Pacient",
+            "validation": {
+                "firstNameMin": "El nom ha de tenir almenys 2 caràcters.",
+                "lastNameMin": "El cognom ha de tenir almenys 2 caràcters.",
+                "emailInvalid": "L'email no és vàlid.",
+                "consentDataRequired": "Has d'obtenir el consentiment per al tractament de dades.",
+                "consentAIRequired": "Has d'informar sobre l'ús de sistemes d'IA."
+            },
+            "sections": {
+                "personal": {
+                    "title": "Informació Personal",
+                    "description": "Dades confidencials del pacient. Aquesta informació serà xifrada."
+                },
+                "clinical": {
+                    "title": "Informació Clínica Inicial"
+                },
+                "communication": {
+                    "title": "Preferències de Comunicació",
+                    "description": "Configura com s'enviaran els recordatoris de cites."
+                },
+                "consent": {
+                    "title": "Consentiment Informat (GDPR)",
+                    "description": "És obligatori registrar el consentiment explícit del pacient abans de processar les seves dades."
+                }
+            },
+            "fields": {
+                "professional": "Professional *",
+                "firstName": "Nom *",
+                "lastName": "Cognoms *",
+                "email": "Email",
+                "phone": "Telèfon",
+                "emergencyContact": "Contacte d'Emergència",
+                "diagnosis": "Diagnòstic Preliminar",
+                "riskLevel": "Nivell de Risc",
+                "notes": "Notes Inicials",
+                "emailReminders": "Recordatoris per Email",
+                "emailRemindersDesc": "Enviar recordatoris automàtics a l'adreça de correu registrada.",
+                "consentData": "Tractament de Dades Personals",
+                "consentDataDesc": "El pacient autoritza l'emmagatzematge i tractament de les seves dades personals i de salut a la plataforma.",
+                "consentAI": "Processament mitjançant IA",
+                "consentAIDesc": "El pacient ha estat informat que s'utilitzaran sistemes d'Intel·ligència Artificial com a suport a la sessió."
+            },
+            "placeholders": {
+                "selectProfessional": "Seleccionar professional",
+                "firstName": "Ex. Joan",
+                "lastName": "Ex. Pérez",
+                "email": "correu@exemple.com",
+                "phone": "+34 600 000 000",
+                "emergencyContact": "Nom i telèfon",
+                "diagnosis": "Ex. Trastorn d'ansietat",
+                "selectRisk": "Selecciona un nivell",
+                "notes": "Observacions importants, motiu de consulta..."
+            },
+            "risk": {
+                "low": "Baix",
+                "medium": "Mig",
+                "high": "Alt",
+                "critical": "Crític"
+            },
+            "buttons": {
+                "cancel": "Cancel·lar",
+                "saving": "Desant..."
+            },
+            "error": {
+                "generic": "S'ha produït un error al desar el client."
+            }
+        },
+        "New": {
+            "title": "Nou Pacient",
+            "subtitle": "Introdueix la informació bàsica per obrir un nou expedient.",
+            "errors": {
+                "selectProfessional": "Has de seleccionar un professional."
+            },
+            "success": {
+                "title": "Client creat exitosament",
+                "description": "S'ha creat l'expedient del nou pacient."
+            },
+            "submitLabel": "Desar Pacient"
+        },
+        "Edit": {
+            "title": "Editar Pacient",
+            "subtitle": "Modifica les dades de l'expedient de {name}.",
+            "errors": {
+                "loadFailed": "No s'ha pogut carregar la informació del pacient."
+            },
+            "success": {
+                "title": "Client actualitzat",
+                "description": "La informació del pacient s'ha desat correctament."
+            },
+            "submitLabel": "Actualitzar Pacient"
+        },
+        "Detail": {
+            "loading": "Carregant informació...",
+            "notFound": "Pacient no trobat",
+            "status": {
+                "active": "Actiu",
+                "inactive": "Inactiu"
+            },
+            "actions": {
+                "newSession": "Nova Sessió",
+                "edit": "Editar"
+            },
+            "tabs": {
+                "info": "Informació General",
+                "sessions": "Sessions",
+                "notes": "Notes i Documents"
+            },
+            "cards": {
+                "contact": {
+                    "title": "Dades de Contacte",
+                    "notRegistered": "No registrat"
+                },
+                "clinical": {
+                    "title": "Informació Clínica",
+                    "diagnosis": "Diagnòstic Principal",
+                    "notSpecified": "No especificat",
+                    "lastSession": "Última Sessió",
+                    "noSessions": "Sense sessions prèvies"
+                },
+                "privateNotes": {
+                    "title": "Notes Privades",
+                    "description": "Notes visibles només per a tu.",
+                    "empty": "No hi ha notes registrades per a aquest pacient."
+                }
+            },
+            "sessions": {
+                "historyTitle": "Historial de Sessions",
+                "historyDescription": "Sessions realitzades amb {name}.",
+                "empty": "No hi ha sessions registrades.",
+                "table": {
+                    "date": "Data",
+                    "type": "Tipus",
+                    "status": "Estat",
+                    "actions": "Accions",
+                    "view": "Veure Detall"
+                }
+            },
+            "documents": {
+                "title": "Documents i Arxius",
+                "empty": "No hi ha documents adjunts."
+            }
+        }
+    },
+    "Blog": {
+        "title": "Blog i Recursos",
+        "subtitle": "Consells pràctics sobre digitalització, ètica IA i gestió eficient de la teva consulta.",
+        "readMore": "Llegir"
+    },
+    "Docs": {
+        "title": "Centre de Documentació",
+        "description": "Tot el que necessites saber per treure el màxim partit a PsicoAIssist. Guies detallades, tutorials ràpids i referències completes.",
+        "cards": {
+            "manual": {
+                "title": "Manual d'Usuari",
+                "description": "Documentació completa sobre totes les funcionalitats de la plataforma. Aprèn sobre rols, gestió de pacients, facturació i anàlisi d'IA.",
+                "link": "Llegir Manual"
+            },
+            "quickGuide": {
+                "title": "Guia Ràpida",
+                "description": "Tens pressa? Troba com realitzar les tasques més comunes en menys d'un minut. Crear cites, afegir pacients i sincronitzar calendari.",
+                "link": "Veure Guia Ràpida"
+            },
+            "tutorials": {
+                "title": "Video Tutorials",
+                "description": "Guies visuals pas a pas. Des de la configuració inicial fins a l'ús avançat d'estadístiques d'IA.",
+                "link": "Veure Tutorials"
+            },
+            "reference": {
+                "title": "Referència i Glossari",
+                "description": "Definicions de mètriques d'IA, rols d'usuari i documentació tècnica per a integracions (API).",
+                "link": "Veure Referència"
+            }
+        },
+        "contact": {
+            "text": "No trobes el que busques?",
+            "link": "Contacta amb suport"
+        }
+    },
+    "Metadata": {
+        "title": {
+            "default": "PsicoAIssist - Assistent IA per a Psicòlegs",
+            "template": "%s | PsicoAIssist"
+        },
+        "description": "Potencia la teva pràctica psicològica amb IA responsable. Transcripció automàtica, informes professionals i anàlisi intel·ligent. Compliment GDPR.",
+        "keywords": "psicòleg, IA, transcripció, sessions, GDPR, intel·ligència artificial, informes clínics, pràctica psicològica, assistent virtual, transcripció automàtica, anàlisi de sessions, programari psicologia"
+    }
+}

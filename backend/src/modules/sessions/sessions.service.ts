@@ -708,7 +708,8 @@ export class SessionsService {
                         result.data.email,
                         clientName,
                         professionalName,
-                        link
+                        link,
+                        session.user.preferredLanguage
                     );
                 }
             } catch (e) {

@@ -22,7 +22,7 @@ import {
     endOfMonth,
     Interval
 } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, Locale } from 'date-fns/locale';
 
 export type TimeRange = '1m' | '3m' | '6m' | '1y';
 
@@ -47,8 +47,10 @@ export function calculateDashboardStats(
     sessions: Session[],
     clients: Client[],
     hourlyRate: number = 60,
-    timeRange: TimeRange = '6m'
+    timeRange: TimeRange = '6m',
+    localeOrUndefined: Locale | undefined = es
 ): DashboardStats {
+    const locale = localeOrUndefined || es;
     const totalSessions = sessions.length;
     const completedSessions = sessions.filter(s => s.status === SessionStatus.COMPLETED).length;
     const totalPatients = clients.length;
@@ -80,7 +82,9 @@ export function calculateDashboardStats(
             startDate = startOfWeek(subMonths(now, 3), { weekStartsOn: 1 });
             endDate = endOfMonth(now);                 // To end of current month
             intervalFn = eachWeekOfInterval;
-            dateFormat = "'Sem' w - MMM";
+            // Determine prefix based on locale code
+            const prefix = locale.code === 'es' ? 'Sem' : (locale.code === 'ca' ? 'Set' : 'W');
+            dateFormat = `'${prefix}' w - MMM`;
             dateKeyFn = (date) => format(startOfWeek(date, { weekStartsOn: 1 }), 'yyyy-MM-dd');
             break;
         case '1y':
@@ -122,7 +126,7 @@ export function calculateDashboardStats(
             cancelled: 0,
             income: 0,
             newPatients: 0,
-            label: format(date, dateFormat, { locale: es }),
+            label: format(date, dateFormat, { locale: locale }),
             dateObj: date
         });
     });
@@ -271,7 +275,7 @@ export function calculateDashboardStats(
         sessionsByMonth,
         topThemes,
         sentimentTrend,
-        clientTrend: { value: "Estable", isPositive: true },
+        clientTrend: { value: "metrics.stable", isPositive: true },
         incomeByMonth,
         attendanceByMonth,
         cancellationByMonth,
@@ -290,7 +294,7 @@ export interface AdvancedStats {
     weeklyLoad: { day: string; count: number }[];
 }
 
-export function calculateAdvancedStats(allSessions: Session[], ratePerHour: number = 60): AdvancedStats {
+export function calculateAdvancedStats(allSessions: Session[], ratePerHour: number = 60, locale: Locale = es): AdvancedStats {
     const now = new Date();
 
     // 0. Sessions Last 30 Days (Daily Evolution)
@@ -319,7 +323,7 @@ export function calculateAdvancedStats(allSessions: Session[], ratePerHour: numb
             isSameDay(parseISO(s.startTime), day)
         ).length;
         // Format: "L", "M", "X", "J", "V", "S", "D"
-        const dayLabel = format(day, 'EEEEEE', { locale: es }).toUpperCase(); // Short day name
+        const dayLabel = format(day, 'EEEEEE', { locale }).toUpperCase(); // Short day name
         return {
             day: dayLabel,
             count

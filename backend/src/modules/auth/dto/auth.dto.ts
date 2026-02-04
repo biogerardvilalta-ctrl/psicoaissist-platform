@@ -61,6 +61,11 @@ export class RegisterDto {
   @IsOptional()
   plan?: string;
 
+  @ApiProperty({ required: false, example: 'es' })
+  @IsString()
+  @IsOptional()
+  preferredLanguage?: string;
+
   @ApiProperty({ required: false, example: 'month' })
   @IsString()
   @IsOptional()

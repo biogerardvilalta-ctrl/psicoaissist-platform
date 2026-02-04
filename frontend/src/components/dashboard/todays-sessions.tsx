@@ -10,7 +10,11 @@ import { ClientsAPI, Client } from '@/lib/clients-api';
 import { Badge } from '@/components/ui/badge';
 import { isToday, parseISO, compareAsc } from 'date-fns';
 
+import { useTranslations, useLocale } from 'next-intl';
+
 export function TodaysSessions() {
+    const t = useTranslations('Dashboard.Overview.TodaysSessions');
+    const locale = useLocale();
     const router = useRouter();
     const [sessions, setSessions] = useState<(Session & { clientName?: string })[]>([]);
     const [loading, setLoading] = useState(true);
@@ -55,7 +59,7 @@ export function TodaysSessions() {
     };
 
     if (loading) {
-        return <div className="h-48 flex items-center justify-center text-sm text-gray-500">Cargando agenda...</div>;
+        return <div className="h-48 flex items-center justify-center text-sm text-gray-500">{t('loading')}</div>;
     }
 
     return (
@@ -65,14 +69,14 @@ export function TodaysSessions() {
                     <div>
                         <CardTitle className="flex items-center gap-2 text-blue-900">
                             <Calendar className="h-5 w-5 text-blue-600" />
-                            Agenda de Hoy
+                            {t('title')}
                         </CardTitle>
                         <CardDescription>
-                            Tienes {sessions.length} sesiones programadas para hoy.
+                            {t('description', { count: sessions.length })}
                         </CardDescription>
                     </div>
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                        {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700 capitalize">
+                        {new Date().toLocaleDateString(locale === 'en' ? 'en-US' : (locale === 'ca' ? 'ca-ES' : 'es-ES'), { weekday: 'long', day: 'numeric', month: 'long' })}
                     </Badge>
                 </div>
             </CardHeader>
@@ -82,10 +86,10 @@ export function TodaysSessions() {
                         <div className="bg-gray-100 p-3 rounded-full mb-3">
                             <Calendar className="h-6 w-6 text-gray-400" />
                         </div>
-                        <p className="text-sm font-medium">No hay sesiones para hoy.</p>
-                        <p className="text-xs mt-1">Disfruta de tu día libre o planifica nuevas citas.</p>
+                        <p className="text-sm font-medium">{t('emptyTitle')}</p>
+                        <p className="text-xs mt-1">{t('emptyDesc')}</p>
                         <Button variant="outline" size="sm" className="mt-4" onClick={() => router.push('/dashboard/sessions/new')}>
-                            Agendar Nueva
+                            {t('scheduleNew')}
                         </Button>
                     </div>
                 ) : (
@@ -118,7 +122,7 @@ export function TodaysSessions() {
                                     className={`${session.status === SessionStatus.COMPLETED ? 'bg-gray-100 text-gray-500 hover:bg-gray-200' : 'bg-blue-600 hover:bg-blue-700'}`}
                                     onClick={() => handleStartSession(session.id)}
                                 >
-                                    {session.status === SessionStatus.COMPLETED ? 'Ver Detalle' : 'Iniciar'}
+                                    {session.status === SessionStatus.COMPLETED ? t('viewDetails') : t('start')}
                                     {!session.status && <ArrowRight className="ml-2 h-4 w-4" />}
                                 </Button>
                             </div>

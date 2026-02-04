@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Calendar, Clock, User, MessageCircle, FileText, TrendingUp, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { AuditAPI, AuditLog } from '@/lib/audit-api';
+import { useTranslations, useFormatter } from 'next-intl';
 
 interface ActivityItem {
   id: string;
@@ -29,18 +30,12 @@ const activityColors = {
   other: 'bg-gray-100 text-gray-600'
 };
 
-function formatTimeAgo(date: Date): string {
-  const now = new Date();
-  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
 
-  if (diffInHours < 1) return 'Hace unos minutos';
-  if (diffInHours < 24) return `Hace ${diffInHours} hora${diffInHours > 1 ? 's' : ''}`;
 
-  const diffInDays = Math.floor(diffInHours / 24);
-  return `Hace ${diffInDays} día${diffInDays > 1 ? 's' : ''}`;
-}
 
 export default function RecentActivity() {
+  const t = useTranslations('Dashboard.Activity');
+  const format = useFormatter();
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +48,7 @@ export default function RecentActivity() {
         // Show ANY activity, not just sessions
         const recentLogs = response.items.slice(0, 5);
 
-        const items = recentLogs.map(log => mapLogToActivity(log));
+        const items = recentLogs.map(log => mapLogToActivity(log, t));
         setActivities(items);
       } catch (error) {
         console.error("Failed to fetch recent activity", error);
@@ -65,7 +60,9 @@ export default function RecentActivity() {
     fetchActivity();
   }, []);
 
-  function mapLogToActivity(log: AuditLog): ActivityItem {
+
+
+  function mapLogToActivity(log: AuditLog, t: any): ActivityItem {
     let type: ActivityItem['type'] = 'other';
     const rType = log.resourceType?.toUpperCase();
 
@@ -74,33 +71,19 @@ export default function RecentActivity() {
     else if (rType === 'REPORT' || rType === 'REPORT_DRAFT') type = 'report';
     else if (rType === 'NOTE') type = 'note';
 
-    let title = log.action;
-    // Friendly titles
-    if (log.action === 'CREATE') title = 'Nuevo registro';
-    if (log.action === 'UPDATE') title = 'Actualización';
-    if (log.action === 'DELETE') title = 'Eliminación';
-    if (log.action === 'LOGIN') title = 'Inicio de sesión';
-
-    // Override title based on details if available or just use details as subtitle
-    const subtitle = log.metadata?.details || `${log.action} on ${log.resourceType}`;
-
-    // Better title logic based on resource
-    if (type === 'session') {
-      if (log.action === 'CREATE') title = 'Sesión Programada';
-      if (log.action === 'UPDATE') title = 'Sesión Actualizada';
-      if (log.action === 'DELETE') title = 'Sesión Eliminada';
-    } else if (type === 'patient') {
-      if (log.action === 'CREATE') title = 'Nuevo Paciente';
-      if (log.action === 'UPDATE') title = 'Datos de Paciente';
-    } else if (type === 'report') {
-      if (log.action === 'CREATE') title = 'Informe Creado';
-      if (log.resourceType === 'REPORT_DRAFT') title = 'Borrador IA Generado';
+    // Default keys based on action
+    let titleKey = `actions.${log.action}`; // actions.CREATE
+    // Override if specific resource keys exist
+    if (t.has(`actions.${log.action}_${rType}`)) {
+      titleKey = `actions.${log.action}_${rType}`;
     }
+
+    const subtitle = log.metadata?.details || `${log.action} ${log.resourceType}`;
 
     return {
       id: log.id,
       type,
-      title,
+      title: t(titleKey, { defaultMessage: log.action }), // Fallback
       subtitle: subtitle,
       timestamp: new Date(log.createdAt)
     };
@@ -111,12 +94,12 @@ export default function RecentActivity() {
       <div className="p-6 border-b">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium text-gray-900">Actividad Reciente</h3>
-            <p className="text-sm text-gray-500 mt-1">Últimas acciones en tu cuenta</p>
+            <h3 className="text-lg font-medium text-gray-900">{t('title')}</h3>
+            <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
           </div>
           <Link href="/dashboard/activity" className="flex items-center text-sm text-blue-600 hover:text-blue-800 cursor-pointer">
             <TrendingUp className="w-4 h-4 mr-1" />
-            Ver todo
+            {t('viewAll')}
           </Link>
         </div>
       </div>
@@ -153,7 +136,7 @@ export default function RecentActivity() {
                       {activity.subtitle}
                     </p>
                     <p className="text-xs text-gray-400 mt-1">
-                      {formatTimeAgo(activity.timestamp)}
+                      {format.relativeTime(activity.timestamp)}
                     </p>
                   </div>
                 </div>
@@ -163,8 +146,8 @@ export default function RecentActivity() {
             {activities.length === 0 && (
               <div className="text-center py-8">
                 <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500">No hay actividad reciente</p>
-                <p className="text-xs text-gray-400">Las acciones que realices aparecerán aquí.</p>
+                <p className="text-sm text-gray-500">{t('empty')}</p>
+                <p className="text-xs text-gray-400">{t('emptyDesc')}</p>
               </div>
             )}
           </div>

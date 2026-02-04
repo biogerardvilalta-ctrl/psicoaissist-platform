@@ -226,7 +226,7 @@ export class PaymentsService {
       const user = await this.prisma.user.findUnique({ where: { id: userId } });
       if (user) {
         try {
-          await this.emailService.sendOnboardingConfirmation(user.email, user.firstName || 'Usuario');
+          await this.emailService.sendOnboardingConfirmation(user.email, user.firstName || 'Usuario', user.preferredLanguage);
 
           // Notify User on Dashboard
           await this.notificationsService.create({
@@ -621,7 +621,8 @@ export class PaymentsService {
     try {
       await this.emailService.sendSubscriptionConfirmation(
         user.email,
-        this.getPlanDisplayName(planType)
+        this.getPlanDisplayName(planType),
+        user.preferredLanguage
       );
     } catch (emailError) {
       this.logger.warn(`Failed to send subscription confirmation email to ${user.email}: ${emailError.message}`);
@@ -704,7 +705,7 @@ export class PaymentsService {
 
     // Enviar email de cancelación
     try {
-      await this.emailService.sendSubscriptionCancellation(user.email);
+      await this.emailService.sendSubscriptionCancellation(user.email, user.preferredLanguage);
     } catch (emailError) {
       this.logger.warn(`Failed to send cancellation email to ${user.email}: ${emailError.message}`);
     }

@@ -2,75 +2,28 @@
 
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-
-const faqs = [
-  {
-    id: 1,
-    question: '¿Es PsicoAIssist seguro para datos confidenciales de pacientes?',
-    answer: 'Absolutamente. PsicoAIssist cumple con GDPR, LOPD-GDD y estándares internacionales de seguridad. Utilizamos encriptación AES-256, servidores en Europa, y jamás almacenamos datos sin encriptar. Cada sesión se procesa de forma aislada y segura.',
-    category: 'Seguridad'
-  },
-  {
-    id: 2,
-    question: '¿Cómo funciona la transcripción automática?',
-    answer: 'Nuestro sistema de IA escucha la sesión en tiempo real y transcribe automáticamente. Reconoce el habla en español (incluyendo acentos regionales), identifica quién habla (terapeuta/paciente) y formatea el texto de manera profesional. La precisión es del 95%+. El audio se procesa en tiempo real y NO se graba ni almacena nunca en nuestros servidores.',
-    category: 'Funcionalidad'
-  },
-  {
-    id: 3,
-    question: '¿Puedo personalizar los informes generados?',
-    answer: 'Sí. Con el plan Premium puedes configurar tu "Marca Personal" en los ajustes. Esto te permite añadir tu logotipo, nombre de clínica y colores corporativos, que se aplicarán automáticamente a todos los informes PDF y Word generados para mantener tu imagen profesional.',
-    category: 'Personalización'
-  },
-  {
-    id: 4,
-    question: '¿Qué pasa si cancelo mi suscripción?',
-    answer: 'Conservas acceso a todos tus datos durante 90 días. Puedes exportar todas las sesiones, informes y notas en cualquier momento. Si decides volver durante este periodo, simplemente inicia sesión con tus credenciales antiguas para reactivar tu cuenta automáticamente.',
-    category: 'Facturación'
-  },
-
-  {
-    id: 6,
-    question: '¿Hay límite en el número de pacientes?',
-    answer: 'Depende del plan. El plan Básico incluye hasta 25 pacientes. Los planes Pro y Premium permiten pacientes ilimitados. El Premium añade funciones avanzadas como marca personal y mayor capacidad de IA. Para clínicas y hospitales disponemos de planes corporativos a medida.',
-    category: 'Planes'
-  },
-  {
-    id: 7,
-    question: '¿Ofrecen soporte técnico en español?',
-    answer: 'Sí, nuestro equipo de soporte habla español, catalán e inglés y te atenderá por email. Las videollamadas están disponibles para el onboarding, planes superiores o si el equipo técnico lo considera necesario. También ofrecemos documentación completa en estos idiomas.',
-    category: 'Soporte'
-  },
-  {
-    id: 8,
-    question: '¿Puedo integrar PsicoAIssist con mi sistema actual?',
-    answer: 'Ofrecemos APIs y integraciones con los principales sistemas de gestión de clínicas. También puedes exportar datos para importar en tu sistema existente. Nuestro equipo técnico puede ayudarte con la integración.',
-    category: 'Integración'
-  },
-  {
-    id: 9,
-    question: '¿Qué idiomas soporta el sistema?',
-    answer: 'Principalmente Catalán, Español e Inglés con alta precisión. También soportamos francés, portugués e italiano. Estamos añadiendo más idiomas basándose en la demanda de nuestros usuarios.',
-    category: 'Funcionalidad'
-  },
-  {
-    id: 10,
-    question: '¿Hay período de prueba gratuito?',
-    answer: 'Disponemos de un Plan Demo de prueba de 14 días. Puedes probar las funcionalidades principales sin coste antes de elegir tu plan profesional.',
-    category: 'Facturación'
-  }
-];
+import { useTranslations } from 'next-intl';
 
 export function FAQSection() {
-  const [openItems, setOpenItems] = useState<number[]>([]);
+  const t = useTranslations('FAQ');
+  const [openItems, setOpenItems] = useState<string[]>([]);
 
-  const toggleItem = (id: number) => {
+  const toggleItem = (id: string) => {
     setOpenItems(prev =>
       prev.includes(id)
         ? prev.filter(item => item !== id)
         : [...prev, id]
     );
   };
+
+  const faqKeys = ['security', 'transcription', 'customization', 'cancellation', 'limits', 'support', 'integration', 'languages', 'trial'];
+
+  const faqs = faqKeys.map((key, index) => ({
+    id: key,
+    question: t(`items.${key}.question`),
+    answer: t(`items.${key}.answer`),
+    category: t(`items.${key}.category`)
+  }));
 
   const categories = Array.from(new Set(faqs.map(faq => faq.category)));
 
@@ -80,13 +33,13 @@ export function FAQSection() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-base font-semibold text-blue-600 tracking-wide uppercase">
-            Preguntas Frecuentes
+            {t('title')}
           </h2>
           <p className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
-            Resolvemos tus dudas
+            {t('subtitle')}
           </p>
           <p className="mt-4 text-xl text-gray-600">
-            Las respuestas a las preguntas más comunes sobre PsicoAIssist.
+            {t('description')}
           </p>
         </div>
 

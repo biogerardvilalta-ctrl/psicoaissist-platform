@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 
 export interface EmailTemplate {
   subject: string;
@@ -13,7 +14,10 @@ export class EmailService {
   private transporter: nodemailer.Transporter;
   private readonly logger = new Logger(EmailService.name);
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private readonly i18n: I18nService
+  ) {
     this.initializeTransporter();
   }
 
@@ -35,28 +39,28 @@ export class EmailService {
 
   // Implementation methods...
 
-  async sendWelcomeEmail(to: string, name: string): Promise<void> {
-    const template = this.getWelcomeTemplate(name);
+  async sendWelcomeEmail(to: string, name: string, lang: string = 'es'): Promise<void> {
+    const template = this.getWelcomeTemplate(name, lang);
     await this.sendEmail(to, template);
   }
 
-  async sendVerificationEmail(to: string, name: string, token: string, plan?: string, interval?: string): Promise<void> {
-    const template = this.getVerificationTemplate(name, token, plan, interval);
+  async sendVerificationEmail(to: string, name: string, token: string, plan?: string, interval?: string, lang: string = 'es'): Promise<void> {
+    const template = this.getVerificationTemplate(name, token, plan, interval, lang);
     await this.sendEmail(to, template);
   }
 
-  async sendSubscriptionConfirmation(to: string, planName: string): Promise<void> {
-    const template = this.getSubscriptionTemplate(planName);
+  async sendSubscriptionConfirmation(to: string, planName: string, lang: string = 'es'): Promise<void> {
+    const template = this.getSubscriptionTemplate(planName, lang);
     await this.sendEmail(to, template);
   }
 
-  async sendPasswordReset(to: string, resetToken: string): Promise<void> {
-    const template = this.getPasswordResetTemplate(resetToken);
+  async sendPasswordReset(to: string, resetToken: string, lang: string = 'es'): Promise<void> {
+    const template = this.getPasswordResetTemplate(resetToken, lang);
     await this.sendEmail(to, template);
   }
 
-  async sendSubscriptionCancellation(to: string): Promise<void> {
-    const template = this.getCancellationTemplate();
+  async sendSubscriptionCancellation(to: string, lang: string = 'es'): Promise<void> {
+    const template = this.getCancellationTemplate(lang);
     await this.sendEmail(to, template);
   }
 
@@ -65,8 +69,8 @@ export class EmailService {
     date: string;
     time: string;
     type: string
-  }): Promise<void> {
-    const template = this.getSessionReminderTemplate(sessionData);
+  }, lang: string = 'es'): Promise<void> {
+    const template = this.getSessionReminderTemplate(sessionData, lang);
     await this.sendEmail(to, template);
   }
 
@@ -75,23 +79,23 @@ export class EmailService {
     professionalName: string;
     date: string;
     time: string
-  }): Promise<void> {
-    const template = this.getClientSessionReminderTemplate(sessionData);
+  }, lang: string = 'es'): Promise<void> {
+    const template = this.getClientSessionReminderTemplate(sessionData, lang);
     await this.sendEmail(to, template);
   }
 
-  async sendOnboardingConfirmation(to: string, name: string): Promise<void> {
-    const template = this.getOnboardingTemplate(name);
+  async sendOnboardingConfirmation(to: string, name: string, lang: string = 'es'): Promise<void> {
+    const template = this.getOnboardingTemplate(name, lang);
     await this.sendEmail(to, template);
   }
 
-  async sendDailyUpcomingSessions(to: string, sessions: { time: string; patient: string; type: string }[]): Promise<void> {
-    const template = this.getDailySummaryTemplate(sessions);
+  async sendDailyUpcomingSessions(to: string, sessions: { time: string; patient: string; type: string }[], lang: string = 'es'): Promise<void> {
+    const template = this.getDailySummaryTemplate(sessions, lang);
     await this.sendEmail(to, template);
   }
 
-  async sendVideoCallInvitation(to: string, clientName: string, professionalName: string, link: string): Promise<void> {
-    const template = this.getVideoCallTemplate(clientName, professionalName, link);
+  async sendVideoCallInvitation(to: string, clientName: string, professionalName: string, link: string, lang: string = 'es'): Promise<void> {
+    const template = this.getVideoCallTemplate(clientName, professionalName, link, lang);
     await this.sendEmail(to, template);
   }
 
@@ -120,18 +124,21 @@ export class EmailService {
     }
   }
 
-  async sendCustomEmail(to: string, subject: string, content: string): Promise<void> {
-    const template = this.getCustomMessageTemplate(subject, content);
+  async sendCustomEmail(to: string, subject: string, content: string, lang: string = 'es'): Promise<void> {
+    const template = this.getCustomMessageTemplate(subject, content, lang);
     await this.sendEmail(to, template);
   }
 
-  private getCustomMessageTemplate(subject: string, content: string): EmailTemplate {
+  private getCustomMessageTemplate(subject: string, content: string, lang: string = 'es'): EmailTemplate {
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     return {
       subject: subject,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">Notificación Administrativa</h1>
+            <h1 style="color: white; margin: 0;">PsicoAIssist</h1>
           </div>
           <div style="padding: 20px; background: #f8f9fa;">
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -147,7 +154,7 @@ export class EmailService {
             </div>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
-            © 2025 PsicoAIssist. Todos los derechos reservados.
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
@@ -156,383 +163,419 @@ export class EmailService {
         
         ${content}
         
-        Soporte PsicoAIssist
+        ${common('support')}
       `
     };
   }
 
   // Existing methods...
-  private getWelcomeTemplate(name: string): EmailTemplate {
+  private getWelcomeTemplate(name: string, lang: string): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.welcome.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     return {
-      subject: '¡Bienvenido a PsicoAIssist!',
+      subject: t('subject') as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">¡Bienvenido a PsicoAIssist!</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #f8f9fa;">
-            <h2 style="color: #333;">Hola ${name},</h2>
+            <h2 style="color: #333;">${t('greeting', { name })}</h2>
             <p style="color: #666; line-height: 1.6;">
-              Nos complace darte la bienvenida a PsicoAIssist, tu nuevo asistente de inteligencia artificial 
-              para optimizar tu práctica psicológica.
+              ${t('intro')}
             </p>
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <h3 style="color: #333;">¿Qué puedes hacer ahora?</h3>
+              <h3 style="color: #333;">${t('steps_title')}</h3>
               <ul style="color: #666;">
-                <li>Configura tu perfil profesional</li>
-                <li>Explora las funciones de transcripción automática</li>
-                <li>Genera tu primer informe con IA</li>
-                <li>Familiarízate con las herramientas de análisis</li>
+                <li>${t('steps.1')}</li>
+                <li>${t('steps.2')}</li>
+                <li>${t('steps.3')}</li>
+                <li>${t('steps.4')}</li>
               </ul>
             </div>
             <div style="text-align: center; margin: 30px 0;">
               <a href="https://psicoaissist.com/dashboard" 
                  style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Acceder a mi Dashboard
+                ${t('cta')}
               </a>
             </div>
             <p style="color: #666; font-size: 14px;">
-              Si necesitas ayuda, nuestro equipo está disponible en 
+              ${t('help')}
               <a href="mailto:soporte@psicoaissist.com">soporte@psicoaissist.com</a>
             </p>
           </div>
           <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
-            © 2025 PsicoAIssist. Todos los derechos reservados.
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        ¡Bienvenido a PsicoAIssist!
+        ${t('subject')}
         
-        Hola ${name},
+        ${t('greeting', { name })}
 
-        Nos complace darte la bienvenida a PsicoAIssist, tu nuevo asistente de inteligencia artificial 
-        para optimizar tu práctica psicológica.
+        ${t('intro')}
 
-        ¿Qué puedes hacer ahora?
-        - Configura tu perfil profesional
-        - Explora las funciones de transcripción automática
-        - Genera tu primer informe con IA
-        - Familiarízate con las herramientas de análisis
+        ${t('steps_title')}
+        - ${t('steps.1')}
+        - ${t('steps.2')}
+        - ${t('steps.3')}
+        - ${t('steps.4')}
 
-        Accede a tu dashboard: https://psicoaissist.com/dashboard
+        Dashboard: https://psicoaissist.com/dashboard
 
-        Si necesitas ayuda, contacta: soporte@psicoaissist.com
+        ${t('help')} soporte@psicoaissist.com
 
-        © 2025 PsicoAIssist. Todos los derechos reservados.
+        ${common('copyright', { year })}
       `
     };
   };
 
 
-  private getVerificationTemplate(name: string, token: string, plan?: string, interval?: string): EmailTemplate {
+  private getVerificationTemplate(name: string, token: string, plan?: string, interval?: string, lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.verification.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
     let verificationUrl = `${frontendUrl}/auth/verify-email?token=${token}`;
     if (plan) verificationUrl += `&plan=${plan}`;
     if (interval) verificationUrl += `&interval=${interval}`;
 
     return {
-      subject: 'Verifica tu cuenta - PsicoAIssist',
+      subject: t('subject') as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">Verifica tu Email</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #f8f9fa;">
-            <h2 style="color: #333;">Hola ${name},</h2>
+            <h2 style="color: #333;">${t('greeting', { name })}</h2>
             <p style="color: #666; line-height: 1.6;">
-              Gracias por registrarte en PsicoAIssist. Para comenzar, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente enlace:
+              ${t('message')}
             </p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${verificationUrl}" 
                  style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Verificar Email
+                ${t('cta')}
               </a>
             </div>
             <p style="color: #666; font-size: 14px;">
-              Si no has creado una cuenta en PsicoAIssist, puedes ignorar este mensaje.
+              ${t('ignore')}
             </p>
           </div>
           <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
-            © 2025 PsicoAIssist. Todos los derechos reservados.
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        Verifica tu Email - PsicoAIssist
+        ${t('subject')}
         
-        Hola ${name},
+        ${t('greeting', { name })}
 
-        Por favor verifica tu cuenta haciendo clic en el siguiente enlace:
+        ${t('message')}
         ${verificationUrl}
 
-        Si no has solicitado esto, ignora este mensaje.
+        ${t('ignore')}
+
+        ${common('copyright', { year })}
       `
     };
   }
 
-  private getSubscriptionTemplate(planName: string): EmailTemplate {
+  private getSubscriptionTemplate(planName: string, lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.subscription.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     return {
-      subject: '¡Suscripción activada exitosamente!',
+      subject: t('subject') as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">¡Suscripción Confirmada!</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #f8f9fa;">
-            <h2 style="color: #333;">¡Excelente elección!</h2>
+            <h2 style="color: #333;">${t('subtitle')}</h2>
             <p style="color: #666; line-height: 1.6;">
-              Tu suscripción al <strong>Plan ${planName}</strong> ha sido activada exitosamente.
+              ${t('message', { planName })}
             </p>
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <h3 style="color: #333;">Ahora tienes acceso a:</h3>
+              <h3 style="color: #333;">${t('features_title')}</h3>
               <ul style="color: #666;">
-                <li>Transcripción automática ilimitada</li>
-                <li>Generación de informes con IA</li>
-                <li>Analytics avanzados de tu práctica</li>
-                <li>Soporte prioritario</li>
+                <li>${t('features.1')}</li>
+                <li>${t('features.2')}</li>
+                <li>${t('features.3')}</li>
+                <li>${t('features.4')}</li>
               </ul>
             </div>
             <div style="text-align: center; margin: 30px 0;">
               <a href="https://psicoaissist.com/dashboard" 
                  style="background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Comenzar ahora
+                ${t('cta')}
               </a>
             </div>
+          </div>
+          <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        ¡Suscripción Confirmada!
+        ${t('subject')}
 
-        Tu suscripción al Plan ${planName} ha sido activada exitosamente.
+        ${t('message', { planName })}
 
-        Ahora tienes acceso completo a todas las funcionalidades.
-
-        Comienza: https://psicoaissist.com/dashboard
+        ${t('cta')}: https://psicoaissist.com/dashboard
       `
     };
   }
 
-  private getPasswordResetTemplate(resetToken: string): EmailTemplate {
+  private getPasswordResetTemplate(resetToken: string, lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.reset_password.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
     const resetUrl = `https://psicoaissist.com/reset-password?token=${resetToken}`;
 
     return {
-      subject: 'Restablecer contraseña - PsicoAIssist',
+      subject: t('subject') as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #f59e0b; padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">Restablecer Contraseña</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #f8f9fa;">
             <p style="color: #666; line-height: 1.6;">
-              Has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace 
-              para crear una nueva contraseña:
+              ${t('message')}
             </p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetUrl}" 
                  style="background: #f59e0b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Restablecer Contraseña
+                ${t('cta')}
               </a>
             </div>
             <p style="color: #666; font-size: 14px;">
-              Este enlace expirará en 1 hora por seguridad.
-              Si no solicitaste este cambio, ignora este email.
+              ${t('expiry')}
             </p>
+          </div>
+          <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        Restablecer Contraseña
+        ${t('title')}
 
-        Has solicitado restablecer tu contraseña.
+        ${t('message')}
 
-        Restablecer: ${resetUrl}
+        ${t('cta')}: ${resetUrl}
 
-        Este enlace expira en 1 hora.
+        ${t('expiry')}
       `
     };
   }
 
-  private getCancellationTemplate(): EmailTemplate {
+  private getCancellationTemplate(lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.cancellation.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     return {
-      subject: 'Suscripción cancelada - PsicoAIssist',
+      subject: t('subject') as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #6b7280; padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">Suscripción Cancelada</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #f8f9fa;">
             <p style="color: #666; line-height: 1.6;">
-              Tu suscripción ha sido cancelada. Seguirás teniendo acceso hasta el final 
-              de tu período actual de facturación.
+              ${t('message')}
             </p>
             <p style="color: #666;">
-              Esperamos verte de vuelta pronto. Si cambias de opinión, puedes reactivar 
-              tu suscripción en cualquier momento.
+              ${t('goodbye')}
             </p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="https://psicoaissist.com/pricing" 
                  style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Ver Planes
+                ${t('cta')}
               </a>
             </div>
+          </div>
+          <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        Suscripción Cancelada
+        ${t('subject')}
 
-        Tu suscripción ha sido cancelada. Seguirás teniendo acceso hasta el final 
-        de tu período actual.
+        ${t('message')}
 
-        Reactivar: https://psicoaissist.com/pricing
+        ${t('goodbye')}
+
+        ${t('cta')}: https://psicoaissist.com/pricing
       `
     };
   }
 
-  private getSessionReminderTemplate(data: { clientName: string; date: string; time: string; type: string }): EmailTemplate {
+  private getSessionReminderTemplate(data: { clientName: string; date: string; time: string; type: string }, lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.session_reminder.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     return {
-      subject: 'Recordatorio de Sesión - PsicoAIssist',
+      subject: t('subject') as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">Recordatorio de Sesión</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #ffff;">
-            <p style="color: #333; font-size: 16px;">Hola,</p>
+            <p style="color: #333; font-size: 16px;">${t('greeting')}</p>
             <p style="color: #555; line-height: 1.6;">
-              Tienes una sesión programada para mañana. Aquí están los detalles:
+              ${t('message')}
             </p>
             
             <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <p style="margin: 5px 0;"><strong>Paciente:</strong> ${data.clientName}</p>
-              <p style="margin: 5px 0;"><strong>Fecha:</strong> ${data.date}</p>
-              <p style="margin: 5px 0;"><strong>Hora:</strong> ${data.time}</p>
-              <p style="margin: 5px 0;"><strong>Tipo:</strong> ${data.type}</p>
+              <p style="margin: 5px 0;"><strong>${t('labels.patient')}:</strong> ${data.clientName}</p>
+              <p style="margin: 5px 0;"><strong>${t('labels.date')}:</strong> ${data.date}</p>
+              <p style="margin: 5px 0;"><strong>${t('labels.time')}:</strong> ${data.time}</p>
+              <p style="margin: 5px 0;"><strong>${t('labels.type')}:</strong> ${data.type}</p>
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
               <a href="https://psicoaissist.com/dashboard/sessions" 
                  style="background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Ver Agenda
+                ${t('cta')}
               </a>
             </div>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
-            © 2025 PsicoAIssist
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        Recordatorio de Sesión
+        ${t('title')}
 
-        Tienes una sesión programada para mañana:
+        ${t('message')}
         
-        Paciente: ${data.clientName}
-        Fecha: ${data.date}
-        Hora: ${data.time}
-        Tipo: ${data.type}
+        ${t('labels.patient')}: ${data.clientName}
+        ${t('labels.date')}: ${data.date}
+        ${t('labels.time')}: ${data.time}
+        ${t('labels.type')}: ${data.type}
 
-        Ver agenda: https://psicoaissist.com/dashboard/sessions
+        ${t('cta')}: https://psicoaissist.com/dashboard/sessions
       `
     };
   };
 
 
-  private getClientSessionReminderTemplate(data: { clientName: string; professionalName: string; date: string; time: string }): EmailTemplate {
+  private getClientSessionReminderTemplate(data: { clientName: string; professionalName: string; date: string; time: string }, lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.client_reminder.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     return {
-      subject: `Recordatorio de cita con ${data.professionalName}`,
+      subject: t('subject', { professionalName: data.professionalName }) as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">Recordatorio de Cita</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #ffff;">
-            <p style="color: #333; font-size: 16px;">Hola ${data.clientName},</p>
+            <p style="color: #333; font-size: 16px;">${t('greeting', { clientName: data.clientName })}</p>
             <p style="color: #555; line-height: 1.6;">
-              Este es un recordatorio de tu cita programada con <strong>${data.professionalName}</strong>.
+              ${t('message', { professionalName: data.professionalName })}
             </p>
             
             <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <p style="margin: 5px 0;"><strong>Fecha:</strong> ${data.date}</p>
-              <p style="margin: 5px 0;"><strong>Hora:</strong> ${data.time}</p>
+              <p style="margin: 5px 0;"><strong>${t('labels.date')}:</strong> ${data.date}</p>
+              <p style="margin: 5px 0;"><strong>${t('labels.time')}:</strong> ${data.time}</p>
             </div>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
-            © 2025 PsicoAIssist
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        Recordatorio de Cita
+        ${t('title')}
         
-        Hola ${data.clientName},
+        ${t('greeting', { clientName: data.clientName })}
         
-        Tienes una cita con ${data.professionalName}:
+        ${t('message', { professionalName: data.professionalName })}
         
-        Fecha: ${data.date}
-        Hora: ${data.time}
+        ${t('labels.date')}: ${data.date}
+        ${t('labels.time')}: ${data.time}
       `
     };
   }
 
-  private getOnboardingTemplate(name: string): EmailTemplate {
+  private getOnboardingTemplate(name: string, lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.onboarding.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     return {
-      subject: 'Pack On-boarding: ¡Empezamos! 🚀',
+      subject: t('subject') as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">¡On-boarding Iniciado!</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #f8f9fa;">
-            <p style="color: #333; font-size: 16px;">Hola ${name},</p>
+            <p style="color: #333; font-size: 16px;">${t('greeting', { name })}</p>
             <p style="color: #555; line-height: 1.6;">
-              Hemos recibido tu contratación del <strong>Pack de On-boarding</strong>. ¡Gracias por confiar en nosotros!
+              ${t('message')}
             </p>
             <p style="color: #555; line-height: 1.6;">
-              Nuestro equipo técnico ya ha sido notificado y comenzará a preparar tu servidor web personalizado. 
-              Este proceso suele tardar entre 24 y 48 horas laborables.
+              ${t('process')}
             </p>
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #6366f1;">
-               <h3 style="color: #333; margin-top: 0;">¿Qué sigue?</h3>
+               <h3 style="color: #333; margin-top: 0;">${t('next_steps_title')}</h3>
                <ul style="color: #666; margin-bottom: 0;">
-                 <li>Un técnico asignado revisará tu solicitud.</li>
-                 <li>Configuraremos tu entorno dedicado.</li>
-                 <li>Te contactaremos por email cuando todo esté listo para entregarte las credenciales de acceso a tu nuevo servidor.</li>
+                 <li>${t('next_steps.1')}</li>
+                 <li>${t('next_steps.2')}</li>
+                 <li>${t('next_steps.3')}</li>
                </ul>
             </div>
             <p style="color: #555; line-height: 1.6;">
-              Mientras tanto, puedes seguir utilizando la plataforma con normalidad.
+              ${t('interim')}
             </p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="https://psicoaissist.com/dashboard" 
                  style="background: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Ir al Dashboard
+                ${t('cta')}
               </a>
             </div>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
-            © 2025 PsicoAIssist
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        Pack On-boarding: ¡Empezamos!
+        ${t('subject')}
   
-        Hola ${name},
+        ${t('greeting', { name })}
   
-        Hemos recibido tu contratación del Pack de On-boarding. Nuestro equipo ya está trabajando en configurar tu servidor web.
+        ${t('message')}
+        ${t('process')}
   
-        Te notificaremos en 24-48h laborables cuando esté listo.
-  
-        Gracias,
-        Equipo de PsicoAIssist
+        ${common('support')}
       `
     };
   }
 
-  private getDailySummaryTemplate(sessions: { time: string; patient: string; type: string }[]): EmailTemplate {
+  private getDailySummaryTemplate(sessions: { time: string; patient: string; type: string }[], lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.daily_summary.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+    const year = new Date().getFullYear();
+
     const rows = sessions.map(s => `
       <tr style="border-bottom: 1px solid #eee;">
         <td style="padding: 10px;"><strong>${s.time}</strong></td>
@@ -541,28 +584,28 @@ export class EmailService {
       </tr>
     `).join('');
 
-    const textRows = sessions.map(s => `- ${s.time}: ${s.patient} (${s.type})`).join('\n');
+    const textRows = sessions.map(s => `- ${s.time}: ${s.patient} (${s.type})`).join('\\n');
 
     return {
-      subject: `Resumen de Agenda - Mañana (${sessions.length} visitas)`,
+      subject: t('subject', { count: sessions.length }) as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0;">Tu Agenda para Mañana</h1>
+            <h1 style="color: white; margin: 0;">${t('title')}</h1>
           </div>
           <div style="padding: 20px; background: #fff;">
-            <p style="color: #333; font-size: 16px;">Hola,</p>
+            <p style="color: #333; font-size: 16px;">${t('greeting')}</p>
             <p style="color: #555; line-height: 1.6;">
-              Tienes <strong>${sessions.length} sesiones</strong> programadas para mañana.
+              ${t('message', { count: sessions.length })}
             </p>
             
             <div style="background: white; border: 1px solid #eee; border-radius: 8px; overflow: hidden; margin: 20px 0;">
               <table style="width: 100%; border-collapse: collapse; text-align: left;">
                 <thead style="background: #f8f9fa;">
                   <tr>
-                    <th style="padding: 10px; color: #444;">Hora</th>
-                    <th style="padding: 10px; color: #444;">Paciente</th>
-                    <th style="padding: 10px; color: #444;">Tipo</th>
+                    <th style="padding: 10px; color: #444;">${t('table_headers.time')}</th>
+                    <th style="padding: 10px; color: #444;">${t('table_headers.patient')}</th>
+                    <th style="padding: 10px; color: #444;">${t('table_headers.type')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -574,47 +617,50 @@ export class EmailService {
             <div style="text-align: center; margin: 30px 0;">
               <a href="https://psicoaissist.com/dashboard/sessions" 
                  style="background: #0ea5e9; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Ver Agenda Completa
+                ${t('cta')}
               </a>
             </div>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
-            © 2025 PsicoAIssist
+            ${common('copyright', { year })}
           </div>
         </div>
       `,
       text: `
-        Tu Agenda para Mañana
+        ${t('title')}
 
-        Tienes ${sessions.length} sesiones programadas:
+        ${t('message', { count: sessions.length })}
 
         ${textRows}
 
-        Ver agenda: https://psicoaissist.com/dashboard/sessions
+        ${t('cta')}: https://psicoaissist.com/dashboard/sessions
       `
     };
   }
 
-  private getVideoCallTemplate(clientName: string, professionalName: string, link: string): EmailTemplate {
+  private getVideoCallTemplate(clientName: string, professionalName: string, link: string, lang: string = 'es'): EmailTemplate {
+    const t = (key: string, args?: any) => this.i18n.translate(`emails.video_call.${key}`, { lang, args });
+    const common = (key: string, args?: any) => this.i18n.translate(`emails.common.${key}`, { lang, args });
+
     return {
-      subject: `Invitación a Videoconferencia - ${professionalName}`,
+      subject: t('subject', { professionalName }) as string,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Hola ${clientName},</h2>
-          <p>${professionalName} te ha invitado a una sesión por videoconferencia.</p>
-          <p>Por favor, haz clic en el siguiente enlace para unirte a la llamada a la hora acordada:</p>
+          <h2>${t('greeting', { clientName })}</h2>
+          <p>${t('message', { professionalName })}</p>
+          <p>${t('instruction')}</p>
           <div style="text-align: center; margin: 30px 0;">
             <a href="${link}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-              Unirse a la Videollamada
+              ${t('cta')}
             </a>
           </div>
-          <p>Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
+          <p>${t('fallback')}</p>
           <p style="word-break: break-all; color: #666;">${link}</p>
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;" />
-          <p style="color: #888; font-size: 12px;">Este es un mensaje automático de PsicoAIssist.</p>
+          <p style="color: #888; font-size: 12px;">${t('footer')}</p>
         </div>
       `,
-      text: `Hola ${clientName},\n\n${professionalName} te ha invitado a una sesión por videoconferencia.\n\nÚnete aquí: ${link}\n\nGracias,\nEl equipo de PsicoAIssist`
+      text: `${t('greeting', { clientName })}\n\n${t('message', { professionalName })}\n\n${t('instruction')}: ${link}\n\n${common('support')}`
     };
   }
 }

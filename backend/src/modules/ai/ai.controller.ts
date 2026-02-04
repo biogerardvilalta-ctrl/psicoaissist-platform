@@ -40,7 +40,7 @@ export class AiController {
 
     @Post('help')
     @RequireFeature('advancedAnalytics')
-    async askHelp(@Body('question') question: string) {
-        return { answer: await this.aiService.askHelp(question) };
+    async askHelp(@Body('question') question: string, @Body('locale') locale: string) {
+        return { answer: await this.aiService.askHelp(question, locale) };
     }
 }

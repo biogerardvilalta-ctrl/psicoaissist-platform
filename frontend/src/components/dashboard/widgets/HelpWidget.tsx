@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+import { AiAPI } from '@/lib/ai-api';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -9,10 +11,20 @@ interface Message {
 }
 
 export function HelpWidget() {
+    const t = useTranslations('Dashboard.HelpWidget');
+    const locale = useLocale();
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        { role: 'assistant', content: 'Hola! Soy tu asistente de PsicoAIssist. ¿En qué puedo ayudarte hoy?' }
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    // Initialize welcome message only once on mount to avoid hydration mismatch
+    useEffect(() => {
+        if (messages.length === 0) {
+            setMessages([
+                { role: 'assistant', content: t('welcome') }
+            ]);
+        }
+    }, [t]);
+
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -35,18 +47,11 @@ export function HelpWidget() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1/ai/help`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ question: userMessage }),
-            });
-
-            if (!response.ok) throw new Error('Error en la petición');
-
-            const data = await response.json();
+            const data = await AiAPI.chat(userMessage, locale);
             setMessages(prev => [...prev, { role: 'assistant', content: data.answer }]);
         } catch (error) {
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Lo siento, tuve un problema de conexión. Inténtalo de nuevo.' }]);
+            console.error('Error sending message:', error);
+            setMessages(prev => [...prev, { role: 'assistant', content: t('error') }]);
         } finally {
             setIsLoading(false);
         }
@@ -57,7 +62,7 @@ export function HelpWidget() {
             <button
                 onClick={() => setIsOpen(true)}
                 className="fixed bottom-6 right-6 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 z-50 flex items-center justify-center"
-                aria-label="Abrir asistente de ayuda"
+                aria-label={t('openLabel')}
             >
                 <MessageCircle className="w-6 h-6" />
             </button>
@@ -70,7 +75,7 @@ export function HelpWidget() {
             <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex justify-between items-center">
                 <div className="flex items-center space-x-2">
                     <Bot className="w-5 h-5" />
-                    <span className="font-semibold">Asistente PsicoAIssist</span>
+                    <span className="font-semibold">{t('title')}</span>
                 </div>
                 <button
                     onClick={() => setIsOpen(false)}
@@ -118,7 +123,7 @@ export function HelpWidget() {
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Pregunta algo..."
+                        placeholder={t('placeholder')}
                         className="flex-1 px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                     />
                     <button
@@ -130,7 +135,7 @@ export function HelpWidget() {
                     </button>
                 </div>
                 <p className="text-[10px] text-center text-gray-400 mt-2">
-                    La IA puede cometer errores. Verifica la info importante.
+                    {t('disclaimer')}
                 </p>
             </form>
         </div>

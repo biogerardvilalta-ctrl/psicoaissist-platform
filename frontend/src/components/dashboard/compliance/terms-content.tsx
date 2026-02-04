@@ -1,88 +1,95 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Scale, Users, Gavel, AlertTriangle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function TermsContent() {
+    const t = useTranslations('Legal.Terms');
+
     return (
         <div className="space-y-8 max-w-4xl mx-auto">
             <div className="text-center space-y-4">
                 <div className="flex justify-center">
                     <Scale className="h-16 w-16 text-blue-600" />
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight text-blue-900">Términos y Condiciones de Uso</h1>
-                <p className="text-lg text-muted-foreground">Acuerdo de servicio para profesionales de la salud mental</p>
+                <h1 className="text-3xl font-bold tracking-tight text-blue-900">{t('title')}</h1>
+                <p className="text-lg text-muted-foreground">{t('subtitle')}</p>
             </div>
 
             <Card className="border-blue-100 shadow-lg">
                 <CardHeader className="bg-slate-50 border-b border-slate-100">
                     <CardTitle className="text-xl flex items-center gap-2 text-slate-800">
                         <Users className="h-5 w-5 text-blue-600" />
-                        Relación Contractual
+                        {t('cardTitle')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">1. Naturaleza del Servicio</h2>
+                        <h2 className="text-lg font-bold text-blue-900">{t('sections.nature.title')}</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            Esta aplicación es una <strong>herramienta de apoyo a la decisión clínica</strong> basada en Inteligencia Artificial. Su objetivo es asistir al profesional en la gestión de sesiones y la generación de borradores documentales.
+                            {t.rich('sections.nature.text', {
+                                b: (chunks) => <strong>{chunks}</strong>
+                            })}
                         </p>
                         <div className="bg-amber-50 p-4 rounded-lg border border-amber-100 flex gap-3">
                             <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                             <p className="text-sm text-amber-800 font-medium">
-                                La herramienta NO sustituye el criterio profesional, ni realiza diagnósticos automáticos, ni prescribe tratamientos médicos o farmacológicos.
+                                {t('sections.nature.warning')}
                             </p>
                         </div>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">2. Responsabilidad del Profesional</h2>
+                        <h2 className="text-lg font-bold text-blue-900">{t('sections.responsibility.title')}</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            El usuario (profesional de la salud mental acreditado/a) reconoce y acepta que:
+                            {t('sections.responsibility.text')}
                         </p>
                         <ul className="list-disc pl-6 text-slate-700 space-y-2">
-                            <li>Es el único responsable de verificar la información generada por la IA antes de utilizarla o incluirla en la historia clínica.</li>
-                            <li>Es responsable de obtener el consentimiento informado de los pacientes para el uso de herramientas de apoyo a la sesión.</li>
-                            <li>Mantiene la responsabilidad final sobre cualquier decisión clínica tomada respecto a sus pacientes.</li>
+                            <li>{t('sections.responsibility.list.1')}</li>
+                            <li>{t('sections.responsibility.list.2')}</li>
+                            <li>{t('sections.responsibility.list.3')}</li>
                         </ul>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">3. Propiedad de los Datos</h2>
+                        <h2 className="text-lg font-bold text-blue-900">{t('sections.ownership.title')}</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            Todos los datos clínicos, notas de sesión e información de los pacientes introducida en la plataforma son <strong>propiedad exclusiva del profesional y/o del paciente</strong>, según corresponda. La plataforma actúa como encargada del tratamiento, limitándose a custodiar y procesar la información según las instrucciones del usuario.
+                            {t.rich('sections.ownership.text', {
+                                b: (chunks) => <strong>{chunks}</strong>
+                            })}
                         </p>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">4. Uso Aceptable</h2>
+                        <h2 className="text-lg font-bold text-blue-900">{t('sections.usage.title')}</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            El usuario se compromete a hacer un uso ético de la plataforma, respetando el Código Deontológico de la profesión y la normativa vigente. Queda prohibido utilizar el sistema para fines ilícitos, discriminatorios o que atenten contra la dignidad de las personas.
+                            {t('sections.usage.text')}
                         </p>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">5. Límites Éticos y Profesionales</h2>
+                        <h2 className="text-lg font-bold text-blue-900">{t('sections.ethics.title')}</h2>
                         <div className="space-y-4">
                             <p className="text-slate-700 leading-relaxed">
-                                El uso de la plataforma está sujeto a los siguientes límites éticos inquebrantables, alineados con la normativa deontológica vigente:
+                                {t('sections.ethics.intro')}
                             </p>
                             <div className="grid gap-3">
                                 <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                    <h4 className="font-bold text-slate-900 text-sm mb-1">PROHIBICIÓN DE DIAGNÓSTICO AUTOMATIZADO</h4>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">{t('sections.ethics.alerts.diagnosis.title')}</h4>
                                     <p className="text-sm text-slate-600">
-                                        Queda estrictamente prohibido utilizar las salidas de la IA como diagnósticos clínicos definitivos. La IA es una herramienta de apoyo orientativo; el diagnóstico es acto exclusivo del profesional humano.
+                                        {t('sections.ethics.alerts.diagnosis.text')}
                                     </p>
                                 </div>
                                 <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                    <h4 className="font-bold text-slate-900 text-sm mb-1">DEBER DE EMERGENCIA</h4>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">{t('sections.ethics.alerts.emergency.title')}</h4>
                                     <p className="text-sm text-slate-600">
-                                        La aplicación NO es un dispositivo de emergencia ni de intervención en crisis. En situaciones de riesgo inminente de suicidio o daño a terceros, el profesional debe actuar según los protocolos de emergencia convencionales, sin depender del procesamiento de la herramienta.
+                                        {t('sections.ethics.alerts.emergency.text')}
                                     </p>
                                 </div>
                                 <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                    <h4 className="font-bold text-slate-900 text-sm mb-1">TRANSPARENCIA CON EL PACIENTE</h4>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-1">{t('sections.ethics.alerts.transparency.title')}</h4>
                                     <p className="text-sm text-slate-600">
-                                        Es obligación ética del profesional informar al paciente sobre el uso de herramientas tecnológicas de apoyo durante la sesión y garantizar que este uso no interfiere en la calidad de la alianza terapéutica.
+                                        {t('sections.ethics.alerts.transparency.text')}
                                     </p>
                                 </div>
                             </div>
@@ -90,75 +97,78 @@ export function TermsContent() {
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">6. Política de Uso Razonable (Fair Use Policy)</h2>
+                        <h2 className="text-lg font-bold text-blue-900">{t('sections.fairUse.title')}</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            Para garantizar la estabilidad del sistema y la calidad del servicio para todos los usuarios, los planes con características "Ilimitadas" están sujetos a los siguientes topes de seguridad mensual:
+                            {t('sections.fairUse.text')}
                         </p>
                         <div className="grid sm:grid-cols-2 gap-4 mt-4">
                             <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                <span className="block text-xs text-red-600 font-bold uppercase">Pacientes Activos</span>
+                                <span className="block text-xs text-red-600 font-bold uppercase">{t('sections.fairUse.stats.activePatients.label')}</span>
                                 <span className="text-lg font-bold text-slate-800">5.000</span>
-                                <span className="text-xs text-slate-500 ml-1">expedientes</span>
+                                <span className="text-xs text-slate-500 ml-1">{t('sections.fairUse.stats.activePatients.unit')}</span>
                             </div>
                             <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                <span className="block text-xs text-red-600 font-bold uppercase">Transcripción IA</span>
+                                <span className="block text-xs text-red-600 font-bold uppercase">{t('sections.fairUse.stats.transcription.label')}</span>
                                 <span className="text-lg font-bold text-slate-800">300</span>
-                                <span className="text-xs text-slate-500 ml-1">horas/mes</span>
+                                <span className="text-xs text-slate-500 ml-1">{t('sections.fairUse.stats.transcription.unit')}</span>
                             </div>
                             <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                <span className="block text-xs text-red-600 font-bold uppercase">Generación Informes</span>
+                                <span className="block text-xs text-red-600 font-bold uppercase">{t('sections.fairUse.stats.reports.label')}</span>
                                 <span className="text-lg font-bold text-slate-800">3.000</span>
-                                <span className="text-xs text-slate-500 ml-1">informes/mes</span>
+                                <span className="text-xs text-slate-500 ml-1">{t('sections.fairUse.stats.reports.unit')}</span>
                             </div>
                             <div className="bg-red-50 p-3 rounded-lg border border-red-100">
-                                <span className="block text-xs text-red-600 font-bold uppercase">Simulador Clínico</span>
+                                <span className="block text-xs text-red-600 font-bold uppercase">{t('sections.fairUse.stats.simulator.label')}</span>
                                 <span className="text-lg font-bold text-slate-800">500</span>
-                                <span className="text-xs text-slate-500 ml-1">casos/mes</span>
-                                <span className="block text-[10px] text-slate-400 mt-1">Máx 45 min/sesión</span>
+                                <span className="text-xs text-slate-500 ml-1">{t('sections.fairUse.stats.simulator.unit')}</span>
+                                <span className="block text-[10px] text-slate-400 mt-1">{t('sections.fairUse.stats.simulator.note')}</span>
                             </div>
                         </div>
                         <p className="text-xs text-red-700 mt-2 italic">
-                            * El uso por encima de estos límites se considera abusivo y puede conllevar la suspensión temporal de la cuenta o contacto por parte de soporte.
+                            {t('sections.fairUse.warning')}
                         </p>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">7. Planes de Suscripción y Características</h2>
+                        <h2 className="text-lg font-bold text-blue-900">{t('sections.plans.title')}</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            A continuación se detallan los planes disponibles y sus características contractuales. Los precios pueden estar sujetos a impuestos aplicables.
+                            {t('sections.plans.intro')}
                         </p>
 
                         <div className="bg-amber-50 p-4 rounded-lg border border-amber-100 flex gap-3 text-sm my-4">
                             <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                             <p className="text-amber-800">
-                                <strong>Política de Reinicio Mensual:</strong> Todas las cuotas incluidas en los planes (minutos de transcripción, casos de simulador, etc.) se reinician automáticamente al inicio de cada ciclo de facturación mensual. <u>Los recursos no utilizados durante el mes en curso no son acumulables para el mes siguiente.</u>
+                                {t.rich('sections.plans.policy', {
+                                    b: (chunks) => <strong>{chunks}</strong>,
+                                    u: (chunks) => <u>{chunks}</u>
+                                })}
                             </p>
                         </div>
 
                         <div className="space-y-6 mt-4">
-                            {/* DEMO PLAN - ADDED */}
+                            {/* DEMO PLAN */}
                             <div className="p-5 bg-slate-50 rounded-lg border border-slate-200">
                                 <h3 className="font-bold text-slate-800 text-lg flex justify-between items-center mb-3">
-                                    <span className="flex items-center gap-2">🌱 Demo (Gratuito / Limitada)</span>
-                                    <span className="text-base bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs">Prueba 14 días</span>
+                                    <span className="flex items-center gap-2">🌱 {t('sections.plans.items.demo.title')} ({t('sections.plans.items.demo.subtitle')})</span>
+                                    <span className="text-base bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs">{t('sections.plans.items.demo.badge')}</span>
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Incluye:</h4>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> {t('sections.plans.items.demo.includes.title')}</h4>
                                         <ul className="space-y-1 text-slate-700 list-disc pl-4 text-xs">
-                                            <li><strong>3 Pacientes Activos</strong> máximo.</li>
-                                            <li><strong>30 Minutos Transcripción + IA</strong> (Prueba).</li>
-                                            <li><strong>5 Informes</strong> mensuales.</li>
-                                            <li>Acceso básico a la plataforma.</li>
+                                            <li><strong>{t('sections.plans.items.demo.includes.list.0')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.demo.includes.list.1')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.demo.includes.list.2')}</strong></li>
+                                            <li>{t('sections.plans.items.demo.includes.list.3')}</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/50 p-2 rounded border border-slate-100">
-                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> Limitaciones:</h4>
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> {t('sections.plans.items.demo.excludes.title')}</h4>
                                         <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
-                                            <li><strong>Sin Simulador Clínico</strong>.</li>
-                                            <li>Caducidad automática a los 14 días.</li>
-                                            <li>Sin sincronización de calendario.</li>
-                                            <li>Sin soporte personalizado.</li>
+                                            <li><strong>{t('sections.plans.items.demo.excludes.list.0')}</strong></li>
+                                            <li>{t('sections.plans.items.demo.excludes.list.1')}</li>
+                                            <li>{t('sections.plans.items.demo.excludes.list.2')}</li>
+                                            <li>{t('sections.plans.items.demo.excludes.list.3')}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -167,100 +177,100 @@ export function TermsContent() {
                             {/* BASIC PLAN */}
                             <div className="p-5 bg-slate-50 rounded-lg border border-slate-200">
                                 <h3 className="font-bold text-slate-800 text-lg flex justify-between items-center mb-3">
-                                    <span className="flex items-center gap-2">🥉 Basic</span>
-                                    <span className="text-base bg-slate-200 px-3 py-1 rounded-full">29€ / mes</span>
+                                    <span className="flex items-center gap-2">🥉 {t('sections.plans.items.basic.title')}</span>
+                                    <span className="text-base bg-slate-200 px-3 py-1 rounded-full">{t('sections.plans.items.basic.price')}</span>
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Incluye:</h4>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> {t('sections.plans.items.demo.includes.title')}</h4>
                                         <ul className="space-y-1 text-slate-700 list-disc pl-4 text-xs">
-                                            <li><strong>25 Pacientes Activos</strong> totales.</li>
-                                            <li><strong>10 Horas Transcripción</strong> (Literal).</li>
-                                            <li><strong>Almacenamiento 5GB</strong>.</li>
-                                            <li>Gestión de Citas Básica.</li>
+                                            <li><strong>{t('sections.plans.items.basic.includes.list.0')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.basic.includes.list.1')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.basic.includes.list.2')}</strong></li>
+                                            <li>{t('sections.plans.items.basic.includes.list.3')}</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/50 p-2 rounded border border-slate-100">
-                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Incluye:</h4>
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> {t('sections.plans.items.demo.excludes.title')}</h4>
                                         <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
-                                            <li>Análisis IA Avanzado (Resúmenes, Emojis).</li>
-                                            <li>Simulador Clínico.</li>
-                                            <li>Google Calendar Sync.</li>
-                                            <li>Soporte Prioritario.</li>
+                                            <li>{t('sections.plans.items.basic.excludes.list.0')}</li>
+                                            <li>{t('sections.plans.items.basic.excludes.list.1')}</li>
+                                            <li>{t('sections.plans.items.basic.excludes.list.2')}</li>
+                                            <li>{t('sections.plans.items.basic.excludes.list.3')}</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* PRO */}
+                            {/* PRO PLAN */}
                             <div className="p-5 bg-blue-50 rounded-lg border border-blue-200 ring-1 ring-blue-500/20">
                                 <h3 className="font-bold text-blue-900 text-lg flex justify-between items-center mb-3">
-                                    <span className="flex items-center gap-2">🥈 Pro</span>
-                                    <span className="text-base bg-blue-100 text-blue-800 px-3 py-1 rounded-full">59€ / mes</span>
+                                    <span className="flex items-center gap-2">🥈 {t('sections.plans.items.pro.title')}</span>
+                                    <span className="text-base bg-blue-100 text-blue-800 px-3 py-1 rounded-full">{t('sections.plans.items.pro.price')}</span>
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Incluye:</h4>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> {t('sections.plans.items.demo.includes.title')}</h4>
                                         <ul className="space-y-1 text-blue-900 list-disc pl-4 text-xs">
-                                            <li><strong>Pacientes Ilimitados</strong>.</li>
-                                            <li><strong>15 Horas (900 min) IA Total</strong>.</li>
-                                            <li><strong>Google Calendar Sync</strong> (Bidireccional).</li>
-                                            <li><strong>Análisis IA Avanzado</strong> (Insights).</li>
-                                            <li>Almacenamiento 50GB.</li>
-                                            <li>Simulador (5 casos/mes).</li>
+                                            <li><strong>{t('sections.plans.items.pro.includes.list.0')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.pro.includes.list.1')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.pro.includes.list.2')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.pro.includes.list.3')}</strong></li>
+                                            <li>{t('sections.plans.items.pro.includes.list.4')}</li>
+                                            <li>{t('sections.plans.items.pro.includes.list.5')}</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/50 p-2 rounded border border-blue-100">
-                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Incluye:</h4>
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> {t('sections.plans.items.demo.excludes.title')}</h4>
                                         <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
-                                            <li>Simulador Ilimitado.</li>
-                                            <li>Branding Personalizado (Logo).</li>
-                                            <li>Videollamada de Soporte.</li>
+                                            <li>{t('sections.plans.items.pro.excludes.list.0')}</li>
+                                            <li>{t('sections.plans.items.pro.excludes.list.1')}</li>
+                                            <li>{t('sections.plans.items.pro.excludes.list.2')}</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* PREMIUM PLUS */}
+                            {/* PREMIUM PLAN */}
                             <div className="p-5 bg-purple-50 rounded-lg border border-purple-200">
                                 <h3 className="font-bold text-purple-900 text-lg flex justify-between items-center mb-3">
-                                    <span className="flex items-center gap-2">🥇 Premium</span>
-                                    <span className="text-base bg-purple-100 text-purple-800 px-3 py-1 rounded-full">99€ / mes</span>
+                                    <span className="flex items-center gap-2">🥇 {t('sections.plans.items.premium.title')}</span>
+                                    <span className="text-base bg-purple-100 text-purple-800 px-3 py-1 rounded-full">{t('sections.plans.items.premium.price')}</span>
                                 </h3>
                                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> Incluye:</h4>
+                                        <h4 className="font-semibold text-green-700 mb-2 flex items-center gap-1"><span className="text-xs">✅</span> {t('sections.plans.items.demo.includes.title')}</h4>
                                         <ul className="space-y-1 text-purple-900 list-disc pl-4 text-xs">
-                                            <li><strong>50 Horas (3.000 min) IA</strong>.</li>
-                                            <li><strong>Simulador Ilimitado</strong>.</li>
-                                            <li><strong>Branding Personalizado</strong>.</li>
-                                            <li><strong>Soporte Prioritario + Videollamada</strong>.</li>
-                                            <li>Almacenamiento 1TB.</li>
+                                            <li><strong>{t('sections.plans.items.premium.includes.list.0')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.premium.includes.list.1')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.premium.includes.list.2')}</strong></li>
+                                            <li><strong>{t('sections.plans.items.premium.includes.list.3')}</strong></li>
+                                            <li>{t('sections.plans.items.premium.includes.list.4')}</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/50 p-2 rounded border border-purple-100">
-                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> No Incluye:</h4>
+                                        <h4 className="font-semibold text-red-700 mb-2 flex items-center gap-1"><span className="text-xs">❌</span> {t('sections.plans.items.demo.excludes.title')}</h4>
                                         <ul className="space-y-1 text-slate-500 list-disc pl-4 text-xs">
-                                            <li>Gestión de Equipos (Multi-usuario).</li>
-                                            <li>API / Integración HIS.</li>
+                                            <li>{t('sections.plans.items.premium.excludes.list.0')}</li>
+                                            <li>{t('sections.plans.items.premium.excludes.list.1')}</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* CLINICS ONLY */}
+                            {/* CLINICS PLAN */}
                             <div className="grid md:grid-cols-1 gap-4">
                                 <div className="p-5 bg-slate-100 rounded-lg border border-slate-300">
-                                    <h3 className="font-bold text-slate-800 mb-2">🏥 Para Centros de Salud, Universidades y Hospitales</h3>
-                                    <p className="text-sm font-semibold text-slate-700 mb-3">Consultar</p>
+                                    <h3 className="font-bold text-slate-800 mb-2">🏥 {t('sections.plans.items.clinics.title')}</h3>
+                                    <p className="text-sm font-semibold text-slate-700 mb-3">{t('sections.plans.items.clinics.consult')}</p>
                                     <div className="text-xs space-y-2">
                                         <div>
-                                            <span className="font-bold text-green-700">✅ Incluye:</span>
+                                            <span className="font-bold text-green-700">✅ {t('sections.plans.items.demo.includes.title')}</span>
                                             <ul className="list-disc pl-4 text-slate-700 mt-1">
-                                                <li>Usuarios ilimitados.</li>
-                                                <li>Simulador Clínico (casos/mes a medida).</li>
-                                                <li>API / HIS & Compliance.</li>
-                                                <li>SLA Garantizado.</li>
+                                                <li>{t('sections.plans.items.clinics.includes.0')}</li>
+                                                <li>{t('sections.plans.items.clinics.includes.1')}</li>
+                                                <li>{t('sections.plans.items.clinics.includes.2')}</li>
+                                                <li>{t('sections.plans.items.clinics.includes.3')}</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -270,42 +280,42 @@ export function TermsContent() {
                     </section>
 
                     <section className="space-y-4 pt-6">
-                        <h3 className="font-bold text-slate-800">Servicios Adicionales (Extras)</h3>
+                        <h3 className="font-bold text-slate-800">{t('sections.plans.extras.title')}</h3>
                         <div className="grid md:grid-cols-3 gap-4">
                             <div className="p-4 border border-slate-200 rounded-lg">
-                                <h4 className="font-bold text-sm text-slate-900">👤 Agenda Manager</h4>
-                                <p className="text-xs text-slate-500 mt-1">15€ / mes</p>
-                                <p className="text-xs text-slate-600 mt-2">Usuario administrativo adicional para gestión de citas. Sin acceso a historias clínicas.</p>
+                                <h4 className="font-bold text-sm text-slate-900">👤 {t('sections.plans.extras.items.agenda.title')}</h4>
+                                <p className="text-xs text-slate-500 mt-1">{t('sections.plans.extras.items.agenda.price')}</p>
+                                <p className="text-xs text-slate-600 mt-2">{t('sections.plans.extras.items.agenda.desc')}</p>
                             </div>
                             <div className="p-4 border border-slate-200 rounded-lg">
-                                <h4 className="font-bold text-sm text-slate-900">⚡ Pack Minutos IA</h4>
-                                <p className="text-xs text-slate-500 mt-1">15€ / pack</p>
-                                <p className="text-xs text-slate-600 mt-2">500 minutos adicionales de procesamiento IA. Pago único, no caducan mientras la suscripción esté activa.</p>
+                                <h4 className="font-bold text-sm text-slate-900">⚡ {t('sections.plans.extras.items.aiPack.title')}</h4>
+                                <p className="text-xs text-slate-500 mt-1">{t('sections.plans.extras.items.aiPack.price')}</p>
+                                <p className="text-xs text-slate-600 mt-2">{t('sections.plans.extras.items.aiPack.desc')}</p>
                             </div>
                             <div className="p-4 border border-slate-200 rounded-lg">
-                                <h4 className="font-bold text-sm text-slate-900">🚀 Onboarding Asistido</h4>
-                                <p className="text-xs text-slate-500 mt-1">50€ (pago único)</p>
-                                <p className="text-xs text-slate-600 mt-2">Sesión de 45 min con un especialista para configuración inicial e importación de datos.</p>
+                                <h4 className="font-bold text-sm text-slate-900">🚀 {t('sections.plans.extras.items.onboarding.title')}</h4>
+                                <p className="text-xs text-slate-500 mt-1">{t('sections.plans.extras.items.onboarding.price')}</p>
+                                <p className="text-xs text-slate-600 mt-2">{t('sections.plans.extras.items.onboarding.desc')}</p>
                             </div>
                             <div className="p-4 border border-slate-200 rounded-lg">
-                                <h4 className="font-bold text-sm text-slate-900">🎓 Pack Simulador</h4>
-                                <p className="text-xs text-slate-500 mt-1">15€ / pack</p>
-                                <p className="text-xs text-slate-600 mt-2">Pack de 10 casos clínicos interactivos adicionales para práctica. Incluye feedback detallado de la IA.</p>
+                                <h4 className="font-bold text-sm text-slate-900">🎓 {t('sections.plans.extras.items.simPack.title')}</h4>
+                                <p className="text-xs text-slate-500 mt-1">{t('sections.plans.extras.items.simPack.price')}</p>
+                                <p className="text-xs text-slate-600 mt-2">{t('sections.plans.extras.items.simPack.desc')}</p>
                             </div>
                         </div>
                     </section>
 
                     <section className="space-y-3">
-                        <h2 className="text-lg font-bold text-blue-900">8. Limitación de Responsabilidad</h2>
+                        <h2 className="text-lg font-bold text-blue-900">{t('sections.liability.title')}</h2>
                         <p className="text-slate-700 leading-relaxed">
-                            La plataforma no se hace responsable de posibles errores en la transcripción o en las sugerencias de la IA, dado que se trata de una tecnología probabilística. La verificación humana es indispensable en todos los casos.
+                            {t('sections.liability.text')}
                         </p>
                     </section>
 
                     <section className="space-y-3 pt-6 border-t font-medium text-slate-500 text-sm">
                         <div className="flex items-center gap-2">
                             <Gavel className="h-4 w-4" />
-                            <span>Última actualización: Diciembre 2025</span>
+                            <span>{t('sections.footer.text')}</span>
                         </div>
                     </section>
 
@@ -314,3 +324,4 @@ export function TermsContent() {
         </div >
     );
 }
+

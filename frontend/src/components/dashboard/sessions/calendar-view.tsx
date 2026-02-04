@@ -23,6 +23,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { useTranslations } from 'next-intl';
 
 const locales = {
     'es': es,
@@ -49,6 +50,7 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
     const { user } = useAuth();
     const { isAgendaManager } = useRole();
     const { toast } = useToast();
+    const t = useTranslations('Dashboard.Calendar');
     const [googleEvents, setGoogleEvents] = useState<any[]>([]);
 
     const [selectedSession, setSelectedSession] = useState<Session | null>(null);
@@ -56,27 +58,27 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
 
     const handleCancelSession = async () => {
         if (!selectedSession) return;
-        if (!confirm('¿Cancelar esta sesión?')) return;
+        if (!confirm(t('actions.cancelConfirm'))) return;
         try {
             await SessionsAPI.update(selectedSession.id, { status: SessionStatus.CANCELLED });
-            toast({ title: 'Sesión cancelada', description: 'Se ha notificado al profesional.' });
+            toast({ title: t('toasts.cancelSuccess'), description: t('toasts.cancelSuccessDesc') });
             setIsActionDialogOpen(false);
             window.location.reload(); // Simple reload to refresh data
         } catch (error) {
-            toast({ title: 'Error', description: 'No se pudo cancelar.', variant: 'destructive' });
+            toast({ title: t('toasts.loadError'), description: t('toasts.cancelError'), variant: 'destructive' });
         }
     };
 
     const handleDeleteSession = async () => {
         if (!selectedSession) return;
-        if (!confirm('¿Eliminar esta sesión permanentemente?')) return;
+        if (!confirm(t('actions.deleteConfirmPermanent'))) return;
         try {
             await SessionsAPI.delete(selectedSession.id);
-            toast({ title: 'Sesión eliminada', description: 'Se ha notificado al profesional.' });
+            toast({ title: t('toasts.deleteSuccess'), description: t('toasts.deleteSuccessDesc') });
             setIsActionDialogOpen(false);
             window.location.reload();
         } catch (error) {
-            toast({ title: 'Error', description: 'No se pudo eliminar.', variant: 'destructive' });
+            toast({ title: t('toasts.loadError'), description: t('toasts.deleteError'), variant: 'destructive' });
         }
     };
 
@@ -227,8 +229,8 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
             <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                     <div>
-                        <CardTitle>Calendario</CardTitle>
-                        <CardDescription>Vista mensual y semanal de tus sesiones</CardDescription>
+                        <CardTitle>{t('calendarView.title')}</CardTitle>
+                        <CardDescription>{t('calendarView.subtitle')}</CardDescription>
                     </div>
                 </div>
             </CardHeader>
@@ -270,9 +272,9 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
             <Dialog open={isActionDialogOpen} onOpenChange={setIsActionDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Acciones de Sesión</DialogTitle>
+                        <DialogTitle>{t('calendarView.actionsTitle')}</DialogTitle>
                         <DialogDescription>
-                            Como gestor, puedes cancelar o eliminar esta sesión.
+                            {t('calendarView.actionsDesc')}
                             {selectedSession && (
                                 <div className="mt-2 text-sm font-medium text-slate-700">
                                     {selectedSession.clientName} - {format(new Date(selectedSession.startTime), 'PP p', { locale: es })}
@@ -287,14 +289,14 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
                             onClick={handleCancelSession}
                             disabled={selectedSession?.status === SessionStatus.CANCELLED}
                         >
-                            <span className="mr-2">🚫</span> Cancelar Sesión
+                            <span className="mr-2">🚫</span> {t('calendarView.cancelBtn')}
                         </Button>
                         <Button
                             variant="destructive"
                             className="w-full justify-start"
                             onClick={handleDeleteSession}
                         >
-                            <span className="mr-2">🗑️</span> Eliminar Sesión
+                            <span className="mr-2">🗑️</span> {t('calendarView.deleteBtn')}
                         </Button>
                     </div>
                 </DialogContent>

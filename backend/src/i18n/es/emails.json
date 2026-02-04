@@ -1,0 +1,116 @@
+{
+    "welcome": {
+        "subject": "¡Bienvenido a PsicoAIssist!",
+        "title": "¡Bienvenido a PsicoAIssist!",
+        "greeting": "Hola {name},",
+        "intro": "Nos complace darte la bienvenida a PsicoAIssist, tu nuevo asistente de inteligencia artificial para optimizar tu práctica psicológica.",
+        "steps_title": "¿Qué puedes hacer ahora?",
+        "steps": {
+            "1": "Configura tu perfil profesional",
+            "2": "Explora las funciones de transcripción automática",
+            "3": "Genera tu primer informe con IA",
+            "4": "Familiarízate con las herramientas de análisis"
+        },
+        "cta": "Acceder a mi Dashboard",
+        "help": "Si necesitas ayuda, nuestro equipo está disponible en"
+    },
+    "verification": {
+        "subject": "Verifica tu cuenta - PsicoAIssist",
+        "title": "Verifica tu Email",
+        "greeting": "Hola {name},",
+        "message": "Gracias por registrarte en PsicoAIssist. Para comenzar, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente enlace:",
+        "cta": "Verificar Email",
+        "ignore": "Si no has creado una cuenta en PsicoAIssist, puedes ignorar este mensaje."
+    },
+    "subscription": {
+        "subject": "¡Suscripción activada exitosamente!",
+        "title": "¡Suscripción Confirmada!",
+        "subtitle": "¡Excelente elección!",
+        "message": "Tu suscripción al <strong>Plan {planName}</strong> ha sido activada exitosamente.",
+        "features_title": "Ahora tienes acceso a:",
+        "features": {
+            "1": "Transcripción automática ilimitada",
+            "2": "Generación de informes con IA",
+            "3": "Analytics avanzados de tu práctica",
+            "4": "Soporte prioritario"
+        },
+        "cta": "Comenzar ahora"
+    },
+    "reset_password": {
+        "subject": "Restablecer contraseña - PsicoAIssist",
+        "title": "Restablecer Contraseña",
+        "message": "Has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para crear una nueva contraseña:",
+        "cta": "Restablecer Contraseña",
+        "expiry": "Este enlace expirará en 1 hora por seguridad. Si no solicitaste este cambio, ignora este email."
+    },
+    "cancellation": {
+        "subject": "Suscripción cancelada - PsicoAIssist",
+        "title": "Suscripción Cancelada",
+        "message": "Tu suscripción ha sido cancelada. Seguirás teniendo acceso hasta el final de tu período actual de facturación.",
+        "goodbye": "Esperamos verte de vuelta pronto. Si cambias de opinión, puedes reactivar tu suscripción en cualquier momento.",
+        "cta": "Ver Planes"
+    },
+    "session_reminder": {
+        "subject": "Recordatorio de Sesión - PsicoAIssist",
+        "title": "Recordatorio de Sesión",
+        "greeting": "Hola,",
+        "message": "Tienes una sesión programada para mañana. Aquí están los detalles:",
+        "labels": {
+            "patient": "Paciente",
+            "date": "Fecha",
+            "time": "Hora",
+            "type": "Tipo"
+        },
+        "cta": "Ver Agenda"
+    },
+    "client_reminder": {
+        "subject": "Recordatorio de cita con {professionalName}",
+        "title": "Recordatorio de Cita",
+        "greeting": "Hola {clientName},",
+        "message": "Este es un recordatorio de tu cita programada con <strong>{professionalName}</strong>.",
+        "labels": {
+            "date": "Fecha",
+            "time": "Hora"
+        }
+    },
+    "onboarding": {
+        "subject": "Pack On-boarding: ¡Empezamos! 🚀",
+        "title": "¡On-boarding Iniciado!",
+        "greeting": "Hola {name},",
+        "message": "Hemos recibido tu contratación del <strong>Pack de On-boarding</strong>. ¡Gracias por confiar en nosotros!",
+        "process": "Nuestro equipo técnico ya ha sido notificado y comenzará a preparar tu servidor web personalizado. Este proceso suele tardar entre 24 y 48 horas laborables.",
+        "next_steps_title": "¿Qué sigue?",
+        "next_steps": {
+            "1": "Un técnico asignado revisará tu solicitud.",
+            "2": "Configuraremos tu entorno dedicado.",
+            "3": "Te contactaremos por email cuando todo esté listo para entregarte las credenciales de acceso a tu nuevo servidor."
+        },
+        "interim": "Mientras tanto, puedes seguir utilizando la plataforma con normalidad.",
+        "cta": "Ir al Dashboard"
+    },
+    "daily_summary": {
+        "subject": "Resumen de Agenda - Mañana ({count} visitas)",
+        "title": "Tu Agenda para Mañana",
+        "greeting": "Hola,",
+        "message": "Tienes <strong>{count} sesiones</strong> programadas para mañana.",
+        "table_headers": {
+            "time": "Hora",
+            "patient": "Paciente",
+            "type": "Tipo"
+        },
+        "cta": "Ver Agenda Completa"
+    },
+    "video_call": {
+        "subject": "Invitación a Videoconferencia - {professionalName}",
+        "greeting": "Hola {clientName},",
+        "message": "{professionalName} te ha invitado a una sesión por videoconferencia.",
+        "instruction": "Por favor, haz clic en el siguiente enlace para unirte a la llamada a la hora acordada:",
+        "cta": "Unirse a la Videollamada",
+        "fallback": "Si el botón no funciona, copia y pega este enlace en tu navegador:",
+        "footer": "Este es un mensaje automático de PsicoAIssist."
+    },
+    "common": {
+        "copyright": "© {year} PsicoAIssist. Todos los derechos reservados.",
+        "support": "Soporte PsicoAIssist"
+    }
+}

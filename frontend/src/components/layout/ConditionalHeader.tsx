@@ -6,8 +6,14 @@ import { Header } from './header';
 export default function ConditionalHeader() {
   const pathname = usePathname();
 
-  // No mostrar el header normal en páginas de admin o legal (tiene su propio header)
-  if (pathname?.startsWith('/admin') || pathname?.startsWith('/legal')) {
+  // Check if pathname contains admin, legal, or dashboard segments
+  // This handles paths like /es/admin, /en/dashboard, etc.
+  const isExcluded =
+    pathname?.includes('/admin') ||
+    pathname?.includes('/legal') ||
+    pathname?.includes('/dashboard');
+
+  if (isExcluded) {
     return null;
   }
 

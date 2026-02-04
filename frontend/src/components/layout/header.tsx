@@ -1,10 +1,13 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { useState } from 'react';
 import { Menu, X, Heart, LogIn, UserPlus, Building2, Scale } from 'lucide-react';
+import LanguageSwitcher from '@/components/language-switcher';
+import { useTranslations } from 'next-intl';
 
 export function Header() {
+  const t = useTranslations('Landing.Header');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -27,26 +30,26 @@ export function Header() {
               href="/#features"
               className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
-              Características
+              {t('nav.features')}
             </Link>
             <Link
               href="/simulator/try"
               className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
-              Simulador
+              {t('nav.simulator')}
             </Link>
             <Link
               href="/#pricing"
               className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
             >
-              Precios
+              {t('nav.pricing')}
             </Link>
             {process.env.NODE_ENV !== 'production' && (
               <Link
                 href="/#testimonials"
                 className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
-                Testimonios
+                {t('nav.testimonials')}
               </Link>
             )}
             <div className="hidden lg:flex items-center space-x-8">
@@ -54,21 +57,22 @@ export function Header() {
                 href="/docs"
                 className="text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
-                Documentación
+                {t('nav.docs')}
               </Link>
               <Link
                 href="/blog"
                 className="text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
-                Blog
+                {t('nav.blog')}
               </Link>
               <Link
                 href="/legal?tab=terms"
                 className="flex items-center text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
               >
                 <Scale className="w-4 h-4 mr-1.5" />
-                Legal
+                {t('nav.legal')}
               </Link>
+              <LanguageSwitcher />
             </div>
           </nav>
 
@@ -79,21 +83,21 @@ export function Header() {
               className="hidden xl:inline-flex items-center px-3 py-1.5 text-xs bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors"
             >
               <Building2 className="w-3 h-3 mr-1" />
-              Para Clínicas
+              {t('cta.clinics')}
             </Link>
             <Link
               href="/auth/login"
               className="inline-flex items-center px-3 py-2 text-sm lg:text-base text-gray-700 font-medium hover:text-blue-600 transition-colors whitespace-nowrap"
             >
               <LogIn className="w-4 h-4 mr-2" />
-              Iniciar sesión
+              {t('cta.login')}
             </Link>
             <Link
               href="/auth/register"
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm lg:text-base font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
             >
               <UserPlus className="w-4 h-4 mr-2" />
-              Prueba gratis
+              {t('cta.tryFree')}
             </Link>
           </div>
 
@@ -119,21 +123,21 @@ export function Header() {
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Características
+                {t('nav.features')}
               </Link>
               <Link
                 href="/simulator/try"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Simulador
+                {t('nav.simulator')}
               </Link>
               <Link
                 href="/#pricing"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Precios
+                {t('nav.pricing')}
               </Link>
               {process.env.NODE_ENV !== 'production' && (
                 <Link
@@ -141,7 +145,7 @@ export function Header() {
                   className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Testimonios
+                  {t('nav.testimonials')}
                 </Link>
               )}
               <Link
@@ -149,14 +153,14 @@ export function Header() {
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Documentación
+                {t('nav.docs')}
               </Link>
               <Link
                 href="/blog"
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                blog
+                {t('nav.blog')}
               </Link>
               <Link
                 href="/legal?tab=terms"
@@ -165,7 +169,7 @@ export function Header() {
               >
                 <div className="flex items-center">
                   <Scale className="w-4 h-4 mr-2" />
-                  Legal
+                  {t('nav.legal')}
                 </div>
               </Link>
               <Link
@@ -173,7 +177,7 @@ export function Header() {
                 className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Para Clínicas
+                {t('cta.clinics')}
               </Link>
               <div className="pt-4 border-t border-gray-200 space-y-3">
                 <Link
@@ -183,7 +187,7 @@ export function Header() {
                 >
                   <div className="flex items-center">
                     <LogIn className="w-4 h-4 mr-2" />
-                    Iniciar sesión
+                    {t('cta.login')}
                   </div>
                 </Link>
                 <Link
@@ -193,7 +197,7 @@ export function Header() {
                 >
                   <div className="flex items-center justify-center">
                     <UserPlus className="w-4 h-4 mr-2" />
-                    Prueba gratis
+                    {t('cta.tryFree')}
                   </div>
                 </Link>
               </div>

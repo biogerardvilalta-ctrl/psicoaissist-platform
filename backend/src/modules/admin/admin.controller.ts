@@ -51,7 +51,7 @@ export class AdminController {
           role: { notIn: [UserRole.ADMIN, UserRole.SUPER_ADMIN] },
           status: UserStatus.ACTIVE
         },
-        select: { id: true, email: true, firstName: true }
+        select: { id: true, email: true, firstName: true, preferredLanguage: true }
       });
     } else if (target === 'SPECIFIC') {
       if (!userIds || userIds.length === 0) {
@@ -59,7 +59,7 @@ export class AdminController {
       }
       recipients = await this.prisma.user.findMany({
         where: { id: { in: userIds } },
-        select: { id: true, email: true, firstName: true }
+        select: { id: true, email: true, firstName: true, preferredLanguage: true }
       });
     }
 
@@ -75,7 +75,7 @@ export class AdminController {
       // Send Email
       if (type === 'EMAIL' || type === 'BOTH') {
         try {
-          await this.emailService.sendCustomEmail(user.email, subject, message);
+          await this.emailService.sendCustomEmail(user.email, subject, message, user.preferredLanguage);
           results.emailsSent++;
         } catch (e) {
           console.error(`Failed to send email to ${user.email}`, e);

@@ -5,11 +5,16 @@ import { Footer } from './footer';
 
 export default function ConditionalFooter() {
   const pathname = usePathname();
-  
+
   // No mostrar el footer en páginas de admin
-  if (pathname?.startsWith('/admin')) {
+  // Check if pathname contains admin or dashboard segments
+  const isExcluded =
+    pathname?.includes('/admin') ||
+    pathname?.includes('/dashboard');
+
+  if (isExcluded) {
     return null;
   }
-  
+
   return <Footer />;
 }

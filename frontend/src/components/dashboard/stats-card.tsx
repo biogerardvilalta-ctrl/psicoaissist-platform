@@ -52,7 +52,7 @@ export default function StatsCard({
         {trend && (
           <div className={`text-sm font-medium ${trend.isPositive ? 'text-green-600' : 'text-red-600'
             }`}>
-            <span>{trend.value} vs mes anterior</span>
+            <span>{trend.value}</span>
           </div>
         )}
       </div>

@@ -1,0 +1,116 @@
+{
+    "welcome": {
+        "subject": "Benvingut a PsicoAIssist!",
+        "title": "Benvingut a PsicoAIssist!",
+        "greeting": "Hola {name},",
+        "intro": "Ens complau donar-te la benvinguda a PsicoAIssist, el teu nou assistent d'intel·ligència artificial per optimitzar la teva pràctica psicològica.",
+        "steps_title": "Què pots fer ara?",
+        "steps": {
+            "1": "Configura el teu perfil professional",
+            "2": "Explora les funcions de transcripció automàtica",
+            "3": "Genera el teu primer informe amb IA",
+            "4": "Familiaritza't amb les eines d'anàlisi"
+        },
+        "cta": "Accedir al meu Dashboard",
+        "help": "Si necessites ajuda, el nostre equip està disponible a"
+    },
+    "verification": {
+        "subject": "Verifica el teu compte - PsicoAIssist",
+        "title": "Verifica el teu Email",
+        "greeting": "Hola {name},",
+        "message": "Gràcies per registrar-te a PsicoAIssist. Per començar, si us plau verifica la teva adreça de correu electrònic fent clic a l'enllaç següent:",
+        "cta": "Verificar Email",
+        "ignore": "Si no has creat un compte a PsicoAIssist, pots ignorar aquest missatge."
+    },
+    "subscription": {
+        "subject": "Subscripció activada amb èxit!",
+        "title": "Subscripció Confirmada!",
+        "subtitle": "Excel·lent elecció!",
+        "message": "La teva subscripció al <strong>Pla {planName}</strong> ha estat activada amb èxit.",
+        "features_title": "Ara tens accés a:",
+        "features": {
+            "1": "Transcripció automàtica il·limitada",
+            "2": "Generació d'informes amb IA",
+            "3": "Analytics avançats de la teva pràctica",
+            "4": "Suport prioritari"
+        },
+        "cta": "Començar ara"
+    },
+    "reset_password": {
+        "subject": "Restablir contrasenya - PsicoAIssist",
+        "title": "Restablir Contrasenya",
+        "message": "Has sol·licitat restablir la teva contrasenya. Fes clic a l'enllaç següent per crear una nova contrasenya:",
+        "cta": "Restablir Contrasenya",
+        "expiry": "Aquest enllaç caducarà en 1 hora per seguretat. Si no has sol·licitat aquest canvi, ignora aquest correu."
+    },
+    "cancellation": {
+        "subject": "Subscripció cancel·lada - PsicoAIssist",
+        "title": "Subscripció Cancel·lada",
+        "message": "La teva subscripció ha estat cancel·lada. Seguiràs tenint accés fins al final del teu període actual de facturació.",
+        "goodbye": "Esperem veure't de nou aviat. Si canvies d'opinió, pots reactivar la teva subscripció en qualsevol moment.",
+        "cta": "Veure Plans"
+    },
+    "session_reminder": {
+        "subject": "Recordatori de Sessió - PsicoAIssist",
+        "title": "Recordatori de Sessió",
+        "greeting": "Hola,",
+        "message": "Tens una sessió programada per demà. Aquí tens els detalls:",
+        "labels": {
+            "patient": "Pacient",
+            "date": "Data",
+            "time": "Hora",
+            "type": "Tipus"
+        },
+        "cta": "Veure Agenda"
+    },
+    "client_reminder": {
+        "subject": "Recordatori de cita amb {professionalName}",
+        "title": "Recordatori de Cita",
+        "greeting": "Hola {clientName},",
+        "message": "Aquest és un recordatori de la teva cita programada amb <strong>{professionalName}</strong>.",
+        "labels": {
+            "date": "Data",
+            "time": "Hora"
+        }
+    },
+    "onboarding": {
+        "subject": "Pack On-boarding: Comencem! 🚀",
+        "title": "On-boarding Iniciat!",
+        "greeting": "Hola {name},",
+        "message": "Hem rebut la teva contractació del <strong>Pack de On-boarding</strong>. Gràcies per confiar en nosaltres!",
+        "process": "El nostre equip tècnic ja ha estat notificat i començarà a preparar el teu servidor web personalitzat. Aquest procés sol trigar entre 24 i 48 hores laborables.",
+        "next_steps_title": "Què segueix?",
+        "next_steps": {
+            "1": "Un tècnic assignat revisarà la teva sol·licitud.",
+            "2": "Configurarem el teu entorn dedicat.",
+            "3": "Et contactarem per correu quan tot estigui llest per donar-te les credencials d'accés al teu nou servidor."
+        },
+        "interim": "Mentrestant, pots seguir utilitzant la plataforma amb normalitat.",
+        "cta": "Anar al Dashboard"
+    },
+    "daily_summary": {
+        "subject": "Resum d'Agenda - Demà ({count} visites)",
+        "title": "La teva Agenda per Demà",
+        "greeting": "Hola,",
+        "message": "Tens <strong>{count} sessions</strong> programades per demà.",
+        "table_headers": {
+            "time": "Hora",
+            "patient": "Pacient",
+            "type": "Tipus"
+        },
+        "cta": "Veure Agenda Completa"
+    },
+    "video_call": {
+        "subject": "Invitació a Videoconferència - {professionalName}",
+        "greeting": "Hola {clientName},",
+        "message": "{professionalName} t'ha convidat a una sessió per videoconferència.",
+        "instruction": "Si us plau, fes clic a l'enllaç següent per unir-te a la trucada a l'hora acordada:",
+        "cta": "Unir-se a la Videotrucada",
+        "fallback": "Si el botó no funciona, copia i enganxa aquest enllaç al teu navegador:",
+        "footer": "Aquest és un missatge automàtic de PsicoAIssist."
+    },
+    "common": {
+        "copyright": "© {year} PsicoAIssist. Tots els drets reservats.",
+        "support": "Suport PsicoAIssist"
+    }
+}

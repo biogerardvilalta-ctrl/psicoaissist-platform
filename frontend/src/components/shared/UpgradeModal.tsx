@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Crown, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import { useRouter } from "next/navigation";
 
 interface UpgradeModalProps {
