@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AuditAPI, AuditLog } from '@/lib/audit-api';
@@ -13,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 export default function ActivityLogPage() {
+    const tCommon = useTranslations('Common');
     const router = useRouter();
     const { toast } = useToast();
     const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -26,7 +28,7 @@ export default function ActivityLogPage() {
             } catch (error) {
                 console.error(error);
                 toast({
-                    title: 'Error',
+                    title: tCommon('error'),
                     description: 'No se pudo cargar el historial de actividad.',
                     variant: 'destructive',
                 });

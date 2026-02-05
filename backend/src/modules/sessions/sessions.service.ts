@@ -105,18 +105,18 @@ export class SessionsService {
             endDate = new Date(startDate.getTime() + durationMinutes * 60000);
         }
 
-        // 2. Check for Overlaps
+        // 2. Check for Overlaps (exclude CANCELLED and COMPLETED sessions)
         const conflictingSession = await this.prisma.session.findFirst({
             where: {
                 userId: targetUserId,
-                status: { not: SessionStatus.CANCELLED },
+                status: { notIn: [SessionStatus.CANCELLED, SessionStatus.COMPLETED] },
                 startTime: { lt: endDate },
                 endTime: { gt: startDate },
             }
         });
 
         if (conflictingSession) {
-            throw new ConflictException('The professional already has a session scheduled for this time slot.');
+            throw new ConflictException('El profesional ya tiene una sesión agendada para este horario.');
         }
 
         const session = await this.prisma.session.create({

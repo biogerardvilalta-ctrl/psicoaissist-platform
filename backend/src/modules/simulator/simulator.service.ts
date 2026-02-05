@@ -67,14 +67,14 @@ export class SimulatorService {
     /**
      * Generates a random clinical case (Persona).
      */
-    async generateCase(userId: string, difficulty: 'easy' | 'medium' | 'hard' = 'medium', showNonVerbalCues?: boolean): Promise<PatientProfile> {
+    async generateCase(userId: string, difficulty: 'easy' | 'medium' | 'hard' = 'medium', showNonVerbalCues?: boolean, language?: string): Promise<PatientProfile> {
         this.logger.log(`Starting generateCase for user ${userId}`);
         try {
             // Enforce Limits
             await this.checkAndIncrementUsage(userId);
 
             const user = await this.prisma.user.findUnique({ where: { id: userId } });
-            const lang = user?.preferredLanguage || 'ca'; // Default to Catalan
+            const lang = language?.toLowerCase() || user?.preferredLanguage || 'ca'; // Priority: Arg > User Pref > Default
 
             // If showNonVerbalCues is true, we ask for more detailed body language
             const nonVerbalInstruction = showNonVerbalCues
@@ -167,15 +167,19 @@ export class SimulatorService {
     /**
      * Handles the chat interaction with the simulated patient.
      */
-    async chat(history: { role: 'user' | 'model'; parts: string }[], newMessage: string, profile: PatientProfile, userId?: string): Promise<string> {
-        let lang = 'ca';
+    /**
+     * Handles the chat interaction with the simulated patient.
+     */
+    async chat(history: { role: 'user' | 'model'; parts: string }[], newMessage: string, profile: PatientProfile, userId?: string, language?: string): Promise<string> {
+        let lang = language?.toLowerCase() || 'ca';
+
         if (userId) {
-            const user = await this.prisma.user.findUnique({ where: { id: userId } });
-            if (user?.preferredLanguage) lang = user.preferredLanguage;
+            if (!language) {
+                const user = await this.prisma.user.findUnique({ where: { id: userId } });
+                if (user?.preferredLanguage) lang = user.preferredLanguage;
+            }
 
             // Integrity & Duration Check
-            // We only check if profile has sessionStart (new sessions). Old sessions (if any active) might fail or pass depending on strictness.
-            // Let's enforce strictly for security.
             if (profile.sessionStart && profile.signature) {
                 const expectedSig = this.signSession(userId, profile.sessionStart, profile.difficulty);
                 if (profile.signature !== expectedSig) {
@@ -186,16 +190,6 @@ export class SimulatorService {
                 const LIMIT_MINUTES = 45; // 45 minutes limit
                 if (elapsedMinutes > LIMIT_MINUTES) {
                     throw new ForbiddenException("Session time expired (" + LIMIT_MINUTES + " mins limit)");
-                }
-            } else {
-                // If it's a demo or old session without signature, we might allow or block.
-                // For safety in this update, if userId is present (Authenticated) and no signature -> Block new cases.
-                // But let's allow "Demo" route which passes NO userId usually (or different path).
-                // If this is called from authenticated controller, userId is present.
-                if (!profile.sessionStart) {
-                    // Optional: generate one now? No, prevent manipulation.
-                    // Allow legacy for 1 hour? No, just strict.
-                    // throw new ForbiddenException("Missing session security context");
                 }
             }
         }
@@ -219,6 +213,8 @@ export class SimulatorService {
            - ANSIEDAD(0 - 100): Nivel de activación.Sube si se tocan "triggers" antes de tiempo.
            - INSIGHT(0 - 100): Comprensión del problema.Empieza BAJO(10 - 20).Solo sube con preguntas reflexivas muy buenas.
         
+        ⚠️ IMPORTANTE: Estos valores son INTERNOS. NUNCA los menciones explícitamente en tus respuestas. Úsalos solo para guiar tu comportamiento.
+        
         2. REGLA "SHOW, DON'T TELL"(IMPORTANTE):
         - NO digas "estoy nervioso".
            - USA ACCIONES ENTRE ASTERISCOS: "*Desvía la mirada y juega con las manos*" o "*Se calla abruptamente*".
@@ -234,7 +230,7 @@ export class SimulatorService {
         - Usa titubeos naturales("eh...", "bueno...") si la ANSIEDAD es alta.
         - Respuestas de longitud realista(no monólogos, salvo que seas "Verborreico").
 
-            IDIOMA: Español(Mantén coherencia con la variante regional si el nombre lo sugiere).
+            IDIOMA: (Usa el idioma definido al inicio: ${lang === 'es' ? 'ESPAÑOL' : lang === 'en' ? 'ENGLISH' : 'CATALÀ'}).
         `;
 
         try {
@@ -264,14 +260,10 @@ export class SimulatorService {
     /**
      * Generates a supervisory report after the session with statistics.
      */
-    async evaluate(history: { role: 'user' | 'model'; parts: string }[], userId: string, profile: PatientProfile, durationSeconds?: number): Promise<{ feedback: string; metrics: any }> {
+    async evaluate(history: { role: 'user' | 'model'; parts: string }[], userId: string, profile: PatientProfile, durationSeconds?: number, language?: string): Promise<{ feedback: string; metrics: any }> {
         // Increment Minutes Used if duration provided
         if (durationSeconds && durationSeconds > 0) {
             const minutes = Math.ceil(durationSeconds / 60);
-
-            // Limit check for minutes (optional, but good practice to ensure they don't go over if we want strict enforcement)
-            // But usually we deduct after usage.
-            // Just increment for now.
             try {
                 await this.prisma.user.update({
                     where: { id: userId },
@@ -297,10 +289,12 @@ export class SimulatorService {
             return `** ${speaker}**: ${text} `;
         }).join('\n\n');
 
-        // Fetch user language preference
-        const user = await this.prisma.user.findUnique({ where: { id: userId } });
-        const lang = user?.preferredLanguage || 'ca'; // Default to Catalan check
-        const langName = lang === 'es' ? 'ESPAÑOL' : lang === 'en' ? 'ENGLISH' : 'CATALÀ';
+        // Determine language
+        let lang = language?.toLowerCase();
+        if (!lang) {
+            const user = await this.prisma.user.findUnique({ where: { id: userId } });
+            lang = user?.preferredLanguage || 'ca';
+        }
 
         let prompt = '';
 
@@ -331,8 +325,36 @@ export class SimulatorService {
 
             IMPORTANT: El camp 'feedback' ha de ser una cadena de text (string) que contingui el Markdown formatat. Assegura't d'escapar els salts de línia correctament en el JSON.
             `;
+        } else if (lang === 'en') {
+            // English prompt
+            prompt = `
+            ACT AS AN EXPERT CLINICAL SUPERVISOR (CBT / Humanistic MODEL).
+            Analyze the following transcript of a simulated session between a Therapist (User) and a Patient (AI).
+            
+            === TRANSCRIPT ===
+            ${transcript}
+            ====================
+
+            YOUR TASK:
+            1. Evaluate the therapist's empathy, effectiveness, and professionalism (0-100).
+            2. Write a detailed report in Markdown format (feedback). DO NOT COPY THE EXAMPLE STRUCTURE LITERALLY, FILL IT WITH SPECIFIC CONTENT FROM THE SESSION.
+            
+            RESPONSE LANGUAGE: ENGLISH.
+
+            Respond with a valid JSON object in this format:
+            {
+                "metrics": {
+                    "empathy": (0-100),
+                    "intervention_effectiveness": (0-100),
+                    "professionalism": (0-100)
+                },
+                "feedback": "# 📊 Executive Summary\\n[Write here a 3-line summary of the overall performance]\\n\\n## 🔑 Key Moments\\n[Quote verbatim 2 or 3 specific interventions and analyze them]\\n\\n## ✅ Strengths\\n- [Point 1]\\n- [Point 2]\\n\\n## ⚠️ Areas for Improvement\\n- [Area 1]\\n- [Area 2]\\n\\n## 💡 Clinical Recommendation\\n[Practical advice for the next session]"
+            }
+
+            IMPORTANT: The 'feedback' field must be a text string containing the formatted Markdown. Make sure to escape line breaks correctly in the JSON.
+            `;
         } else {
-            // Default to Spanish
+            // Default to Spanish (fallback)
             prompt = `
             ACTÚA COMO UN SUPERVISOR CLÍNICO EXPERTO (MODELO CBT / Humanista).
             Analiza la siguiente transcripción de una sesión simulada entre un Terapeuta (Usuario) y un Paciente (IA).
@@ -354,7 +376,7 @@ export class SimulatorService {
                     "intervention_effectiveness": (0-100),
                     "professionalism": (0-100)
                 },
-                "feedback": "# 📊 Resumen Ejecutivo\n[Escribe aquí un resumen de 3 líneas sobre el desempeño global]\n\n## 🔑 Momentos Clave\n[Cita textualmente 2 o 3 intervenciones específicas y analízalas]\n\n## ✅ Puntos Fuertes\n- [Punto 1]\n- [Punto 2]\n\n## ⚠️ Áreas de Mejora\n- [Area 1]\n- [Area 2]\n\n## 💡 Recomendación Clínica\n[Consejo práctico para la próxima sesión]"
+                "feedback": "# 📊 Resumen Ejecutivo\\n[Escribe aquí un resumen de 3 líneas sobre el desempeño global]\\n\\n## 🔑 Momentos Clave\\n[Cita textualmente 2 o 3 intervenciones específicas y analízalas]\\n\\n## ✅ Puntos Fuertes\\n- [Punto 1]\\n- [Punto 2]\\n\\n## ⚠️ Áreas de Mejora\\n- [Area 1]\\n- [Area 2]\\n\\n## 💡 Recomendación Clínica\\n[Consejo práctico para la próxima sesión]"
             }
 
             IMPORTANTE: El campo 'feedback' debe ser una cadena de texto (string) que contenga el Markdown formateado. Asegúrate de escapar los saltos de línea correctamente en el JSON.

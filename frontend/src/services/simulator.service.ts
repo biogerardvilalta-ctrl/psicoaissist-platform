@@ -47,20 +47,20 @@ export interface StatsData {
 }
 
 export const simulatorService = {
-    startSimulation: async (difficulty: 'easy' | 'medium' | 'hard', showNonVerbalCues: boolean = true): Promise<PatientProfile> => {
+    startSimulation: async (difficulty: 'easy' | 'medium' | 'hard', showNonVerbalCues: boolean = true, language?: string): Promise<PatientProfile> => {
         // httpClient returns the data directly
-        return await httpClient.post<PatientProfile>('/api/v1/simulator/start', { difficulty, showNonVerbalCues });
+        return await httpClient.post<PatientProfile>('/api/v1/simulator/start', { difficulty, showNonVerbalCues, language });
     },
 
-    sendMessage: async (message: string, history: Array<{ role: 'user' | 'model'; parts: string }>, profile: PatientProfile) => {
-        return await httpClient.post<{ response: string }>('/api/v1/simulator/chat', { message, history, profile });
+    sendMessage: async (message: string, history: Array<{ role: 'user' | 'model'; parts: string }>, profile: PatientProfile, language?: string) => {
+        return await httpClient.post<{ response: string }>('/api/v1/simulator/chat', { message, history, profile, language });
     },
 
-    evaluateSession: async (history: Array<{ role: 'user' | 'model'; parts: string }>, profile: PatientProfile, durationSeconds?: number) => {
+    evaluateSession: async (history: Array<{ role: 'user' | 'model'; parts: string }>, profile: PatientProfile, durationSeconds?: number, language?: string) => {
         return await httpClient.post<{
             feedback: string;
             metrics: { empathy: number; intervention_effectiveness: number; professionalism: number }
-        }>('/api/v1/simulator/evaluate', { history, profile, durationSeconds });
+        }>('/api/v1/simulator/evaluate', { history, profile, durationSeconds, language });
     },
 
     getReports: async (filters?: { period?: string; patientName?: string; date?: string }) => {

@@ -13,6 +13,10 @@ class StartSimulationDto {
 
     @IsOptional()
     showNonVerbalCues?: boolean;
+
+    @IsString()
+    @IsOptional()
+    language?: string;
 }
 
 class ChatDto {
@@ -27,6 +31,10 @@ class ChatDto {
     @IsObject()
     @IsNotEmpty()
     profile: PatientProfile;
+
+    @IsString()
+    @IsOptional()
+    language?: string;
 }
 
 class EndSimulationDto {
@@ -40,6 +48,10 @@ class EndSimulationDto {
 
     @IsOptional()
     durationSeconds?: number;
+
+    @IsString()
+    @IsOptional()
+    language?: string;
 }
 
 @Controller('simulator')
@@ -51,7 +63,7 @@ export class SimulatorController {
 
     @Post('start')
     async start(@Body() dto: StartSimulationDto, @Request() req) {
-        return this.simulatorService.generateCase(req.user.id, dto.difficulty, dto.showNonVerbalCues);
+        return this.simulatorService.generateCase(req.user.id, dto.difficulty, dto.showNonVerbalCues, dto.language);
     }
 
     @Post('chat')
@@ -59,13 +71,13 @@ export class SimulatorController {
         // Note: In a real app, we should validate 'profile' matches a cached session to prevent manipulation,
         // but for this MVP, passing it back is fine.
         return {
-            response: await this.simulatorService.chat(dto.history, dto.message, dto.profile, req.user.id)
+            response: await this.simulatorService.chat(dto.history, dto.message, dto.profile, req.user.id, dto.language)
         };
     }
 
     @Post('evaluate')
     async evaluate(@Body() dto: EndSimulationDto, @Request() req) {
-        return this.simulatorService.evaluate(dto.history, req.user.id, dto.profile, dto.durationSeconds);
+        return this.simulatorService.evaluate(dto.history, req.user.id, dto.profile, dto.durationSeconds, dto.language);
     }
 
     @Get('reports')

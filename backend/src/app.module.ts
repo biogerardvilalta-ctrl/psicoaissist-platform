@@ -122,7 +122,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     I18nModule.forRoot({
       fallbackLanguage: 'es',
       loaderOptions: {
-        path: join(__dirname, '/i18n/'),
+        path: join(__dirname, 'i18n'),
         watch: true,
       },
       resolvers: [

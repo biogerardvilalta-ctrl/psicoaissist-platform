@@ -397,7 +397,7 @@ export class ReportsService {
             notesSummary,
             firstSessionNote: config.useFirstSession ? firstSessionNote : undefined,
             additionalInstructions: data.additionalInstructions,
-            language: user?.preferredLanguage || 'es' // Pass user language
+            language: data.language || user?.preferredLanguage || 'es' // Pass user language
         });
 
         console.log(`[ReportsService] Draft generated. Length: ${draftContent.length}`);

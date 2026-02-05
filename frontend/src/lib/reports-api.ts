@@ -58,6 +58,7 @@ export interface GenerateDraftData {
     reportType: ReportType;
     sessionIds: string[];
     additionalInstructions?: string;
+    language?: string;
 }
 
 export class ReportsAPI {

@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 export default function ClientDetailPage({ params }: { params: { id: string } }) {
     const t = useTranslations('Clients.Detail');
+    const tCommon = useTranslations('Common');
     const router = useRouter();
     const { toast } = useToast();
     const [client, setClient] = useState<Client | null>(null);
@@ -43,8 +44,8 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
             } catch (error) {
                 console.error('Error loading data:', error);
                 toast({
-                    title: "Error",
-                    description: "No se pudo cargar la información.",
+                    title: tCommon('error'),
+                    description: tCommon('loadError'),
                     variant: "destructive",
                 });
             } finally {

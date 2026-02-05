@@ -14,6 +14,7 @@ import { useTranslations } from 'next-intl';
 
 export default function NewClientPage() {
     const t = useTranslations('Clients.New');
+    const tCommon = useTranslations('Common');
     const router = useRouter();
     const { toast } = useToast();
     const { isAgendaManager } = useRole();
@@ -32,7 +33,7 @@ export default function NewClientPage() {
         if (isAgendaManager() && !values.professionalId) {
             toast({
                 variant: 'destructive',
-                title: 'Error',
+                title: tCommon('error'),
                 description: t('errors.selectProfessional'),
             });
             return;

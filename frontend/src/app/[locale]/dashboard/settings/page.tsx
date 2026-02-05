@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AuthAPI } from '@/lib/auth-api';
-import { CalendarIcon, BrainCircuit, Bell, Settings, Clock, Euro, Users, Palette, FileJson } from 'lucide-react';
+import { CalendarIcon, Bell, Settings, Clock, Euro, Users, Palette, FileJson } from 'lucide-react';
 import { AgendaManagersSettings } from '@/components/dashboard/settings/agenda-managers-settings';
 import { BrandingSettings } from '@/components/dashboard/settings/branding-settings';
 import { GoogleCalendarConnect } from "@/components/settings/GoogleCalendarConnect";
@@ -33,7 +33,6 @@ export default function SettingsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations('Dashboard.Settings');
-  const tAI = useTranslations('AISettings');
   const locale = useLocale();
 
   // Navigation State
@@ -61,7 +60,6 @@ export default function SettingsPage() {
   const [bufferTime, setBufferTime] = useState<string>("10");
   const [workStartHour, setWorkStartHour] = useState<string>("09:00");
   const [workEndHour, setWorkEndHour] = useState<string>("18:00");
-  const [preferredLanguage, setPreferredLanguage] = useState<string>("ca");
   const [loading, setLoading] = useState(false);
 
   // Blocking State
@@ -79,11 +77,11 @@ export default function SettingsPage() {
       setBufferTime(user.bufferTime?.toString() || "10");
       setWorkStartHour(user.workStartHour || "09:00");
       setWorkEndHour(user.workEndHour || "18:00");
-      setPreferredLanguage(user.preferredLanguage || "ca");
+      setWorkEndHour(user.workEndHour || "18:00");
 
       // Redirect if on Basic plan and trying to access blocked section
       const isBasic = user.subscription?.planType?.toUpperCase() === 'BASIC';
-      if (isBasic && (activeSection === 'agenda' || activeSection === 'ai')) {
+      if (isBasic && (activeSection === 'agenda')) {
         setActiveSection('notifications');
       }
     }
@@ -161,8 +159,6 @@ export default function SettingsPage() {
     ...((user?.subscription?.planType?.toUpperCase() === 'PREMIUM' || user?.role === 'ADMIN') ? [{ id: 'branding', label: t('sections.branding'), icon: Palette }] : []),
     // Solo mostrar Gestores de Agenda si tiene el pack activado con agendaManagerEnabled o es ADMIN
     ...((user?.agendaManagerEnabled === true || user?.role === 'ADMIN') ? [{ id: 'managers', label: t('sections.managers'), icon: Users }] : []),
-    // Hide AI for Basic
-    ...(user?.subscription?.planType?.toUpperCase() !== 'BASIC' ? [{ id: 'ai', label: t('sections.ai'), icon: BrainCircuit }] : []),
     { id: 'notifications', label: t('sections.notifications'), icon: Bell },
     { id: 'privacy', label: t('sections.privacy'), icon: FileJson },
   ];
@@ -405,77 +401,7 @@ export default function SettingsPage() {
 
 
 
-        {/* AI SECTION */}
-        {activeSection === 'ai' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('ai.title')}</CardTitle>
-              <CardDescription>{t('ai.subtitle')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
-                  <Checkbox
-                    checked={user?.brandingConfig?.syncAiLanguage !== false}
-                    onCheckedChange={(checked) => {
-                      const newConfig = { ...user?.brandingConfig, syncAiLanguage: !!checked };
-                      const updates: any = { brandingConfig: newConfig };
 
-                      // If turning ON, sync immediately
-                      if (checked) {
-                        updates.preferredLanguage = locale;
-                        setPreferredLanguage(locale);
-                      }
-
-                      updateUser({ ...user!, brandingConfig: newConfig, ...(checked ? { preferredLanguage: locale } : {}) });
-                      handleUpdateProfile(updates);
-                    }}
-                  />
-                  <div className="space-y-1 leading-none">
-                    <Label>{t('ai.syncLanguage')}</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('ai.syncLanguageHelp')}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t('ai.preferredLanguage')}</Label>
-                  <Select
-                    value={preferredLanguage}
-                    onValueChange={(val) => {
-                      setPreferredLanguage(val);
-                      // Disable sync when manually selecting
-                      const newConfig = { ...user?.brandingConfig, syncAiLanguage: false };
-                      updateUser({ ...user!, brandingConfig: newConfig, preferredLanguage: val });
-
-                      handleUpdateProfile({
-                        preferredLanguage: val,
-                        brandingConfig: newConfig
-                      });
-                    }}
-                    disabled={loading}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('ai.selectLanguage')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="es">{t('ai.languages.es')}</SelectItem>
-                      <SelectItem value="ca">{t('ai.languages.ca')}</SelectItem>
-                      <SelectItem value="en">{t('ai.languages.en')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <div className="text-xs text-muted-foreground mt-2">
-                    {tAI.rich('helpText', {
-                      strong: (chunks) => <strong>{chunks}</strong>,
-                      p: (chunks) => <p className="mb-1 last:mb-0">{chunks}</p>
-                    })}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* NOTIFICATIONS SECTION */}
         {activeSection === 'notifications' && (

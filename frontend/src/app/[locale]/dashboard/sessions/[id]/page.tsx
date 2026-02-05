@@ -17,7 +17,7 @@ import {
     Mail
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, ca, enUS } from 'date-fns/locale';
 import { AudioRecorder } from '@/components/dashboard/sessions/audio-recorder';
 import { AiAPI } from '@/lib/ai-api';
 import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
@@ -43,12 +43,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { useSocket } from '@/hooks/use-socket';
 import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
 import { useAuth } from '@/contexts/auth-context';
+import { useTranslations, useLocale } from 'next-intl';
 
-export default function SessionDetailPage({ params }: { params: { id: string } }) {
+export default function SessionDetailPage({ params }: { params: { id: string, locale: string } }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
     const { tokens } = useAuth(); // Get tokens from context
+    const t = useTranslations('SessionDetail');
+    const locale = useLocale();
+
+    // Get date-fns locale based on interface language
+    const dateLocale = locale === 'es' ? es : locale === 'ca' ? ca : enUS;
     const [session, setSession] = useState<Session | null>(null);
     const [client, setClient] = useState<Client | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -88,8 +94,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
     const showLimitToast = useCallback(() => {
         console.log('[DEBUG] Showing AI limit toast and modal');
         toast({
-            title: "Límite de IA alcanzado",
-            description: "Se han agotado tus minutos de IA. Actualiza tu plan para continuar.",
+            title: t('aiLimitReached'),
+            description: t('aiLimitReachedDesc'),
             variant: "destructive",
             duration: 5000,
         });
@@ -153,8 +159,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
         } catch (error) {
             console.error('Error fetching session:', error);
             toast({
-                title: 'Error',
-                description: 'No se pudo cargar la información de la sesión',
+                title: t('error'),
+                description: t('errorLoadingSession'),
                 variant: 'destructive',
             });
             router.push('/dashboard/sessions');
@@ -194,13 +200,13 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             setSession(updatedSession);
             router.refresh(); // Invalidate client cache to ensure list view updates
             toast({
-                title: 'Estado actualizado',
-                description: `La sesión ha sido marcada como ${newStatus === SessionStatus.COMPLETED ? 'completada' : newStatus === SessionStatus.IN_PROGRESS ? 'iniciada' : 'cancelada'}.`,
+                title: t('statusUpdated'),
+                description: newStatus === SessionStatus.COMPLETED ? t('statusCompletedDesc') : newStatus === SessionStatus.IN_PROGRESS ? t('statusStartedDesc') : t('statusCancelledDesc'),
             });
         } catch (error) {
             toast({
-                title: 'Error',
-                description: 'No se pudo actualizar el estado',
+                title: t('error'),
+                description: t('errorUpdatingStatus'),
                 variant: 'destructive',
             });
         }
@@ -225,13 +231,13 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             const updatedSession = await SessionsAPI.update(session.id, { isMinor: checked });
             setSession(updatedSession);
             toast({
-                title: 'Configuración actualizada',
-                description: `Modo menors d'edat ${checked ? 'activado' : 'desactivado'}.`,
+                title: t('configUpdated'),
+                description: checked ? t('minorModeActivated') : t('minorModeDeactivated'),
             });
         } catch (error) {
             toast({
-                title: 'Error',
-                description: 'No se pudo actualizar la configuración',
+                title: t('error'),
+                description: t('errorUpdatingConfig'),
                 variant: 'destructive',
             });
         }
@@ -250,15 +256,15 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             setLastSavedAt(now);
             router.refresh(); // Invalidate client cache
             toast({
-                title: 'Datos guardados',
-                description: 'Información de sesión guardada correctamente.',
+                title: t('dataSaved'),
+                description: t('dataSavedDesc'),
             });
             setSession(prev => prev ? { ...prev, notes, transcription, methodology } : null);
             setIsEditing(false);
         } catch (error) {
             toast({
-                title: 'Error',
-                description: 'No se pudieron guardar los datos',
+                title: t('error'),
+                description: t('errorSavingData'),
                 variant: 'destructive',
             });
         } finally {
@@ -268,19 +274,19 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
 
     const handleDelete = async () => {
         if (!session) return;
-        if (!confirm('¿Estás seguro de que deseas eliminar permanentemente esta sesión?')) return;
+        if (!confirm(t('confirmDelete'))) return;
         try {
             await SessionsAPI.delete(session.id);
             toast({
-                title: 'Sesión eliminada',
-                description: 'La sesión ha sido eliminada correctamente.',
+                title: t('sessionDeleted'),
+                description: t('sessionDeletedDesc'),
             });
             router.push('/dashboard/sessions');
         } catch (error) {
             console.error('Error deleting session:', error);
             toast({
-                title: 'Error',
-                description: 'No se pudo eliminar la sesión',
+                title: t('error'),
+                description: t('errorDeletingSession'),
                 variant: 'destructive',
             });
         }
@@ -292,14 +298,14 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
             const data = await SessionsAPI.createVideoCall(session.id);
             setVideoCallData(data);
             toast({
-                title: 'Videoconferencia Creada',
-                description: 'Se ha enviado un correo al paciente con el enlace.',
+                title: t('videoCallCreated'),
+                description: t('videoCallCreatedDesc'),
             });
         } catch (error) {
             console.error(error);
             toast({
-                title: 'Error',
-                description: 'No se pudo crear la videollamada',
+                title: t('error'),
+                description: t('errorCreatingVideoCall'),
                 variant: 'destructive',
             });
         }
@@ -324,13 +330,13 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
                     <div className="flex-1 lg:flex-none">
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Detalle de Sesión</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('title')}</h1>
                         <p className="text-muted-foreground flex items-center gap-2 mt-1 text-sm md:text-base">
                             <Calendar className="h-4 w-4" />
-                            {format(new Date(session.startTime), 'PPP', { locale: es })}
+                            {format(new Date(session.startTime), 'PPP', { locale: dateLocale })}
                             <span className="hidden sm:inline">•</span>
                             <Clock className="h-4 w-4 ml-2 sm:ml-0" />
-                            {format(new Date(session.startTime), 'p', { locale: es })}
+                            {format(new Date(session.startTime), 'p', { locale: dateLocale })}
                         </p>
                     </div>
                 </div>
@@ -349,13 +355,13 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                 className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 flex-1 lg:flex-none"
                                 onClick={() => handleStatusChange(SessionStatus.CANCELLED)}
                             >
-                                <XCircle className="mr-2 h-4 w-4" /> Cancelar
+                                <XCircle className="mr-2 h-4 w-4" /> {t('cancel')}
                             </Button>
                             <Button
                                 className="bg-blue-600 hover:bg-blue-700 flex-1 lg:flex-none"
                                 onClick={handleStartSessionClick}
                             >
-                                <CheckCircle2 className="mr-2 h-4 w-4" /> Iniciar Sesión
+                                <CheckCircle2 className="mr-2 h-4 w-4" /> {t('startSession')}
                             </Button>
                         </>
                     )}
@@ -364,15 +370,15 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button className="bg-indigo-600 hover:bg-indigo-700 text-white ml-2">
-                                    <Video className="mr-2 h-4 w-4" /> Videoconf.
+                                    <Video className="mr-2 h-4 w-4" /> {t('videoconf')}
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-80">
                                 {videoCallData ? (
                                     <div className="p-4 space-y-4">
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium">Invitación enviada</p>
-                                            <p className="text-xs text-muted-foreground">Enlace para el paciente:</p>
+                                            <p className="text-sm font-medium">{t('videoInvitationSent')}</p>
+                                            <p className="text-xs text-muted-foreground">{t('patientLink')}</p>
                                             <div className="flex items-center gap-2 p-2 bg-slate-100 rounded text-xs break-all">
                                                 {videoCallData.link}
                                             </div>
@@ -382,14 +388,14 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                             size="sm"
                                             onClick={() => router.push(`/dashboard/sessions/${session.id}/video`)}
                                         >
-                                            <Video className="mr-2 h-3 w-3" /> Unirse ahora
+                                            <Video className="mr-2 h-3 w-3" /> {t('joinNow')}
                                         </Button>
                                     </div>
                                 ) : (
                                     <div className="p-2">
                                         <DropdownMenuItem onClick={handleCreateVideoCall} className="cursor-pointer">
                                             <Mail className="mr-2 h-4 w-4" />
-                                            Enviar Invitación por Email
+                                            {t('sendEmailInvitation')}
                                         </DropdownMenuItem>
                                     </div>
                                 )}
@@ -402,7 +408,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                             className="bg-green-600 hover:bg-green-700 w-full lg:w-auto"
                             onClick={() => handleStatusChange(SessionStatus.COMPLETED)}
                         >
-                            <CheckCircle2 className="mr-2 h-4 w-4" /> Finalizar Sesión
+                            <CheckCircle2 className="mr-2 h-4 w-4" /> {t('finishSession')}
                         </Button>
                     )}
 
@@ -440,7 +446,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                             >
                                 <div className="flex items-center">
                                     <XCircle className="mr-2 h-4 w-4" />
-                                    Eliminar Sesión
+                                    {t('deleteSession')}
                                 </div>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -455,7 +461,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <User className="h-5 w-5 text-purple-600" />
-                                Paciente
+                                {t('patient')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -471,7 +477,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                                 {session.status === SessionStatus.COMPLETED && session.duration !== undefined && (
                                                     <Badge variant="secondary" className="text-[10px] font-normal h-5 px-1.5 bg-green-50 text-green-700 hover:bg-green-100 border-green-100">
                                                         <Clock className="w-3 h-3 mr-1" />
-                                                        <span className="mr-1">Duración de la sesión:</span>
+                                                        <span className="mr-1">{t('sessionDuration')}</span>
                                                         {(() => {
                                                             const h = Math.floor(session.duration! / 3600);
                                                             const m = Math.floor((session.duration! % 3600) / 60);
@@ -481,19 +487,19 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                                     </Badge>
                                                 )}
                                             </div>
-                                            <p className="text-xs text-muted-foreground">Paciente Activo</p>
+                                            <p className="text-xs text-muted-foreground">{t('activePatient')}</p>
                                         </div>
                                     </div>
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between">
-                                            <span className="text-muted-foreground">Email:</span>
+                                            <span className="text-muted-foreground">{t('email')}:</span>
                                             <span className="truncate max-w-[120px]">{client.email || '-'}</span>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="text-center py-4">
-                                    <p className="text-muted-foreground italic">Información del paciente no disponible.</p>
+                                    <p className="text-muted-foreground italic">{t('patientInfoUnavailable')}</p>
                                 </div>
                             )}
                         </CardContent>
@@ -504,11 +510,11 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                             <div className="flex items-center justify-between">
                                 <CardTitle className="flex items-center gap-2">
                                     <FileText className="h-5 w-5 text-blue-600" />
-                                    Registro de Sesión
+                                    {t('sessionRecord')}
                                 </CardTitle>
                                 {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) && (
                                     <Button size="sm" variant="ghost" onClick={handleSaveNotes} disabled={isSavingNotes}>
-                                        {isSavingNotes ? 'Guardando...' : 'Guardar Todo'}
+                                        {isSavingNotes ? t('saving') : t('saveAll')}
                                     </Button>
                                 )}
                             </div>
@@ -516,66 +522,66 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                         <CardContent>
                             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                                 <TabsList className="grid w-full grid-cols-2 mb-4">
-                                    <TabsTrigger value="transcription">Transcripción (IA)</TabsTrigger>
-                                    <TabsTrigger value="clinical_notes">Notas Clínicas</TabsTrigger>
+                                    <TabsTrigger value="transcription">{t('transcriptionTab')}</TabsTrigger>
+                                    <TabsTrigger value="clinical_notes">{t('clinicalNotesTab')}</TabsTrigger>
                                 </TabsList>
 
                                 <TabsContent value="transcription" className="space-y-4">
                                     <div className="bg-slate-50 border rounded-md p-4 min-h-[300px]">
                                         <label className="text-xs font-semibold text-slate-500 mb-2 block uppercase tracking-wider">
-                                            Transcripción en tiempo real / Audio
+                                            {t('transcriptionRealtime')}
                                         </label>
                                         {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) ? (
                                             <textarea
                                                 ref={transcriptionRef}
                                                 className="w-full h-full bg-transparent outline-none resize-none text-sm text-slate-700 leading-relaxed min-h-[250px]"
-                                                placeholder="La transcripción del audio aparecerá aquí automáticamente..."
+                                                placeholder={t('transcriptionPlaceholder')}
                                                 value={transcription}
                                                 onChange={(e) => setTranscription(e.target.value)}
                                             />
                                         ) : (
                                             <div className="text-sm text-slate-700 whitespace-pre-wrap">
-                                                {transcription || "No hay transcripción disponible."}
+                                                {transcription || t('noTranscription')}
                                             </div>
                                         )}
                                     </div>
                                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                                         <Brain className="h-3 w-3" />
-                                        La IA analiza este texto para generar sugerencias.
+                                        {t('aiAnalysisNote')}
                                     </p>
                                 </TabsContent>
 
                                 <TabsContent value="clinical_notes" className="space-y-4">
                                     {/* Methodology Section */}
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Metodología / Técnicas Aplicadas</label>
+                                        <label className="text-sm font-medium">{t('methodology')}</label>
                                         {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) ? (
                                             <input
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                                placeholder="Ej: Terapia Cognitivo-Conductual, EMDR, Mindfulness..."
+                                                placeholder={t('methodologyPlaceholder')}
                                                 value={methodology}
                                                 onChange={(e) => setMethodology(e.target.value)}
                                             />
                                         ) : (
                                             <div className="p-2 bg-slate-50 rounded border text-sm">
-                                                {methodology || "No especificada"}
+                                                {methodology || t('notSpecified')}
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Clinical Notes Section */}
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Notas Clínicas Privadas</label>
+                                        <label className="text-sm font-medium">{t('clinicalNotesPrivate')}</label>
                                         {(session.status === SessionStatus.IN_PROGRESS || session.status === SessionStatus.SCHEDULED || isEditing) ? (
                                             <textarea
                                                 className="w-full min-h-[200px] p-4 bg-white rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
-                                                placeholder="Escribe aquí tus observaciones clínicas, impresiones y plan de tratamiento..."
+                                                placeholder={t('clinicalNotesPlaceholder')}
                                                 value={notes}
                                                 onChange={(e) => setNotes(e.target.value)}
                                             />
                                         ) : (
                                             <div className="p-4 bg-slate-50 rounded-lg text-sm leading-relaxed border whitespace-pre-wrap min-h-[150px]">
-                                                {notes || "No hay notas registradas."}
+                                                {notes || t('noNotes')}
                                             </div>
                                         )}
                                     </div>
@@ -592,20 +598,20 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                     <div className="flex items-center justify-between">
                                         <CardTitle className="flex items-center gap-2 text-purple-700">
                                             <Brain className="h-5 w-5" />
-                                            Informe de la IA
+                                            {t('aiReport')}
                                         </CardTitle>
                                     </div>
                                 </CardHeader>
                                 <CardContent>
                                     <Tabs defaultValue="summary" className="w-full">
                                         <TabsList className="grid w-full grid-cols-2 mb-4">
-                                            <TabsTrigger value="summary">Resum de Sessió</TabsTrigger>
-                                            <TabsTrigger value="analysis">Anàlisi Clínic</TabsTrigger>
+                                            <TabsTrigger value="summary">{t('sessionSummaryTab')}</TabsTrigger>
+                                            <TabsTrigger value="analysis">{t('clinicalAnalysisTab')}</TabsTrigger>
                                         </TabsList>
 
                                         <TabsContent value="summary" className="space-y-4">
                                             <div className="bg-white p-4 rounded-md border text-sm leading-relaxed text-slate-700 shadow-sm">
-                                                <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Resum Fàctic (Transcripció)</h4>
+                                                <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">{t('factualSummary')}</h4>
                                                 <p className="whitespace-pre-wrap">{session.aiMetadata.summary}</p>
                                             </div>
                                         </TabsContent>
@@ -614,7 +620,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                             {/* Emotional Elements */}
                                             {session.aiMetadata.emotionalElements && session.aiMetadata.emotionalElements.length > 0 && (
                                                 <div>
-                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Elements emocionals inferits</h4>
+                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">{t('emotionalElements')}</h4>
                                                     <div className="flex flex-wrap gap-2">
                                                         {session.aiMetadata.emotionalElements.map((el: string, i: number) => (
                                                             <Badge key={i} variant="secondary" className="bg-amber-50 text-amber-800 hover:bg-amber-100">
@@ -628,7 +634,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                             {/* Narrative Indicators */}
                                             {session.aiMetadata.narrativeIndicators && session.aiMetadata.narrativeIndicators.length > 0 && (
                                                 <div>
-                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Indicadors Narratius</h4>
+                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">{t('narrativeIndicators')}</h4>
                                                     <ul className="list-disc pl-4 space-y-1">
                                                         {session.aiMetadata.narrativeIndicators.map((ind: string, i: number) => (
                                                             <li key={i} className="text-sm text-slate-700">{ind}</li>
@@ -643,8 +649,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                                     {/* Suggestions */}
                                                     {session.aiMetadata.clinicalFollowUpSupport.suggestions && session.aiMetadata.clinicalFollowUpSupport.suggestions.length > 0 && (
                                                         <div>
-                                                            <h4 className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Suggeriments Orientatius</h4>
-                                                            <p className="text-[10px] text-slate-500 italic mb-2">A tall de possibles línies de reflexió, sense caràcter prescriptiu:</p>
+                                                            <h4 className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">{t('orientativeSuggestions')}</h4>
+                                                            <p className="text-[10px] text-slate-500 italic mb-2">{t('suggestionsDisclaimer')}</p>
                                                             <ul className="space-y-2">
                                                                 {session.aiMetadata.clinicalFollowUpSupport.suggestions.map((sug: string, i: number) => (
                                                                     <li key={i} className="text-sm text-slate-700 bg-blue-50/50 p-2 rounded border border-blue-100 flex gap-2">
@@ -659,7 +665,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                                     {/* Possible Lines of Work */}
                                                     {session.aiMetadata.clinicalFollowUpSupport.possibleLines && session.aiMetadata.clinicalFollowUpSupport.possibleLines.length > 0 && (
                                                         <div>
-                                                            <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Línies de Treball Possibles</h4>
+                                                            <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">{t('possibleWorkLines')}</h4>
                                                             <ul className="list-disc pl-4 space-y-1">
                                                                 {session.aiMetadata.clinicalFollowUpSupport.possibleLines.map((line: string, i: number) => (
                                                                     <li key={i} className="text-sm text-slate-700">{line}</li>
@@ -673,7 +679,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                             {/* Suggested Tests */}
                                             {(session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.length || 0) > 0 && (
                                                 <div>
-                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Instruments d'Avaluació Suggerits</h4>
+                                                    <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">{t('suggestedInstruments')}</h4>
                                                     <div className="space-y-3">
                                                         {session.aiMetadata.diagnostic_final?.tests_sugerits_final?.suggeriments?.map((block: any, i: number) => (
                                                             <div key={i} className="bg-slate-50 rounded-md p-3 border">
@@ -702,7 +708,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
 
                                     <div className="pt-4 border-t border-purple-200 mt-4">
                                         <p className="text-[10px] text-center text-slate-500 font-medium whitespace-pre-line">
-                                            {session.aiMetadata.disclaimer || "Aquesta anàlisi no constitueix una valoració clínica, diagnòstica ni una avaluació de risc."}
+                                            {session.aiMetadata.disclaimer || t('aiDisclaimer')}
                                         </p>
                                     </div>
                                 </CardContent>

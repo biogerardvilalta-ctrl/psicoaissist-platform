@@ -34,19 +34,11 @@ import { UserAPI } from '@/lib/user-api';
 import { useRole } from '@/hooks/useRole';
 import { User } from '@/types/auth';
 import { UpgradeModal } from '@/components/shared/UpgradeModal';
-
-const formSchema = z.object({
-    professionalId: z.string().optional(), // Required for Agenda Managers, will validate conditionally
-    clientId: z.string().min(1, 'Debes seleccionar un paciente'),
-    date: z.string().min(1, 'La fecha es requerida'),
-    time: z.string().min(1, 'La hora es requerida'),
-    sessionType: z.nativeEnum(SessionType, {
-        required_error: 'El tipo de sesión es requerido',
-    }),
-    notes: z.string().optional(),
-});
+import { useTranslations } from 'next-intl';
 
 export default function NewSessionPage() {
+    const t = useTranslations('NewSession');
+    const tCommon = useTranslations('Common');
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
@@ -57,6 +49,18 @@ export default function NewSessionPage() {
     const [managedProfessionals, setManagedProfessionals] = useState<User[]>([]);
     const [managedGroups, setManagedGroups] = useState<User[]>([]); // New state for groups
     const [isLoadingProfessionals, setIsLoadingProfessionals] = useState(false);
+
+    // Create form schema with translations
+    const formSchema = z.object({
+        professionalId: z.string().optional(), // Required for Agenda Managers, will validate conditionally
+        clientId: z.string().min(1, t('validationPatient')),
+        date: z.string().min(1, t('validationDate')),
+        time: z.string().min(1, t('validationTime')),
+        sessionType: z.nativeEnum(SessionType, {
+            required_error: t('validationSessionType'),
+        }),
+        notes: z.string().optional(),
+    });
 
     // Get clientId and date from URL query param
     const preselectedClientId = searchParams.get('clientId') || '';
@@ -152,8 +156,8 @@ export default function NewSessionPage() {
                 console.error('Error fetching clients:', error);
                 toast({
                     variant: 'destructive',
-                    title: 'Error',
-                    description: 'No se pudieron cargar los pacientes.',
+                    title: tCommon('error'),
+                    description: t('errorLoadingPatients'),
                 });
             } finally {
                 setIsLoadingClients(false);
@@ -196,8 +200,8 @@ export default function NewSessionPage() {
         if (isAgendaManager() && !values.professionalId) {
             toast({
                 variant: 'destructive',
-                title: 'Error',
-                description: 'Debes seleccionar un profesional.',
+                title: tCommon('error'),
+                description: t('errorSelectProfessional'),
             });
             return;
         }
@@ -217,8 +221,8 @@ export default function NewSessionPage() {
             });
 
             toast({
-                title: 'Sesión agendada',
-                description: 'La sesión se ha creado correctamente.',
+                title: t('sessionScheduled'),
+                description: t('sessionScheduledDesc'),
             });
 
             router.push('/dashboard/sessions');
@@ -228,7 +232,7 @@ export default function NewSessionPage() {
 
             // Check for 403 Forbidden specifically for limits 
             if (error?.response?.status === 403 || error?.status === 403 || error?.message?.includes('limit')) {
-                setLimitMessage(error.message || 'Límite de transcripción/sesiones alcanzado');
+                setLimitMessage(error.message || t('limitReached'));
                 setShowUpgradeModal(true);
                 // Don't show toast if showing modal
                 return;
@@ -236,8 +240,8 @@ export default function NewSessionPage() {
 
             toast({
                 variant: 'destructive',
-                title: 'Error al agendar',
-                description: error.response?.data?.message || 'No se pudo crear la sesión. Por favor intenta nuevamente.',
+                title: t('errorScheduling'),
+                description: error.response?.data?.message || t('errorSchedulingDesc'),
             });
         } finally {
             setIsSubmitting(false);
@@ -249,15 +253,15 @@ export default function NewSessionPage() {
     return (
         <div className="container max-w-2xl py-6 mx-auto">
             <div className="mb-6">
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Agendar Nueva Sesión</h1>
-                <p className="text-gray-500">Programa una sesión para uno de tus pacientes.</p>
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{t('title')}</h1>
+                <p className="text-gray-500">{t('subtitle')}</p>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Detalles de la Sesión</CardTitle>
+                    <CardTitle>{t('cardTitle')}</CardTitle>
                     <CardDescription>
-                        Completa la información para programar la cita.
+                        {t('cardDescription')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -273,7 +277,7 @@ export default function NewSessionPage() {
                             {/* Professional Selection (Agenda Managers only) */}
                             {isAgendaManager() && (
                                 <div className="space-y-4 p-4 border rounded-lg bg-slate-50">
-                                    <h3 className="text-sm font-medium text-slate-900 mb-2">Selección de Agenda</h3>
+                                    <h3 className="text-sm font-medium text-slate-900 mb-2">{t('agendaSelection')}</h3>
 
                                     <FormField
                                         control={form.control}
@@ -281,7 +285,7 @@ export default function NewSessionPage() {
                                         render={({ field }) => (
                                             <>
                                                 <FormItem>
-                                                    <FormLabel>Profesional Individual</FormLabel>
+                                                    <FormLabel>{t('individualProfessional')}</FormLabel>
                                                     <Select
                                                         onValueChange={(val) => {
                                                             field.onChange(val);
@@ -292,7 +296,7 @@ export default function NewSessionPage() {
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger className="bg-white">
-                                                                <SelectValue placeholder={isLoadingProfessionals ? "Cargando..." : "Seleccionar profesional"} />
+                                                                <SelectValue placeholder={isLoadingProfessionals ? t('loading') : t('selectProfessional')} />
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
@@ -306,7 +310,7 @@ export default function NewSessionPage() {
                                                 </FormItem>
 
                                                 <FormItem>
-                                                    <FormLabel>Agenda de Grupo (Opcional)</FormLabel>
+                                                    <FormLabel>{t('groupAgenda')}</FormLabel>
                                                     <Select
                                                         onValueChange={(val) => {
                                                             setSelectedGroupId(val === 'none' ? '' : val);
@@ -316,11 +320,11 @@ export default function NewSessionPage() {
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger className="bg-white">
-                                                                <SelectValue placeholder={isLoadingProfessionals ? "Cargando..." : "Seleccionar grupo (Unión de agendas)"} />
+                                                                <SelectValue placeholder={isLoadingProfessionals ? t('loading') : t('selectGroup')} />
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
-                                                            <SelectItem value="none">-- Sin Grupo (Agenda Individual) --</SelectItem>
+                                                            <SelectItem value="none">{t('noGroup')}</SelectItem>
                                                             {managedGroups.map((group) => (
                                                                 <SelectItem key={group.id} value={group.id}>
                                                                     {group.firstName}
@@ -342,7 +346,7 @@ export default function NewSessionPage() {
                                 name="clientId"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Paciente</FormLabel>
+                                        <FormLabel>{t('patient')}</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
@@ -350,7 +354,7 @@ export default function NewSessionPage() {
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder={isLoadingClients ? "Cargando pacientes..." : "Seleccionar paciente"} />
+                                                    <SelectValue placeholder={isLoadingClients ? t('loadingPatients') : t('selectPatient')} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -373,7 +377,7 @@ export default function NewSessionPage() {
                                     name="date"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Fecha</FormLabel>
+                                            <FormLabel>{t('date')}</FormLabel>
                                             <FormControl>
                                                 <div className="relative">
                                                     <CalendarIcon className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
@@ -394,7 +398,7 @@ export default function NewSessionPage() {
                                     name="time"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Hora Disponible</FormLabel>
+                                            <FormLabel>{t('availableTime')}</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
@@ -402,7 +406,7 @@ export default function NewSessionPage() {
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder={isLoadingSlots ? "Cargando horarios..." : "Seleccionar hora"} />
+                                                        <SelectValue placeholder={isLoadingSlots ? t('loadingSchedules') : t('selectTime')} />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -414,7 +418,7 @@ export default function NewSessionPage() {
                                                         ))
                                                     ) : (
                                                         <div className="p-2 text-sm text-muted-foreground text-center">
-                                                            No hay horarios disponibles
+                                                            {t('noAvailableSlots')}
                                                         </div>
                                                     )}
                                                 </SelectContent>
@@ -431,18 +435,18 @@ export default function NewSessionPage() {
                                 name="sessionType"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Tipo de Sesión</FormLabel>
+                                        <FormLabel>{t('sessionType')}</FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Seleccionar tipo" />
+                                                    <SelectValue placeholder={t('selectType')} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value={SessionType.INDIVIDUAL}>Individual</SelectItem>
-                                                <SelectItem value={SessionType.GROUP}>Grupal</SelectItem>
-                                                <SelectItem value={SessionType.COUPLE}>Pareja</SelectItem>
-                                                <SelectItem value={SessionType.FAMILY}>Familiar</SelectItem>
+                                                <SelectItem value={SessionType.INDIVIDUAL}>{t('individual')}</SelectItem>
+                                                <SelectItem value={SessionType.GROUP}>{t('group')}</SelectItem>
+                                                <SelectItem value={SessionType.COUPLE}>{t('couple')}</SelectItem>
+                                                <SelectItem value={SessionType.FAMILY}>{t('family')}</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -456,10 +460,10 @@ export default function NewSessionPage() {
                                 name="notes"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Notas preliminares (Opcional)</FormLabel>
+                                        <FormLabel>{t('preliminaryNotes')}</FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="Agregar notas o motivo de consulta..."
+                                                placeholder={t('notesPlaceholder')}
                                                 className="resize-none min-h-[100px]"
                                                 {...field}
                                             />
@@ -476,18 +480,18 @@ export default function NewSessionPage() {
                                     onClick={() => router.back()}
                                     disabled={isSubmitting}
                                 >
-                                    Cancelar
+                                    {t('cancel')}
                                 </Button>
                                 <Button type="submit" disabled={isSubmitting}>
                                     {isSubmitting ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Agendando...
+                                            {t('scheduling')}
                                         </>
                                     ) : (
                                         <>
                                             <CheckCircle2 className="mr-2 h-4 w-4" />
-                                            Agendar Sesión
+                                            {t('scheduleSession')}
                                         </>
                                     )}
                                 </Button>

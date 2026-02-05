@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } f
 import { Button } from '@/components/ui/button';
 import { Mic, Square, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslations } from 'next-intl';
 
 export interface AudioRecorderHandle {
     startRecording: () => void;
@@ -30,6 +31,7 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
     inputStream,
     hideControls = false
 }, ref) => {
+    const t = useTranslations('AudioRecorder');
     const [isRecording, setIsRecording] = useState(false);
 
     const [recordingTime, setRecordingTime] = useState(0);
@@ -146,7 +148,7 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
 
         } catch (err) {
             console.error('Error accessing microphone:', err);
-            setPermissionError('No se pudo acceder al micrófono. Por favor verifica los permisos.');
+            setPermissionError(t('permissionError'));
         }
     };
 
@@ -218,7 +220,7 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
                         </div>
                     ) : (
                         <span className="text-sm text-slate-500">
-                            {hideControls ? 'Lista para grabar (Usa controles arriba)' : 'Listo para grabar'}
+                            {hideControls ? t('readyToRecordWithControls') : t('readyToRecord')}
                         </span>
                     )}
                 </div>
@@ -234,7 +236,7 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
                                 disabled={isProcessing}
                             >
                                 <Mic className="h-4 w-4 text-blue-500" />
-                                {isProcessing ? 'Procesando...' : 'Grabar Sesión'}
+                                {isProcessing ? t('processing') : t('recordSession')}
                             </Button>
                         ) : (
                             <Button
@@ -244,7 +246,7 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
                                 onClick={stopRecording}
                             >
                                 <Square className="h-4 w-4 fill-current" />
-                                Detener
+                                {t('stop')}
                             </Button>
                         )}
                     </div>
@@ -253,7 +255,7 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
                 {isProcessing && (
                     <div className="flex items-center gap-2 text-xs text-blue-600 animate-pulse">
                         <Loader2 className="h-3 w-3 animate-spin" />
-                        Transcribiendo y analizando...
+                        {t('transcribingAndAnalyzing')}
                     </div>
                 )}
             </CardContent>

@@ -71,23 +71,23 @@ export default function VideoCallPage({ params }: { params: { token: string } })
         newSocket.on('connect', () => {
             console.log('Socket connected');
             setIsConnected(true);
-            setStatus('Uniéndose a la sala...');
+            setStatus(t('status.joiningRoom'));
             newSocket.emit('join-video-room', { token: params.token });
         });
 
         newSocket.on('room-joined', (data) => {
             console.log('[PatientPage] Room Joined:', data);
-            setStatus(`Conectado. Peers: ${data.peerCount || 0}`);
+            setStatus(`${t('status.connected')} ${data.peerCount || 0}`);
             setRoomId(data.roomId);
         });
 
         newSocket.on('error', (err) => {
-            setStatus('Error: ' + err.message);
+            setStatus(t('status.error') + ' ' + err.message);
         });
 
         newSocket.on('disconnect', () => {
             setIsConnected(false);
-            setStatus('Desconectado');
+            setStatus(t('status.disconnected'));
         });
 
         setSocket(newSocket);

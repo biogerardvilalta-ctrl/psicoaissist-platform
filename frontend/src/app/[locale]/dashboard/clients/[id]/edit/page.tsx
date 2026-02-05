@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 
 export default function EditClientPage({ params }: { params: { id: string } }) {
     const t = useTranslations('Clients.Edit');
+    const tCommon = useTranslations('Common');
     const router = useRouter();
     const { toast } = useToast();
     const [client, setClient] = useState<Client | null>(null);
@@ -24,7 +25,7 @@ export default function EditClientPage({ params }: { params: { id: string } }) {
             } catch (error) {
                 console.error('Error fetching client:', error);
                 toast({
-                    title: "Error",
+                    title: tCommon('error'),
                     description: t('errors.loadFailed'),
                     variant: "destructive",
                 });

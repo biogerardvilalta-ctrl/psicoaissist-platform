@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ShieldCheck, Info, FileText } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ConsentModalProps {
     isOpen: boolean;
@@ -22,6 +23,7 @@ interface ConsentModalProps {
 }
 
 export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: ConsentModalProps) {
+    const t = useTranslations('ConsentModal');
     const [isChecked, setIsChecked] = useState(false);
     const [isMinorChecked, setIsMinorChecked] = useState(false);
 
@@ -37,20 +39,20 @@ export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: Consent
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-blue-700">
                         <ShieldCheck className="h-5 w-5" />
-                        Consentiment Informat
+                        {t('title')}
                     </DialogTitle>
                     <DialogDescription>
-                        Abans d'iniciar la sessió amb <strong>{clientName}</strong>, confirma el següent:
+                        {t('description').split('{clientName}')[0]}<strong>{clientName}</strong>{t('description').split('{clientName}')[1]}
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4 py-4">
                     <Alert className="bg-blue-50 border-blue-200">
                         <Info className="h-4 w-4 text-blue-600" />
-                        <AlertTitle className="text-blue-800">Eina de Suport Clínic</AlertTitle>
+                        <AlertTitle className="text-blue-800">{t('clinicalToolTitle')}</AlertTitle>
                         <AlertDescription className="text-blue-700 text-sm">
-                            Aquesta eina ofereix suport orientatiu exclusivament per a professionals de la psicologia.
-                            <strong> No realitza diagnòstics ni substitueix el criteri clínic.</strong>
+                            {t('clinicalToolDescription').split('No realitza')[0]}
+                            <strong>{t('clinicalToolDescription').split('No realitza')[1] ? 'No realitza' + t('clinicalToolDescription').split('No realitza')[1] : t('clinicalToolDescription')}</strong>
                         </AlertDescription>
                     </Alert>
 
@@ -66,10 +68,10 @@ export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: Consent
                                     htmlFor="consent"
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                                 >
-                                    Confirmo que he informat al pacient sobre l'ús d'aquesta eina de suport i el processament de dades conforme a GDPR.
+                                    {t('consentLabel')}
                                 </label>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    Les dades d'àudio s'eliminaran automàticament després del processament.
+                                    {t('audioDeleteNote')}
                                 </p>
                             </div>
                         </div>
@@ -86,10 +88,10 @@ export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: Consent
                                     htmlFor="minor-consent"
                                     className="text-sm font-bold text-amber-900 leading-none cursor-pointer"
                                 >
-                                    El pacient és MENOR d'edat.
+                                    {t('minorLabel')}
                                 </label>
                                 <p className="text-xs text-amber-800 mt-1">
-                                    En marcar aquesta opció, l'IA adaptarà l'anàlisi a un context infanto-juvenil i aplicarà filtres de seguretat addicionals.
+                                    {t('minorNote')}
                                 </p>
                             </div>
                         </div>
@@ -98,14 +100,14 @@ export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: Consent
 
                 <DialogFooter className="sm:justify-between">
                     <div className="text-xs text-slate-400 mt-2 sm:mt-0 flex items-center">
-                        Secure EU Server <ShieldCheck className="h-3 w-3 ml-1" />
+                        {t('secureServer')} <ShieldCheck className="h-3 w-3 ml-1" />
                     </div>
                     <div className="flex gap-2">
                         <Button type="button" variant="secondary" onClick={onClose}>
-                            Cancel·lar
+                            {t('cancel')}
                         </Button>
                         <Button type="button" onClick={handleConfirm} disabled={!isChecked}>
-                            Iniciar Sessió
+                            {t('startSession')}
                         </Button>
                     </div>
                 </DialogFooter>

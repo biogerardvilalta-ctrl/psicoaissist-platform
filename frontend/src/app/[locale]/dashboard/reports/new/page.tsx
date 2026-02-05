@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { ChevronRight, Check, FileText, User, Calendar, Sparkles, AlertCircle, Scale, PenTool, ShieldAlert } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ReportsAPI, ReportType, ReportStatus, REPORT_TYPE_LABELS } from '@/lib/reports-api';
@@ -27,6 +27,8 @@ export default function NewReportPage() {
     const router = useRouter();
     const { toast } = useToast();
     const t = useTranslations('Reports');
+    const tCommon = useTranslations('Common');
+    const locale = useLocale();
 
     // Wizard State
     const [step, setStep] = useState(1);
@@ -73,7 +75,7 @@ export default function NewReportPage() {
                     }
                 } catch (error) {
                     console.error("Failed to load draft", error);
-                    toast({ title: "Error", description: "No se pudo cargar el borrador.", variant: "destructive" });
+                    toast({ title: tCommon('error'), description: tCommon('loadDraftError'), variant: "destructive" });
                 } finally {
                     setIsLoading(false);
                 }
@@ -108,7 +110,7 @@ export default function NewReportPage() {
                 setSessions(data);
             } catch (error) {
                 console.error("Failed to load sessions", error);
-                toast({ title: "Error", description: "No se pudieron cargar las sesiones del paciente.", variant: "destructive" });
+                toast({ title: tCommon('error'), description: tCommon('loadSessionsError'), variant: "destructive" });
             }
         };
         loadSessions();
@@ -140,7 +142,8 @@ export default function NewReportPage() {
                 clientId: selectedClientId,
                 reportType,
                 sessionIds: selectedSessionIds,
-                additionalInstructions: `Perfil linguístico: ${languageProfile}`
+                additionalInstructions: `Perfil linguístico: ${languageProfile}`,
+                language: locale
             });
             setDraftContent(result.content);
             setDraftContent(result.content);
@@ -271,8 +274,8 @@ export default function NewReportPage() {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Nuevo Informe Clínico</h1>
-                <p className="text-gray-500">Asistente de generación de informes con IA</p>
+                <h1 className="text-2xl font-bold text-gray-900">{t('New.title')}</h1>
+                <p className="text-gray-500">{t('New.subtitle')}</p>
             </div>
 
             {/* Stepper */}
@@ -286,7 +289,7 @@ export default function NewReportPage() {
                                 {step > s ? <Check className="w-5 h-5" /> : s}
                             </div>
                             <span className={`text-xs mt-1 font-medium ${step >= s ? 'text-blue-600' : 'text-gray-400'}`}>
-                                {s === 1 ? 'Paciente' : s === 2 ? 'Datos' : s === 3 ? 'Borrador' : 'Revisión'}
+                                {s === 1 ? t('New.steps.patient') : s === 2 ? t('New.steps.data') : s === 3 ? t('New.steps.draft') : t('New.steps.review')}
                             </span>
                         </div>
                     ))}
@@ -303,28 +306,24 @@ export default function NewReportPage() {
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
                             <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                             <div className="text-sm text-blue-800">
-                                <p className="font-semibold mb-1">Informació important sobre l'ús d'IA</p>
-                                <p>
-                                    Aquest informe serà redactat amb el suport d’una eina d’intel·ligència artificial i
-                                    <strong> requerirà revisió humana obligatòria</strong> abans de ser finalitzat.
-                                    L'eina actua com a suport a la redacció i no emet judicis clínics automàtics.
-                                </p>
+                                <p className="font-semibold mb-1">{t('New.aiDisclaimer.title')}</p>
+                                <p dangerouslySetInnerHTML={{ __html: t.raw('New.aiDisclaimer.text') }}></p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* Left Column: Basic Selection */}
                             <div className="space-y-6">
-                                <h2 className="text-lg font-semibold flex items-center"><User className="w-5 h-5 mr-2" /> Dades Bàsiques</h2>
+                                <h2 className="text-lg font-semibold flex items-center"><User className="w-5 h-5 mr-2" /> {t('New.basicData.title')}</h2>
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label>Pacient</Label>
+                                        <Label>{t('New.basicData.patient')}</Label>
                                         <select
                                             className="w-full p-2 border rounded-md"
                                             value={selectedClientId}
                                             onChange={(e) => setSelectedClientId(e.target.value)}
                                         >
-                                            <option value="">Seleccionar pacient...</option>
+                                            <option value="">{t('New.basicData.selectPatient')}</option>
                                             {clients.map(client => (
                                                 <option key={client.id} value={client.id}>
                                                     {client.firstName} {client.lastName}
@@ -333,14 +332,14 @@ export default function NewReportPage() {
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Tipus d'Informe</Label>
+                                        <Label>{t('New.basicData.reportType')}</Label>
                                         <select
                                             className="w-full p-2 border rounded-md"
                                             value={reportType}
                                             onChange={(e) => setReportType(e.target.value as ReportType)}
                                         >
                                             {Object.entries(REPORT_TYPE_LABELS).map(([key, label]) => (
-                                                <option key={key} value={key}>{label}</option>
+                                                <option key={key} value={key}>{t(`types.${key}`)}</option>
                                             ))}
                                         </select>
                                     </div>
@@ -349,24 +348,24 @@ export default function NewReportPage() {
 
                             {/* Right Column: Language Profile */}
                             <div className="space-y-6">
-                                <h2 className="text-lg font-semibold flex items-center"><PenTool className="w-5 h-5 mr-2" /> Perfil Lingüístic</h2>
+                                <h2 className="text-lg font-semibold flex items-center"><PenTool className="w-5 h-5 mr-2" /> {t('New.languageProfile.title')}</h2>
                                 <div className="bg-gray-50 p-4 rounded-lg space-y-4 border">
                                     <RadioGroup value={languageProfile} onValueChange={(v) => setLanguageProfile(v as any)}>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="adult" id="r-adult" />
-                                            <Label htmlFor="r-adult">Adult (Estàndard)</Label>
+                                            <Label htmlFor="r-adult">{t('New.languageProfile.adult')}</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="child" id="r-child" />
-                                            <Label htmlFor="r-child">Infantil / Adolescent</Label>
+                                            <Label htmlFor="r-child">{t('New.languageProfile.child')}</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="school" id="r-school" />
-                                            <Label htmlFor="r-school">Escolar / Educatiu</Label>
+                                            <Label htmlFor="r-school">{t('New.languageProfile.school')}</Label>
                                         </div>
                                     </RadioGroup>
                                     <p className="text-xs text-gray-500 mt-2">
-                                        El llenguatge de l’informe s’adaptarà al context seleccionat. Això no implica canvis en el contingut clínic, que sempre serà revisat pel professional.
+                                        {t('New.languageProfile.description')}
                                     </p>
                                 </div>
                             </div>
@@ -381,8 +380,7 @@ export default function NewReportPage() {
                                     </div>
                                     <div className="ml-3">
                                         <p className="text-sm text-amber-700">
-                                            <strong>Mode Legal-Forense Actiu:</strong> Aquest tipus d'informe està destinat a ús legal o administratiu.
-                                            El sistema aplicarà restriccions reforçades i no es permetrà la finalització sense una doble validació expressa.
+                                            <strong>{t('New.forensicWarning.title')}</strong> {t('New.forensicWarning.text')}
                                         </p>
                                     </div>
                                 </div>
@@ -395,7 +393,7 @@ export default function NewReportPage() {
                                 disabled={!selectedClientId}
                                 className="bg-blue-600 hover:bg-blue-700"
                             >
-                                Continuar
+                                {t('New.buttons.continue')}
                             </Button>
                         </div>
                     </div>
@@ -404,16 +402,16 @@ export default function NewReportPage() {
                 {/* Step 2: Select Sessions */}
                 {step === 2 && (
                     <div className="space-y-6">
-                        <h2 className="text-lg font-semibold flex items-center"><Calendar className="w-5 h-5 mr-2" /> Selecció de Sessions</h2>
+                        <h2 className="text-lg font-semibold flex items-center"><Calendar className="w-5 h-5 mr-2" /> {t('New.selectSessions.title')}</h2>
                         <div className="bg-blue-50 text-blue-800 p-3 rounded-md text-sm border border-blue-100 mb-4">
-                            Selecciona les sessions que la IA utilitzarà com a base per a l'esborrany. Recorda que la IA només té accés al contingut transcrit o anotat.
+                            {t('New.selectSessions.info')}
                         </div>
 
                         {/* Session List */}
                         <div className="border rounded-md divide-y max-h-60 overflow-y-auto">
                             {sessions.length === 0 ? (
                                 <div className="p-8 text-center text-gray-500 italic">
-                                    {selectedClientId ? 'No hay sesiones completadas para este paciente.' : 'Selecciona un paciente primero.'}
+                                    {selectedClientId ? t('New.selectSessions.noSessions') : t('New.selectSessions.selectPatientFirst')}
                                 </div>
                             ) : (
                                 sessions.map(session => (
@@ -425,7 +423,7 @@ export default function NewReportPage() {
                                             onChange={() => toggleSession(session.id)}
                                         />
                                         <div>
-                                            <div className="font-medium">Sesión {new Date(session.startTime).toLocaleDateString()}</div>
+                                            <div className="font-medium">{t('New.selectSessions.session')} {new Date(session.startTime).toLocaleDateString()}</div>
                                             <div className="text-xs text-gray-500">{session.sessionType || 'Consulta General'}</div>
                                         </div>
                                     </label>
@@ -434,13 +432,13 @@ export default function NewReportPage() {
                         </div>
 
                         <div className="flex justify-between pt-4">
-                            <Button variant="outline" onClick={prevStep}>Enrere</Button>
+                            <Button variant="outline" onClick={prevStep}>{t('New.buttons.back')}</Button>
                             <Button
                                 onClick={handleGenerateDraft}
                                 disabled={isLoading || selectedSessionIds.length === 0}
                                 className="bg-purple-600 hover:bg-purple-700 text-white"
                             >
-                                {isLoading ? 'Generant...' : <><Sparkles className="w-4 h-4 mr-2" /> Generar Esborrany amb IA</>}
+                                {isLoading ? t('New.buttons.generating') : <><Sparkles className="w-4 h-4 mr-2" /> {t('New.buttons.generate')}</>}
                             </Button>
                         </div>
                     </div>
@@ -450,22 +448,22 @@ export default function NewReportPage() {
                 {step === 3 && (
                     <div className="space-y-6">
                         <div className="flex justify-between items-center border-b pb-4">
-                            <h2 className="text-lg font-semibold flex items-center"><FileText className="w-5 h-5 mr-2" /> Revisió i Edició</h2>
+                            <h2 className="text-lg font-semibold flex items-center"><FileText className="w-5 h-5 mr-2" /> {t('New.review.title')}</h2>
                             <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
-                                Esborrany generat amb IA – pendent de revisió
+                                {t('New.review.badge')}
                             </Badge>
                         </div>
 
                         {reportType === ReportType.LEGAL && (
                             <div className="bg-red-50 to-red-100 border-l-4 border-red-500 p-3 flex items-center gap-3">
                                 <Scale className="w-5 h-5 text-red-700" />
-                                <span className="font-bold text-red-800 text-sm">MODE LEGAL-FORENSE ACTIU: El contingut ha de ser revisat amb especial atenció a la neutralitat i objectivitat.</span>
+                                <span className="font-bold text-red-800 text-sm">{t('New.review.forensicAlert')}</span>
                             </div>
                         )}
 
                         <div className="space-y-4">
                             <div>
-                                <Label>Títol de l'Informe</Label>
+                                <Label>{t('New.review.reportTitle')}</Label>
                                 <input
                                     className="w-full p-2 border rounded-md mt-1"
                                     value={reportTitle}
@@ -473,24 +471,24 @@ export default function NewReportPage() {
                                 />
                             </div>
                             <div>
-                                <Label>Contingut (Totalment Editable)</Label>
+                                <Label>{t('New.review.contentLabel')}</Label>
                                 <RichTextEditor
                                     value={draftContent}
                                     onChange={setDraftContent}
-                                    placeholder="El contenido del informe generado aparecerá aquí..."
+                                    placeholder={t('New.review.placeholder')}
                                 />
                             </div>
                         </div>
 
                         <div className="flex justify-between pt-4">
-                            <Button variant="outline" onClick={prevStep}>Enrere</Button>
+                            <Button variant="outline" onClick={prevStep}>{t('New.buttons.back')}</Button>
                             <div className="flex gap-2">
                                 <Button
                                     variant="ghost"
                                     onClick={handleSaveDraft}
                                     disabled={isLoading || !reportTitle}
                                 >
-                                    Guardar Esborrany
+                                    {t('New.buttons.saveDraft')}
                                 </Button>
                                 <Button
                                     onClick={onFinalizeClick}
@@ -498,7 +496,7 @@ export default function NewReportPage() {
                                     className={reportType === ReportType.LEGAL ? "bg-amber-600 hover:bg-amber-700" : "bg-green-600 hover:bg-green-700"}
                                 >
                                     <Check className="w-4 h-4 mr-2" />
-                                    Finalitzar i Validar
+                                    {t('New.buttons.finalize')}
                                 </Button>
                             </div>
                         </div>
@@ -512,22 +510,22 @@ export default function NewReportPage() {
                             <Check className="w-8 h-8 text-green-600" />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900">
-                            {savedReportStatus === ReportStatus.COMPLETED ? 'Informe Validat i Finalitzat' : 'Esborrany Guardat'}
+                            {savedReportStatus === ReportStatus.COMPLETED ? t('New.success.titleCompleted') : t('New.success.titleDraft')}
                         </h2>
                         {savedReportStatus === ReportStatus.COMPLETED && (
                             <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-medium mt-2">
-                                <User className="w-4 h-4 mr-1" /> Validat per professional
+                                <User className="w-4 h-4 mr-1" /> {t('New.success.validated')}
                             </div>
                         )}
                         <p className="text-gray-500 mt-4">
                             {savedReportStatus === ReportStatus.COMPLETED
-                                ? "L'informe ha estat bloquejat i guardat correctament."
-                                : "L'esborrany s'ha guardat per continuar més tard."}
+                                ? t('New.success.descCompleted')
+                                : t('New.success.descDraft')}
                         </p>
 
                         <div className="flex justify-center gap-4 pt-8">
                             <Button variant="outline" onClick={() => router.push('/dashboard/reports')}>
-                                Tornar a la llista
+                                {t('New.buttons.returnToList')}
                             </Button>
                             {savedReportStatus === ReportStatus.COMPLETED && (
                                 <Button
@@ -544,15 +542,15 @@ export default function NewReportPage() {
                                                 link.download = `${clientName.replace(/\s+/g, '_').toLowerCase()}_informe_${dateStr}.pdf`;
                                                 link.click();
                                                 window.URL.revokeObjectURL(url);
-                                            } catch (e) {
+                                            } catch (e: any) {
                                                 console.error("Download failed", e);
-                                                toast({ title: "Error", description: "No se pudo descargar el PDF", variant: "destructive" });
+                                                toast({ title: tCommon('error'), description: t('errors.downloadPdfFailed'), variant: "destructive" });
                                             }
                                         }
                                     }}
                                     className="bg-blue-600 hover:bg-blue-700"
                                 >
-                                    Descarregar PDF Oficial
+                                    {t('New.buttons.downloadPdf')}
                                 </Button>
                             )}
                         </div>
@@ -572,17 +570,17 @@ export default function NewReportPage() {
                     <DialogHeader>
                         <div className="flex items-center gap-2 mb-2">
                             {reportType === ReportType.LEGAL ? <Scale className="w-6 h-6 text-amber-600" /> : <ShieldAlert className="w-6 h-6 text-blue-600" />}
-                            <DialogTitle className="text-xl">Validació Professional Obligatòria</DialogTitle>
+                            <DialogTitle className="text-xl">{t('New.validationModal.title')}</DialogTitle>
                         </div>
                         <DialogDescription>
-                            Per finalitzar aquest informe, és necessari que el professional assumeixi la responsabilitat del seu contingut.
+                            {t('New.validationModal.description')}
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="py-6 space-y-6">
                         {/* Common Disclaimer */}
                         <div className="bg-gray-50 p-4 rounded-md text-sm text-gray-700 border">
-                            Recorda: La IA és una eina de suport. La decisió clínica i la responsabilitat legal recauen exclusivament en el professional signant.
+                            {t('New.validationModal.disclaimer')}
                         </div>
 
                         {/* Checkbox 1: Content Review (ALL TYPES) */}
@@ -595,7 +593,7 @@ export default function NewReportPage() {
                                 onChange={(e) => setCheckContentReviewed(e.target.checked)}
                             />
                             <label htmlFor="check1" className="text-sm font-medium text-gray-900 cursor-pointer">
-                                He revisat íntegrament el contingut de l’informe i n’assumeixo la responsabilitat professional.
+                                {t('New.validationModal.checkContent')}
                             </label>
                         </div>
 
@@ -610,21 +608,21 @@ export default function NewReportPage() {
                                     onChange={(e) => setCheckLegalResponsibility(e.target.checked)}
                                 />
                                 <label htmlFor="check2" className="text-sm font-bold text-amber-900 cursor-pointer">
-                                    Confirmo que aquest informe pot tenir ús judicial o administratiu i n’assumeixo totes les implicacions legals.
+                                    {t('New.validationModal.checkLegal')}
                                 </label>
                             </div>
                         )}
                     </div>
 
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setShowFinalizeModal(false)}>Cancel·lar</Button>
+                        <Button variant="outline" onClick={() => setShowFinalizeModal(false)}>{t('New.validationModal.cancel')}</Button>
                         <Button
                             onClick={confirmFinalize}
                             disabled={!checkContentReviewed || (reportType === ReportType.LEGAL && !checkLegalResponsibility)}
                             className={reportType === ReportType.LEGAL ? "bg-amber-600 hover:bg-amber-700" : "bg-blue-600 hover:bg-blue-700"}
                         >
                             <Check className="w-4 h-4 mr-2" />
-                            Signar i Finalitzar
+                            {t('New.validationModal.sign')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

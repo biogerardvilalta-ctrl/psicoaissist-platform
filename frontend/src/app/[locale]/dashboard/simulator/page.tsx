@@ -19,7 +19,7 @@ import { EvolutionChart } from './components/EvolutionChart';
 import { ReportsHistory } from './components/ReportsHistory';
 import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
 import { SimulatorUsageBar } from '@/components/dashboard/usage/SimulatorUsageBar';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 // Simple hook mock if not available, or assume it exists. 
 // Given previous context, it likely exists or I should use standard web speech api. 
@@ -96,6 +96,7 @@ export default function SimulatorPage() {
     const { toast } = useToast();
     const { isListening, transcript, interimTranscript, startListening, stopListening, resetTranscript } = useSpeechRecognition();
     const t = useTranslations('Dashboard.Simulator');
+    const locale = useLocale();
 
     // Main State
     const [status, setStatus] = useState<'idle' | 'loading' | 'active' | 'evaluating' | 'finished'>('idle');
@@ -218,7 +219,7 @@ export default function SimulatorPage() {
     const handleStart = async () => {
         setStatus('loading');
         try {
-            const newProfile = await simulatorService.startSimulation(difficulty, showNonVerbalCues);
+            const newProfile = await simulatorService.startSimulation(difficulty, showNonVerbalCues, locale);
             setProfile(newProfile);
             setMessages([]);
             setStatus('active');
@@ -268,7 +269,7 @@ export default function SimulatorPage() {
         resetTranscript(); // Clear voice input
 
         try {
-            const response = await simulatorService.sendMessage(text, messages, profile);
+            const response = await simulatorService.sendMessage(text, messages, profile, locale);
 
             const newerMessages = [...newMessages, { role: 'model' as const, parts: response.response }];
             setMessages(newerMessages);
@@ -314,7 +315,7 @@ export default function SimulatorPage() {
             const durationSeconds = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
 
             // Using non-null assertion for profile because we are 'active' only if profile is set
-            const res = await simulatorService.evaluateSession(messages, profile!, durationSeconds);
+            const res = await simulatorService.evaluateSession(messages, profile!, durationSeconds, locale);
             setFeedback(res.feedback);
             setMetrics(res.metrics);
             setStatus('finished');

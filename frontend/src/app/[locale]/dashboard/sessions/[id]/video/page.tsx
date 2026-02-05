@@ -15,11 +15,13 @@ import { SessionsAPI, Session, SessionStatus } from '@/lib/sessions-api';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslations } from 'next-intl';
 
 export default function ProfessionalVideoPage({ params }: { params: { id: string } }) {
     const { tokens, isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
+    const t = useTranslations('ProfessionalVideoCall');
 
     // Session State
     const [session, setSession] = useState<Session | null>(null);
@@ -30,7 +32,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
     // WebRTC & Socket State
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
-    const [status, setStatus] = useState('Conectando...');
+    const [status, setStatus] = useState(t('status.connecting'));
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [roomId, setRoomId] = useState<string | null>(null);
     const [mixedStream, setMixedStream] = useState<MediaStream | null>(null);
@@ -64,7 +66,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                 }
             } catch (error) {
                 console.error("Error fetching session", error);
-                toast({ title: "Error", description: "No se pudo cargar la sesión", variant: "destructive" });
+                toast({ title: t('toasts.error'), description: t('toasts.errorLoadSession'), variant: "destructive" });
             }
         };
         if (tokens?.accessToken) fetchSession();
@@ -110,15 +112,15 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
             });
             setSession(updated);
             setElapsedTime(0);
-            toast({ title: "Sesión Iniciada", description: "El cronómetro ha comenzado." });
+            toast({ title: t('toasts.sessionStarted'), description: t('toasts.sessionStartedDesc') });
         } catch (e) {
-            toast({ title: "Error", description: "No se pudo iniciar la sesión", variant: "destructive" });
+            toast({ title: t('toasts.error'), description: t('toasts.errorStartSession'), variant: "destructive" });
         }
     };
 
     const handleEndSession = async () => {
         if (!session) return;
-        if (!confirm("¿Finalizar sesión y volver al detalle?")) return;
+        if (!confirm(t('confirmEnd'))) return;
 
         try {
             // Stop recording logic if active
@@ -138,9 +140,9 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
             endCall(); // Clean up WebRTC
 
             router.push(`/dashboard/sessions/${session.id}`);
-            toast({ title: "Sesión Finalizada", description: "Informe de IA generándose..." });
+            toast({ title: t('toasts.sessionEnded'), description: t('toasts.sessionEndedDesc') });
         } catch (e) {
-            toast({ title: "Error", description: "No se pudo finalizar la sesión", variant: "destructive" });
+            toast({ title: t('toasts.error'), description: t('toasts.errorEndSession'), variant: "destructive" });
         }
     };
 
@@ -192,7 +194,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
             })
             .catch(err => {
                 console.error("Error media", err);
-                setStatus('Error accediendo a cámara/micrófono');
+                setStatus(t('status.mediaError'));
             });
 
         return () => {
@@ -215,27 +217,27 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
         newSocket.on('connect', () => {
             console.log('Socket connected (Pro)');
             setIsConnected(true);
-            setStatus('Uniéndose a la sala como Profesional...');
+            setStatus(t('status.joiningRoom'));
             newSocket.emit('join-video-room', { sessionId: params.id });
         });
 
         newSocket.on('room-joined', (data) => {
             console.log('[ProfessionalPage] Room Joined:', data);
-            setStatus(`En linea. Peers: ${data.peerCount || 0}`);
+            setStatus(`${t('status.online')} ${data.peerCount || 0}`);
             setRoomId(data.roomId);
         });
 
         newSocket.on('peer-joined', (data) => {
-            setStatus(`Paciente conectado (${data.identity})`);
+            setStatus(`${t('status.patientConnected')} (${data.identity})`);
         });
 
         newSocket.on('error', (err) => {
-            setStatus('Error: ' + err.message);
+            setStatus(t('status.error') + ' ' + err.message);
         });
 
         newSocket.on('disconnect', () => {
             setIsConnected(false);
-            setStatus('Desconectado');
+            setStatus(t('status.disconnected'));
         });
 
         setSocket(newSocket);
@@ -331,11 +333,11 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
         return (
             <div className="h-[calc(100vh-6rem)] flex flex-col items-center justify-center p-4 bg-slate-950 rounded-lg text-white">
                 {!session ? (
-                    <div className="animate-pulse">Cargando sesión...</div>
+                    <div className="animate-pulse">{t('loading')}</div>
                 ) : (
                     <Card className="p-8 bg-slate-900 border-slate-800 text-center max-w-md">
-                        <h2 className="text-xl font-semibold mb-4 text-red-400">Sesión Caducada</h2>
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => router.push(`/auth/login`)}>Iniciar Sesión</Button>
+                        <h2 className="text-xl font-semibold mb-4 text-red-400">{t('sessionExpired')}</h2>
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => router.push(`/auth/login`)}>{t('loginButton')}</Button>
                     </Card>
                 )}
             </div>
@@ -359,7 +361,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                 <div className="flex items-center gap-2 lg:gap-3 flex-1 justify-center">
                     <div className="hidden md:flex bg-indigo-600 text-white px-4 py-2 rounded-md items-center gap-2 font-medium shadow-lg">
                         <Video className="h-4 w-4" />
-                        Videoconf.
+                        {t('videoconf')}
                     </div>
 
                     {session.status === SessionStatus.SCHEDULED && (
@@ -369,7 +371,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                             size="sm"
                         >
                             <Play className="h-4 w-4 lg:mr-2 fill-current" />
-                            <span className="hidden lg:inline">Iniciar Sesión</span>
+                            <span className="hidden lg:inline">{t('startSession')}</span>
                         </Button>
                     )}
 
@@ -380,7 +382,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                             size="sm"
                         >
                             <CheckCircle2 className="h-4 w-4 lg:mr-2" />
-                            <span className="hidden lg:inline">Finalizar</span>
+                            <span className="hidden lg:inline">{t('finishSession')}</span>
                         </Button>
                     )}
                 </div>
@@ -397,7 +399,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                                 onClick={handleStartRecording}
                             >
                                 <Mic className="h-4 w-4 text-blue-400 lg:mr-2" />
-                                <span className="hidden lg:inline">Grabar</span>
+                                <span className="hidden lg:inline">{t('record')}</span>
                             </Button>
                         ) : (
                             <div className="flex items-center gap-1 lg:gap-3 bg-slate-900/80 p-0.5 lg:p-1 lg:pr-3 rounded-full border border-red-500/30">
@@ -406,7 +408,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                                     </span>
-                                    <span className="hidden lg:inline text-xs font-mono font-bold">GRABANDO</span>
+                                    <span className="hidden lg:inline text-xs font-mono font-bold">{t('recording')}</span>
                                 </div>
                                 <Button
                                     size="sm"
@@ -415,12 +417,12 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                                     onClick={handleStopRecording}
                                 >
                                     <Square className="h-3 w-3 lg:mr-2 fill-current" />
-                                    <span className="hidden lg:inline">Detener</span>
+                                    <span className="hidden lg:inline">{t('stop')}</span>
                                 </Button>
                             </div>
                         )
                     ) : (
-                        <div className="hidden lg:block text-xs text-slate-500 italic px-2">Esperando audio...</div>
+                        <div className="hidden lg:block text-xs text-slate-500 italic px-2">{t('waitingAudio')}</div>
                     )}
                     <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white h-8 w-8 lg:h-10 lg:w-10" onClick={endCall}>
                         <ArrowLeft className="h-5 w-5" />
@@ -446,7 +448,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                             ) : (
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="h-16 w-16 rounded-full border-2 border-slate-800 border-t-blue-500 animate-spin" />
-                                    <div className="text-slate-500 animate-pulse text-xs lg:text-base">Esperando vídeo del paciente...</div>
+                                    <div className="text-slate-500 animate-pulse text-xs lg:text-base">{t('waitingVideo')}</div>
                                 </div>
                             )}
 
@@ -457,7 +459,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                                         networkQuality === 'fair' ? 'bg-yellow-500/20 text-yellow-400' :
                                             'bg-red-500/20 text-red-400'
                                         }`}>
-                                        {networkQuality === 'good' ? 'Conexión: Buena' : networkQuality === 'fair' ? 'Conexión: Regular' : 'Conexión: Mala'}
+                                        {networkQuality === 'good' ? t('connectionGood') : networkQuality === 'fair' ? t('connectionFair') : t('connectionBad')}
                                     </span>
                                 )}
                             </div>
@@ -521,8 +523,8 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
                             <div className="px-3 pt-2 border-b border-slate-800 bg-slate-950/50">
                                 <TabsList className="bg-slate-800/50 border border-slate-700/50 w-full grid grid-cols-2 h-8">
-                                    <TabsTrigger value="transcription" className="text-xs data-[state=active]:bg-slate-700 data-[state=active]:text-white">Transcripción</TabsTrigger>
-                                    <TabsTrigger value="notes" className="text-xs data-[state=active]:bg-slate-700 data-[state=active]:text-white">Notas Privadas</TabsTrigger>
+                                    <TabsTrigger value="transcription" className="text-xs data-[state=active]:bg-slate-700 data-[state=active]:text-white">{t('transcriptionTab')}</TabsTrigger>
+                                    <TabsTrigger value="notes" className="text-xs data-[state=active]:bg-slate-700 data-[state=active]:text-white">{t('notesTab')}</TabsTrigger>
                                 </TabsList>
                             </div>
 
@@ -539,7 +541,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                                     ) : (
                                         <div className="h-full flex flex-col items-center justify-center text-slate-600 gap-2">
                                             <div className="w-8 h-0.5 bg-slate-800 rounded-full" />
-                                            <p className="italic text-[10px]">La transcripción aparecerá aquí...</p>
+                                            <p className="italic text-[10px]">{t('transcriptionPlaceholder')}</p>
                                         </div>
                                     )}
                                 </div>
@@ -548,12 +550,12 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                             <TabsContent value="notes" className="flex-1 min-h-0 p-0 m-0 flex flex-col">
                                 <Textarea
                                     className="flex-1 bg-transparent border-none resize-none focus-visible:ring-0 p-3 text-sm text-slate-200"
-                                    placeholder="Escribe tus notas clínicas aquí..."
+                                    placeholder={t('notesPlaceholder')}
                                     value={notes}
                                     onChange={(e) => handleNotesChange(e.target.value)}
                                 />
                                 <div className="px-2 py-1 bg-slate-950 text-[10px] text-slate-600 border-t border-slate-800 text-right">
-                                    {notes ? 'Guardado automático' : 'Privado'}
+                                    {notes ? t('autoSaved') : t('private')}
                                 </div>
                             </TabsContent>
                         </Tabs>
