@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Video, Mic, MicOff, VideoOff, PhoneOff, ArrowLeft, Circle, Square, CheckCircle2, Play, FileText, Brain } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { useWebRTC } from '@/hooks/use-webrtc';
 import { AudioRecorder, AudioRecorderHandle } from '@/components/dashboard/sessions/audio-recorder';
 import { AiAssistantPanel } from '@/components/dashboard/sessions/ai-assistant-panel';

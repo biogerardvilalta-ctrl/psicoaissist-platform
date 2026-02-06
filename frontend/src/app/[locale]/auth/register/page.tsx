@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Link } from '@/navigation';
 import { Eye, EyeOff, UserPlus, Heart, AlertCircle, Gift, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';

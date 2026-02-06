@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { ChevronRight, Check, FileText, User, Calendar, Sparkles, AlertCircle, Scale, PenTool, ShieldAlert } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

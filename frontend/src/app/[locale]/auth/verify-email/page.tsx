@@ -1,7 +1,8 @@
 'use client';
 
 import { Suspense, useEffect, useState, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { AuthAPI } from '@/lib/auth-api';
 import Link from 'next/link';

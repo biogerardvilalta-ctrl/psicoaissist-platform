@@ -18,7 +18,8 @@ import {
   Shield
 } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 import { RecentActivity, TodaysSessions } from '@/components/dashboard';
 import { useEffect, useState } from 'react';
 import { DashboardAPI, DashboardStats } from '@/lib/dashboard-api';

@@ -26,8 +26,9 @@ import {
 import { format, parseISO } from 'date-fns';
 import { es, ca, enUS as en } from 'date-fns/locale';
 
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter, usePathname } from '@/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
     Select,

@@ -6,7 +6,8 @@ import { TermsContent } from '@/components/dashboard/compliance/terms-content';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Printer, Shield, Lock, Cookie, Scale } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { useTranslations } from 'next-intl';
 

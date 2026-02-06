@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Plus, Search, MoreHorizontal, FileText, Calendar, Trash2, Pencil, PieChart, RefreshCcw } from 'lucide-react';
 import { ClientsAPI, Client } from '@/lib/clients-api';
 import { UserAPI } from '@/lib/user-api';

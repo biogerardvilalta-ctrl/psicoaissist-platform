@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { ClientsAPI, Client } from '@/lib/clients-api';
 import { Button } from '@/components/ui/button';

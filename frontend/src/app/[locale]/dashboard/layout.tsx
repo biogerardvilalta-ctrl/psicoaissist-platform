@@ -8,7 +8,7 @@ import { Heart, User, Settings, LogOut, Menu, X, Shield, LayoutDashboard, Users,
 import { NotificationProvider } from '@/context/NotificationContext';
 import { NotificationBell } from '@/components/ui/NotificationBell';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import {
     DropdownMenu,

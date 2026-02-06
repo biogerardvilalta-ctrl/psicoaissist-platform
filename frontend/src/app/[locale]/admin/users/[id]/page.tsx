@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { AdminAPI, AdminUser, AuditLog } from '@/lib/admin-api';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useParams } from 'next/navigation';
 import { User, Mail, Calendar, CreditCard, Activity, ArrowLeft, Clock, FileText, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 

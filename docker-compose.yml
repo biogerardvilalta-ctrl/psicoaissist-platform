@@ -44,17 +44,20 @@ services:
     environment:
       - TURN_SECRET=${TURN_SECRET}
       - REALM=${TURN_REALM}
+      - EXTERNAL_IP=${EXTERNAL_IP}
       # IMPORTANT: Coturn needs to know its external IP for NAT traversal
       # This is the public IPv4 address of the server
     ports:
       - "3478:3478/tcp"
       - "3478:3478/udp"
-      - "49152:65535/udp"  # Full range for RTP/SRTP relay
+      - "49152:65535/udp" # Full range for RTP/SRTP relay
     command:
-      - -c /etc/coturn/turnserver.conf
+      - -c
+      - /etc/coturn/turnserver.conf
       - --static-auth-secret=${TURN_SECRET}
       - --realm=${TURN_REALM}
-      - --external-ip=188.245.35.99  # Public IPv4 address
+      - --external-ip=${EXTERNAL_IP}
+      - --relay-ip=${EXTERNAL_IP}
 
   # Backend (NestJS)
   backend:

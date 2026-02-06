@@ -5,7 +5,7 @@ import { AdminAPI, AdminUser } from '@/lib/admin-api';
 import { useState, useEffect } from 'react';
 import { Users, CreditCard, Shield, AlertCircle, RefreshCw, LogOut, DollarSign, TrendingUp, MessageSquare, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { AdminStatsCard, RecentUsers, AdminActivityFeed, AdminCharts, EvolutionCharts, UsageEvolutionCharts } from '@/components/admin';
 import { useTranslations } from 'next-intl';
 

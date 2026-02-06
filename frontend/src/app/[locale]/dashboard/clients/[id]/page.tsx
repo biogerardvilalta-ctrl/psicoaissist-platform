@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { ArrowLeft, Edit, Calendar, FileText, Phone, Mail, Clock, Shield } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ClientsAPI, Client } from '@/lib/clients-api';
