@@ -1225,6 +1225,23 @@
         }
     },
     "Landing": {
+        "HeroDemo": {
+            "patient_1": "Patient: \"I feel like no one takes me seriously at work.\"",
+            "insight_1": "Feeling of invisibility",
+            "therapist_1": "Therapist: \"That must be frustrating. Tell me more about that.\"",
+            "insight_2": "Validate underlying emotion",
+            "patient_2": "Patient: \"I just shut up and say nothing.\"",
+            "insight_3": "What do you fear would happen if you spoke up?",
+            "header": "AI Assistant",
+            "live": "Live",
+            "subheader": "Real-time analysis • 100% Private",
+            "live_transcription": "Live Transcription",
+            "observations": "Observations",
+            "suggested_questions": "Suggested Questions",
+            "add_to_notes": "Add to notes",
+            "considerations": "Considerations",
+            "footer": "AI Assistance © 2025 • PsicoAIssist"
+        },
         "Hero": {
             "badge": "Ethical AI for Psychologists",
             "title": {

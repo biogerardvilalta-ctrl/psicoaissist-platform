@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+// Force reload messages
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './navigation';
 

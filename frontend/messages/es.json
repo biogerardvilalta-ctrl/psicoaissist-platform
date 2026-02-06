@@ -1222,6 +1222,23 @@
         }
     },
     "Landing": {
+        "HeroDemo": {
+            "patient_1": "Paciente: \"Siento que nadie me toma en serio en el trabajo.\"",
+            "insight_1": "Sentimiento de invisibilidad",
+            "therapist_1": "Terapeuta: \"Debe ser frustrante. Cuéntame más sobre eso.\"",
+            "insight_2": "Validar la emoción subyacente",
+            "patient_2": "Paciente: \"Simplemente me callo y no digo nada.\"",
+            "insight_3": "¿Qué temes que pasaría si hablaras?",
+            "header": "Asistente IA",
+            "live": "Live",
+            "subheader": "Análisis en tiempo real • 100% Privado",
+            "live_transcription": "Transcripción en vivo",
+            "observations": "Observaciones",
+            "suggested_questions": "Preguntas Sugeridas",
+            "add_to_notes": "Añadir a notas",
+            "considerations": "Consideraciones",
+            "footer": "Asistencia IA © 2025 • PsicoAIssist"
+        },
         "Hero": {
             "badge": "IA Ética para Psicólogos",
             "title": {

@@ -1,45 +1,47 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Sparkles, MessageSquare, Lightbulb, Zap, Mic, AlertTriangle, Brain, PlusCircle, XCircle } from 'lucide-react';
 
-const DEMO_SCRIPT = [
-    {
-        text: "Paciente: \"Siento que nadie me toma en serio en el trabajo.\"",
-        type: 'transcription',
-        duration: 2000
-    },
-    {
-        text: "Sentimiento de invisibilidad", // Indicator
-        type: 'insight',
-        category: 'indicator',
-        trait: 'mood' // for coloring
-    },
-    {
-        text: "Terapeuta: \"Debe ser frustrante. Cuéntame más sobre eso.\"",
-        type: 'transcription',
-        duration: 2500
-    },
-    {
-        text: "Validar la emoción subyacente", // Consideration
-        type: 'insight',
-        category: 'consideration'
-    },
-    {
-        text: "Pac: \"Simplemente me callo y no digo nada.\"",
-        type: 'transcription',
-        duration: 1500
-    },
-    {
-        text: "¿Qué temes que pasaría si hablaras?", // Question
-        type: 'insight',
-        category: 'question'
-    }
-];
-
 export function HeroDemo() {
+    const t = useTranslations('Landing.HeroDemo');
     const [displayedText, setDisplayedText] = useState('');
     const [currentStep, setCurrentStep] = useState(0);
+
+    const DEMO_SCRIPT = useMemo(() => [
+        {
+            text: t('patient_1'),
+            type: 'transcription',
+            duration: 2000
+        },
+        {
+            text: t('insight_1'), // Indicator
+            type: 'insight',
+            category: 'indicator',
+            trait: 'mood' // for coloring
+        },
+        {
+            text: t('therapist_1'),
+            type: 'transcription',
+            duration: 2500
+        },
+        {
+            text: t('insight_2'), // Consideration
+            type: 'insight',
+            category: 'consideration'
+        },
+        {
+            text: t('patient_2'),
+            type: 'transcription',
+            duration: 1500
+        },
+        {
+            text: t('insight_3'), // Question
+            type: 'insight',
+            category: 'question'
+        }
+    ], [t]);
 
     // State for the AI Assistant parts
     const [indicators, setIndicators] = useState<{ type: string; label: string }[]>([]);
@@ -76,7 +78,10 @@ export function HeroDemo() {
 
                 const typeChar = () => {
                     if (charIndex < text.length) {
-                        setDisplayedText(prev => prev + text[charIndex]);
+                        const char = text[charIndex];
+                        if (char) {
+                            setDisplayedText(prev => prev + char);
+                        }
                         charIndex++;
                         timeoutId = setTimeout(typeChar, 30); // Typing speed
                     } else {
@@ -104,7 +109,7 @@ export function HeroDemo() {
         processStep();
 
         return () => clearTimeout(timeoutId);
-    }, [currentStep]);
+    }, [currentStep, DEMO_SCRIPT]);
 
     return (
         <div className="relative mx-auto w-full max-w-lg font-sans">
@@ -119,15 +124,15 @@ export function HeroDemo() {
                             <div className="p-1.5 bg-indigo-100 rounded-lg">
                                 <Sparkles className="h-4 w-4 text-indigo-600" />
                             </div>
-                            Asistente IA
+                            {t('header')}
                         </div>
                         <div className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0 text-[10px] font-semibold transition-colors text-emerald-600 h-5">
                             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse" />
-                            Live
+                            {t('live')}
                         </div>
                     </div>
                     <p className="text-slate-500 font-medium text-xs mt-1">
-                        Análisis en tiempo real • 100% Privado
+                        {t('subheader')}
                     </p>
                 </div>
 
@@ -139,7 +144,7 @@ export function HeroDemo() {
                     <div className="mb-1 p-3 bg-slate-50 rounded-lg border border-slate-100">
                         <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-400 uppercase">
                             <Mic className="h-3 w-3" />
-                            Transcripción en vivo
+                            {t('live_transcription')}
                         </div>
                         <div className="text-xs font-mono text-slate-600 h-[8.75rem] overflow-y-auto leading-relaxed opacity-80 whitespace-pre-wrap scrollbar-hide">
                             {displayedText}
@@ -152,7 +157,7 @@ export function HeroDemo() {
                         <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                             <div className="flex items-center gap-2 mb-1">
                                 <Zap className="h-3 w-3 text-amber-500" />
-                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Observaciones</h4>
+                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('observations')}</h4>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {indicators.map((ind, i) => (
@@ -180,7 +185,7 @@ export function HeroDemo() {
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
                             <div className="flex items-center gap-2 mb-1">
                                 <MessageSquare className="h-3 w-3 text-blue-500" />
-                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Preguntas Sugeridas</h4>
+                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('suggested_questions')}</h4>
                             </div>
                             <div className="space-y-3">
                                 {questions.map((q, index) => (
@@ -194,7 +199,7 @@ export function HeroDemo() {
                                         <p className="text-sm text-slate-700 leading-relaxed pr-2">{q}</p>
                                         <div className="mt-3 flex items-center text-blue-500 text-xs font-medium">
                                             <PlusCircle className="h-3 w-3 mr-1" />
-                                            Añadir a notas
+                                            {t('add_to_notes')}
                                         </div>
                                     </div>
                                 ))}
@@ -207,7 +212,7 @@ export function HeroDemo() {
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
                             <div className="flex items-center gap-2 mb-1">
                                 <Lightbulb className="h-3 w-3 text-amber-500" />
-                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Consideraciones</h4>
+                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{t('considerations')}</h4>
                             </div>
                             <div className="space-y-3">
                                 {considerations.map((c, index) => (
@@ -223,7 +228,7 @@ export function HeroDemo() {
                 {/* FOOTER */}
                 <div className="p-3 bg-slate-50/80 backdrop-blur-sm border-t border-slate-100 z-10 mt-auto">
                     <p className="text-[10px] text-center text-slate-400 font-medium">
-                        Ia Assistance © 2025 • PsicoAIssist
+                        {t('footer')}
                     </p>
                 </div>
             </div>

@@ -1225,6 +1225,23 @@
         }
     },
     "Landing": {
+        "HeroDemo": {
+            "patient_1": "Pacient: \"Sento que ningú em pren seriosament a la feina.\"",
+            "insight_1": "Sentiment d'invisibilitat",
+            "therapist_1": "Terapeuta: \"Ha de ser frustrant. Explica'm més sobre això.\"",
+            "insight_2": "Validar l'emoció subjacent",
+            "patient_2": "Pacient: \"Simplement callo i no dic res.\"",
+            "insight_3": "Què tens por que passaria si parlessis?",
+            "header": "Assistent IA",
+            "live": "En viu",
+            "subheader": "Anàlisi en temps real • 100% Privat",
+            "live_transcription": "Transcripció en viu",
+            "observations": "Observacions",
+            "suggested_questions": "Preguntes Suggerides",
+            "add_to_notes": "Afegir a notes",
+            "considerations": "Consideracions",
+            "footer": "Assistència IA © 2025 • PsicoAIssist"
+        },
         "Hero": {
             "badge": "IA Ètica per a Psicòlegs",
             "title": {
