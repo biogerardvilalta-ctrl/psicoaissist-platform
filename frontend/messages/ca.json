@@ -2625,6 +2625,50 @@
         },
         "confirmEnd": "Finalitzar sessió i tornar al detall?"
     },
+    "Notifications": {
+        "notifications": "Notificacions",
+        "title": "Notificacions",
+        "markAsRead": "Marcar llegides",
+        "test": "Test",
+        "noNotifications": "No tens notificacions",
+        "test_notification": {
+            "title": "Notificació de Prova 🔔",
+            "message": "Aquesta és una notificació de prova per verificar el sistema en temps real."
+        },
+        "onboarding": {
+            "title": "Pack On-boarding Contractat 🚀",
+            "message": "Hem rebut la teva sol·licitud. Un administrador configurarà el teu servidor aviat.",
+            "admin": {
+                "title": "Nou Pack On-boarding 📦",
+                "message": "L'usuari {email} ha contractat el Pack On-boarding. Revisa les Tasques."
+            }
+        },
+        "payment": {
+            "success": {
+                "title": "Pagament Rebut 💳",
+                "message": "La teva subscripció s'ha renovat correctament."
+            },
+            "failed": {
+                "title": "Error en el Pagament ⚠️",
+                "message": "No hem pogut renovar la teva subscripció. Si us plau revisa el teu mètode de pagament per evitar perdre accés."
+            }
+        },
+        "session": {
+            "scheduled": {
+                "title": "Nova Sessió Agendada 📅",
+                "message": "{managerName} ha agendat una nova sessió pel {date}"
+            },
+            "updated": {
+                "title": "Sessió Actualitzada ✏️",
+                "message": "{managerName} ha actualitzat una de les teves sessions.",
+                "cancelled": "{managerName} ha cancel·lat una de les teves sessions."
+            },
+            "deleted": {
+                "title": "Sessió Eliminada 🗑️",
+                "message": "{managerName} ha eliminat una de les teves sessions."
+            }
+        }
+    },
     "Common": {
         "error": "Error",
         "success": "Èxit",

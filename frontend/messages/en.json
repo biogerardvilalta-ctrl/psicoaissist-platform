@@ -2625,6 +2625,50 @@
         },
         "confirmEnd": "End session and return to details?"
     },
+    "Notifications": {
+        "notifications": "Notifications",
+        "title": "Notifications",
+        "markAsRead": "Mark as read",
+        "test": "Test",
+        "noNotifications": "You have no notifications",
+        "test_notification": {
+            "title": "Test Notification 🔔",
+            "message": "This is a test notification to verify the system in real time."
+        },
+        "onboarding": {
+            "title": "Onboarding Pack Purchased 🚀",
+            "message": "We have received your request. An administrator will configure your server soon.",
+            "admin": {
+                "title": "New Onboarding Pack 📦",
+                "message": "User {email} has purchased the Onboarding Pack. Check Tasks."
+            }
+        },
+        "payment": {
+            "success": {
+                "title": "Payment Received 💳",
+                "message": "Your subscription has been renewed successfully."
+            },
+            "failed": {
+                "title": "Payment Error ⚠️",
+                "message": "We couldn't renew your subscription. Please check your payment method to avoid losing access."
+            }
+        },
+        "session": {
+            "scheduled": {
+                "title": "New Session Scheduled 📅",
+                "message": "{managerName} has scheduled a new session for {date}"
+            },
+            "updated": {
+                "title": "Session Updated ✏️",
+                "message": "{managerName} has updated one of your sessions.",
+                "cancelled": "{managerName} has cancelled one of your sessions."
+            },
+            "deleted": {
+                "title": "Session Deleted 🗑️",
+                "message": "{managerName} has deleted one of your sessions."
+            }
+        }
+    },
     "Common": {
         "error": "Error",
         "success": "Success",

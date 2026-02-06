@@ -10,10 +10,17 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, ca, enUS } from "date-fns/locale";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 
 export function NotificationBell() {
     const { notifications, unreadCount, markAsRead, markAllAsRead, sendTestNotification } = useNotifications();
+    const t = useTranslations('Notifications');
+    const locale = useLocale();
+
+    // Map locale to date-fns locale
+    const dateLocale = locale === 'es' ? es : locale === 'ca' ? ca : enUS;
 
     return (
         <Popover>
@@ -25,12 +32,12 @@ export function NotificationBell() {
                             {unreadCount > 9 ? "9+" : unreadCount}
                         </span>
                     )}
-                    <span className="sr-only">Notificaciones</span>
+                    <span className="sr-only">{t('notifications')}</span>
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0" align="end">
                 <div className="flex items-center justify-between border-b p-4">
-                    <h4 className="font-semibold">Notificaciones</h4>
+                    <h4 className="font-semibold">{t('title')}</h4>
                     <div className="flex gap-2">
                         {unreadCount > 0 && (
                             <Button
@@ -39,7 +46,7 @@ export function NotificationBell() {
                                 className="text-xs h-auto px-2"
                                 onClick={() => markAllAsRead()}
                             >
-                                Marcar leídas
+                                {t('markAsRead')}
                             </Button>
                         )}
                         <Button
@@ -48,14 +55,14 @@ export function NotificationBell() {
                             className="text-xs h-auto px-2 text-blue-600"
                             onClick={() => sendTestNotification()}
                         >
-                            🔔 Test
+                            🔔 {t('test')}
                         </Button>
                     </div>
                 </div>
                 <div className="h-[300px] overflow-y-auto">
                     {notifications.length === 0 ? (
                         <div className="flex h-full items-center justify-center p-4 text-sm text-gray-500">
-                            No tienes notificaciones
+                            {t('noNotifications')}
                         </div>
                     ) : (
                         <div className="flex flex-col">
@@ -80,7 +87,7 @@ export function NotificationBell() {
                                         {notification.message}
                                     </p>
                                     <span className="text-[10px] text-gray-400">
-                                        {format(new Date(notification.createdAt), "d MMM, HH:mm", { locale: es })}
+                                        {format(new Date(notification.createdAt), "d MMM, HH:mm", { locale: dateLocale })}
                                     </span>
                                 </div>
                             ))}

@@ -2622,6 +2622,50 @@
         },
         "confirmEnd": "¿Finalizar sesión y volver al detalle?"
     },
+    "Notifications": {
+        "notifications": "Notificaciones",
+        "title": "Notificaciones",
+        "markAsRead": "Marcar leídas",
+        "test": "Test",
+        "noNotifications": "No tienes notificaciones",
+        "test_notification": {
+            "title": "Notificación de Prueba 🔔",
+            "message": "Esta es una notificación de prueba para verificar el sistema en tiempo real."
+        },
+        "onboarding": {
+            "title": "Pack On-boarding Contratado 🚀",
+            "message": "Hemos recibido tu solicitud. Un administrador configurará tu servidor pronto.",
+            "admin": {
+                "title": "Nuevo Pack On-boarding 📦",
+                "message": "El usuario {email} ha contratado el Pack On-boarding. Revisa las Tareas."
+            }
+        },
+        "payment": {
+            "success": {
+                "title": "Pago Recibido 💳",
+                "message": "Tu suscripción se ha renovado correctamente."
+            },
+            "failed": {
+                "title": "Error en el Pago ⚠️",
+                "message": "No pudimos renovar tu suscripción. Por favor revisa tu método de pago para evitar perder acceso."
+            }
+        },
+        "session": {
+            "scheduled": {
+                "title": "Nueva Sesión Agendada 📅",
+                "message": "{managerName} ha agendado una nueva sesión para el {date}"
+            },
+            "updated": {
+                "title": "Sesión Actualizada ✏️",
+                "message": "{managerName} ha actualizado una de tus sesiones.",
+                "cancelled": "{managerName} ha cancelado una de tus sesiones."
+            },
+            "deleted": {
+                "title": "Sesión Eliminada 🗑️",
+                "message": "{managerName} ha eliminado una de tus sesiones."
+            }
+        }
+    },
     "Common": {
         "error": "Error",
         "success": "Éxito",
