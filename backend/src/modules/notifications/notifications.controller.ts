@@ -57,8 +57,8 @@ export class NotificationsController {
     async testNotification(@Request() req) {
         return this.notificationsService.create({
             userId: req.user.id,
-            title: 'Notificación de Prueba 🔔',
-            message: 'Esta es una notificación de prueba para verificar el sistema en tiempo real.',
+            title: 'notifications.test_notification.title',
+            message: 'notifications.test_notification.message',
             type: 'SUCCESS',
         });
     }

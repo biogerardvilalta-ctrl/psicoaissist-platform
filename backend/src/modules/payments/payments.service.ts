@@ -231,8 +231,8 @@ export class PaymentsService {
           // Notify User on Dashboard
           await this.notificationsService.create({
             userId: user.id,
-            title: 'Pack On-boarding Contratado 🚀',
-            message: 'Hemos recibido tu solicitud. Un administrador configurará tu servidor pronto.',
+            title: 'notifications.onboarding.title',
+            message: 'notifications.onboarding.message',
             type: 'SUCCESS'
           });
 
@@ -246,9 +246,10 @@ export class PaymentsService {
       for (const admin of admins) {
         await this.notificationsService.create({
           userId: admin.id,
-          title: 'Nuevo Pack On-boarding 📦',
-          message: `El usuario ${user?.email} ha contratado el Pack On-boarding. Revisa las Tareas.`,
-          type: 'INFO'
+          title: 'notifications.onboarding.admin.title',
+          message: 'notifications.onboarding.admin.message', // Backend should interpolate {email} if needed, but for now simple key or handle params
+          type: 'INFO',
+          data: { email: user?.email } // We pass data for interpolation in frontend
         });
       }
 
@@ -745,8 +746,8 @@ export class PaymentsService {
             try {
               await this.notificationsService.create({
                 userId: user.id,
-                title: 'Pago Recibido 💳',
-                message: `Tu suscripción se ha renovado correctamente.`,
+                title: 'notifications.payment.success.title',
+                message: 'notifications.payment.success.message',
                 type: 'SUCCESS'
               });
             } catch (notifyError) {
@@ -776,8 +777,8 @@ export class PaymentsService {
           // Send Real-time Notification
           await this.notificationsService.create({
             userId: user.id,
-            title: 'Error en el Pago ⚠️',
-            message: `No pudimos renovar tu suscripción. Por favor revisa tu método de pago para evitar perder acceso.`,
+            title: 'notifications.payment.failed.title',
+            message: 'notifications.payment.failed.message',
             type: 'ERROR'
           });
         }

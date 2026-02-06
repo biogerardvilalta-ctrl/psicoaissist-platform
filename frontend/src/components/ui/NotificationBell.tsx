@@ -22,6 +22,20 @@ export function NotificationBell() {
     // Map locale to date-fns locale
     const dateLocale = locale === 'es' ? es : locale === 'ca' ? ca : enUS;
 
+    // Helper to translate notification content
+    const getTranslatedContent = (text: string, data?: any) => {
+        // If text is a key (e.g. 'notifications.payment.success'), translate it
+        if (text && (text.startsWith('notifications.') || text.includes('.'))) {
+            const key = text.replace(/^notifications\./, '');
+            try {
+                return t(key, data) || text;
+            } catch (e) {
+                return text;
+            }
+        }
+        return text;
+    };
+
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -77,14 +91,14 @@ export function NotificationBell() {
                                 >
                                     <div className="flex items-start justify-between gap-2">
                                         <p className={cn("text-sm font-medium", !notification.isRead && "text-blue-700 dark:text-blue-400")}>
-                                            {notification.title}
+                                            {getTranslatedContent(notification.title, notification.data)}
                                         </p>
                                         {!notification.isRead && (
                                             <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
                                         )}
                                     </div>
                                     <p className="text-xs text-gray-500 line-clamp-2">
-                                        {notification.message}
+                                        {getTranslatedContent(notification.message, notification.data)}
                                     </p>
                                     <span className="text-[10px] text-gray-400">
                                         {format(new Date(notification.createdAt), "d MMM, HH:mm", { locale: dateLocale })}

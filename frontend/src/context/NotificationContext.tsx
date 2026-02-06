@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from 'next-intl';
 
 export type NotificationType = 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
 
@@ -35,6 +36,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const [isLoading, setIsLoading] = useState(true);
     const [socket, setSocket] = useState<Socket | null>(null);
     const { toast } = useToast();
+    const t = useTranslations('Notifications');
 
     useEffect(() => {
         if (!user || !tokens?.accessToken) {
@@ -77,10 +79,41 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 console.error("Audio error", e);
             }
 
+            // Translate title and message if they are keys
+            // We assume backend sends keys like 'notifications.payment.success.title'
+            // But we already have 'Notifications' namespace loaded as 't'
+            // So if backend sends 'payment.success.title', we use t('payment.success.title')
+
+            // Helper to translate or return original if not a key or missing
+            const getTranslatedText = (text: string, data?: any) => {
+                // Check if text looks like a key (e.g. starts with 'notifications.' or just 'payment.')
+                // Our keys in json are nested under Notifications.
+                // Backend will send e.g. 'payment.success.title' (without 'Notifications.' prefix hopefully, or we strip it)
+
+                // If backend sends 'notifications.payment.success.title', and we loaded 'Notifications' namespace:
+                // t('payment.success.title') should work if our namespace setup allows it.
+                // OR we can use useTranslations() (root) and t('Notifications.payment.success.title')
+
+                // Let's assume we strip 'notifications.' prefix if present to match the namespace scope
+                const key = text.replace(/^notifications\./, '');
+
+                // If it's a simple string not looking like a key, return it.
+                if (!text.includes('.')) return text;
+
+                try {
+                    return t(key, data);
+                } catch (e) {
+                    return text;
+                }
+            };
+
+            const title = getTranslatedText(notification.title, notification.data);
+            const message = getTranslatedText(notification.message, notification.data);
+
             // Show toast
             toast({
-                title: notification.title,
-                description: notification.message,
+                title: title,
+                description: message,
                 variant: notification.type === 'ERROR' ? 'destructive' : 'default',
             });
         });

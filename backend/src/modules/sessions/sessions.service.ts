@@ -186,10 +186,14 @@ export class SessionsService {
 
                 await this.notificationsService.create({
                     userId: targetUserId,
-                    title: '📅 Nueva Sesión Agendada',
-                    message: `${managerName} ha agendado una nueva sesión para el ${session.startTime.toLocaleString()}`,
+                    title: 'notifications.session.scheduled.title',
+                    message: 'notifications.session.scheduled.message',
                     type: 'INFO',
-                    data: { sessionId: session.id }
+                    data: {
+                        sessionId: session.id,
+                        managerName: managerName,
+                        date: session.startTime.toLocaleString() // We'll handle date formatting in frontend later ideally, but string for now
+                    }
                 });
             }
         } catch (e) { console.error('Failed to send session notification', e); }
@@ -592,10 +596,13 @@ export class SessionsService {
 
                 await this.notificationsService.create({
                     userId: session.userId,
-                    title: '✏️ Sesión Actualizada',
-                    message: message,
+                    title: 'notifications.session.updated.title',
+                    message: updateSessionDto.status === SessionStatus.CANCELLED ? 'notifications.session.updated.cancelled' : 'notifications.session.updated.message',
                     type: 'INFO',
-                    data: { sessionId: id }
+                    data: {
+                        sessionId: id,
+                        managerName: managerName
+                    }
                 });
             } catch (e) { console.error('Failed to send session update notification', e); }
         }
@@ -658,10 +665,13 @@ export class SessionsService {
 
                 await this.notificationsService.create({
                     userId: session.userId,
-                    title: '🗑️ Sesión Eliminada',
-                    message: `${managerName} ha eliminado una de tus sesiones.`,
+                    title: 'notifications.session.deleted.title',
+                    message: 'notifications.session.deleted.message',
                     type: 'WARNING',
-                    data: { sessionId: id }
+                    data: {
+                        sessionId: id,
+                        managerName: managerName
+                    }
                 });
             } catch (e) { console.error('Failed to send session delete notification', e); }
         }
