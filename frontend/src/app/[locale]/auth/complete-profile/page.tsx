@@ -7,7 +7,7 @@ import { AuthAPI } from '@/lib/auth-api';
 import { useToast } from '@/hooks/use-toast';
 import { usePayments } from '@/hooks/usePayments';
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 
 export default function CompleteProfilePage() {
     const router = useRouter();

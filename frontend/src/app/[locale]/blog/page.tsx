@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { getAllPosts } from '@/lib/blog-data';
 import { ArrowRight, Calendar, Clock, User } from 'lucide-react';
 import { Header } from '@/components/layout/header';

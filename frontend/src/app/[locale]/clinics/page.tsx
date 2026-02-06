@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { Button } from '@/components/ui/button';
 import { Building2, ShieldCheck, GraduationCap, Network, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';

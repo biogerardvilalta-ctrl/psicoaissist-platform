@@ -7,7 +7,7 @@ import { useRole } from '@/hooks/useRole';
 import { Heart, User, Settings, LogOut, Menu, X, Shield, LayoutDashboard, Users, FileText, Calendar, PieChart, Mic } from 'lucide-react';
 import { NotificationProvider } from '@/context/NotificationContext';
 import { NotificationBell } from '@/components/ui/NotificationBell';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { useRouter, usePathname } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import {

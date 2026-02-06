@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { ArrowLeft, PlayCircle, Video } from 'lucide-react';
 
 export default function TutorialsPage() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { Header } from '@/components/layout/header';
 import { Send, Loader2, Lock } from 'lucide-react';
 

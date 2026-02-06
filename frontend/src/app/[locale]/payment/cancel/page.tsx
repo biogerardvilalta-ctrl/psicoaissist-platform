@@ -1,6 +1,6 @@
 'use client';
 import { XCircle, ArrowLeft, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { useTranslations } from 'next-intl';
 
 export default function PaymentCancelPage() {

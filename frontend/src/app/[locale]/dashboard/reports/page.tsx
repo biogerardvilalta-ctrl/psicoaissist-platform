@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { FileText, Plus, Download, Trash2, Search, Filter, Pencil } from 'lucide-react';
 import { ReportsAPI, Report, REPORT_TYPE_LABELS, ReportType, ReportStatus } from '@/lib/reports-api';
 import { ClientsAPI } from '@/lib/clients-api';

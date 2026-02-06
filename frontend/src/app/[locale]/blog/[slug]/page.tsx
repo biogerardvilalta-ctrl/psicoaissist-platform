@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { getPostBySlug, getAllPosts } from '@/lib/blog-data';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Calendar, Clock, User, Share2 } from 'lucide-react';

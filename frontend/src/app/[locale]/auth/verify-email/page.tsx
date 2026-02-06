@@ -5,7 +5,7 @@ import { useRouter } from '@/navigation';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { AuthAPI } from '@/lib/auth-api';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { usePayments } from '@/hooks/usePayments';
 

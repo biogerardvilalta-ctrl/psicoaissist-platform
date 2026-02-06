@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mic, MicOff, Square, Play, RotateCcw, User, UserCheck, Settings2, BarChart3, History, Search, X } from 'lucide-react';
 import { simulatorService, PatientProfile, SimulationReport, StatsData } from '@/services/simulator.service';
 import { ApiError } from '@/lib/http-client';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { EvolutionChart } from './components/EvolutionChart';
 import { ReportsHistory } from './components/ReportsHistory';
 import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';

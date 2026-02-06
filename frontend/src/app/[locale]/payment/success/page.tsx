@@ -1,7 +1,7 @@
 'use client';
 
 import { CheckCircle, ArrowRight, Home } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';

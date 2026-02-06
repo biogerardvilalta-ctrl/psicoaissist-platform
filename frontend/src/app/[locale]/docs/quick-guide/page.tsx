@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { ArrowLeft, Zap, CheckCircle2, HelpCircle, Users } from 'lucide-react';
 
 export default function QuickGuidePage() {
