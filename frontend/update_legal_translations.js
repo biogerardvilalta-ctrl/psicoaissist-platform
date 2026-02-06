@@ -117,7 +117,7 @@ const legalData = {
                     title: "10. Contacto",
                     text: "Para ejercer sus derechos o realizar consultas sobre privacidad:",
                     dpoTitle: "Delegado de Protección de Datos (DPO)",
-                    email: "Email: hola@psicoaissist.com"
+                    email: "Email: suport@psicoaissist.com"
                 },
                 authority: {
                     title: "11. Autoridad de Control",
@@ -235,7 +235,7 @@ const legalData = {
                     title: "10. Contact",
                     text: "To exercise your rights or make privacy inquiries:",
                     dpoTitle: "Data Protection Officer (DPO)",
-                    email: "Email: hola@psicoaissist.com"
+                    email: "Email: suport@psicoaissist.com"
                 },
                 authority: {
                     title: "11. Control Authority",
@@ -353,7 +353,7 @@ const legalData = {
                     title: "10. Contacte",
                     text: "Per exercir els vostres drets o realitzar consultes sobre privacitat:",
                     dpoTitle: "Delegat de Protecció de Dades (DPO)",
-                    email: "Email: hola@psicoaissist.com"
+                    email: "Email: suport@psicoaissist.com"
                 },
                 authority: {
                     title: "11. Autoritat de Control",

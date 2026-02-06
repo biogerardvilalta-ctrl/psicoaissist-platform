@@ -76,7 +76,7 @@ export function HeroSection() {
               </Link>
             </div>
 
-            {/* Trust indicators */}
+            {/* Trust indicators - HIDDEN BY USER REQUEST
             <div className="mt-8 flex items-center justify-center space-x-6 sm:justify-start">
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">500+</div>
@@ -91,6 +91,7 @@ export function HeroSection() {
                 <div className="text-sm text-gray-600">{t('stats.uptime')}</div>
               </div>
             </div>
+            */}
           </div>
 
           {/* Hero image/video */}
