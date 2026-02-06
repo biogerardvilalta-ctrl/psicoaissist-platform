@@ -1451,7 +1451,8 @@
                 "testimonials": "Testimonis",
                 "docs": "Documentació",
                 "blog": "Blog",
-                "legal": "Legal"
+                "legal": "Legal",
+                "language": "Idioma"
             },
             "cta": {
                 "clinics": "Per a Clíniques",

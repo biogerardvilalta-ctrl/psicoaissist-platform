@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { usePayments } from '@/hooks/usePayments';
 import { UserAPI } from '@/lib/user-api';
 import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/language-switcher';
 
 interface RegisterFormData {
   firstName: string;
@@ -198,7 +199,11 @@ export default function RegisterPage() {
 
   if (isVerificationSent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+        {/* Language Switcher - Top Right */}
+        <div className="absolute top-4 right-4 z-10">
+          <LanguageSwitcher />
+        </div>
         <div className="max-w-md w-full text-center space-y-6 bg-white p-8 rounded-2xl shadow-xl">
           <div className="flex justify-center">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
@@ -226,7 +231,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Language Switcher - Top Right */}
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
+
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">

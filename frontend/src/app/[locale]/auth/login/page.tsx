@@ -10,6 +10,7 @@ import { AuthAPI } from '@/lib/auth-api';
 import { usePayments } from '@/hooks/usePayments';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/language-switcher';
 
 interface LoginFormData {
   email: string;
@@ -204,7 +205,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Language Switcher - Top Right */}
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
+
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">

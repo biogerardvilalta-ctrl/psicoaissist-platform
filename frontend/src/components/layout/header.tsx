@@ -179,6 +179,10 @@ export function Header() {
               >
                 {t('cta.clinics')}
               </Link>
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-sm font-medium text-gray-700">{t('nav.language')}</span>
+                <LanguageSwitcher />
+              </div>
               <div className="pt-4 border-t border-gray-200 space-y-3">
                 <Link
                   href="/auth/login"
