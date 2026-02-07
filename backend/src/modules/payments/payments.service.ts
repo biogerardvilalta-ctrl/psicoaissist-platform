@@ -253,6 +253,20 @@ export class PaymentsService {
         });
       }
 
+      // Notify Support via Email
+      if (user) {
+        try {
+          await this.emailService.sendCustomEmail(
+            'suport@psicoaissist.com',
+            `Nuevo Pack Onboarding: ${user.email}`,
+            `El usuario ${user.firstName || ''} ${user.lastName || ''} (${user.email}) ha contratado el Pack On-boarding.\n\nPor favor iniciar el proceso de configuración del servidor.`,
+            'es'
+          );
+        } catch (e) {
+          this.logger.error(`Failed to send support email for onboarding: ${e.message}`, e);
+        }
+      }
+
       details = `Pack On-boarding contratado (Tarea Admin Creada)`;
       this.logger.log(`Created Onboarding task for user ${userId}`);
     }

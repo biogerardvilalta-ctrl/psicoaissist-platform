@@ -152,6 +152,9 @@ export class EmailService {
                 Ir al Dashboard
               </a>
             </div>
+            <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
+              ${common('spam_notice')}
+            </p>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
             ${common('copyright', { year })}
@@ -163,6 +166,8 @@ export class EmailService {
         
         ${content}
         
+        ${common('spam_notice')}
+
         ${common('support')}
       `
     };
@@ -205,6 +210,9 @@ export class EmailService {
               ${t('help')}
               <a href="mailto:soporte@psicoaissist.com">soporte@psicoaissist.com</a>
             </p>
+            <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
+              ${common('spam_notice')}
+            </p>
           </div>
           <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
             ${common('copyright', { year })}
@@ -227,6 +235,8 @@ export class EmailService {
         Dashboard: https://psicoaissist.com/dashboard
 
         ${t('help')} soporte@psicoaissist.com
+
+        ${common('spam_notice')}
 
         ${common('copyright', { year })}
       `
@@ -265,6 +275,9 @@ export class EmailService {
             <p style="color: #666; font-size: 14px;">
               ${t('ignore')}
             </p>
+            <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
+              ${common('spam_notice')}
+            </p>
           </div>
           <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
             ${common('copyright', { year })}
@@ -280,6 +293,8 @@ export class EmailService {
         ${verificationUrl}
 
         ${t('ignore')}
+
+        ${common('spam_notice')}
 
         ${common('copyright', { year })}
       `
@@ -330,6 +345,8 @@ export class EmailService {
         ${t('message', { planName })}
 
         ${t('cta')}: https://psicoaissist.com/dashboard
+
+        ${common('spam_notice')}
       `
     };
   }
@@ -360,6 +377,9 @@ export class EmailService {
             <p style="color: #666; font-size: 14px;">
               ${t('expiry')}
             </p>
+            <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
+              ${common('spam_notice')}
+            </p>
           </div>
           <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
             ${common('copyright', { year })}
@@ -374,6 +394,8 @@ export class EmailService {
         ${t('cta')}: ${resetUrl}
 
         ${t('expiry')}
+
+        ${common('spam_notice')}
       `
     };
   }
@@ -403,6 +425,9 @@ export class EmailService {
                 ${t('cta')}
               </a>
             </div>
+            <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
+              ${common('spam_notice')}
+            </p>
           </div>
           <div style="background: #333; color: #999; padding: 15px; text-align: center; font-size: 12px;">
             ${common('copyright', { year })}
@@ -417,6 +442,8 @@ export class EmailService {
         ${t('goodbye')}
 
         ${t('cta')}: https://psicoaissist.com/pricing
+
+        ${common('spam_notice')}
       `
     };
   }
@@ -469,6 +496,8 @@ export class EmailService {
         ${t('labels.type')}: ${data.type}
 
         ${t('cta')}: https://psicoaissist.com/dashboard/sessions
+
+        ${common('spam_notice')}
       `
     };
   };
@@ -511,6 +540,8 @@ export class EmailService {
         
         ${t('labels.date')}: ${data.date}
         ${t('labels.time')}: ${data.time}
+
+        ${common('spam_notice')}
       `
     };
   }
@@ -552,6 +583,9 @@ export class EmailService {
                 ${t('cta')}
               </a>
             </div>
+            <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
+              ${common('spam_notice')}
+            </p>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
             ${common('copyright', { year })}
@@ -567,6 +601,8 @@ export class EmailService {
         ${t('process')}
   
         ${common('support')}
+
+        ${common('spam_notice')}
       `
     };
   }
@@ -620,6 +656,9 @@ export class EmailService {
                 ${t('cta')}
               </a>
             </div>
+            <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
+              ${common('spam_notice')}
+            </p>
           </div>
           <div style="background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #777;">
             ${common('copyright', { year })}
@@ -634,6 +673,8 @@ export class EmailService {
         ${textRows}
 
         ${t('cta')}: https://psicoaissist.com/dashboard/sessions
+
+        ${common('spam_notice')}
       `
     };
   }
@@ -658,9 +699,12 @@ export class EmailService {
           <p style="word-break: break-all; color: #666;">${link}</p>
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;" />
           <p style="color: #888; font-size: 12px;">${t('footer')}</p>
+          <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
+            ${common('spam_notice')}
+          </p>
         </div>
       `,
-      text: `${t('greeting', { clientName })}\n\n${t('message', { professionalName })}\n\n${t('instruction')}: ${link}\n\n${common('support')}`
+      text: `${t('greeting', { clientName })}\n\n${t('message', { professionalName })}\n\n${t('instruction')}: ${link}\n\n${common('spam_notice')}\n\n${common('support')}`
     };
   }
 }

@@ -111,6 +111,7 @@
     },
     "common": {
         "copyright": "© {year} PsicoAIssist. Tots els drets reservats.",
-        "support": "Suport PsicoAIssist"
+        "support": "Suport PsicoAIssist",
+        "spam_notice": "Si no reps el correu a la teva safata d'entrada, si us plau revisa el correu brossa i marca'l com a no spam."
     }
 }

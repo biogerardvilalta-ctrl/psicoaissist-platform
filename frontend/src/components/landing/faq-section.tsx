@@ -106,20 +106,14 @@ export function FAQSection() {
               ¿No encuentras la respuesta que buscas?
             </h3>
             <p className="text-gray-600 mb-6">
-              Nuestro equipo de soporte está aquí para ayudarte. Contáctanos y te responderemos en menos de 2 horas.
+              Nuestro equipo de soporte está aquí para ayudarte. Contáctanos y te responderemos en menos de 24 horas.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:soporte@psicoaissist.com"
+                href="mailto:suport@psicoaissist.com"
                 className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
               >
-                Enviar email
-              </a>
-              <a
-                href="/chat"
-                className="inline-flex items-center justify-center px-6 py-3 border border-blue-300 text-base font-medium rounded-lg text-blue-700 bg-white hover:bg-blue-50 transition-colors"
-              >
-                Chat en vivo
+                Contáctanos
               </a>
             </div>
           </div>

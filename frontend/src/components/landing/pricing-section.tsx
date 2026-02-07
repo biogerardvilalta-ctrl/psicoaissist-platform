@@ -235,7 +235,7 @@ export default function PricingSection() {
                     </div>
                     <div className="mt-8">
                       <a
-                        href="mailto:ventas@psicoaissist.com"
+                        href="mailto:suport@psicoaissist.com"
                         className={`w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg transition-colors bg-slate-900 hover:bg-slate-800 text-white`}
                       >
                         {t(`plans.${plan.id}.cta`)}
@@ -339,9 +339,9 @@ export default function PricingSection() {
           <div className="mt-12 text-center">
             <p className="text-base text-gray-600">
               {t('footer.contact')}{' '}
-              <Link href="/contact" className="text-blue-600 hover:text-blue-700 font-medium">
+              <a href="mailto:suport@psicoaissist.com" className="text-blue-600 hover:text-blue-700 font-medium">
                 Contáctanos
-              </Link>
+              </a>
             </p>
             <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-gray-500">
               {/* <span>✓ 14 días gratis en todos los planes</span> */}

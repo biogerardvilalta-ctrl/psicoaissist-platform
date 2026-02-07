@@ -44,12 +44,12 @@
             },
             "languages": {
                 "question": "What languages does the system support?",
-                "answer": "Mainly Catalan, Spanish, and English with high accuracy. We also support French, Portuguese, and Italian. We are adding more languages based on user demand.",
+                "answer": "Mainly Catalan, Spanish, and English with high accuracy. We will consider adding more languages based on user demand.",
                 "category": "Functionality"
             },
             "trial": {
                 "question": "Is there a free trial period?",
-                "answer": "We have a 14-day Demo Plan to try. You can test key functionalities at no cost before choosing your professional plan.",
+                "answer": "We have a 14-day Demo Plan to try. You can test key functionalities (with usage limits) at no cost before choosing your professional plan.",
                 "category": "Billing"
             }
         }
@@ -1399,7 +1399,7 @@
                 }
             },
             "footer": {
-                "contact": "Need a custom plan? Contact us",
+                "contact": "Need a custom plan?",
                 "cancel": "Cancel anytime",
                 "data": "Data always yours",
                 "fairuse": "* Fair Use Policy applies to unlimited storage."

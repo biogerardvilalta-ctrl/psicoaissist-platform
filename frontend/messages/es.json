@@ -44,12 +44,12 @@
             },
             "languages": {
                 "question": "¿Qué idiomas soporta el sistema?",
-                "answer": "Principalmente Catalán, Español e Inglés con alta precisión. También soportamos francés, portugués e italiano. Estamos añadiendo más idiomas basándose en la demanda de nuestros usuarios.",
+                "answer": "Principalmente Catalán, Español e Inglés con alta precisión. Estudiaremos añadir más idiomas basándose en la demanda de nuestros usuarios.",
                 "category": "Funcionalidad"
             },
             "trial": {
                 "question": "¿Hay período de prueba gratuito?",
-                "answer": "Disponemos de un Plan Demo de prueba de 14 días. Puedes probar las funcionalidades principales sin coste antes de elegir tu plan profesional.",
+                "answer": "Disponemos de un Plan Demo de prueba de 14 días. Puedes probar las funcionalidades principales (con límites de uso) sin coste antes de elegir tu plan profesional.",
                 "category": "Facturación"
             }
         }
@@ -1396,7 +1396,7 @@
                 }
             },
             "footer": {
-                "contact": "¿Necesitas un plan a medida? Contáctanos",
+                "contact": "¿Necesitas un plan a medida?",
                 "cancel": "Cancela cuando quieras",
                 "data": "Datos siempre tuyos",
                 "fairuse": "* Política de Uso Razonable (Fair Use) aplica al almacenamiento ilimitado."

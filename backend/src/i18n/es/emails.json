@@ -111,6 +111,7 @@
     },
     "common": {
         "copyright": "© {year} PsicoAIssist. Todos los derechos reservados.",
-        "support": "Soporte PsicoAIssist"
+        "support": "Soporte PsicoAIssist",
+        "spam_notice": "Si no recibes el correo en tu bandeja de entrada, por favor revisa en spam y márcalo como no spam."
     }
 }

@@ -44,12 +44,12 @@
             },
             "languages": {
                 "question": "Quins idiomes suporta el sistema?",
-                "answer": "Principalment Català, Espanyol i Anglès amb alta precisió. També suportem francès, portuguès i italià. Estem afegint més idiomes basant-nos en la demanda dels nostres usuaris.",
+                "answer": "Principalment Català, Espanyol i Anglès amb alta precisió. Estudiarem afegir més idiomes basant-nos en la demanda dels nostres usuaris.",
                 "category": "Funcionalitat"
             },
             "trial": {
                 "question": "Hi ha període de prova gratuït?",
-                "answer": "Disposem d'un Pla Demo de prova de 14 dies. Pots provar les funcionalitats principals sense cost abans de triar el teu pla professional.",
+                "answer": "Disposem d'un Pla Demo de prova de 14 dies. Pots provar les funcionalitats principals (amb límits d'ús) sense cost abans de triar el teu pla professional.",
                 "category": "Facturació"
             }
         }
@@ -1399,7 +1399,7 @@
                 }
             },
             "footer": {
-                "contact": "Necessites un pla a mida? Contacta'ns",
+                "contact": "Necessites un pla a mida?",
                 "cancel": "Cancel·la quan vulguis",
                 "data": "Dades sempre teves",
                 "fairuse": "* Política d'Ús Raonable (Fair Use) aplica a l'emmagatzematge il·limitat."
