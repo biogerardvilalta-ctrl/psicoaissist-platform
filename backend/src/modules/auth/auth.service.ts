@@ -395,19 +395,19 @@ export class AuthService {
           professionalNumber,
           country,
           isPendingRegistration: false,
-          status: UserStatus.ACTIVE,
-          verified: true,
+          status: UserStatus.INACTIVE, // Changed to INACTIVE to require payment
+          verified: false, // Verification/Payment required
           role: UserRole.PSYCHOLOGIST,
           updatedAt: new Date(),
         } as any,
       });
 
-      const tokens = await this.generateTokens(updatedUser);
-
+      // Similar to standard register, we return user but NO tokens
       return {
-        message: 'Registro completado exitosamente',
+        message: 'Registro de Google completado. Por favor completa el pago para activar tu cuenta.',
         user: updatedUser as any,
-        tokens,
+        tokens: null,
+        encryptionKey: null,
       };
 
     } catch (error) {

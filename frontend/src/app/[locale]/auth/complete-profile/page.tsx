@@ -13,7 +13,7 @@ export default function CompleteProfilePage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
-    const { createCheckoutSession } = usePayments();
+    const { createCheckoutSession, createInitialCheckoutSession } = usePayments();
 
     useEffect(() => {
         console.log('CompleteProfile Params:', {
@@ -87,11 +87,17 @@ export default function CompleteProfilePage() {
                 localStorage.setItem('psychoai_access_token', response.tokens.accessToken);
                 localStorage.setItem('psychoai_refresh_token', response.tokens.refreshToken);
             } else {
-                // Should not happen on successful completion, but handle safety
-                console.error("No tokens returned after profile completion");
-                setError("Error de autenticación. Por favor inicia sesión.");
-                router.push('/auth/login');
-                return;
+                // Payment Required or Verification Required
+                // If we have a user object, we can proceed to payment
+                if (response.user) {
+                    console.log('Registration complete but payment required. Redirecting...');
+                } else {
+                    // Fallback error
+                    console.error("No tokens returned after profile completion");
+                    setError("Error de autenticación. Por favor inicia sesión.");
+                    router.push('/auth/login');
+                    return;
+                }
             }
 
             toast({
@@ -106,11 +112,23 @@ export default function CompleteProfilePage() {
             if (plan && plan !== 'demo') {
                 try {
                     console.log('Redirecting to payment for plan:', plan);
-                    await createCheckoutSession({
-                        plan: plan as any,
-                        interval: interval || 'month'
-                    });
-                    // createCheckoutSession handles the redirect
+
+                    if (response.tokens) {
+                        // Logged in user (e.g. Demo plan or legacy flow)
+                        await createCheckoutSession({
+                            plan: plan as any,
+                            interval: interval || 'month'
+                        });
+                    } else {
+                        // Unauthenticated user (INACTIVE) -> Use Initial Checkout
+                        // We need the user ID from response
+                        await createInitialCheckoutSession(
+                            response.user!.id,
+                            plan,
+                            interval || 'month'
+                        );
+                    }
+
                     return;
                 } catch (paymentError: any) {
                     console.error('Payment redirection failed', paymentError);
