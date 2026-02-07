@@ -53,19 +53,17 @@ export class PaymentsController {
   }
 
   @Post('create-checkout-session-demo')
+  @UseGuards(JwtAuthGuard)
   async createCheckoutSessionDemo(
     @Body() createCheckoutDto: CreateCheckoutSessionDto,
+    @Req() req: any,
   ) {
-    // Endpoint temporal para testing sin autenticación
+    // Endpoint para testing/demo
     console.log('Demo checkout session requested:', createCheckoutDto);
-
-    // Usar un usuario real de la base de datos para el demo
-    // Podemos usar el admin o cualquier usuario de los seeded
-    const demoUserId = 'cmj66cjcg0000ojxfyrhpepoh'; // admin@psychoai.com del seed
 
     return this.paymentsService.createCheckoutSessionDemo(
       createCheckoutDto,
-      demoUserId,
+      req.user.id,
     );
   }
 

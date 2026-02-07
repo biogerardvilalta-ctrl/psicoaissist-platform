@@ -16,10 +16,9 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { NotificationBell } from '@/components/ui/NotificationBell';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Menu, LogOut, LayoutDashboard, Users, Settings, Mail, ClipboardList, Sparkles, CreditCard, UserCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+
 
 export default function AdminHeader() {
-  const t = useTranslations('Dashboard.Header');
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -30,13 +29,13 @@ export default function AdminHeader() {
   };
 
   const navigationItems = [
-    { name: t('panel'), href: '/admin', icon: LayoutDashboard },
-    { name: t('users'), href: '/admin/users', icon: Users },
-    { name: t('tasks'), href: '/admin/tasks', icon: Sparkles },
-    { name: t('communications'), href: '/admin/communications', icon: Mail },
-    { name: t('billing'), href: '/admin/billing', icon: CreditCard },
-    { name: t('logs'), href: '/admin/audit-logs', icon: ClipboardList },
-    { name: t('system'), href: '/admin/system', icon: Settings },
+    { name: 'Panel', href: '/admin', icon: LayoutDashboard },
+    { name: 'Usuarios', href: '/admin/users', icon: Users },
+    { name: 'Tareas', href: '/admin/tasks', icon: Sparkles },
+    { name: 'Comunicaciones', href: '/admin/communications', icon: Mail },
+    { name: 'Facturación', href: '/admin/billing', icon: CreditCard },
+    { name: 'Registros', href: '/admin/audit-logs', icon: ClipboardList },
+    { name: 'Sistema', href: '/admin/system', icon: Settings },
   ];
 
   return (
@@ -51,7 +50,7 @@ export default function AdminHeader() {
               </div>
               <div className="hidden sm:block">
                 <span className="text-white font-semibold">PsicoAIssist</span>
-                <span className="text-gray-400 text-sm ml-2">{t('adminLabel')}</span>
+                <span className="text-gray-400 text-sm ml-2">Admin</span>
               </div>
             </Link>
 
@@ -95,34 +94,34 @@ export default function AdminHeader() {
                   <div className="hidden sm:block text-right">
                     <div className="text-white text-sm font-medium">{user?.firstName}</div>
                     <div className="text-gray-400 text-xs text-xs-custom-color">
-                      {user?.role === 'PSYCHOLOGIST_PREMIUM' ? t('roles.premium') :
-                        user?.role === 'PSYCHOLOGIST' ? t('roles.psychologist') :
-                          user?.role === 'MANAGER' || user?.role === 'AGENDA_MANAGER' ? t('roles.manager') :
-                            user?.role === 'ADMIN' ? t('roles.admin') :
+                      {user?.role === 'PSYCHOLOGIST_PREMIUM' ? 'Psicólogo Premium' :
+                        user?.role === 'PSYCHOLOGIST' ? 'Psicólogo' :
+                          user?.role === 'MANAGER' || user?.role === 'AGENDA_MANAGER' ? 'Gestor' :
+                            user?.role === 'ADMIN' ? 'Administrador' :
                               user?.role}
                     </div>
                   </div>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
+                <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="w-full cursor-pointer flex items-center">
                     <UserCircle className="mr-2 h-4 w-4" />
-                    <span>{t('profile')}</span>
+                    <span>Perfil</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>{t('settings')}</span>
+                    <span>Configuración</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>{t('logout')}</span>
+                  <span>Cerrar Sesión</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -139,7 +138,7 @@ export default function AdminHeader() {
                   <div className="flex flex-col h-full">
                     <div className="mb-8">
                       <SheetTitle className="text-xl font-bold text-gray-900 mb-2">PsicoAIssist</SheetTitle>
-                      <p className="text-sm text-gray-500">{t('adminPanelTitle')}</p>
+                      <p className="text-sm text-gray-500">Panel de Administración</p>
                     </div>
 
                     <nav className="flex-1 space-y-2">
@@ -163,7 +162,7 @@ export default function AdminHeader() {
                     </nav>
 
                     <div className="pt-6 border-t border-gray-100 text-center text-xs text-gray-400">
-                      {t('copyright')}
+                      © 2024 PsicoAIssist. Todos los derechos reservados.
                     </div>
                   </div>
                 </SheetContent>

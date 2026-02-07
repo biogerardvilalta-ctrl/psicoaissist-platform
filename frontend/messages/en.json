@@ -385,6 +385,82 @@
                 "blockErrorDesc": "Complete date and times.",
                 "blockTimeError": "Start time must be before end time."
             },
+            "UpgradeModal": {
+                "title": {
+                    "simulator": "Case Limit Reached",
+                    "transcription": "Transcription Limit Reached"
+                },
+                "description": {
+                    "simulator": "You have used up the clinical cases available in your current cycle or pack.",
+                    "transcription": "You have consumed the AI/Transcription minutes available in your current cycle."
+                },
+                "callToAction": {
+                    "simulator": "Buy a case pack to continue.",
+                    "transcription": "Upgrade your plan or buy a minutes pack.",
+                    "general": "Upgrade to a higher plan to remove limits."
+                },
+                "buttons": {
+                    "viewOptions": "View Available Options",
+                    "notNow": "Not Now",
+                    "cancel": "Cancel",
+                    "back": "Back"
+                },
+                "selection": {
+                    "title": "Options Available for You",
+                    "subtitle": "Select the plan or pack that best suits your needs.",
+                    "monthly": "Monthly",
+                    "annual": "Annual",
+                    "savePercent": "-17%",
+                    "recommended": "Recommended",
+                    "perMonth": "/month",
+                    "perYear": "/year",
+                    "oneTime": "/one-time payment",
+                    "titles": {
+                        "plans": "Subscription Plans",
+                        "packs": "Additional Packs (One-time)"
+                    },
+                    "buttons": {
+                        "processing": "Processing...",
+                        "upgradeTo": "Upgrade to {name}",
+                        "buyPack": "Buy Pack"
+                    }
+                },
+                "confirmation": {
+                    "title": "Confirm Change",
+                    "message": "You are about to switch to the {planName} plan.",
+                    "warningPart1": "By making this change, ",
+                    "warningStrong": "you will be charged immediately",
+                    "warningPart2": " for the prorated difference of the remaining days of your current cycle.",
+                    "note": "The new billing cycle will start today if it's a new subscription, or your current date will be maintained if it's an upgrade.",
+                    "confirmButton": "Understood, Confirm Payment and Switch"
+                },
+                "plans": {
+                    "pro": {
+                        "name": "Pro",
+                        "description": "For growing professionals"
+                    },
+                    "premium": {
+                        "name": "Premium",
+                        "description": "For high-volume specialists"
+                    },
+                    "minutes_pack": {
+                        "name": "Minutes Pack",
+                        "description": "500 extra AI/Transcription minutes"
+                    },
+                    "simulator_pack": {
+                        "name": "Simulator Pack",
+                        "description": "10 extra clinical cases"
+                    },
+                    "agenda_manager_pack": {
+                        "name": "Agenda Manager",
+                        "description": "Add an administrative manager"
+                    },
+                    "on_boarding_pack": {
+                        "name": "Onboarding Pack",
+                        "description": "Guided setup and migration"
+                    }
+                }
+            },
             "GoogleCalendar": {
                 "title": "Google Calendar Integration",
                 "description": "Connect your calendar to automatically sync events.",

@@ -113,46 +113,7 @@ export class PaymentsService {
         mode
       );
 
-      if (process.env.NODE_ENV === 'development') {
-        this.logger.log('DEV MODE: Simulating subscription/pack success immediately for testing (Webhooks may not reach localhost).');
 
-        if (isPack) {
-          // For packs, we don't update the subscription PlanType (it remains as Basic/Pro/etc)
-          // We just deliver the content immediately because webhooks won't reach localhost without CLI
-          this.logger.log(`DEV MODE: Auto-delivering pack ${createCheckoutDto.plan}`);
-          await this.addExtraPack(user.id, createCheckoutDto.plan);
-        } else {
-          // Only for SUBSCRIPTIONS do we update the main subscription record
-          // We can't know the subscription ID yet (it's created on checkout completion),
-          // but we can create a placeholder one to allow the UI to show "Active".
-          await this.prisma.subscription.upsert({
-            where: { userId: user.id },
-            update: {
-              status: 'active',
-              planType: createCheckoutDto.plan,
-              stripeSubscriptionId: `sub_test_dev_${Date.now()}`,
-              currentPeriodStart: new Date(),
-              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
-            },
-            create: {
-              userId: user.id,
-              status: 'active',
-              planType: createCheckoutDto.plan,
-              stripeSubscriptionId: `sub_test_dev_${Date.now()}`,
-              currentPeriodStart: new Date(),
-              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
-            }
-          });
-        }
-
-        await this.auditService.log({
-          userId: user.id,
-          action: AuditAction.SUBSCRIPTION_CHANGE,
-          resourceType: 'SUBSCRIPTION',
-          details: `Simulación DEV: Acción completada para ${createCheckoutDto.plan}`,
-          isSuccess: true,
-        });
-      }
 
       return {
         sessionId: session.id,
@@ -370,23 +331,24 @@ export class PaymentsService {
     // Check if this was an initial payment (registration flow)
     const isInitialPayment = session.metadata?.isInitialPayment === 'true';
 
-    if (isInitialPayment) {
-      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    // Activar usuario si el pago es exitoso, independientemente de si es inicial o reactivación
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
-      if (user && (user.status === 'INACTIVE' || user.status === 'PENDING_REVIEW')) {
-        this.logger.log(`Activating user ${userId} after initial payment success.`);
+    if (user && (user.status === 'INACTIVE' || user.status === 'PENDING_REVIEW' || user.status === 'DELETED')) {
+      this.logger.log(`Activating user ${userId} after successful payment.`);
 
-        await this.prisma.user.update({
-          where: { id: userId },
-          data: {
-            status: 'ACTIVE',
-            verified: true, // Payment confirms identity/intent
-            verificationToken: null,
-            updatedAt: new Date()
-          }
-        });
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          status: 'ACTIVE',
+          verified: true,
+          verificationToken: null,
+          updatedAt: new Date()
+        }
+      });
 
-        // Send Welcome Email (now that they are active)
+      // Send Welcome Email if it was an initial payment (optional check)
+      if (isInitialPayment) {
         try {
           await this.emailService.sendWelcomeEmail(
             user.email,
@@ -396,16 +358,16 @@ export class PaymentsService {
         } catch (e) {
           this.logger.warn(`Could not send welcome email after payment activation: ${e.message}`);
         }
-
-        await this.auditService.log({
-          userId: userId,
-          action: AuditAction.UPDATE,
-          resourceType: 'USER',
-          resourceId: userId,
-          details: 'Usuario activado tras pago inicial exitoso',
-          isSuccess: true,
-        });
       }
+
+      await this.auditService.log({
+        userId: userId,
+        action: AuditAction.UPDATE,
+        resourceType: 'USER',
+        resourceId: userId,
+        details: 'Usuario activado tras pago exitoso',
+        isSuccess: true,
+      });
     }
   }
 
@@ -460,6 +422,12 @@ export class PaymentsService {
           let packId = createCheckoutDto.plan;
           await this.addExtraPack(userId, packId);
         } else {
+          // Ensure user is active
+          await this.prisma.user.update({
+            where: { id: userId },
+            data: { status: 'ACTIVE' }
+          });
+
           // Simular suscripción activa
           await this.prisma.subscription.upsert({
             where: { userId: user.id },
@@ -470,6 +438,7 @@ export class PaymentsService {
               currentPeriodStart: new Date(),
               currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30)),
               updatedAt: new Date(),
+              canceledAt: null, // Reset canceled status
             },
             create: {
               userId: user.id,
@@ -477,7 +446,8 @@ export class PaymentsService {
               planType: createCheckoutDto.plan,
               stripeSubscriptionId: `sub_demo_${Date.now()}`,
               currentPeriodStart: new Date(),
-              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
+              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30)),
+              canceledAt: null,
             }
           });
 
@@ -737,6 +707,15 @@ export class PaymentsService {
     const safeStartTime = !isNaN(startTime.getTime()) ? startTime : new Date();
     const safeEndTime = !isNaN(endTime.getTime()) ? endTime : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
+    // Reactivate user if they were deleted/inactive
+    if (user.status !== 'ACTIVE') {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { status: 'ACTIVE' }
+      });
+      this.logger.log(`User ${user.id} reactivated via subscription creation`);
+    }
+
     await this.prisma.subscription.upsert({
       where: { userId: user.id },
       update: {
@@ -746,6 +725,7 @@ export class PaymentsService {
         currentPeriodStart: safeStartTime,
         currentPeriodEnd: safeEndTime,
         updatedAt: new Date(),
+        canceledAt: null, // Ensure cancellation is cleared if re-subscribing
       },
       create: {
         userId: user.id,
@@ -754,6 +734,7 @@ export class PaymentsService {
         planType,
         currentPeriodStart: safeStartTime,
         currentPeriodEnd: safeEndTime,
+        canceledAt: null,
       },
     });
 
@@ -799,6 +780,15 @@ export class PaymentsService {
     const safeStartTime = !isNaN(startTime.getTime()) ? startTime : new Date();
     const safeEndTime = !isNaN(endTime.getTime()) ? endTime : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
+    // Reactivate user if they were deleted/inactive (e.g. renewal after expiry/deletion)
+    if (user.status !== 'ACTIVE' && subscription.status === 'active') {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { status: 'ACTIVE' }
+      });
+      this.logger.log(`User ${user.id} reactivated via subscription update`);
+    }
+
     await this.prisma.subscription.update({
       where: { userId: user.id },
       data: {
@@ -807,6 +797,7 @@ export class PaymentsService {
         currentPeriodStart: safeStartTime,
         currentPeriodEnd: safeEndTime,
         updatedAt: new Date(),
+        canceledAt: null, // Reset canceled status on update/renewal
       },
     });
 
@@ -900,6 +891,22 @@ export class PaymentsService {
                 message: 'notifications.payment.success.message',
                 type: 'SUCCESS'
               });
+
+              // AUDIT LOG
+              await this.auditService.log({
+                userId: user.id,
+                action: AuditAction.SUBSCRIPTION_CHANGE,
+                resourceType: 'PAYMENT',
+                resourceId: invoice.id,
+                details: `Pago de factura exitoso (${invoice.amount_paid / 100} ${invoice.currency})`,
+                isSuccess: true,
+                metadata: {
+                  status: invoice.status,
+                  invoiceId: invoice.id,
+                  amount: invoice.amount_paid
+                }
+              });
+
             } catch (notifyError) {
               this.logger.warn(`Failed to send payment notification: ${notifyError.message}`);
             }
@@ -930,6 +937,20 @@ export class PaymentsService {
             title: 'notifications.payment.failed.title',
             message: 'notifications.payment.failed.message',
             type: 'ERROR'
+          });
+
+          // AUDIT LOG
+          await this.auditService.log({
+            userId: user.id,
+            action: AuditAction.SUBSCRIPTION_CHANGE,
+            resourceType: 'PAYMENT',
+            resourceId: invoice.id,
+            details: `Fallo en pago de factura`,
+            isSuccess: false,
+            metadata: {
+              status: invoice.status,
+              invoiceId: invoice.id
+            }
           });
         }
       }
@@ -1040,6 +1061,16 @@ export class PaymentsService {
       title: 'Pago Recibido (Simulado) 💳',
       message: `Tu suscripción se ha renovado correctamente.`,
       type: 'SUCCESS'
+    });
+
+    // AUDIT LOG
+    await this.auditService.log({
+      userId: userId,
+      action: AuditAction.SUBSCRIPTION_CHANGE,
+      resourceType: 'PAYMENT',
+      resourceId: 'simulation',
+      details: `Simulación de pago exitoso (Dev Mode)`,
+      isSuccess: true
     });
 
     return { success: true, message: 'Payment simulation triggered' };

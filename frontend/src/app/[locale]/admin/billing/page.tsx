@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import { AdminAPI, AdminStats, AdminPlan } from '@/lib/admin-api';
 import { DollarSign, CreditCard, TrendingUp, CheckCircle, Package } from 'lucide-react';
 import { useAdminStats } from '@/hooks/useAdmin';
-import { useTranslations } from 'next-intl';
+
 
 export default function AdminBillingPage() {
-    const t = useTranslations('Admin.Billing');
     const { stats, loading: statsLoading } = useAdminStats();
     const [plans, setPlans] = useState<AdminPlan[]>([]);
     const [plansLoading, setPlansLoading] = useState(true);
@@ -41,14 +40,14 @@ export default function AdminBillingPage() {
         return (plan?.price || 0) * count;
     };
 
-    if (statsLoading && plansLoading) return <div className="p-8 text-center text-gray-500">{t('title')}...</div>;
+    if (statsLoading && plansLoading) return <div className="p-8 text-center text-gray-500">Cargando facturación...</div>;
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-                    <p className="mt-1 text-sm text-gray-600">{t('subtitle')}</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Facturación y Planes</h1>
+                    <p className="mt-1 text-sm text-gray-600">Gestiona los planes de suscripción y visualiza los ingresos recurrentes.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -58,7 +57,7 @@ export default function AdminBillingPage() {
                                 <DollarSign className="w-6 h-6" />
                             </div>
                             <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500">{t('overview.monthlyRecurring')}</p>
+                                <p className="text-sm font-medium text-gray-500">Ingresos Recurrentes (MRR)</p>
                                 <p className="text-2xl font-bold text-gray-900">€{stats?.totalRevenue || 0}</p>
                             </div>
                         </div>
@@ -70,7 +69,7 @@ export default function AdminBillingPage() {
                                 <CreditCard className="w-6 h-6" />
                             </div>
                             <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500">{t('overview.activeSubscriptions')}</p>
+                                <p className="text-sm font-medium text-gray-500">Suscripciones Activas</p>
                                 <p className="text-2xl font-bold text-gray-900">{stats?.activeSubscriptions || 0}</p>
                             </div>
                         </div>
@@ -89,7 +88,7 @@ export default function AdminBillingPage() {
                     </div>
                 </div>
 
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('subscriptions.title')}</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Planes de Suscripción</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {plans.map((plan) => (
                         <div key={plan.id} className="bg-white rounded-lg shadow-sm border overflow-hidden">
@@ -108,11 +107,11 @@ export default function AdminBillingPage() {
 
                                 <div className="border-t border-gray-100 py-4 my-2">
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm text-gray-600">{t('subscriptions.user')}:</span>
+                                        <span className="text-sm text-gray-600">Usuarios Activos:</span>
                                         <span className="font-semibold text-gray-900">{getPlanUserCount(plan.id.toUpperCase())}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-sm text-gray-600">{t('overview.totalRevenue')}:</span>
+                                        <span className="text-sm text-gray-600">Ingresos Totales:</span>
                                         <span className="font-semibold text-green-600">€{calculatePlanRevenue(plan.id)}</span>
                                     </div>
                                 </div>

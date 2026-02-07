@@ -20,6 +20,7 @@ export class AuditService {
         details?: string; // stored in metadata
         ipAddress?: string;
         isSuccess?: boolean;
+        metadata?: any;
     }) {
         try {
             await this.prisma.auditLog.create({
@@ -30,7 +31,10 @@ export class AuditService {
                     resourceId: data.resourceId,
                     ipAddress: data.ipAddress || 'SYSTEM',
                     isSuccess: data.isSuccess ?? true,
-                    metadata: data.details ? { details: data.details } : undefined,
+                    metadata: {
+                        ...(data.metadata || {}),
+                        details: data.details
+                    },
                 },
             });
         } catch (e) {

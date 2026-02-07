@@ -7,7 +7,7 @@ import { useRole } from '@/hooks/useRole';
 import { useAdminUsers } from '@/hooks/useAdmin';
 import { UserFilters, AdminAPI } from '@/lib/admin-api';
 import { Users, Search, Filter, MoreHorizontal, UserCheck, UserX, Mail, RefreshCw, CreditCard, Calendar, CheckCircle, XCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+
 
 const PLAN_LIMITS: Record<string, number> = {
   FREE: 30,
@@ -54,7 +54,7 @@ function UserModal({
   onSuccess: () => void;
   userToEdit?: any | null;
 }) {
-  const t = useTranslations('Admin.Users');
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -137,17 +137,17 @@ function UserModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold text-gray-900">{userToEdit ? t('modal.editTitle') : t('modal.createTitle')}</h2>
+        <h2 className="text-xl font-bold text-gray-900">{userToEdit ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
         {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">{t('modal.firstName')}</label>
+              <label className="block text-sm font-medium text-gray-700">Nombre</label>
               <input type="text" required className="mt-1 block w-full border rounded-md p-2"
                 value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">{t('modal.lastName')}</label>
+              <label className="block text-sm font-medium text-gray-700">Apellidos</label>
               <input type="text" required className="mt-1 block w-full border rounded-md p-2"
                 value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} />
             </div>
@@ -159,7 +159,7 @@ function UserModal({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              {userToEdit ? t('modal.newPassword') : t('modal.password')}
+              {userToEdit ? 'Nueva Contraseña' : 'Contraseña'}
             </label>
             <input
               type="password"
@@ -171,7 +171,7 @@ function UserModal({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">{t('modal.role')}</label>
+            <label className="block text-sm font-medium text-gray-700">Rol</label>
             <select className="mt-1 block w-full border rounded-md p-2"
               value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })}>
               <option value="PSYCHOLOGIST">Psicólogo</option>
@@ -183,7 +183,7 @@ function UserModal({
 
           {/* Usage Limits Section */}
           <div className="border-t pt-4 mt-4">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">{t('modal.usage')}</h3>
+            <h3 className="text-sm font-medium text-gray-900 mb-3">Límites de Uso</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Minutos Transcritos (Usados)</label>
@@ -229,9 +229,9 @@ function UserModal({
           </div>
 
           <div className="flex justify-end gap-3 mt-6">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">{t('modal.cancel')}</button>
+            <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
             <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
-              {loading ? t('modal.saving') : (userToEdit ? t('modal.saveChanges') : t('modal.createUser'))}
+              {loading ? 'Guardando...' : (userToEdit ? 'Guardar Cambios' : 'Crear Usuario')}
             </button>
           </div>
         </form>
@@ -242,7 +242,7 @@ function UserModal({
 
 export default function UsersPage() {
   const { isAdmin } = useRole();
-  const t = useTranslations('Admin.Users');
+
   const searchParams = useSearchParams();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -351,7 +351,7 @@ export default function UsersPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('table.loading')}</p>
+          <p className="text-gray-600">Cargando usuarios...</p>
         </div>
       </div>
     );
@@ -362,7 +362,7 @@ export default function UsersPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <UserX className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h2 className="text-lg font-medium text-gray-900 mb-2">{t('table.error')}</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-2">Error al cargar usuarios</h2>
           <p className="text-gray-500 mb-4">{error}</p>
           <button
             onClick={() => refetch()}
@@ -422,13 +422,6 @@ export default function UsersPage() {
   };
 
   const getPlanBadge = (planType: string) => {
-    // Check if user is Agenda Manager by role if plan is free/missing
-    // Note: This relies on where this function is called. We need user object.
-    // Since getPlanBadge only takes planType string, we should change call sites or handle it differently.
-    // However, looking at the code, we call it with `user.subscription?.planType || 'FREE'`.
-    // If we want to override, we should do it at the CALL SITE.
-
-    // Just returning badge styling here.
     const colors: Record<string, string> = {
       FREE: 'bg-gray-100 text-gray-800',
       BASIC: 'bg-blue-100 text-blue-800',
@@ -450,7 +443,7 @@ export default function UsersPage() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
               <p className="text-gray-600 mt-2">Administra los usuarios registrados en la plataforma</p>
             </div>
             <button
@@ -605,7 +598,7 @@ export default function UsersPage() {
                   </span>
                 )}
                 {statusFilter !== 'ALL' && (
-                  <span className="inline-flex items-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                     Estado: {statusFilter === 'ACTIVE' ? 'Activos' : statusFilter === 'INACTIVE' ? 'Inactivos' : statusFilter === 'SUSPENDED' ? 'Suspendidos' : statusFilter === 'DELETED' ? 'Eliminados' : statusFilter}
                   </span>
                 )}

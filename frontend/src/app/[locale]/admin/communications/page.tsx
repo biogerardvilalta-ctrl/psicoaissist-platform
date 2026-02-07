@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, Send, Users, Mail, Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { httpClient } from '@/lib/http-client';
-import { useTranslations } from 'next-intl';
+
 
 interface User {
     id: string;
@@ -22,7 +22,7 @@ interface User {
 
 export default function CommunicationsPage() {
     const { toast } = useToast();
-    const t = useTranslations('Admin.Communications');
+
     const [users, setUsers] = useState<User[]>([]);
     const [isLoadingUsers, setIsLoadingUsers] = useState(true);
 
@@ -143,8 +143,8 @@ export default function CommunicationsPage() {
     return (
         <div className="max-w-4xl mx-auto py-8 px-4">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">{t('title')}</h1>
-                <p className="text-gray-400">{t('subtitle')}</p>
+                <h1 className="text-3xl font-bold text-white mb-2">Centro de Comunicaciones</h1>
+                <p className="text-gray-400">Envía correos y notificaciones a los usuarios.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -154,12 +154,12 @@ export default function CommunicationsPage() {
                         <CardHeader>
                             <CardTitle className="text-white flex items-center">
                                 <Mail className="w-5 h-5 mr-2" />
-                                {t('sendEmail')}
+                                Configurar Correo Electrónico
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label className="text-gray-300">{t('subject')}</Label>
+                                <Label className="text-gray-300">Asunto</Label>
                                 <Input
                                     placeholder="Ej: Mantenimiento programado"
                                     value={subject}
@@ -169,7 +169,7 @@ export default function CommunicationsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-gray-300">{t('message')}</Label>
+                                <Label className="text-gray-300">Mensaje</Label>
                                 <Textarea
                                     placeholder="Escribe aquí tu mensaje..."
                                     value={message}
@@ -221,10 +221,10 @@ export default function CommunicationsPage() {
                         <CardHeader>
                             <CardTitle className="text-white flex items-center">
                                 <Users className="w-5 h-5 mr-2" />
-                                {t('recipients')}
+                                Destinatarios
                             </CardTitle>
                             <CardDescription className="text-gray-400">
-                                {t('subtitle')}
+                                Selecciona los destinatarios.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1 flex flex-col">
@@ -234,14 +234,14 @@ export default function CommunicationsPage() {
                                     className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${target === 'SPECIFIC' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
                                         }`}
                                 >
-                                    {t('selectUsers')}
+                                    Seleccionar Usuarios
                                 </button>
                                 <button
                                     onClick={() => setTarget('ALL')}
                                     className={`flex-1 py-1.5 text-sm rounded-md transition-colors ${target === 'ALL' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
                                         }`}
                                 >
-                                    {t('allUsers')}
+                                    Todos los Usuarios
                                 </button>
                             </div>
 
@@ -284,7 +284,7 @@ export default function CommunicationsPage() {
                                         )}
                                     </div>
                                     <div className="mt-2 text-xs text-gray-500 text-right">
-                                        {selectedUserIds.length} {t('selectUsers')}
+                                        {selectedUserIds.length} usuarios seleccionados
                                     </div>
                                 </>
                             )}
@@ -317,7 +317,7 @@ export default function CommunicationsPage() {
                     ) : (
                         <>
                             <Send className="mr-2 h-4 w-4" />
-                            {t('send')}
+                            Enviar
                         </>
                     )}
                 </Button>

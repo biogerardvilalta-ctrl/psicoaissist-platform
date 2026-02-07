@@ -3,10 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AdminAPI, AuditLog } from '@/lib/admin-api';
 import { AlertTriangle, Search, Filter, RefreshCw, FileText, CheckCircle, XCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+
 
 export default function AdminLogsPage() {
-    const t = useTranslations('Admin.AuditLogs');
     const [logs, setLogs] = useState<AuditLog[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorOnly, setErrorOnly] = useState(false);
@@ -14,11 +13,13 @@ export default function AdminLogsPage() {
     const [total, setTotal] = useState(0);
 
     const ACTIONS = [
-        { value: 'LOGIN', label: 'Login' },
+        { value: 'LOGIN', label: 'Login (Intento)' },
         { value: 'LOGIN_SUCCESS', label: 'Login Exitoso' },
         { value: 'LOGIN_FAILED', label: 'Login Fallido' },
+        { value: 'FAILED_LOGIN', label: 'Login Fallido (Sistema)' },
         { value: 'LOGOUT', label: 'Logout' },
         { value: 'CREATE', label: 'Crear' },
+        { value: 'READ', label: 'Leer/Acceder' },
         { value: 'UPDATE', label: 'Actualizar' },
         { value: 'DELETE', label: 'Eliminar' },
         { value: 'SUBSCRIPTION_CHANGE', label: 'Cambio Suscripción' },
@@ -26,16 +27,22 @@ export default function AdminLogsPage() {
         { value: 'EMAIL_VERIFICATION', label: 'Verificación Email' },
         { value: 'CONSENT_GRANTED', label: 'Consentimiento Otorgado' },
         { value: 'CONSENT_REVOKED', label: 'Consentimiento Revocado' },
+        { value: 'DATA_EXPORT', label: 'Exportación Datos' },
+        { value: 'DATA_IMPORT', label: 'Importación Datos' },
     ];
 
     const RESOURCES = [
-        'User',
-        'Subscription',
-        'Session',
-        'Report',
-        'Client',
-        'Payment',
-        'Auth'
+        { value: 'User', label: 'Usuario' },
+        { value: 'Subscription', label: 'Suscripción' },
+        { value: 'Session', label: 'Sesión' },
+        { value: 'Report', label: 'Informe' },
+        { value: 'Client', label: 'Paciente' },
+        { value: 'Payment', label: 'Pago' },
+        { value: 'Auth', label: 'Autenticación' },
+        { value: 'Consent', label: 'Consentimiento' },
+        { value: 'Notification', label: 'Notificación' },
+        { value: 'AdminTask', label: 'Tarea Admin' },
+        { value: 'SimulationReport', label: 'Informe Simulación' }
     ];
 
     // Filters
@@ -78,8 +85,8 @@ export default function AdminLogsPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-                        <p className="mt-1 text-sm text-gray-600">{t('subtitle')}</p>
+                        <h1 className="text-2xl font-bold text-gray-900">Registros de Auditoría</h1>
+                        <p className="mt-1 text-sm text-gray-600">Visualiza y filtra la actividad del sistema</p>
                     </div>
                 </div>
 
@@ -88,7 +95,7 @@ export default function AdminLogsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Search User */}
                         <div className="relative">
-                            <label className="block text-xs font-medium text-gray-500 mb-1">{t('filters.user')}</label>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Usuario</label>
                             <div className="relative">
                                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                 <input
@@ -103,13 +110,13 @@ export default function AdminLogsPage() {
 
                         {/* Action Filter */}
                         <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">{t('table.action')}</label>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Acción</label>
                             <select
                                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border bg-white"
                                 value={actionFilter}
                                 onChange={(e) => setActionFilter(e.target.value)}
                             >
-                                <option value="">{t('filters.all')}</option>
+                                <option value="">Todas</option>
                                 {ACTIONS.map((action) => (
                                     <option key={action.value} value={action.value}>
                                         {action.label}
@@ -128,8 +135,8 @@ export default function AdminLogsPage() {
                             >
                                 <option value="">Todos</option>
                                 {RESOURCES.map((resource) => (
-                                    <option key={resource} value={resource}>
-                                        {resource}
+                                    <option key={resource.value} value={resource.value}>
+                                        {resource.label}
                                     </option>
                                 ))}
                             </select>
@@ -242,7 +249,9 @@ export default function AdminLogsPage() {
                                                 </div>
                                                 <div className="flex items-center text-gray-600">
                                                     <span className="w-20 text-xs text-gray-400 uppercase">Recurso:</span>
-                                                    <span className="truncate flex-1 font-mono text-xs">{log.resourceType}</span>
+                                                    <span className="truncate flex-1 font-mono text-xs">
+                                                        {RESOURCES.find(r => r.value === log.resourceType)?.label || log.resourceType}
+                                                    </span>
                                                 </div>
                                             </div>
 
@@ -265,11 +274,11 @@ export default function AdminLogsPage() {
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.action')} / Estado</th>
-                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.user')}</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción / Estado</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
                                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recurso</th>
-                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.timestamp')}</th>
-                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.details')}</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha/Hora</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalles</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
@@ -303,7 +312,7 @@ export default function AdminLogsPage() {
                                                         <div className="text-xs text-gray-500 truncate max-w-[120px]">{log.user?.firstName}</div>
                                                     </td>
                                                     <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        {log.resourceType}
+                                                        {RESOURCES.find(r => r.value === log.resourceType)?.label || log.resourceType}
                                                     </td>
                                                     <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                                                         {new Date(log.createdAt).toLocaleString()}
@@ -359,7 +368,7 @@ export default function AdminLogsPage() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-gray-900">{t('table.details')}</h2>
+                            <h2 className="text-xl font-bold text-gray-900">Detalles</h2>
                             <button
                                 onClick={() => setSelectedLog(null)}
                                 className="text-gray-400 hover:text-gray-500"
@@ -419,7 +428,7 @@ export default function AdminLogsPage() {
                                         Tipo de Recurso
                                     </label>
                                     <p className="text-sm text-gray-900 font-mono">
-                                        {selectedLog.resourceType}
+                                        {RESOURCES.find(r => r.value === selectedLog.resourceType)?.label || selectedLog.resourceType}
                                     </p>
                                 </div>
                                 <div>

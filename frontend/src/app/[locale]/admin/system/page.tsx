@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRole } from '@/hooks/useRole';
 import { Database, Server, Activity, HardDrive, ShieldCheck, AlertTriangle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+
 
 export default function SystemPage() {
     const { isAdmin } = useRole();
-    const t = useTranslations('Admin.System');
+
     const [stats, setStats] = useState({
         dbStatus: 'Connected',
         dbLatency: '12ms',
@@ -18,13 +18,13 @@ export default function SystemPage() {
     });
 
     if (!isAdmin()) {
-        return <div className="p-8 text-center text-red-600">{t('title')}</div>;
+        return <div className="p-8 text-center text-red-600">Estado del Sistema</div>;
     }
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="text-2xl font-bold text-gray-900 mb-8">{t('title')}</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-8">Estado del Sistema</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     {/* Database Status */}
@@ -32,7 +32,7 @@ export default function SystemPage() {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-gray-900 flex items-center">
                                 <Database className="w-5 h-5 mr-2 text-blue-600" />
-                                {t('general.siteName')}
+                                Base de Datos
                             </h3>
                             <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
                                 Online
@@ -59,7 +59,7 @@ export default function SystemPage() {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-gray-900 flex items-center">
                                 <Activity className="w-5 h-5 mr-2 text-green-600" />
-                                {t('general.title')}
+                                Salud del Sistema
                             </h3>
                             <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
                                 Healthy
@@ -86,7 +86,7 @@ export default function SystemPage() {
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-gray-900 flex items-center">
                                 <ShieldCheck className="w-5 h-5 mr-2 text-purple-600" />
-                                {t('features.title')}
+                                Seguridad y Backups
                             </h3>
                         </div>
                         <div className="space-y-3">
@@ -108,7 +108,7 @@ export default function SystemPage() {
 
                 {/* Quick Actions (Mock) */}
                 <div className="bg-white rounded-lg shadow-sm border p-6">
-                    <h3 className="font-semibold text-gray-900 mb-4">{t('limits.title')}</h3>
+                    <h3 className="font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-left transition-colors"
                             onClick={() => alert("Cache limpiada correctamente")}

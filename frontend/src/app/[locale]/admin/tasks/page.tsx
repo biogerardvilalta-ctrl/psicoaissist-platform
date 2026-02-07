@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/auth-context';
-import { useTranslations } from 'next-intl';
+
 
 /* 
   Since we don't have a shared type for AdminTask on frontend yet (unless generated), 
@@ -43,7 +43,7 @@ interface AdminTask {
 
 export default function AdminTasksPage() {
     const { tokens } = useAuth();
-    const t = useTranslations('Admin.Tasks');
+
     const [tasks, setTasks] = useState<AdminTask[]>([]);
     const [loading, setLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -141,11 +141,11 @@ export default function AdminTasksPage() {
         <div className="p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-                    <p className="text-gray-500">{t('subtitle')}</p>
+                    <h1 className="text-3xl font-bold text-gray-900">Gestión de Tareas</h1>
+                    <p className="text-gray-500">Administra las tareas pendientes y solicitudes de soporte.</p>
                 </div>
                 <Button onClick={fetchTasks} variant="outline" size="sm">
-                    {t('filters.all')}
+                    Todas
                 </Button>
             </div>
 
@@ -155,7 +155,7 @@ export default function AdminTasksPage() {
                         <div className="relative w-full md:w-64">
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
                             <Input
-                                placeholder={t('table.title') + '...'}
+                                placeholder={'Título...'}
                                 className="pl-9"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -166,14 +166,14 @@ export default function AdminTasksPage() {
                                 <SelectTrigger className="w-[180px]">
                                     <div className="flex items-center gap-2">
                                         <Filter className="h-4 w-4 text-gray-500" />
-                                        <span>{filterStatus === 'all' ? t('filters.all') : filterStatus}</span>
+                                        <span>{filterStatus === 'all' ? 'Todas' : filterStatus}</span>
                                     </div>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">{t('filters.all')}</SelectItem>
-                                    <SelectItem value="PENDING">{t('filters.pending')}</SelectItem>
+                                    <SelectItem value="all">Todas</SelectItem>
+                                    <SelectItem value="PENDING">Pendiente</SelectItem>
                                     <SelectItem value="IN_PROGRESS">En Progreso</SelectItem>
-                                    <SelectItem value="COMPLETED">{t('filters.completed')}</SelectItem>
+                                    <SelectItem value="COMPLETED">Completada</SelectItem>
                                     <SelectItem value="CANCELLED">Cancelado</SelectItem>
                                 </SelectContent>
                             </Select>
@@ -249,7 +249,7 @@ export default function AdminTasksPage() {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>{t('table.actions')}</DropdownMenuLabel>
+                                                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem onClick={() => updateTaskStatus(task.id, 'IN_PROGRESS')}>
                                                     Marcar En Progreso

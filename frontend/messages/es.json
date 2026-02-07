@@ -385,6 +385,82 @@
                 "blockErrorDesc": "Completa fecha y horas.",
                 "blockTimeError": "La hora de inicio debe ser anterior a la final."
             },
+            "UpgradeModal": {
+                "title": {
+                    "simulator": "Límite de Casos Alcanzado",
+                    "transcription": "Límite de Transcripción Alcanzado"
+                },
+                "description": {
+                    "simulator": "Has agotado los casos clínicos disponibles en tu ciclo actual o pack.",
+                    "transcription": "Has consumido los minutos de IA/Transcripción disponibles en tu ciclo actual."
+                },
+                "callToAction": {
+                    "simulator": "Compra un pack de casos para continuar.",
+                    "transcription": "Actualiza tu plan o compra un pack de minutos.",
+                    "general": "Actualiza a un plan superior para eliminar límites."
+                },
+                "buttons": {
+                    "viewOptions": "Ver Opciones Disponibles",
+                    "notNow": "Ahora no",
+                    "cancel": "Cancelar",
+                    "back": "Volver"
+                },
+                "selection": {
+                    "title": "Opciones Disponibles para Ti",
+                    "subtitle": "Selecciona el plan o pack que mejor se adapte a tus necesidades.",
+                    "monthly": "Mensual",
+                    "annual": "Anual",
+                    "savePercent": "-17%",
+                    "recommended": "Recomendado",
+                    "perMonth": "/mes",
+                    "perYear": "/año",
+                    "oneTime": "/pago único",
+                    "titles": {
+                        "plans": "Planes de Suscripción",
+                        "packs": "Packs Adicionales (Pago Único)"
+                    },
+                    "buttons": {
+                        "processing": "Procesando...",
+                        "upgradeTo": "Mejorar a {name}",
+                        "buyPack": "Comprar Pack"
+                    }
+                },
+                "confirmation": {
+                    "title": "Confirma el cambio",
+                    "message": "Estás a punto de cambiar al plan {planName}.",
+                    "warningPart1": "Al realizar este cambio, ",
+                    "warningStrong": "se te cobrará inmediatamente",
+                    "warningPart2": " la diferencia proporcional de los días restantes de tu ciclo actual (Prorrateo).",
+                    "note": "El nuevo ciclo de facturación comenzará hoy si es un alta nueva, o se mantendrá tu fecha actual si es una actualización.",
+                    "confirmButton": "Entendido, Confirmar Pago y Cambio"
+                },
+                "plans": {
+                    "pro": {
+                        "name": "Pro",
+                        "description": "Para profesionales en crecimiento"
+                    },
+                    "premium": {
+                        "name": "Premium",
+                        "description": "Para especialistas con alto volumen"
+                    },
+                    "minutes_pack": {
+                        "name": "Pack Minutos",
+                        "description": "500 minutos extra de IA/Transcripción"
+                    },
+                    "simulator_pack": {
+                        "name": "Pack 10 Casos",
+                        "description": "10 casos clínicos extra para el simulador"
+                    },
+                    "agenda_manager_pack": {
+                        "name": "Pack Agenda Manager",
+                        "description": "Gestión delegada de agenda y pacientes"
+                    },
+                    "on_boarding_pack": {
+                        "name": "Pack On-boarding",
+                        "description": "Configuración personalizada de servidor y dominio"
+                    }
+                }
+            },
             "GoogleCalendar": {
                 "title": "Integración con Google Calendar",
                 "description": "Conecta tu calendario para sincronizar eventos automáticamente.",

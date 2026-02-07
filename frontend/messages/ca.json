@@ -384,6 +384,82 @@
                 "blockErrorDesc": "Completa data i hores.",
                 "blockTimeError": "L'hora d'inici ha de ser anterior a la final."
             },
+            "UpgradeModal": {
+                "title": {
+                    "simulator": "Límit de Casos Assolit",
+                    "transcription": "Límit de Transcripció Assolit"
+                },
+                "description": {
+                    "simulator": "Has esgotat els casos clínics disponibles al teu cicle actual o pack.",
+                    "transcription": "Has consumit els minuts d'IA/Transcripció disponibles al teu cicle actual."
+                },
+                "callToAction": {
+                    "simulator": "Compra un pack de casos per continuar.",
+                    "transcription": "Actualitza el teu pla o compra un pack de minuts.",
+                    "general": "Actualitza a un pla superior per eliminar límits."
+                },
+                "buttons": {
+                    "viewOptions": "Veure Opcions Disponibles",
+                    "notNow": "Ara no",
+                    "cancel": "Cancel·lar",
+                    "back": "Tornar"
+                },
+                "selection": {
+                    "title": "Opcions Disponibles per a Tu",
+                    "subtitle": "Selecciona el pla o pack que millor s'adapti a les teves necessitats.",
+                    "monthly": "Mensual",
+                    "annual": "Anual",
+                    "savePercent": "-17%",
+                    "recommended": "Recomanat",
+                    "perMonth": "/mes",
+                    "perYear": "/any",
+                    "oneTime": "/pagament únic",
+                    "titles": {
+                        "plans": "Plans de Subscripció",
+                        "packs": "Packs Addicionals (Pagament Únic)"
+                    },
+                    "buttons": {
+                        "processing": "Processant...",
+                        "upgradeTo": "Millorar a {name}",
+                        "buyPack": "Comprar Pack"
+                    }
+                },
+                "confirmation": {
+                    "title": "Confirma el canvi",
+                    "message": "Estàs a punt de canviar al pla {planName}.",
+                    "warningPart1": "En realitzar aquest canvi, ",
+                    "warningStrong": "se et cobrarà immediatament",
+                    "warningPart2": " la diferència proporcional dels dies restants del teu cicle actual (Prorrateig).",
+                    "note": "El nou cicle de facturació començarà avui si és una alta nova, o es mantindrà la teva data actual si és una actualització.",
+                    "confirmButton": "Entès, Confirmar Pagament i Canvi"
+                },
+                "plans": {
+                    "pro": {
+                        "name": "Pro",
+                        "description": "Per a professionals en creixement"
+                    },
+                    "premium": {
+                        "name": "Premium",
+                        "description": "Per a especialistes amb alt volum"
+                    },
+                    "minutes_pack": {
+                        "name": "Pack Minuts",
+                        "description": "500 minuts extra d'IA/Transcripció"
+                    },
+                    "simulator_pack": {
+                        "name": "Pack Simulador",
+                        "description": "10 casos clínics extra"
+                    },
+                    "agenda_manager_pack": {
+                        "name": "Gestor d'Agenda",
+                        "description": "Afegeix un gestor administratiu"
+                    },
+                    "on_boarding_pack": {
+                        "name": "Pack Onboarding",
+                        "description": "Configuració guiada i migració"
+                    }
+                }
+            },
             "GoogleCalendar": {
                 "title": "Integració amb Google Calendar",
                 "description": "Connecta el teu calendari per sincronitzar esdeveniments automàticament.",

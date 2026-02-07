@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { AiProvider, AiMessage } from '../ai/interfaces/ai-provider.interface';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { UsageLimitsService } from '../payments/usage-limits.service';
+import { AuditService } from '../audit/audit.service';
+import { AuditAction } from '@prisma/client';
 
 import { createHmac } from 'crypto';
 
@@ -36,6 +38,7 @@ export class SimulatorService {
         private configService: ConfigService,
         private prisma: PrismaService,
         private usageLimitsService: UsageLimitsService,
+        private auditService: AuditService,
         @Inject('AI_PROVIDER') private aiProvider: AiProvider
     ) {
         // Allow overriding model via ENV, default to 2.0-flash if not set
@@ -389,7 +392,7 @@ export class SimulatorService {
             });
 
             // Save Report to DB
-            await this.prisma.simulationReport.create({
+            const report = await this.prisma.simulationReport.create({
                 data: {
                     userId,
                     patientName: profile.name,
@@ -400,6 +403,16 @@ export class SimulatorService {
                     professionalismScore: result.metrics.professionalism,
                     feedbackMarkdown: result.feedback
                 }
+            });
+
+            // AUDIT LOG
+            await this.auditService.log({
+                userId,
+                action: AuditAction.CREATE,
+                resourceType: 'SIMULATION_REPORT',
+                resourceId: report.id,
+                details: `Simulación completada con ${profile.name} (${profile.difficulty}). Empatía: ${result.metrics.empathy}`,
+                isSuccess: true
             });
 
             return result;

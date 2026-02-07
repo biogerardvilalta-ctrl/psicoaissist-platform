@@ -21,6 +21,8 @@ import { CreateUserDto, UpdateUserDto, AdminChangePasswordDto } from '../users/d
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { UserRole, UserStatus, AuditAction, AdminTaskStatus, AdminTaskType, AdminTaskPriority, NotificationType } from '@prisma/client';
 
+import { AuditService } from '../audit/audit.service';
+
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
@@ -31,6 +33,7 @@ export class AdminController {
     private readonly prisma: PrismaService,
     private readonly notificationsService: NotificationsService,
     private readonly emailService: EmailService,
+    private readonly auditService: AuditService,
   ) { }
 
   @Post('communicate')
@@ -105,6 +108,10 @@ export class AdminController {
       details: results
     };
   }
+
+  // ... (existing methods skipped for brevity in replacement, but I need to be careful not to delete them if I use huge range. 
+  // BETTER STRATEGY: Replace Constructor and logAdminAction separately to be safe.)
+
 
   @Get('dashboard')
   async getDashboardStats() {
@@ -548,73 +555,88 @@ export class AdminController {
   }
 
   private async getSystemActivity() {
-    // 1. Recent Users
-    const recentUsers = await this.prisma.user.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        role: true,
-        createdAt: true
-      }
-    });
-
-    // 2. Recent Subscriptions
-    const recentSubs = await this.prisma.subscription.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        user: {
-          select: { firstName: true, lastName: true }
-        }
-      }
-    });
-
-    // 3. Recent Admin Tasks (Onboarding Packs)
-    const recentTasks = await this.prisma.adminTask.findMany({
+    // Fetch recent relevant audit logs
+    const logs = await this.prisma.auditLog.findMany({
       where: {
-        type: 'ONBOARDING_SETUP',
+        OR: [
+          {
+            action: AuditAction.CREATE,
+            resourceType: 'USER'
+          },
+          {
+            action: AuditAction.SUBSCRIPTION_CHANGE
+          }
+        ]
       },
-      take: 5,
+      take: 10,
       orderBy: { createdAt: 'desc' },
       include: {
         user: {
-          select: { firstName: true, lastName: true, email: true }
+          select: { firstName: true, lastName: true, email: true, role: true }
         }
       }
     });
 
-    // Transform to common format
-    const activities = [
-      ...recentUsers.map(u => ({
-        id: `user-${u.id}`,
-        type: 'user_registered',
-        title: 'Nuevo usuario registrado',
-        description: `${u.firstName} ${u.lastName} se registró como ${u.role.toLowerCase()}`,
-        timestamp: u.createdAt
-      })),
-      ...recentSubs.map(s => ({
-        id: `sub-${s.id}`,
-        type: 'subscription_created',
-        title: `Nueva suscripción ${s.planType}`,
-        description: `${s.user.firstName} ${s.user.lastName} activó el plan ${s.planType}`,
-        timestamp: s.createdAt
-      })),
-      ...recentTasks.map(t => ({
-        id: `task-${t.id}`,
-        type: 'pack_purchased',
-        title: 'Pack On-boarding Contratado',
-        description: `${t.user.firstName} ${t.user.lastName} (${t.user.email}) ha contratado el pack.`,
-        timestamp: t.createdAt
-      }))
-    ];
+    return logs.map(log => {
+      let type = 'info';
+      let title = 'Actividad del Sistema';
+      // Use details from top level or metadata
+      const meta = log.metadata as { details?: string } || {};
+      let description = meta.details || '';
 
-    // Sort by date desc and take top 10
-    return activities
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-      .slice(0, 10);
+      const userName = log.user ? `${log.user.firstName || ''} ${log.user.lastName || ''}`.trim() || log.user.email : 'Usuario';
+
+      // Map AuditLog to Frontend Activity Items
+      if (log.action === AuditAction.CREATE && log.resourceType === 'USER') {
+        type = 'user_registered';
+        title = 'Nuevo usuario registrado';
+        description = `${userName} se registró como ${log.user?.role?.toLowerCase() || 'usuario'}`;
+      }
+      else if (log.action === AuditAction.SUBSCRIPTION_CHANGE) {
+        if (description.toLowerCase().includes('pack')) {
+          type = 'pack_purchased';
+          title = 'Pack Contratado';
+        }
+        else if (description.toLowerCase().includes('creada') || description.toLowerCase().includes('activada')) {
+          type = 'subscription_created';
+          title = 'Nueva Suscripción';
+          // Format description to be cleaner if needed
+          if (!description.includes(userName)) {
+            description = `${userName}: ${description}`;
+          }
+        }
+        else if (description.toLowerCase().includes('actualizada')) {
+          type = 'subscription_created'; // Reusing style for updates
+          title = 'Plan Actualizado';
+          if (!description.includes(userName)) {
+            description = `${userName}: ${description}`;
+          }
+        }
+        else if (description.toLowerCase().includes('cancelada')) {
+          type = 'error'; // Use error style for cancellations
+          title = 'Suscripción Cancelada';
+          if (!description.includes(userName)) {
+            description = `${userName}: ${description}`;
+          }
+        }
+        else {
+          type = 'payment_completed';
+          title = 'Actividad de Suscripción';
+        }
+      }
+      else if (log.action === AuditAction.UPDATE && log.resourceType === 'USER') {
+        type = 'user_registered'; // Reusing style
+        title = 'Usuario Activado';
+      }
+
+      return {
+        id: log.id,
+        type,
+        title,
+        description,
+        timestamp: log.createdAt
+      };
+    });
   }
 
   @Get('logs')
@@ -641,7 +663,7 @@ export class AdminController {
       where.userId = userId;
     }
 
-    if (errorOnly === 'true') {
+    if (errorOnly === 'true' || errorOnly === '1' || (errorOnly as any) === true) {
       where.OR = [
         { isSuccess: false },
         { errorMessage: { not: null } }
@@ -649,24 +671,10 @@ export class AdminController {
     }
 
     if (action) {
-      // Find matching enum values
-      const matchingActions = Object.values(AuditAction).filter(a =>
-        a.toString().toLowerCase().includes(action.toLowerCase())
-      );
-
-      if (matchingActions.length > 0) {
-        where.action = { in: matchingActions };
-      } else {
-        // No action matches the search term, return empty result
-        return {
-          logs: [],
-          pagination: {
-            page: pageNum,
-            limit: limitNum,
-            total: 0,
-            pages: 0,
-          },
-        };
+      // Strict match for action
+      // Check if the action exists in the Enum to avoid Prisma errors
+      if (Object.values(AuditAction).includes(action as AuditAction)) {
+        where.action = action as AuditAction;
       }
     }
 
@@ -1146,8 +1154,54 @@ export class AdminController {
   }
 
   private async logAdminAction(action: string, metadata: any) {
-    // In a real app, you'd have a dedicated audit log table
-    console.log('Admin Action:', { action, metadata, timestamp: new Date() });
+    try {
+      // Map string actions to AuditAction enum
+      let auditAction: AuditAction = AuditAction.UPDATE; // Default
+      let resourceType = 'ADMIN_ACTION';
+      let details = `Acción administrativa: ${action}`;
+
+      if (action === 'USER_CREATE') {
+        auditAction = AuditAction.CREATE;
+        resourceType = 'USER';
+        details = `Usuario creado por admin: ${metadata.email}`;
+      } else if (action === 'USER_UPDATE') {
+        auditAction = AuditAction.UPDATE;
+        resourceType = 'USER';
+        details = `Usuario actualizado por admin (ID: ${metadata.updatedUserId})`;
+      } else if (action === 'USER_DELETE') {
+        auditAction = AuditAction.DELETE;
+        resourceType = 'USER';
+        details = `Usuario eliminado por admin. Razón: ${metadata.reason}`;
+      } else if (action === 'USER_STATUS_CHANGE') {
+        auditAction = AuditAction.UPDATE;
+        resourceType = 'USER';
+        details = `Estado de usuario cambiado a ${metadata.newStatus}. Razón: ${metadata.reason}`;
+      } else if (action === 'SUBSCRIPTION_CANCEL') {
+        auditAction = AuditAction.SUBSCRIPTION_CHANGE;
+        resourceType = 'SUBSCRIPTION';
+        details = `Suscripción cancelada por admin. Razón: ${metadata.reason}`;
+      } else if (action === 'USER_PASSWORD_RESET') {
+        auditAction = AuditAction.PASSWORD_RESET;
+        resourceType = 'USER';
+        details = `Contraseña de usuario restablecida por admin`;
+      } else if (action === 'USER_VERIFY') {
+        auditAction = AuditAction.UPDATE;
+        resourceType = 'USER';
+        details = `Usuario verificado manualmente por admin`;
+      }
+
+      await this.auditService.log({
+        userId: 'system-admin', // Placeholder since we don't have the admin ID readily available in this helper without refactoring
+        action: auditAction,
+        resourceType: resourceType,
+        resourceId: metadata.targetUserId || metadata.createdUserId || metadata.updatedUserId || metadata.subscriptionId || null,
+        details: details,
+        metadata: metadata,
+        isSuccess: true
+      });
+    } catch (e) {
+      console.error('Failed to log admin action:', e);
+    }
   }
 
   @Get('tasks')
@@ -1182,7 +1236,7 @@ export class AdminController {
     @Param('id') id: string,
     @Body() data: { status?: AdminTaskStatus, priority?: AdminTaskPriority, assignedTo?: string }
   ) {
-    return this.prisma.adminTask.update({
+    const task = await this.prisma.adminTask.update({
       where: { id },
       data: {
         ...data,
@@ -1192,5 +1246,18 @@ export class AdminController {
         user: true
       }
     });
+
+    await this.auditService.log({
+      userId: task.userId, // We log it related to the user who owns the task? Or system? 
+      // If we use task.userId, it appears in THEIR log. That's good.
+      action: AuditAction.UPDATE,
+      resourceType: 'ADMIN_TASK',
+      resourceId: id,
+      details: `Tarea administrativa actualizada: ${task.title} - Estado: ${task.status}`,
+      metadata: data,
+      isSuccess: true
+    });
+
+    return task;
   }
 }

@@ -7,10 +7,9 @@ import { Users, CreditCard, Shield, AlertCircle, RefreshCw, LogOut, DollarSign, 
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from '@/navigation';
 import { AdminStatsCard, RecentUsers, AdminActivityFeed, AdminCharts, EvolutionCharts, UsageEvolutionCharts } from '@/components/admin';
-import { useTranslations } from 'next-intl';
+
 
 export default function AdminDashboard() {
-  const t = useTranslations('Admin.Dashboard');
   const { stats, loading: statsLoading, error: statsError, refetch: refetchStats } = useAdminStats();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -50,7 +49,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">{t('loading')}</p>
+          <p className="mt-4 text-gray-600">Cargando...</p>
         </div>
       </div>
     );
@@ -61,7 +60,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('error')}</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error</h2>
           <p className="text-gray-600 mb-4">{statsError || usersError}</p>
           <button
             onClick={() => {
@@ -71,7 +70,7 @@ export default function AdminDashboard() {
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
-            {t('retry')}
+            Reintentar
           </button>
         </div>
       </div>
@@ -84,54 +83,54 @@ export default function AdminDashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Title */}
         <div className="mb-8">
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="mt-1 text-sm text-gray-600">{t('subtitle')}</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Panel de Administración</h1>
+          <p className="mt-1 text-sm text-gray-600">Bienvenido al área de gestión. Tienes acceso completo para administrar usuarios, facturación y configuraciones del sistema.</p>
         </div>
 
         {/* Enhanced Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
           <AdminStatsCard
-            title={t('stats.activeUsers')}
+            title="Usuarios Activos"
             value={stats?.activeUsers || 0}
             icon={Users}
             iconColor="text-blue-600"
-            subtitle={`${stats?.activeSubscriptions || 0} ${t('stats.subscriptions')} + ${stats?.agendaManagersCount || 0} ${t('stats.managers')}`}
-            action={{ label: t('stats.viewUsers'), onClick: () => router.push('/admin/users') }}
+            subtitle={`${stats?.activeSubscriptions || 0} Suscripciones + ${stats?.agendaManagersCount || 0} Gestores`}
+            action={{ label: "Ver Usuarios", onClick: () => router.push('/admin/users') }}
           />
 
           <AdminStatsCard
-            title={t('stats.estimatedRevenue')}
+            title="Ingresos Estimados"
             value={`€${stats?.totalRevenue || 0}`}
             icon={DollarSign}
             iconColor="text-purple-600"
-            subtitle={t('stats.monthlyRecurring')}
-            action={{ label: t('stats.viewBilling'), onClick: () => router.push('/admin/billing') }}
+            subtitle="Recurrente Mensual"
+            action={{ label: "Ver Facturación", onClick: () => router.push('/admin/billing') }}
           />
 
           <AdminStatsCard
-            title={t('stats.totalSessions')}
+            title="Total Sesiones"
             value={stats?.totalSessions || 0}
             icon={MessageSquare}
             iconColor="text-indigo-600"
-            subtitle={t('stats.sessionsCompleted')}
+            subtitle="Sesiones Completadas"
           />
 
           <AdminStatsCard
-            title={t('stats.reportsGenerated')}
+            title="Informes Generados"
             value={stats?.totalReports || 0}
             icon={FileText}
             iconColor="text-orange-600"
-            subtitle={t('stats.aiReports')}
+            subtitle="Informes IA"
           />
           <AdminStatsCard
-            title={t('stats.resourceUsage')}
-            value={t('stats.aiConsumption')}
+            title="Consumo Recursos"
+            value="Consumo IA"
             icon={TrendingUp}
             iconColor="text-pink-600"
             subtitle={
               <div className="flex flex-col gap-1">
-                <span>{stats?.totalTranscriptionMinutes || 0} {t('stats.transcribedMinutes')}</span>
-                <span>{stats?.totalSimulatorSessions || 0} {t('stats.simulatorSessions')}</span>
+                <span>{stats?.totalTranscriptionMinutes || 0} Minutos Transcritos</span>
+                <span>{stats?.totalSimulatorSessions || 0} Sesiones Simulador</span>
               </div>
             }
           />
