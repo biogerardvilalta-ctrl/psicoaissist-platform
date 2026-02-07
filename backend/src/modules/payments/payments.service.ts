@@ -455,9 +455,40 @@ export class PaymentsService {
       this.logger.log(`Demo checkout session created for user ${user.email} - plan ${createCheckoutDto.plan}`);
 
       // AUTO-APPLY FOR DEMO ONLY (Immediate gratification)
-      if (isPack && process.env.NODE_ENV !== 'production') {
-        let packId = createCheckoutDto.plan;
-        await this.addExtraPack(userId, packId);
+      if (process.env.NODE_ENV !== 'production') {
+        if (isPack) {
+          let packId = createCheckoutDto.plan;
+          await this.addExtraPack(userId, packId);
+        } else {
+          // Simular suscripción activa
+          await this.prisma.subscription.upsert({
+            where: { userId: user.id },
+            update: {
+              status: 'active',
+              planType: createCheckoutDto.plan,
+              stripeSubscriptionId: `sub_demo_${Date.now()}`,
+              currentPeriodStart: new Date(),
+              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30)),
+              updatedAt: new Date(),
+            },
+            create: {
+              userId: user.id,
+              status: 'active',
+              planType: createCheckoutDto.plan,
+              stripeSubscriptionId: `sub_demo_${Date.now()}`,
+              currentPeriodStart: new Date(),
+              currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30))
+            }
+          });
+
+          await this.auditService.log({
+            userId: user.id,
+            action: AuditAction.SUBSCRIPTION_CHANGE,
+            resourceType: 'SUBSCRIPTION',
+            details: `Simulación Demo: Suscripción activada para ${createCheckoutDto.plan}`,
+            isSuccess: true,
+          });
+        }
       }
 
       return {

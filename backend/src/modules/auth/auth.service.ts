@@ -129,7 +129,10 @@ export class AuthService {
       this.logger.log(`Reactivating deleted user: ${user.email}`);
       await this.prisma.user.update({
         where: { id: user.id },
-        data: { status: UserStatus.ACTIVE }
+        data: {
+          status: UserStatus.ACTIVE,
+          updatedAt: new Date()
+        }
       });
       user.status = UserStatus.ACTIVE; // Update local object for token generation
 
