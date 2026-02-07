@@ -22,7 +22,7 @@ type AuthAction =
 // Auth Context Interface
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest, remember?: boolean) => Promise<void>;
-  register: (userData: RegisterRequest) => Promise<boolean>;
+  register: (userData: RegisterRequest) => Promise<{ success: boolean; user?: User }>;
   logout: () => void;
   refreshToken: () => Promise<void>;
   clearError: () => void;
@@ -298,7 +298,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [saveSession, clearSession]);
 
   // Register function
-  const register = useCallback(async (userData: RegisterRequest): Promise<boolean> => {
+  const register = useCallback(async (userData: RegisterRequest): Promise<{ success: boolean; user?: User }> => {
     dispatch({ type: 'REGISTER_START' });
 
     try {
@@ -311,7 +311,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Verification required flow
         console.log('ℹ️ Verification required for:', user.email);
         dispatch({ type: 'REGISTER_SUCCESS', payload: { user } });
-        return false; // Not logged in
+        return { success: false, user }; // Return user so we can use ID for payment
       }
 
       // Default to true (persistent) for registration
@@ -319,7 +319,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       dispatch({ type: 'REGISTER_SUCCESS', payload: { user, tokens, encryptionKey } });
 
       console.log('✅ Register successful for:', user.email);
-      return true; // Logged in
+      return { success: true, user }; // Logged in
 
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error en el registro';

@@ -114,6 +114,29 @@ export function usePayments() {
     }
   }, [toast]);
 
+  const createInitialCheckoutSession = useCallback(async (userId: string, plan: string, interval: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      console.log('🔄 Creating initial checkout session...', { userId, plan, interval });
+      const session = await PaymentsAPI.createInitialCheckoutSession(userId, plan, interval);
+      if (session.url) {
+        window.location.href = session.url;
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      setError(errorMessage);
+      toast({
+        title: "Error de Pago",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
   return {
     loading,
     error,
@@ -121,5 +144,6 @@ export function usePayments() {
     openCustomerPortal,
     cancelSubscription,
     changePlan,
+    createInitialCheckoutSession,
   };
 }

@@ -258,7 +258,7 @@ export class AuthService {
           professionalNumber: registerDto.professionalNumber,
           country: registerDto.country,
           role: registerDto.role || UserRole.PSYCHOLOGIST,
-          status: UserStatus.ACTIVE,
+          status: UserStatus.INACTIVE, // Changed from ACTIVE to INACTIVE to wait for payment
           updatedAt: new Date(),
           referralCode,
           referredBy: referredByUserId,
@@ -282,10 +282,10 @@ export class AuthService {
         isSuccess: true,
       });
 
-      // Enviar email de verificación
+      // Enviar email de verificación - REMOVED: Verification/Welcome email will be sent after Payment
       const verificationToken = uuidv4();
 
-      // Update user with verification token
+      // Update user with verification token (kept for future use or manual verification)
       await this.prisma.user.update({
         where: { id: user.id },
         data: {
@@ -294,6 +294,10 @@ export class AuthService {
         }
       });
 
+      /* 
+       * DISABLED: We do not send verification email now. 
+       * User must pay first. Verification will be implicit via Payment Webhook.
+       
       try {
         await this.emailService.sendVerificationEmail(
           user.email,
@@ -305,11 +309,11 @@ export class AuthService {
         );
       } catch (emailError) {
         this.logger.warn(`Failed to send verification email to ${user.email}: ${emailError.message}`);
-        // We still allow registration, but user might need to resend verification
       }
+      */
 
       // No generamos tokens ni login automático
-      // Devolvemos solo el usuario y flag de verificación
+      // Devolvemos solo el usuario y flag de verificación/pago requerido
 
       return {
         user: {
@@ -337,6 +341,13 @@ export class AuthService {
         },
         tokens: null, // No tokens
         encryptionKey: null, // No key access yet
+        // Custom flag to tell frontend to redirect to payment
+        // We can reuse verificationRequired or add a new one if DTO allows.
+        // For now using verificationRequired as "Steps Required" signal, but ideally we'd add `paymentRequired` to DTO.
+        // Since DTO is strict in NestJS if validation pipes are on, we might need to update DTO or just rely on status=INACTIVE check.
+        // Let's assume we can add a dynamic property or use existing structure.
+        // Checking AuthResponseDto... it has `message`.
+        message: 'Registro iniciado. Por favor completa el pago para activar tu cuenta.',
       };
     } catch (error) {
       this.logger.error(`Error registering user: ${error.message}`);

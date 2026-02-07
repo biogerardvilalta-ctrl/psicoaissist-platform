@@ -81,6 +81,18 @@ export class PaymentsController {
     );
   }
 
+  @Post('checkout/initial')
+  async createInitialCheckoutSession(
+    @Body() body: { userId: string; plan: string; interval: string },
+  ) {
+    // Public endpoint for registration flow
+    return this.paymentsService.createInitialCheckoutSession(
+      body.userId,
+      body.plan,
+      body.interval,
+    );
+  }
+
   @Post('create-customer')
   @UseGuards(JwtAuthGuard)
   async createCustomer(@Body() createCustomerDto: CreateCustomerDto) {

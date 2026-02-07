@@ -28,6 +28,21 @@ export class PaymentsAPI {
     }
   }
 
+  static async createInitialCheckoutSession(
+    userId: string,
+    plan: string,
+    interval: string
+  ): Promise<{ sessionId: string; url: string }> {
+    const endpoint = `${this.BASE_URL}/checkout/initial`; // matches backend controller
+    try {
+      const response = await httpClient.post(endpoint, { userId, plan, interval });
+      return response as { sessionId: string; url: string };
+    } catch (error) {
+      console.error('Error in PaymentsAPI.createInitialCheckoutSession:', error);
+      throw error;
+    }
+  }
+
   static async getSubscriptionStatus(): Promise<SubscriptionStatus> {
     const response = await httpClient.get(`${this.BASE_URL}/subscription-status`);
     return (response as any).data;

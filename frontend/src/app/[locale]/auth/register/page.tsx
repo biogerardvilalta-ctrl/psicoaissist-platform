@@ -48,7 +48,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { register } = useAuth();
-  const { createCheckoutSession } = usePayments();
+  const { createCheckoutSession, createInitialCheckoutSession } = usePayments();
 
   const selectedPlan = searchParams.get('plan');
   const billingInterval = searchParams.get('interval');
@@ -130,7 +130,7 @@ export default function RegisterPage() {
       // params are now at component level
 
       // 1. Register User with Plan info (this also handles Auto-Login in AuthContext if no verification needed)
-      const isLoggedIn = await register({
+      const { success: isLoggedIn, user: registeredUser } = await register({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -144,7 +144,24 @@ export default function RegisterPage() {
       });
 
       if (!isLoggedIn) {
-        // Verification required flow
+        // Verification required flow OR Payment Required flow
+        // Check if we have a user and a paid plan selected
+        if (registeredUser && selectedPlan && selectedPlan !== 'demo') {
+          try {
+            await createInitialCheckoutSession(
+              registeredUser.id,
+              selectedPlan,
+              (billingInterval as 'month' | 'year') || 'month'
+            );
+            return;
+          } catch (paymentError) {
+            console.error('Error initiating payment redirect:', paymentError);
+            setLocalError('Error iniciando la pasarela de pago. Tu cuenta ha sido creada pero requiere pago. Por favor inicia sesión par aintentarlo de nuevo.');
+            setIsSubmitting(false);
+            return;
+          }
+        }
+
         setIsVerificationSent(true);
         setIsSubmitting(false);
         return;
@@ -152,7 +169,7 @@ export default function RegisterPage() {
 
       // Check if a paid plan is selected (Basic is now paid, only 'demo' or null is free/trial)
       if (selectedPlan && selectedPlan !== 'demo') {
-        // 3. Initiate Checkout for Paid Plans
+        // 3. Initiate Checkout for Paid Plans (Authenticted User)
         try {
           // Cast the string to the expected union type for safety after verification
           // In a real scenario we'd validate against the allowed values list

@@ -175,6 +175,70 @@ export class PaymentsService {
     }
   }
 
+  /**
+   * Creates a checkout session for a user who is not yet active/authenticated.
+   * Used during the registration flow where payment is required before access.
+   */
+  async createInitialCheckoutSession(userId: string, planId: string, interval: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Ensure user is indeed INACTIVE or PENDING to avoid abuse
+      // We allow if status is INACTIVE or if they are just upgrading from a free/broken state
+      // but primarily this is for the registration flow.
+
+      const planConfig = this.stripeService.getPlan(planId, interval as 'month' | 'year');
+      if (!planConfig) {
+        throw new BadRequestException('Invalid plan selected');
+      }
+
+      // Create or get Stripe customer
+      let stripeCustomerId = user.stripeCustomerId;
+
+      if (!stripeCustomerId) {
+        const customer = await this.stripeService.createCustomer(
+          user.email,
+          `${user.firstName} ${user.lastName}`,
+          { userId: user.id }
+        );
+        stripeCustomerId = customer.id;
+
+        await this.prisma.user.update({
+          where: { id: userId },
+          data: { stripeCustomerId },
+        });
+      }
+
+      const mode: Stripe.Checkout.SessionCreateParams.Mode = (planConfig.interval === null || planConfig.interval === 'one-time') ? 'payment' : 'subscription';
+
+      const session = await this.stripeService.createCheckoutSession(
+        planConfig.priceId,
+        stripeCustomerId,
+        {
+          userId: user.id,
+          planType: planId,
+          isInitialPayment: 'true', // Flag to trigger activation in webhook
+          ... (mode === 'payment' ? { isOneTime: 'true' } : {}),
+        },
+        mode
+      );
+
+      return {
+        sessionId: session.id,
+        url: session.url,
+      };
+    } catch (error) {
+      this.logger.error('Error creating initial checkout session:', error);
+      throw error;
+    }
+  }
+
   // ... (createCustomer, createPortalSession, etc remain same)
 
   async addExtraPack(userId: string, packId: string) {
@@ -302,6 +366,47 @@ export class PaymentsService {
 
     // The subscription will be handled by the subscription.created webhook
     this.logger.log(`Checkout session completed for user ${userId} with plan ${planType}`);
+
+    // Check if this was an initial payment (registration flow)
+    const isInitialPayment = session.metadata?.isInitialPayment === 'true';
+
+    if (isInitialPayment) {
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+      if (user && (user.status === 'INACTIVE' || user.status === 'PENDING_REVIEW')) {
+        this.logger.log(`Activating user ${userId} after initial payment success.`);
+
+        await this.prisma.user.update({
+          where: { id: userId },
+          data: {
+            status: 'ACTIVE',
+            verified: true, // Payment confirms identity/intent
+            verificationToken: null,
+            updatedAt: new Date()
+          }
+        });
+
+        // Send Welcome Email (now that they are active)
+        try {
+          await this.emailService.sendWelcomeEmail(
+            user.email,
+            `${user.firstName} ${user.lastName}`,
+            user.preferredLanguage
+          );
+        } catch (e) {
+          this.logger.warn(`Could not send welcome email after payment activation: ${e.message}`);
+        }
+
+        await this.auditService.log({
+          userId: userId,
+          action: AuditAction.UPDATE,
+          resourceType: 'USER',
+          resourceId: userId,
+          details: 'Usuario activado tras pago inicial exitoso',
+          isSuccess: true,
+        });
+      }
+    }
   }
 
   // ... (rest)
