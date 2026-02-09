@@ -79,6 +79,12 @@ export class PaymentsController {
     );
   }
 
+  @Post('verify-session')
+  @UseGuards(JwtAuthGuard)
+  async verifySession(@Body() body: { sessionId: string }, @Req() req: any) {
+    return this.paymentsService.verifyCheckoutSession(body.sessionId, req.user.id);
+  }
+
   @Post('checkout/initial')
   async createInitialCheckoutSession(
     @Body() body: { userId: string; plan: string; interval: string },

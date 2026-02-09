@@ -200,6 +200,47 @@ export class PaymentsService {
     }
   }
 
+  async verifyCheckoutSession(sessionId: string, userId: string) {
+    try {
+      this.logger.log(`Verifying checkout session ${sessionId} for user ${userId}`);
+
+      // 1. Retrieve session from Stripe
+      // Note: In demo mode, retrieving a random session ID will return mock success.
+      // In real mode, it retrieves actual status.
+      let session;
+      try {
+        session = await this.stripeService.retrieveCheckoutSession(sessionId);
+      } catch (e) {
+        throw new NotFoundException('Session not found');
+      }
+
+      // 2. Security Check: Ensure this session belongs to the user requesting verification
+      // (Metadata is key here)
+      // In demo mode, metadata might be mock, so we relax check or ensure mock matches.
+      // For real implementation:
+      if (!this.stripeService.isInDemoMode()) {
+        if (session.metadata?.userId !== userId) {
+          this.logger.warn(`Security alert: User ${userId} tried to verify session ${sessionId} belonging to ${session.metadata?.userId}`);
+          throw new BadRequestException('Invalid session owner');
+        }
+      }
+
+      // 3. Check Payment Status
+      if (session.payment_status === 'paid' || session.payment_status === 'no_payment_required') {
+        // 4. Trigger completion logic (Reuse Webhook Handler Logic)
+        // We cast to Stripe.Checkout.Session as our service handles it
+        await this.handleCheckoutSessionCompleted(session as Stripe.Checkout.Session);
+        return { success: true, status: 'paid' };
+      } else {
+        return { success: false, status: session.payment_status };
+      }
+
+    } catch (error) {
+      this.logger.error(`Error verifying session ${sessionId}: ${error.message}`);
+      throw error;
+    }
+  }
+
   // ... (createCustomer, createPortalSession, etc remain same)
 
   async addExtraPack(userId: string, packId: string) {

@@ -301,19 +301,6 @@
                     "partialBlocks": "Partial Blocks"
                 }
             },
-            "ai": {
-                "title": "Artificial Intelligence",
-                "subtitle": "Customize report generation, analysis, and patient simulator.",
-                "preferredLanguage": "Language for Reports and Analysis",
-                "selectLanguage": "Select a language",
-                "languages": {
-                    "es": "Español",
-                    "ca": "Català",
-                    "en": "English"
-                },
-                "syncLanguage": "Sync with Interface Language",
-                "syncLanguageHelp": "If enabled, the report language will automatically change when you switch the website language."
-            },
             "notifications": {
                 "title": "Notifications",
                 "subtitle": "Manage your notification and reminder preferences.",
@@ -1719,7 +1706,6 @@
                                 ]
                             },
                             "excludes": {
-                                "title": "Limitations:",
                                 "list": [
                                     "No Clinical Simulator",
                                     "Auto-expiry after 14 days",
@@ -2828,7 +2814,7 @@
                 }
             },
             "export": {
-                "title": "7. Privacy & Export",
+                "title": "8. Privacy & Export",
                 "text": "Your data and your patients' data are yours. We strictly comply with GDPR.",
                 "csv": {
                     "title": "CSV Export (Excel)",
@@ -2848,7 +2834,7 @@
                 }
             },
             "settings": {
-                "title": "8. Settings",
+                "title": "9. Settings",
                 "agenda": {
                     "title": "Agenda",
                     "list": {
@@ -2875,10 +2861,6 @@
                     }
                 },
                 "note": "These elements will appear on exported PDF headers.",
-                "ai": {
-                    "title": "AI Configuration",
-                    "text": "Adjust risk analysis sensitivity, default output language, and summary style (more technical or more layman)."
-                },
                 "notifications": {
                     "title": "Notifications",
                     "list": {

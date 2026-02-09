@@ -2548,7 +2548,7 @@
                 }
             },
             "intro": {
-                "title": "Introducción",
+                "title": "1. Introducción",
                 "text": "PsicoAIssist es una solución integral que permite a psicólogos y terapeutas gestionar sus agendas, pacientes y sesiones clínico-terapéuticas. Además de las funciones administrativas básicas, la plataforma ofrece análisis avanzados mediante IA para detectar tendencias en el bienestar del paciente, temas recurrentes y métricas de eficacia terapéutica.",
                 "capabilities": {
                     "title": "Resumen de Capacidades del Sistema",
@@ -2588,7 +2588,7 @@
                 }
             },
             "roles": {
-                "title": "Roles de Usuario",
+                "title": "2. Roles de Usuario",
                 "text": "El sistema distingue principalmente entre dos roles con interfaces adaptadas:",
                 "professional": {
                     "title": "Professional (Psicólogo/a)",
@@ -2610,7 +2610,7 @@
                 }
             },
             "plans": {
-                "title": "Planes y Suscripciones",
+                "title": "3. Planes y Suscripciones",
                 "text": "PsicoAIssist ofrece cinco niveles de servicio, divididos en opciones individuales y para grupos. Puede consultar su plan actual en <strong>Perfil > Suscripción</strong>.",
                 "languages": "<strong>Idiomas:</strong> La plataforma está disponible en Español, Catalán e Inglés. Puede cambiar el idioma de la interfaz desde el icono del mundo 🌐 en la <strong>barra de navegación superior</strong>.",
                 "resetPolicy": {
@@ -2671,7 +2671,7 @@
                 }
             },
             "steps": {
-                "title": "Primeros Pasos",
+                "title": "4. Primeros Pasos",
                 "access": {
                     "title": "Acceso Inicial",
                     "text": "Ingrese con sus credenciales (email y contraseña) en la página de inicio de sesión segura."
@@ -2687,7 +2687,7 @@
                 }
             },
             "dashboard": {
-                "title": "El Dashboard",
+                "title": "5. El Dashboard",
                 "text": "El Dashboard es el centro de control principal y su diseño se adapta dinámicamente según su rol.",
                 "professional": {
                     "title": "Para el Profesional",
@@ -2706,7 +2706,7 @@
                 }
             },
             "features": {
-                "title": "Funcionalidades Principales",
+                "title": "6. Funcionalidades Principales",
                 "patients": {
                     "title": "Gestión de Pacientes",
                     "text": "En la sección <strong>Pacientes</strong>, cree nuevos expedientes, vea historiales y acceda a datos demográficos."
@@ -2826,7 +2826,7 @@
                 }
             },
             "export": {
-                "title": "Privacidad y Exportación de Datos",
+                "title": "8. Privacidad y Exportación de Datos",
                 "text": "PsicoAIssist le permite descargar toda su información en cualquier momento, garantizando su derecho a la portabilidad de datos (RGPD).",
                 "csv": {
                     "title": "📊 Exportar Datos (CSV/Excel)",
@@ -2846,7 +2846,7 @@
                 }
             },
             "settings": {
-                "title": "Configuración Detallada",
+                "title": "9. Configuración Detallada",
                 "agenda": {
                     "title": "📅 Agenda y Calendario",
                     "list": [
@@ -2872,10 +2872,6 @@
                         "<strong>Logo:</strong> Suba su logotipo para que aparezca en la esquina superior de sus informes."
                     ],
                     "note": "Nota: Esta funcionalidad es exclusiva para usuarios con plan Premium o superior."
-                },
-                "ai": {
-                    "title": "🤖 Inteligencia Artificial",
-                    "text": "<strong>Idioma de la IA:</strong> El idioma de los análisis e informes generados por la Inteligencia Artificial se sincroniza automáticamente con el idioma seleccionado en la interfaz (barra de navegación superior)."
                 },
                 "notifications": {
                     "title": "🔔 Notificaciones",

@@ -300,19 +300,6 @@
                     "partialBlocks": "Bloquejos Parcials"
                 }
             },
-            "ai": {
-                "title": "Intel·ligència Artificial",
-                "subtitle": "Personalitza la generació d'informes, anàlisi i el simulador de pacients.",
-                "preferredLanguage": "Idioma per a Informes i Anàlisi",
-                "selectLanguage": "Selecciona un idioma",
-                "languages": {
-                    "es": "Español",
-                    "ca": "Català",
-                    "en": "English"
-                },
-                "syncLanguage": "Sincronitzar amb l'idioma de la interfície",
-                "syncLanguageHelp": "Si actives això, l'idioma dels informes canviarà automàticament en canviar l'idioma de la web."
-            },
             "notifications": {
                 "title": "Notificacions",
                 "subtitle": "Gestiona les teves preferències de notificacions i recordatoris.",
@@ -2791,7 +2778,7 @@
                 }
             },
             "export": {
-                "title": "7. Privacitat i Exportació",
+                "title": "8. Privacitat i Exportació",
                 "text": "Les teves dades i les dels teus pacients són teves. Complim amb GDPR rigorosament.",
                 "csv": {
                     "title": "Exportació CSV (Excel)",
@@ -2811,7 +2798,7 @@
                 }
             },
             "settings": {
-                "title": "8. Configuració",
+                "title": "9. Configuració",
                 "agenda": {
                     "title": "Agenda",
                     "list": {
@@ -2838,10 +2825,6 @@
                     }
                 },
                 "note": "Aquests elements apareixeran a les capçaleres dels PDF exportats.",
-                "ai": {
-                    "title": "Configuració d'IA",
-                    "text": "Ajusta la sensibilitat de l'anàlisi de riscos, l'idioma per defecte de sortida i l'estil dels resums (més tècnic o més divulgatiu)."
-                },
                 "notifications": {
                     "title": "Notificacions",
                     "list": {

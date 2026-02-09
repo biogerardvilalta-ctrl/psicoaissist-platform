@@ -25,6 +25,26 @@ export default function PaymentSuccessPage() {
       'premium': t('plans.premium')
     };
     setPlanName(planNames[planParam] || planParam || t('plans.selected'));
+    setPlanName(planNames[planParam] || planParam || t('plans.selected'));
+
+    if (sessionIdParam) {
+      // Synchronous Verification to ensure user is active immediately
+      // This bypasses potential webhook delays/failures in dev/prod
+      console.log('Verifying session:', sessionIdParam);
+      import('@/lib/payments-api').then(({ PaymentsAPI }) => {
+        PaymentsAPI.verifySession(sessionIdParam)
+          .then(result => {
+            console.log('Verification result:', result);
+            if (result.success) {
+              // Force reload user to update status/limits locally
+              // We can trigger this via window reload or AuthContext if available
+              // For simplicity and robustness, specific timeout reload
+            }
+          })
+          .catch(err => console.error('Verification failed', err));
+      });
+    }
+
   }, [searchParams]);
 
   return (

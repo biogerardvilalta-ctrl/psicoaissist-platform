@@ -113,6 +113,20 @@ export class StripeService {
     return this.stripe.checkout.sessions.create(sessionData);
   }
 
+  async retrieveCheckoutSession(sessionId: string) {
+    if (this.isDemoMode) {
+      return {
+        id: sessionId,
+        payment_status: 'paid',
+        status: 'complete',
+        metadata: { userId: 'demo_user', planType: 'pro' }, // Mock data, actual values should be passed carefully in real scenario if relying on them
+        mode: 'subscription',
+        subscription: 'sub_demo_' + Date.now(),
+      };
+    }
+    return this.stripe.checkout.sessions.retrieve(sessionId);
+  }
+
   async createPortalSession(customerId: string) {
     if (this.isDemoMode) {
       return {

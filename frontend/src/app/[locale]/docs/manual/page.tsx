@@ -32,6 +32,23 @@ export default function ManualPage() {
                 <div className="max-w-4xl mx-auto">
 
 
+
+                    {/* Table of Contents */}
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-12 not-prose">
+                        <h2 className="text-lg font-bold text-slate-900 mb-4">{t('index.title')}</h2>
+                        <nav className="grid sm:grid-cols-2 gap-x-8 gap-y-2">
+                            {['intro', 'roles', 'plans', 'steps', 'dashboard', 'features', 'profile', 'export', 'settings'].map((item) => (
+                                <a
+                                    key={item}
+                                    href={`#${item}`}
+                                    className="text-slate-600 hover:text-blue-600 hover:underline text-sm transition-colors py-1 block"
+                                >
+                                    {t(`index.items.${item}`)}
+                                </a>
+                            ))}
+                        </nav>
+                    </div>
+
                     {/* Main Content */}
                     <div className="mode-prose prose prose-slate max-w-none">
 
@@ -171,7 +188,7 @@ export default function ManualPage() {
                             <p>{t('dashboard.text')}</p>
 
                             <h3 className="font-bold text-lg mt-4 text-slate-800 block">{t('dashboard.professional.title')}</h3>
-                            <p>{t('dashboard.professional.text')}</p>
+                            <p dangerouslySetInnerHTML={{ __html: t.raw('dashboard.professional.text') }} />
                             <p className="mt-2 text-sm text-slate-500">{t('dashboard.professional.widgets')}</p>
                             <ul className="list-disc pl-5 mt-1 space-y-1 text-sm text-slate-600">
                                 {['0', '1', '2'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`dashboard.professional.list.${i}`) }} />)}
@@ -384,8 +401,7 @@ export default function ManualPage() {
                             </ul>
                             <p className="text-sm text-slate-500 mt-2"><i>{t('settings.branding.note')}</i></p>
 
-                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🤖 {t('settings.ai.title')}</h3>
-                            <p dangerouslySetInnerHTML={{ __html: t.raw('settings.ai.text') }} />
+
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🔔 {t('settings.notifications.title')}</h3>
                             <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">

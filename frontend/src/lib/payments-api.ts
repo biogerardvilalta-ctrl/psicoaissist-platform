@@ -64,4 +64,9 @@ export class PaymentsAPI {
       interval,
     });
   }
+
+  static async verifySession(sessionId: string): Promise<{ success: boolean; status: string }> {
+    const response = await httpClient.post(`${this.BASE_URL}/verify-session`, { sessionId });
+    return response as { success: boolean; status: string };
+  }
 }
