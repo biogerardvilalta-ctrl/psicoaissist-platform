@@ -160,7 +160,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
             </div>
 
             {/* Self View (PIP) */}
-            <div className="absolute top-4 right-4 landscape:right-auto landscape:left-4 lg:landscape:right-4 lg:landscape:left-auto w-32 h-24 sm:w-48 sm:h-36 bg-slate-700 rounded-lg border border-slate-600 shadow-xl overflow-hidden z-20">
+            <div className="absolute top-24 md:top-4 landscape:top-4 right-4 landscape:right-auto landscape:left-4 lg:landscape:right-4 lg:landscape:left-auto w-32 h-24 sm:w-48 sm:h-36 bg-slate-700 rounded-lg border border-slate-600 shadow-xl overflow-hidden z-20">
                 <video
                     ref={localVideoRef}
                     autoPlay

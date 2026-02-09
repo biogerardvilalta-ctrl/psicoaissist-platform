@@ -156,10 +156,7 @@ export function AiAssistantPanel({ sessionId, isActive, liveContext, onSuggestio
                 </CardTitle>
                 <CardDescription className="text-slate-500 font-medium text-xs">
                     {t('subtitle')}
-                    {/* SOCKET DEBUG LOG */}
-                    <div className="text-[10px] text-red-500 font-mono mt-1 border-t pt-1 border-red-200">
-                        SRV: {debugLog}
-                    </div>
+
                 </CardDescription>
 
                 {isAiLimitReached && (

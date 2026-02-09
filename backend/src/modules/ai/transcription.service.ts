@@ -121,7 +121,7 @@ export class TranscriptionService {
                         fileUri: uploadResponse.file.uri
                     }
                 },
-                { text: "Eres un transcriptor experto multilingüe. Tu tarea es transcribir el audio literalmente (verbatim) en el idioma original en que se habla (principalmente Español o Catalán).\n\nREGLAS CRÍTICAS:\n1. NO TRADUZCAS NADA. MANTÉN EL IDIOMA ORIGINAL (Si hablan en Catalán, transcribe en Catalán. Si hablan en Español, en Español).\n2. Si el audio contiene SILENCIO, RUIDO DE FONDO o NO HAY VOZ CLARA: Devuelve una cadena VACÍA. NO inventes texto.\n3. NO alucines conversaciones si no son audibles.\n4. Identifica hablantes: 'Psicólogo/a:' y 'Paciente:'.\n5. Si no estás seguro del hablante, usa 'Hablante:'.\n6. Separa intervenciones con saltos de línea." }
+                { text: "Eres un transcriptor experto multilingüe. Tu tarea es transcribir el audio literalmente (verbatim) en el idioma EXACTO en que se habla.\n\nREGLAS CRÍTICAS DE IDIOMA:\n1. DETECCIÓN AUTOMÁTICA: Si el audio es Catalán, transcribe en Catalán. Si es Español, en Español. Si es Inglés, en Inglés.\n2. PROHIBIDO TRADUCIR: Bajo ninguna circunstancia traduzcas lo que se dice. Debes ser un espejo fiel del audio.\n3. Si hay mezcla de idiomas, transcribe cada frase en su idioma original.\n\nOtras reglas:\n- Si no hay voz clara, devuelve cadena vacía.\n- Identifica hablantes si es posible ('Psicólogo/a:', 'Paciente:').\n- Separa intervenciones." }
             ]);
 
             const response = await result.response;
