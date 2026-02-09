@@ -29,26 +29,11 @@ export default function ManualPage() {
                 </div>
 
                 {/* Content Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-                    {/* Sidebar / Index */}
-                    <div className="hidden lg:block col-span-1">
-                        <div className="sticky top-8 space-y-4">
-                            <h3 className="font-semibold text-slate-900 uppercase text-sm tracking-wider">{t('index.title')}</h3>
-                            <nav className="flex flex-col space-y-2 text-sm text-slate-600">
-                                <a href="#intro" className="hover:text-blue-600 transition-colors">{t('index.items.intro')}</a>
-                                <a href="#roles" className="hover:text-blue-600 transition-colors">{t('index.items.roles')}</a>
-                                <a href="#plans" className="hover:text-blue-600 transition-colors">{t('index.items.plans')}</a>
-                                <a href="#steps" className="hover:text-blue-600 transition-colors">{t('index.items.steps')}</a>
-                                <a href="#dashboard" className="hover:text-blue-600 transition-colors">{t('index.items.dashboard')}</a>
-                                <a href="#features" className="hover:text-blue-600 transition-colors">{t('index.items.features')}</a>
-                                <a href="#export" className="hover:text-blue-600 transition-colors">{t('index.items.export')}</a>
-                                <a href="#settings" className="hover:text-blue-600 transition-colors">{t('index.items.settings')}</a>
-                            </nav>
-                        </div>
-                    </div>
+                <div className="max-w-4xl mx-auto">
+
 
                     {/* Main Content */}
-                    <div className="col-span-1 lg:col-span-3 prose prose-slate max-w-none">
+                    <div className="mode-prose prose prose-slate max-w-none">
 
                         {/* 1. Introducción */}
                         <section id="intro" className="mb-16 scroll-mt-20">
@@ -130,38 +115,28 @@ export default function ManualPage() {
                                 <p className="text-xs text-yellow-600 mt-2 italic">{t('plans.resetPolicy.note')}</p>
                             </div>
 
-                            <h3 className="font-bold text-lg mt-6 text-slate-800 block border-b pb-2">{t('plans.individual.title')}</h3>
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                            <h3 className="font-bold text-lg mt-6 text-slate-800 block text-blue-700">{t('plans.individual.title')} (Demo, Basic, Pro, Premium)</h3>
+                            <ul className="list-disc pl-5 mt-2 space-y-2 text-slate-700">
                                 {['basic', 'pro', 'premium'].map(plan => (
-                                    <div key={plan} className="border p-4 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
-                                        <h4 className="font-bold text-blue-700 mb-1">{t(`plans.individual.${plan}.title`)}</h4>
-                                        <p className="text-sm text-slate-700 italic mb-3 h-10">{t(`plans.individual.${plan}.description`)}</p>
-                                        <div className="text-xs space-y-2">
-                                            <p className="text-slate-600"><strong>Incluye:</strong> {t(`plans.individual.${plan}.features`)}</p>
-                                            {plan === 'basic' && (
-                                                <p className="text-red-500"><strong>No incluye:</strong> {t(`plans.individual.${plan}.limitations`)}</p>
-                                            )}
-                                        </div>
-                                    </div>
+                                    <li key={plan}>
+                                        <strong>{t(`plans.individual.${plan}.title`)}:</strong> {t(`plans.individual.${plan}.description`)} <span className="text-slate-500 text-sm">({t(`plans.individual.${plan}.features`)})</span>
+                                    </li>
                                 ))}
-                            </div>
+                            </ul>
 
-                            <h3 className="font-bold text-lg mt-8 text-slate-800 block border-b pb-2">{t('plans.group.title')}</h3>
-                            <div className="mt-4 border p-4 rounded-lg bg-blue-50 border-blue-100">
-                                <h4 className="font-bold text-blue-900">{t('plans.group.clinics.title')}</h4>
-                                <p className="text-sm text-slate-700 mb-2">{t('plans.group.clinics.description')}</p>
-                                <p className="text-xs text-blue-800"><strong>Características:</strong> {t('plans.group.clinics.features')}</p>
-                            </div>
+                            <h3 className="font-bold text-lg mt-6 text-slate-800 block text-blue-700">{t('plans.group.title')} (Clinics/Centers)</h3>
+                            <p className="mt-2 text-slate-700">
+                                <strong>{t('plans.group.clinics.title')}:</strong> {t('plans.group.clinics.description')}
+                            </p>
 
-                            <h3 className="font-bold text-lg mt-8 text-slate-800 block border-b pb-2">{t('plans.extras.title')}</h3>
-                            <div className="grid md:grid-cols-2 gap-4 mt-4">
+                            <h3 className="font-bold text-lg mt-6 text-slate-800 block text-blue-700">{t('plans.extras.title')} (Agenda, Packs extra)</h3>
+                            <ul className="list-disc pl-5 mt-2 space-y-2 text-slate-700">
                                 {['agenda', 'minutes', 'simulator', 'onboarding'].map(extra => (
-                                    <div key={extra} className="border p-4 rounded-lg bg-slate-50 border-slate-200">
-                                        <h4 className="font-bold text-slate-800 mb-1">{t(`plans.extras.${extra}.title`)}</h4>
-                                        <p className="text-sm text-slate-600">{t(`plans.extras.${extra}.description`)}</p>
-                                    </div>
+                                    <li key={extra}>
+                                        <strong>{t(`plans.extras.${extra}.title`)}:</strong> {t(`plans.extras.${extra}.description`)}
+                                    </li>
                                 ))}
-                            </div>
+                            </ul>
 
                             <div className="my-6 p-4 bg-pink-50 rounded-lg border border-pink-100">
                                 <h4 className="font-bold text-pink-800 mb-2">{t('plans.fairUse.title')}</h4>
