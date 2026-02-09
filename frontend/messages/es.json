@@ -2542,8 +2542,9 @@
                     "steps": "4. Primeros Pasos",
                     "dashboard": "5. El Dashboard",
                     "features": "6. Funcionalidades Principales",
-                    "export": "7. Privacidad y Exportación",
-                    "settings": "8. Configuración Detallada"
+                    "profile": "7. Perfil y Suscripción",
+                    "export": "8. Privacidad y Exportación",
+                    "settings": "9. Configuración Detallada"
                 }
             },
             "intro": {
@@ -2797,6 +2798,31 @@
                             "<strong>Premium/Clinics:</strong> Casos ilimitados."
                         ]
                     }
+                }
+            },
+            "profile": {
+                "title": "7. Perfil y Suscripción",
+                "text": "Gestione su cuenta, seguridad y suscripción desde el apartado de Perfil.",
+                "subscription": {
+                    "title": "Gestión de Suscripción",
+                    "text": "Aquí puede ver su plan actual, estado de pagos y próxima fecha de renovación.",
+                    "list": [
+                        "<strong>Cambiar Plan:</strong> Use el botón 'Mejorar Plan' para acceder a nuevas funcionalidades.",
+                        "<strong>Límites de Uso:</strong> Las barras de progreso muestran su consumo de pacientes, minutos de IA y casos de simulador."
+                    ]
+                },
+                "packs": {
+                    "title": "Packs Extra y Límites",
+                    "text": "Si agota sus recursos mensuales antes de la renovación, puede adquirir Packs Extra.",
+                    "list": [
+                        "<strong>Pack Minutos IA:</strong> Añade minutos de transcripción.",
+                        "<strong>Pack Simulador:</strong> Añade casos clínicos adicionales.",
+                        "<strong>Prioridad:</strong> El sistema consume primero su plan base y luego los packs extra (que no caducan a fin de mes)."
+                    ]
+                },
+                "security": {
+                    "title": "Seguridad de la Cuenta",
+                    "text": "Puede cambiar su contraseña o eliminar su cuenta permanentemente desde la 'Zona de Peligro'."
                 }
             },
             "export": {

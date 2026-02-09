@@ -2545,8 +2545,9 @@
                     "steps": "4. First Steps",
                     "dashboard": "5. Dashboard",
                     "features": "6. Features",
-                    "export": "7. Privacy & Export",
-                    "settings": "8. Settings"
+                    "profile": "7. Profile & Subscription",
+                    "export": "8. Privacy & Export",
+                    "settings": "9. Settings"
                 }
             },
             "intro": {
@@ -2799,6 +2800,31 @@
                             "2": "Ideal for supervision or student practice."
                         }
                     }
+                }
+            },
+            "profile": {
+                "title": "7. Profile & Subscription",
+                "text": "Manage your account, security, and subscription from the Profile section.",
+                "subscription": {
+                    "title": "Subscription Management",
+                    "text": "Here you can view your current plan, payment status, and next renewal date.",
+                    "list": [
+                        "<strong>Change Plan:</strong> Use the 'Upgrade Plan' button to access new features.",
+                        "<strong>Usage Limits:</strong> Progress bars show your consumption of patients, AI minutes, and simulator cases."
+                    ]
+                },
+                "packs": {
+                    "title": "Extra Packs & Limits",
+                    "text": "If you exhaust your monthly resources before renewal, you can purchase Extra Packs.",
+                    "list": [
+                        "<strong>AI Minutes Pack:</strong> Adds transcription minutes.",
+                        "<strong>Simulator Pack:</strong> Adds extra clinical cases.",
+                        "<strong>Priority:</strong> The system consumes your base plan first, then extra packs (which do not expire at month end)."
+                    ]
+                },
+                "security": {
+                    "title": "Account Security",
+                    "text": "You can change your password or permanently delete your account from the 'Danger Zone'."
                 }
             },
             "export": {

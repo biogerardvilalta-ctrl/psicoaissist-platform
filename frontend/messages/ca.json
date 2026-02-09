@@ -2545,8 +2545,9 @@
                     "steps": "4. Primeros Pasos",
                     "dashboard": "5. Dashboard",
                     "features": "6. Funcionalitats",
-                    "export": "7. Privacitat i Exportació",
-                    "settings": "8. Configuració"
+                    "profile": "7. Perfil i Subscripció",
+                    "export": "8. Privacitat i Exportació",
+                    "settings": "9. Configuració"
                 }
             },
             "intro": {
@@ -2762,6 +2763,31 @@
                             "2": "Ideal per a supervisió o pràctica d'estudiants."
                         }
                     }
+                }
+            },
+            "profile": {
+                "title": "7. Perfil i Subscripció",
+                "text": "Gestioneu el vostre compte, seguretat i subscripció des de l'apartat de Perfil.",
+                "subscription": {
+                    "title": "Gestió de Subscripció",
+                    "text": "Aquí podeu veure el vostre pla actual, estat de pagaments i propera data de renovació.",
+                    "list": [
+                        "<strong>Canviar Pla:</strong> Utilitzeu el botó 'Millorar Pla' per accedir a noves funcionalitats.",
+                        "<strong>Límits d'Ús:</strong> Les barres de progrés mostren el consum de pacients, minuts d'IA i casos de simulador."
+                    ]
+                },
+                "packs": {
+                    "title": "Packs Extra i Límits",
+                    "text": "Si esgota els recursos mensuals abans de la renovació, pot adquirir Packs Extra.",
+                    "list": [
+                        "<strong>Pack Minutos IA:</strong> Afegeix minuts de transcripció.",
+                        "<strong>Pack Simulador:</strong> Afegeix casos clínics addicionals.",
+                        "<strong>Prioritat:</strong> El sistema consumeix primer el pla base i després els packs extra (que no caduquen a final de mes)."
+                    ]
+                },
+                "security": {
+                    "title": "Seguretat del Compte",
+                    "text": "Podeu canviar la vostra contrasenya o eliminar el compte permanentment des de la 'Zona de Perill'."
                 }
             },
             "export": {

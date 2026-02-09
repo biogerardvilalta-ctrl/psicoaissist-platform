@@ -37,6 +37,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         status: true,
         dashboardLayout: true,
         googleRefreshToken: true,
+        verified: true,
       },
     });
 
@@ -45,7 +46,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     if (user.status !== UserStatus.ACTIVE) {
-      throw new UnauthorizedException('Usuario inactivo');
+      // Allow INACTIVE if verified (for payment completion)
+      if (user.status === UserStatus.INACTIVE && (user as any).verified) {
+        // Allowed
+      } else {
+        throw new UnauthorizedException('Usuario inactivo');
+      }
     }
 
     return user;

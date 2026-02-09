@@ -276,7 +276,59 @@ export default function ManualPage() {
                             </div>
                         </section>
 
-                        {/* 7. Privacidad */}
+                        {/* 7. Perfil y Suscripción */}
+                        <section id="profile" className="mb-16 scroll-mt-20 border-t pt-12">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('profile.title')}</h2>
+                            <p className="mb-6 text-lg text-slate-600">{t('profile.text')}</p>
+
+                            <div className="grid md:grid-cols-2 gap-6 mb-8">
+                                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                    <h3 className="flex items-center gap-2 font-bold text-lg text-blue-900 mb-4">
+                                        <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
+                                        </div>
+                                        {t('profile.subscription.title')}
+                                    </h3>
+                                    <p className="text-slate-600 mb-4 text-sm">{t('profile.subscription.text')}</p>
+                                    <ul className="space-y-3">
+                                        {['0', '1'].map(i => (
+                                            <li key={i} className="flex gap-3 text-sm text-slate-600">
+                                                <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
+                                                <span dangerouslySetInnerHTML={{ __html: t.raw(`profile.subscription.list.${i}`) }} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                    <h3 className="flex items-center gap-2 font-bold text-lg text-purple-900 mb-4">
+                                        <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22v-9" /></svg>
+                                        </div>
+                                        {t('profile.packs.title')}
+                                    </h3>
+                                    <p className="text-slate-600 mb-4 text-sm">{t('profile.packs.text')}</p>
+                                    <ul className="space-y-3">
+                                        {['0', '1', '2'].map(i => (
+                                            <li key={i} className="flex gap-3 text-sm text-slate-600">
+                                                <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+                                                <span dangerouslySetInnerHTML={{ __html: t.raw(`profile.packs.list.${i}`) }} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="bg-red-50 p-6 rounded-xl border border-red-100">
+                                <h3 className="flex items-center gap-2 font-semibold text-red-900 mb-2">
+                                    <AlertCircle className="h-5 w-5" />
+                                    {t('profile.security.title')}
+                                </h3>
+                                <p className="text-slate-700 text-sm">{t('profile.security.text')}</p>
+                            </div>
+                        </section>
+
+                        {/* 8. Privacidad y Exportación */}
                         <section id="export" className="mb-16 scroll-mt-20 border-t pt-12">
                             <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('export.title')}</h2>
                             <p className="mb-6">{t('export.text')}</p>
@@ -310,7 +362,7 @@ export default function ManualPage() {
                             </div>
                         </section>
 
-                        {/* 8. Configuración */}
+                        {/* 9. Configuración */}
                         <section id="settings" className="mb-16 scroll-mt-20 border-t pt-12">
                             <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('settings.title')}</h2>
 
