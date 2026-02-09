@@ -2618,13 +2618,50 @@
                     "note": "Los recursos no consumidos NO son acumulables para el mes siguiente."
                 },
                 "individual": {
-                    "title": "1. Planes Individuales"
+                    "title": "1. Planes Individuales",
+                    "basic": {
+                        "title": "Plan Basic",
+                        "description": "Perfecto para psicólogos independientes que comienzan.",
+                        "features": "Incluye hasta 25 clientes activos, 10 horas de transcripción (solo texto), agenda y facturación básica.",
+                        "limitations": "No incluye IA generativa, simulador clínico ni sincronización con Google Calendar."
+                    },
+                    "pro": {
+                        "title": "Plan Pro",
+                        "description": "La opción más popular para práctica profesional.",
+                        "features": "Pacientes ilimitados, 15h (900 min) de Transcripción + IA, Sincronización Google Calendar, Simulador Clínico (5 casos/mes), 50GB almacenamiento y soporte prioritario."
+                    },
+                    "premium": {
+                        "title": "Plan Premium",
+                        "description": "Para especialistas con alto volumen de trabajo.",
+                        "features": "Todo lo incluido en Pro, 50h (3.000 min) de Transcripción + IA, Simulador Clínico Ilimitado, 1TB almacenamiento, Soporte Prioritario + Videollamada y Branding Personalizado."
+                    }
                 },
                 "group": {
-                    "title": "2. Planes Grupales y Corporativos"
+                    "title": "2. Planes Grupales y Corporativos",
+                    "clinics": {
+                        "title": "Plan Clinics / Instituciones",
+                        "description": "Para Centros de Salud, Universidades y Hospitales que priorizan formación y control.",
+                        "features": "Usuarios ilimitados, IA Corporativa (5.000+ min/mes), Simulador Clínico a medida, Acceso API (Integración HIS), Compliance Avanzado y Facturación unificada."
+                    }
                 },
                 "extras": {
-                    "title": "3. Extras y Complementos"
+                    "title": "3. Extras y Complementos",
+                    "agenda": {
+                        "title": "Agenda Manager",
+                        "description": "Permite añadir un usuario administrativo para delegar la gestión de citas y pacientes."
+                    },
+                    "minutes": {
+                        "title": "Pack Minutos IA",
+                        "description": "Añade minutos extra de IA/Transcripción para cubrir picos de trabajo puntuales."
+                    },
+                    "simulator": {
+                        "title": "Pack Simulador",
+                        "description": "Pack de 10 casos clínicos adicionales para ampliar la formación práctica."
+                    },
+                    "onboarding": {
+                        "title": "Sesión Onboarding",
+                        "description": "Sesión personalizada de 45 minutos para configurar la cuenta, importar datos y garantizar el funcionamiento."
+                    }
                 },
                 "fairUse": {
                     "title": "Política de Uso Razonable (Fair Use Policy)",

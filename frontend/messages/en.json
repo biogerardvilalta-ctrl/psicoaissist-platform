@@ -2620,13 +2620,50 @@
                     "note": "Exception: Separately purchased 'Extra Packs' do not expire until used."
                 },
                 "individual": {
-                    "title": "Individual Plans"
+                    "title": "1. Individual Plans",
+                    "basic": {
+                        "title": "Basic Plan",
+                        "description": "Perfect for independent psychologists just starting.",
+                        "features": "Includes up to 25 active clients, 10 hours transcription (text only), basic booking and invoicing.",
+                        "limitations": "No Generative AI, no Clinical Simulator, no Google Calendar Synchronization."
+                    },
+                    "pro": {
+                        "title": "Pro Plan",
+                        "description": "The most popular option for professional practice.",
+                        "features": "Unlimited patients, 15h (900 min) Transcription + AI, Google Calendar Synchronization, Clinical Simulator (5 cases/month), 50GB Storage, Priority Support."
+                    },
+                    "premium": {
+                        "title": "Premium Plan",
+                        "description": "For specialists with high workload.",
+                        "features": "Everything in Pro, 50h (3,000 min) Transcription + AI, Unlimited Clinical Simulator, 1TB Storage, Priority Support + Video Call, Custom Branding."
+                    }
                 },
                 "group": {
-                    "title": "Group Plans"
+                    "title": "2. Group Plans",
+                    "clinics": {
+                        "title": "Clinics / Institutions Plan",
+                        "description": "For Health Centers, Universities, and Hospitals prioritizing training and control.",
+                        "features": "Unlimited users, Corporate AI (5,000+ min/month), Tailored Clinical Simulator, API Access (HIS integration), Advanced Compliance, Unified Billing."
+                    }
                 },
                 "extras": {
-                    "title": "Extras"
+                    "title": "3. Extras and Additional Services",
+                    "agenda": {
+                        "title": "Agenda Manager",
+                        "description": "Allows adding an administrative user to delegate appointment management."
+                    },
+                    "minutes": {
+                        "title": "AI Minute Pack",
+                        "description": "Add extra AI/Transcription minutes to cover peak workloads."
+                    },
+                    "simulator": {
+                        "title": "Simulator Pack",
+                        "description": "Pack of 10 additional clinical cases to expand practical training."
+                    },
+                    "onboarding": {
+                        "title": "Onboarding Session",
+                        "description": "Personalized 45-minute session to set up the account, import data, and guarantee operation."
+                    }
                 },
                 "fairUse": {
                     "title": "Fair Use Policy",
