@@ -2527,6 +2527,464 @@
         "contact": {
             "text": "¿No encuentras lo que buscas?",
             "link": "Contacta con soporte"
+        },
+        "Manual": {
+            "title": "Manual de Usuario",
+            "subtitle": "Guía completa para dominar PsicoAIssist, desde la configuración inicial hasta el análisis avanzado con IA.",
+            "back": "Volver a Documentación",
+            "officialDocs": "Documentación Oficial",
+            "index": {
+                "title": "Índice de Contenidos",
+                "items": {
+                    "intro": "1. Introducción",
+                    "roles": "2. Roles de Usuario",
+                    "plans": "3. Planes y Suscripciones",
+                    "steps": "4. Primeros Pasos",
+                    "dashboard": "5. El Dashboard",
+                    "features": "6. Funcionalidades Principales",
+                    "export": "7. Privacidad y Exportación",
+                    "settings": "8. Configuración Detallada"
+                }
+            },
+            "intro": {
+                "title": "Introducción",
+                "text": "PsicoAIssist es una solución integral que permite a psicólogos y terapeutas gestionar sus agendas, pacientes y sesiones clínico-terapéuticas. Además de las funciones administrativas básicas, la plataforma ofrece análisis avanzados mediante IA para detectar tendencias en el bienestar del paciente, temas recurrentes y métricas de eficacia terapéutica.",
+                "capabilities": {
+                    "title": "Resumen de Capacidades del Sistema",
+                    "ai": {
+                        "title": "🧠 Inteligencia Artificial y Clínica",
+                        "list": [
+                            "• <strong>Transcripción:</strong> Audio a texto automático.",
+                            "• <strong>Análisis IA:</strong> Resúmenes, notas SOAP y puntos clave.",
+                            "• <strong>Analíticas:</strong> Detección de tendencias de ánimo y temas recurrentes.",
+                            "• <strong>Simulador:</strong> Roleplay con pacientes virtuales."
+                        ]
+                    },
+                    "management": {
+                        "title": "📋 Gestión y Documentación",
+                        "list": [
+                            "• <strong>Expediente Digital:</strong> Historial único y seguro.",
+                            "• <strong>Generación de Informes:</strong> PDFs clínicos en un clic.",
+                            "• <strong>Almacenamiento Seguro:</strong> Cifrado de datos sensibles."
+                        ]
+                    },
+                    "agenda": {
+                        "title": "📅 Agenda y Negocio",
+                        "list": [
+                            "• <strong>Calendario Inteligente:</strong> Citas, buffers y sincro con Google.",
+                            "• <strong>Control de Ingresos:</strong> Estimación de ganancias tiempo real.",
+                            "• <strong>Recordatorios:</strong> Emails automáticos anti-ausentismo."
+                        ]
+                    },
+                    "extras": {
+                        "title": "🚀 Extras y Equipos",
+                        "list": [
+                            "• <strong>Gestión de Equipos:</strong> Roles Manager/Doctor.",
+                            "• <strong>Branding:</strong> Tu logo en los informes.",
+                            "• <strong>Integraciones:</strong> API y SSO (Planes superiores)."
+                        ]
+                    }
+                }
+            },
+            "roles": {
+                "title": "Roles de Usuario",
+                "text": "El sistema distingue principalmente entre dos roles con interfaces adaptadas:",
+                "professional": {
+                    "title": "Professional (Psicólogo/a)",
+                    "desc": "Usuario principal (terapeuta/psicólogo).",
+                    "list": [
+                        "✓ Gestión de sus propios pacientes",
+                        "✓ Dashboard analítico con IA",
+                        "✓ Configuración de facturación"
+                    ]
+                },
+                "manager": {
+                    "title": "Agenda Manager",
+                    "desc": "Rol administrativo para secretarios.",
+                    "list": [
+                        "✓ Gestión de agendas de terceros",
+                        "✓ Creación de Grupos de Profesionales",
+                        "✕ Sin acceso a estadísticas clínicas"
+                    ]
+                }
+            },
+            "plans": {
+                "title": "Planes y Suscripciones",
+                "text": "PsicoAIssist ofrece cinco niveles de servicio, divididos en opciones individuales y para grupos. Puede consultar su plan actual en <strong>Perfil > Suscripción</strong>.",
+                "languages": "<strong>Idiomas:</strong> La plataforma está disponible en Español, Catalán e Inglés. Puede cambiar el idioma de la interfaz desde el icono del mundo 🌐 en la <strong>barra de navegación superior</strong>.",
+                "resetPolicy": {
+                    "title": "Política de Reinicio Mensual:",
+                    "text": "Todos los contadores de uso (minutos de transcripción, casos de simulador, etc.) son mensuales y se reinician a cero en la fecha de renovación de su suscripción.",
+                    "note": "Los recursos no consumidos NO son acumulables para el mes siguiente."
+                },
+                "individual": {
+                    "title": "1. Planes Individuales"
+                },
+                "group": {
+                    "title": "2. Planes Grupales y Corporativos"
+                },
+                "extras": {
+                    "title": "3. Extras y Complementos"
+                },
+                "fairUse": {
+                    "title": "Política de Uso Razonable (Fair Use Policy)",
+                    "text": "Para garantizar la estabilidad del sistema y la calidad del servicio para todos los usuarios, los planes con características 'Ilimitadas' están sujetos a los siguientes topes de seguridad mensual:",
+                    "warning": "* El uso por encima de estos límites se considera 'no humano' o abusivo y puede conllevar la suspensión temporal de la cuenta o el contacto por parte de soporte para migrar a un plan Enterprise personalizado."
+                }
+            },
+            "steps": {
+                "title": "Primeros Pasos",
+                "access": {
+                    "title": "Acceso Inicial",
+                    "text": "Ingrese con sus credenciales (email y contraseña) en la página de inicio de sesión segura."
+                },
+                "config": {
+                    "title": "Configuración Inicial (Recomendado)",
+                    "text": "Antes de empezar a citar pacientes, diríjase a <strong>Ajustes (Settings)</strong> para configurar:",
+                    "list": [
+                        "<strong>Horario Laboral:</strong> Defina su hora de inicio y fin, y la duración por defecto de sus sesiones.",
+                        "<strong>Tarifa:</strong> Establezca su precio por hora para que el sistema calcule sus ingresos estimados.",
+                        "<strong>Google Calendar:</strong> Active la sincronización bidireccional para que sus citas aparezcan en su calendario personal y viceversa."
+                    ]
+                }
+            },
+            "dashboard": {
+                "title": "El Dashboard",
+                "text": "El Dashboard es el centro de control principal y su diseño se adapta dinámicamente según su rol.",
+                "professional": {
+                    "title": "Para el Profesional",
+                    "text": "Es un panel modular y personalizable. Puede añadir o quitar 'Widgets' desde la <strong>Librería de Widgets</strong>.",
+                    "widgets": "Widgets Disponibles:",
+                    "list": [
+                        "<strong>Operativos:</strong> Agenda de Hoy, Notas Pendientes, Agenda (7 días).",
+                        "<strong>Analíticos (Negocio):</strong> Ingresos Estimados, Tasa de Asistencia, Pacientes Activos.",
+                        "<strong>Clínicos (IA):</strong> Temas Recurrentes (análisis de notas), Tendencia de Bienestar, Técnicas Terapéuticas."
+                    ],
+                    "note": "<strong>Nota:</strong> Los widgets clínicos requieren que complete sus notas de sesión para que la IA pueda generar datos útiles."
+                },
+                "manager": {
+                    "title": "Para el Agenda Manager",
+                    "text": "Su dashboard muestra 'Tarjetas de Profesionales'. Haga clic en una tarjeta para gestionar la agenda específica de ese doctor."
+                }
+            },
+            "features": {
+                "title": "Funcionalidades Principales",
+                "patients": {
+                    "title": "Gestión de Pacientes",
+                    "text": "En la sección <strong>Pacientes</strong>, cree nuevos expedientes, vea historiales y acceda a datos demográficos."
+                },
+                "sessions": {
+                    "title": "Gestión de Sesiones",
+                    "text": "En <strong>Sesiones</strong>, use la vista de calendario para crear citas.",
+                    "flow": {
+                        "title": "Flujo de una Sesión Estándar",
+                        "step1": {
+                            "title": "1. Iniciar Sesión",
+                            "text": "Al llegar el paciente, pulse el botón de <strong>Iniciar</strong> en la cita. Esto abre el panel de sesión y activa el cronómetro."
+                        },
+                        "step2": {
+                            "title": "2. Consentimiento y Verificaciones",
+                            "text": "Aparecerá una ventana emergente obligatoria. Debe marcar las casillas de:",
+                            "list": [
+                                "<strong>Consentimiento Informado:</strong> El paciente autoriza el uso de IA.",
+                                "<strong>Paciente Menor:</strong> Si aplica, active esta casilla para ajustar la protección de datos."
+                            ]
+                        },
+                        "step3": {
+                            "title": "3. Grabación y Activación IA",
+                            "text": "<strong>Importante:</strong> La IA no escucha automáticamente. Debe pulsar el botón <strong>Grabar</strong> (micrófono) cuando quiera que empiece la transcripción y el análisis.",
+                            "note": "* Puede pausar y reanudar la grabación en cualquier momento de la sesión."
+                        },
+                        "step4": {
+                            "title": "4. Finalizar y Generar Informes",
+                            "text": "Al terminar, pulse <strong>Finalizar Sesión</strong>. El sistema procesará el audio capturado y generará automáticamente:",
+                            "list": [
+                                "Transcripción completa.",
+                                "Resumen de la sesión.",
+                                "Informe de IA (según su plan)."
+                            ]
+                        }
+                    },
+                    "cancelNote": "Marque las sesiones canceladas o no presentadas como 'Cancelada' para que no computen en sus estadísticas ni facturación."
+                },
+                "video": {
+                    "title": "Videoconsulta y Telemedicina",
+                    "text": "La plataforma incluye un sistema de videollamadas integrado que permite realizar sesiones remotas.",
+                    "step1": {
+                        "title": "1. Iniciar Sesión",
+                        "text": "Al entrar en la sala, pulse <strong>Iniciar Sesión</strong>. Esto activa el cronómetro de duración y cambia el estado de la cita a 'En Curso'."
+                    },
+                    "step2": {
+                        "title": "2. Iniciar Grabación (IA)",
+                        "text": "Para obtener transcripción y análisis de IA, pulse <strong>Grabar</strong>. Es necesario para que se generen los resúmenes automáticos. (Requiere consentimiento)."
+                    },
+                    "step3": {
+                        "title": "3. Finalizar Sesión",
+                        "text": "Al terminar, pulse <strong>Finalizar Sesión</strong>. El sistema guardará todo, marcará la cita como 'Completada' y generará el informe clínico con IA (si su plan lo permite)."
+                    }
+                },
+                "ai": {
+                    "title": "Análisis IA de Sesiones",
+                    "text": "La IA actúa como un 'espejo' del contenido de la sesión, proporcionando 5 tipos de información para asistir al profesional, sin sustituir nunca su criterio:",
+                    "types": {
+                        "summary": {
+                            "title": "📝 Resumen Fáctico",
+                            "text": "Síntesis objetiva de lo hablado en la sesión, ideal para copiar a la historia clínica reduciendo el tiempo de redacción."
+                        },
+                        "emotional": {
+                            "title": "🎭 Elementos Emocionales y Narrativos",
+                            "text": "Detecta palabras clave (tristeza, rabia...) y patrones discursivos (absolutos tipo 'siempre', rumiación) para alertar de posibles incongruencias."
+                        },
+                        "themes": {
+                            "title": "🏷️ Temas Emergentes",
+                            "text": "Clasifica automáticamente el contenido en áreas temáticas (Ansiedad, Trauma, Autoestima) para no perder de vista ejes latentes."
+                        },
+                        "tests": {
+                            "title": "💡 Sugerencias de Tests (Orientativo)",
+                            "text": "Si detecta indicadores de un tema (ej. Ansiedad), sugiere valorar instrumentos validados (BAI, STAI), sin 'asignarlos' automáticamente."
+                        },
+                        "risks": {
+                            "title": "🚩 Marcadores de Riesgo",
+                            "text": "Identifica lenguaje de riesgo potencial (autolesión, ideación) para revisión prioritaria del profesional."
+                        }
+                    }
+                },
+                "simulator": {
+                    "title": "Simulador Clínico",
+                    "text": "Acceda desde el menú 'Simulador' para practicar con pacientes virtuales. La IA le dará feedback sobre su empatía y técnica al terminar la sesión simulada. Las sesiones tienen una duración máxima de 45 minutos.",
+                    "availability": {
+                        "title": "Disponibilidad por Plan:",
+                        "list": [
+                            "<strong>Basic:</strong> No incluido.",
+                            "<strong>Pro/Start:</strong> 5 casos prácticos al mes.",
+                            "<strong>Premium/Clinics:</strong> Casos ilimitados."
+                        ]
+                    }
+                }
+            },
+            "export": {
+                "title": "Privacidad y Exportación de Datos",
+                "text": "PsicoAIssist le permite descargar toda su información en cualquier momento, garantizando su derecho a la portabilidad de datos (RGPD).",
+                "csv": {
+                    "title": "📊 Exportar Datos (CSV/Excel)",
+                    "text": "Descarga una hoja de cálculo con el listado completo de sus sesiones.",
+                    "list": [
+                        "✓ <strong>Datos Desencriptados:</strong> Nombres reales de clientes y contenido de notas.",
+                        "✓ <strong>Formato:</strong> Compatible con Excel, Numbers y Google Sheets."
+                    ]
+                },
+                "pdf": {
+                    "title": "📂 Exportar Informes (PDF)",
+                    "text": "Genera un archivo ZIP comprimido con todos sus documentos.",
+                    "list": [
+                        "✓ <strong>Todos los Informes:</strong> Incluye historial completo.",
+                        "✓ <strong>Formato:</strong> Archivos PDF individuales organizados."
+                    ]
+                }
+            },
+            "settings": {
+                "title": "Configuración Detallada",
+                "agenda": {
+                    "title": "📅 Agenda y Calendario",
+                    "list": [
+                        "<strong>Duración por Defecto:</strong> Tiempo estándar de sus sesiones (ej. 60 min).",
+                        "<strong>Buffer:</strong> Tiempo de descanso automático entre citas (ej. 10 min).",
+                        "<strong>Bloqueos:</strong> Use 'Bloquear día completo' para vacaciones."
+                    ]
+                },
+                "google": {
+                    "title": "🔗 Google Calendar",
+                    "text": "La integración permite:",
+                    "list": [
+                        "<strong>Importar:</strong> Eventos de su Google Calendar personal bloquean huecos en PsicoAIssist.",
+                        "<strong>Exportar:</strong> Las sesiones creadas en PsicoAIssist aparecen en su Google Calendar."
+                    ]
+                },
+                "branding": {
+                    "title": "🎨 Marca Personal y Personalización de Informes (Solo Premium)",
+                    "text": "Personalice la apariencia de sus informes clínicos (PDF y Word) para reflejar su identidad corporativa.",
+                    "list": [
+                        "<strong>Nombre de la Empresa:</strong> Aparecerá en el encabezado de todos los documentos generados.",
+                        "<strong>Colores Corporativos:</strong> Defina un color primario y secundario que se aplicará a títulos y elementos gráficos del informe.",
+                        "<strong>Logo:</strong> Suba su logotipo para que aparezca en la esquina superior de sus informes."
+                    ],
+                    "note": "Nota: Esta funcionalidad es exclusiva para usuarios con plan Premium o superior."
+                },
+                "ai": {
+                    "title": "🤖 Inteligencia Artificial",
+                    "text": "<strong>Idioma de la IA:</strong> El idioma de los análisis e informes generados por la Inteligencia Artificial se sincroniza automáticamente con el idioma seleccionado en la interfaz (barra de navegación superior)."
+                },
+                "notifications": {
+                    "title": "🔔 Notificaciones",
+                    "list": [
+                        "<strong>Recordatorios a Pacientes:</strong> El sistema envía un correo al paciente 24h antes de la cita (requiere email en la ficha del paciente).",
+                        "<strong>Resumen de Agenda (Profesional):</strong> Si activa esta opción, recibirá un correo diario a las 20:00h con el listado de visitas del día siguiente."
+                    ]
+                },
+                "account": {
+                    "title": "🛑 Gestión de Cuenta y Baja",
+                    "text": "Entendemos que su privacidad es fundamental. Si decide dar de baja su cuenta (desde <strong>Perfil > Eliminar Cuenta</strong>), el sistema iniciará un proceso seguro:",
+                    "process": {
+                        "title": "Proceso de Eliminación y Recuperación (90 días)",
+                        "list": [
+                            "<strong>Inicio (Día 0):</strong> Su cuenta se marca como 'Eliminada'. Ya no podrá acceder, pero sus datos siguen encriptados en nuestros servidores.",
+                            "<strong>Periodo de Gracia (90 días):</strong> Durante este tiempo, si se arrepiente, simplemente <strong>inicie sesión</strong> de nuevo para reactivar su cuenta y todos sus datos automáticamente.",
+                            "<strong>Borrado Definitivo (Día 91):</strong> El sistema ejecuta automáticamente un proceso de <strong>Anonimización Irreversible</strong>. Su nombre, email y datos de contacto se borran para siempre, cumpliendo con el RGPD."
+                        ]
+                    }
+                }
+            }
+        },
+        "QuickGuide": {
+            "title": "Guía Rápida",
+            "subtitle": "Acciones frecuentes en menos de un minuto. Todo lo directo y al grano.",
+            "back": "Volver a Documentación",
+            "cheatSheet": "Cheat Sheet",
+            "agenda": {
+                "title": "📅 Gestión de Agenda",
+                "create": {
+                    "title": "Crear una Nueva Cita",
+                    "steps": {
+                        "0": "Vaya a <strong>Sesiones</strong> en el menú.",
+                        "1": "Haga clic en un hueco vacío o en <strong>\"Nueva Sesión\"</strong>.",
+                        "2": "Seleccione el <strong>Paciente</strong> y confirme hora.",
+                        "3": "¡Listo!"
+                    }
+                },
+                "sync": {
+                    "title": "Sincronizar Google Calendar",
+                    "steps": {
+                        "0": "Vaya a <strong>Ajustes > Preferencias</strong>.",
+                        "1": "Busque la sección <strong>Google Calendar</strong>.",
+                        "2": "Active <strong>Importar eventos</strong>.",
+                        "3": "Complete la autenticación con Google."
+                    },
+                    "note": "*Truco: Esto permite que sus citas de PsicoAIssist aparezcan en su calendario."
+                }
+            },
+            "patients": {
+                "title": "👥 Pacientes y Dashboard",
+                "add": {
+                    "title": "Añadir Paciente",
+                    "steps": {
+                        "0": "Click en <strong>Clientes</strong>.",
+                        "1": "Botón <strong>\"Añadir Paciente\"</strong>.",
+                        "2": "Rellene Nombre y Email obligatorios.",
+                        "3": "Guardar."
+                    }
+                },
+                "dashboard": {
+                    "title": "Personalizar Dashboard",
+                    "steps": {
+                        "0": "En página <strong>Inicio</strong>.",
+                        "1": "Botón <strong>\"Librería de Widgets\"</strong>.",
+                        "2": "Active/Desactive los paneles deseados.",
+                        "3": "Se guarda automáticamente."
+                    }
+                }
+            },
+            "tips": {
+                "config": {
+                    "title": "Trucos Configuración",
+                    "list": {
+                        "0": "<strong>Cambiar Plan/Tarifa:</strong> En <em>Ajustes > Facturación</em>. Consulte si es Basic, Pro, Premium o clínicas.",
+                        "1": "<strong>Vacaciones:</strong> En <em>Ajustes > Agenda > Bloqueos</em>. Use \"Bloquear Día Completo\" en lugar de borrar sesiones."
+                    }
+                },
+                "professional": {
+                    "title": "Para Profesionales",
+                    "list": {
+                        "0": "<strong>Notas Completas:</strong> La IA necesita contexto. Escriba notas post-sesión para mejorar los \"Temas Recurrentes\".",
+                        "1": "<strong>Marcar Asistencia:</strong> Use \"Realizada\" o \"Cancelada\". Las citas \"Pendientes\" no suman en estadísticas."
+                    }
+                },
+                "manager": {
+                    "title": "Para Gestores",
+                    "list": {
+                        "0": "<strong>Grupos:</strong> Cree grupos (ej. \"Tardes\") si gestiona muchos doctores para filtrar rápido.",
+                        "1": "<strong>Vista Unificada:</strong> Al seleccionar un grupo, verá una agenda combinada ideal para huecos."
+                    }
+                }
+            },
+            "troubleshooting": {
+                "title": "¿Problemas Comunes?",
+                "google": {
+                    "title": "\"No veo mis citas de Google\"",
+                    "text": "Asegúrese de que el interruptor \"Importar eventos\" esté activado en Ajustes y que haya dado todos los permisos solicitados en la pantalla de Google."
+                },
+                "dashboard": {
+                    "title": "\"El Dashboard está vacío\"",
+                    "text": "Si acaba de registrarse, es normal. Cree su primer paciente y primera sesión para empezar a ver datos y gráficas."
+                }
+            }
+        },
+        "Tutorials": {
+            "title": "Video Tutoriales",
+            "subtitle": "Aprende viendo. Guías visuales para dominar la plataforma.",
+            "back": "Volver a Documentación",
+            "videos": {
+                "0": {
+                    "title": "Cómo crear tu primera sesión",
+                    "description": "Aprende paso a paso cómo agendar una cita y vincularla a un paciente.",
+                    "category": "Básico",
+                    "duration": "2:15"
+                },
+                "1": {
+                    "title": "Interpretación del Dashboard de IA",
+                    "description": "Descubre qué significan las métricas de bienestar y temas recurrentes.",
+                    "category": "Avanzado",
+                    "duration": "4:30"
+                },
+                "2": {
+                    "title": "Configurar Google Calendar",
+                    "description": "Sincroniza tu agenda personal con la plataforma para evitar conflictos.",
+                    "category": "Configuración",
+                    "duration": "1:45"
+                },
+                "3": {
+                    "title": "Gestión para Secretarios (Agenda Managers)",
+                    "description": "Cómo gestionar múltiples doctores y crear grupos de profesionales.",
+                    "category": "Roles",
+                    "duration": "3:20"
+                }
+            },
+            "callToAction": {
+                "title": "¿Buscas algo específico?",
+                "text": "Estamos creando nuevos tutoriales cada semana. Si necesitas ayuda con algo concreto, contáctanos.",
+                "button": "Solicitar Tutorial"
+            },
+            "comingSoon": "Próximamente... Estamos grabando nuevos contenidos.",
+            "disclaimer": {
+                "title": "Nota Importante",
+                "text": "Los videos mostrados son simulaciones con actores ficticios. No se utilizan datos de pacientes reales en estos ejemplos."
+            }
+        },
+        "Reference": {
+            "title": "Glosario y Referencia",
+            "subtitle": "Definiciones clave y detalles técnicos para usuarios avanzados y desarrolladores.",
+            "sectionTitle": "Referencia Técnica",
+            "back": "Volver a Documentación",
+            "glossary": {
+                "title": "Glosario de Términos",
+                "items": {
+                    "manager": {
+                        "title": "Agenda Manager",
+                        "text": "Rol de usuario con permisos para gestionar calendarios de otros profesionales (\"Managed Professionals\"), pero sin acceso a datos clínicos confidenciales mostrados en las estadísticas detalladas."
+                    },
+                    "themes": {
+                        "title": "Temas Recurrentes (AI)",
+                        "text": "Algoritmo de procesamiento de lenguaje natural que analiza las notas de sesión anónimizadas para extraer patrones temáticos (ej. \"Ansiedad laboral\", \"Conflicto familiar\") y visualizarlos en el dashboard."
+                    },
+                    "sentiment": {
+                        "title": "Sentiment Analysis",
+                        "text": "Métrica de bienestar calculada analizando el tono emocional de las notas clínicas. Se presenta como una tendencia (Positiva, Neutra, Negativa) a lo largo del tiempo."
+                    }
+                }
+            },
+            "api": {
+                "title": "API Reference (Básico)",
+                "text": "PsicoAIssist ofrece una API RESTful para integraciones personalizadas. Para obtener acceso completo a la documentación de la API (Swagger), contacte con soporte."
+            }
         }
     },
     "Metadata": {

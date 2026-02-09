@@ -2530,6 +2530,463 @@
         "contact": {
             "text": "No trobes el que busques?",
             "link": "Contacta amb suport"
+        },
+        "Manual": {
+            "title": "Manual d'Usuari",
+            "subtitle": "Guia completa de PsicoAIssist: Des de la configuració inicial fins a l'ús avançat de la IA i els informes.",
+            "back": "Tornar a Documentació",
+            "officialDocs": "Documentació Oficial",
+            "index": {
+                "title": "ÍNDEX DE CONTINGUTS",
+                "items": {
+                    "intro": "1. Introducció",
+                    "roles": "2. Rols d'Usuari",
+                    "plans": "3. Plans i Preus",
+                    "steps": "4. Primeros Pasos",
+                    "dashboard": "5. Dashboard",
+                    "features": "6. Funcionalitats",
+                    "export": "7. Privacitat i Exportació",
+                    "settings": "8. Configuració"
+                }
+            },
+            "intro": {
+                "title": "1. Introducció a PsicoAIssist",
+                "text": "Benvingut a PsicoAIssist, la plataforma integral dissenyada per modernitzar i simplificar la gestió de consultes de psicologia. La nostra missió és permetre que els professionals es centrin en el que realment importa: els seus pacients, mentre la tecnologia s'encarrega de l'administratiu i proporciona eines de suport clínic basades en Intel·ligència Artificial.",
+                "capabilities": {
+                    "title": "Què pots fer amb PsicoAIssist?",
+                    "ai": {
+                        "title": "🤖 Intel·ligència Artificial",
+                        "list": {
+                            "0": "<strong>Transcripció Automàtica:</strong> Converteix l'àudio de les teves sessions a text amb alta precisió.",
+                            "1": "<strong>Anàlisi Emocional:</strong> Detecta patrons de sentiment i temes recurrents.",
+                            "2": "<strong>Generació d'Informes:</strong> Crea esborranys d'informes clínics, resums i plans de treball en segons.",
+                            "3": "<strong>Assistent Clínic:</strong> Rep suggeriments no prescriptius sobre possibles línies d'intervenció."
+                        }
+                    },
+                    "management": {
+                        "title": "👥 Gestió de Pacients",
+                        "list": {
+                            "0": "Expedients digitals segurs i centralitzats.",
+                            "1": "Historial de sessions i seguiment de progrés.",
+                            "2": "Emmagatzematge de documents i notes privades."
+                        }
+                    },
+                    "agenda": {
+                        "title": "📅 Agenda Intel·ligent",
+                        "list": {
+                            "0": "Gestió de cites individuals, de parella i de grup.",
+                            "1": "Sincronització bidireccional amb <strong>Google Calendar</strong>.",
+                            "2": "Recordatoris automàtics."
+                        }
+                    },
+                    "extras": {
+                        "title": "✨ Eines Extra",
+                        "list": {
+                            "0": "<strong>Videoconferència integrada</strong> amb pissarra i xat segur.",
+                            "1": "<strong>Simulador Clínic:</strong> Practica casos complexos amb pacients virtuals generats per IA."
+                        }
+                    }
+                }
+            },
+            "roles": {
+                "title": "2. Rols d'Usuari",
+                "text": "La plataforma s'adapta a diferents perfils professionals dins d'una consulta o clínica:",
+                "professional": {
+                    "title": "Professional (Psicòleg/Psiquiatre)",
+                    "desc": "L'usuari principal que atén pacients.",
+                    "list": {
+                        "0": "Gestiona la seva pròpia agenda i pacients.",
+                        "1": "Realitza sessions i utilitza les eines d'IA.",
+                        "2": "Accés complet a les dades clíniques dels seus pacients."
+                    }
+                },
+                "manager": {
+                    "title": "Agenda Manager (Secretaria/Administració)",
+                    "desc": "Perfil de suport per a la gestió de cites, ideal per a clíniques.",
+                    "list": {
+                        "0": "Pot veure i gestionar l'agenda de múltiples professionals.",
+                        "1": "Pot crear, moure i cancel·lar cites.",
+                        "2": "<strong>NO té accés</strong> a dades clíniques sensibles (notes, transcripcions, xats)."
+                    }
+                }
+            },
+            "plans": {
+                "title": "3. Plans i Suscripcions",
+                "text": "PsicoAIssist funciona mitjançant un model de subscripció flexible. Pots canviar de pla en qualsevol moment des de la secció de <em>Facturació</em>.",
+                "languages": "🌍 <strong>Suport Multilíngüe:</strong> La IA entén i processa sessions en <strong>més de 50 idiomes</strong> (Català, Castellà, Anglès, Francès, etc.), generant els informes en l'idioma que tinguis configurat a la plataforma.",
+                "resetPolicy": {
+                    "title": "⚠️ Política de Reinici Mensual",
+                    "text": "Els minuts d'IA i l'espai d'emmagatzematge del teu pla es reinicien el dia 1 de cada mes natural. Els minuts no consumides NO s'acumulen per al mes següent.",
+                    "note": "Excepció: Els 'Packs Extra' comprats a part no caduquen fins a esgotar-se."
+                },
+                "individual": {
+                    "title": "Plans Individuals"
+                },
+                "group": {
+                    "title": "Plans per a Grups"
+                },
+                "extras": {
+                    "title": "Extres"
+                },
+                "fairUse": {
+                    "title": "Política d'Ús Just (Fair Use)",
+                    "text": "L'ús de la IA i l'emmagatzematge està subjecte a límits raonables per garantir l'estabilitat del servei. L'ús compartit de comptes individuals està prohibit i monitoritzat.",
+                    "warning": "L'incompliment pot comportar la suspensió del compte."
+                }
+            },
+            "steps": {
+                "title": "4. Primers Passos",
+                "access": {
+                    "title": "Accés",
+                    "text": "Pots accedir des de qualsevol navegador modern (Chrome, Edge, Safari, Firefox). Recomanem Chrome per a la millor experiència amb la gravació d'àudio."
+                },
+                "config": {
+                    "title": "Configuració Inicial",
+                    "text": "Abans de començar, et recomanem:",
+                    "list": {
+                        "0": "Anar a <strong>Ajustes</strong> i completar el teu perfil.",
+                        "1": "Configurar la teva <strong>Disponibilitat Horària</strong> a l'Agenda.",
+                        "2": "Si uses Google Calendar, activar la sincronització a <em>Preferències</em>."
+                    }
+                }
+            },
+            "dashboard": {
+                "title": "5. Dashboard Principal",
+                "text": "El teu centre de comandament. La informació que veus depèn del teu rol.",
+                "professional": {
+                    "title": "Vista Professional",
+                    "text": "Veuràs les teves properes cites, un resum de l'activitat recent i estadístiques globals dels teus pacients.",
+                    "widgets": "Widgets destacats:",
+                    "list": {
+                        "0": "<strong>Benestar General:</strong> Mitjana de l'estat d'ànim detectat en les últimes sessions.",
+                        "1": "<strong>Alertes de Risc:</strong> Indicadors d'ideació suïcida o autolesió (només informatiu).",
+                        "2": "<strong>Pròximes Sessions:</strong> Accés ràpid per iniciar videoconferència o gravació."
+                    },
+                    "note": "* Les dades s'actualitzen en temps real després de processar cada sessió."
+                },
+                "manager": {
+                    "title": "Vista Manager",
+                    "text": "Veuràs un calendari unificat amb les cites de tots els professionals assignats, facilitant la reprogramació i gestió de buits."
+                }
+            },
+            "features": {
+                "title": "6. Funcionalitats Clau",
+                "patients": {
+                    "title": "Gestió de Pacients",
+                    "text": "Crea perfils detallats amb dades de contacte, notes privades generals i històric de sessions. Pots cercar i filtrar la teva llista de pacients ràpidament."
+                },
+                "sessions": {
+                    "title": "Sessions i Transcripció",
+                    "text": "El nucli de PsicoAIssist.  Pots realitzar sessions presencials (gravant àudio) o remotes (videoconferència).",
+                    "flow": {
+                        "title": "Flux de Treball Habitual:",
+                        "step1": {
+                            "title": "Crear Sessió:",
+                            "text": "Des de l'agenda o el perfil del pacient. Defineix si és presencial o online."
+                        },
+                        "step2": {
+                            "title": "Durant la Sessió:",
+                            "text": "Prem <strong>\"Gravar\"</strong> o <strong>\"Iniciar Videoconferència\"</strong>.",
+                            "list": {
+                                "0": "L'àudio es grava de forma segura.",
+                                "1": "Pots prendre <em>Notes Ràpides</em> manuals durant la sessió sense aturar la gravació."
+                            }
+                        },
+                        "step3": {
+                            "title": "Finalitzar i Processar:",
+                            "text": "En acabar, prem <strong>\"Finalitzar\"</strong>. El sistema demanarà confirmació i començarà a processar l'àudio. <br/>Aquest procés sol trigar entre el 30% i el 50% de la durada de l'àudio (ex: 1h d'àudio triga ~20min).",
+                            "note": "Pots seguir treballant en altres coses mentre es processa en segon pla."
+                        },
+                        "step4": {
+                            "title": "Revisió:",
+                            "text": "Un cop llesta, rebràs una notificació. Accedeix al detall per veure:",
+                            "list": {
+                                "0": "Transcripció completa (amb identificació de parlants).",
+                                "1": "Resum clínic generat per IA.",
+                                "2": "Suggeriments d'intervenció i anàlisi de riscos."
+                            }
+                        }
+                    },
+                    "cancelNote": "Si cancel·les o esborres una sessió abans que es processi, l'àudio s'elimina immediatament i no compta per als límits del teu pla."
+                },
+                "video": {
+                    "title": "Videoconferència",
+                    "text": "Sistema propi encriptat, sense necessitat de Zoom o Meets externs.",
+                    "step1": {
+                        "title": "Enviament d'Enllaç",
+                        "text": "Al crear una sessió online, pots enviar l'enllaç al pacient per email amb un clic."
+                    },
+                    "step2": {
+                        "title": "Sala d'Espera",
+                        "text": "El pacient entra a una sala d'espera virtual fins que tu t'uneixes."
+                    },
+                    "step3": {
+                        "title": "Gravació",
+                        "text": "L'àudio de la videotrucada es grava automàticament per a la transcripció (requereix consentiment, veure Privacitat)."
+                    }
+                },
+                "ai": {
+                    "title": "Eines d'IA i Pissarra",
+                    "text": "Després del processament, la IA ofereix diversos mòduls d'anàlisi:",
+                    "types": {
+                        "summary": {
+                            "title": "Resum Fàctic",
+                            "text": "Què s'ha dit, punts clau i acords."
+                        },
+                        "emotional": {
+                            "title": "Anàlisi Emocional",
+                            "text": "To de la conversa, moments de tensió o calma."
+                        },
+                        "themes": {
+                            "title": "Temes Recurrents",
+                            "text": "Identificació de patrons al llarg de múltiples sessions."
+                        },
+                        "tests": {
+                            "title": "Suggeriment de Tests",
+                            "text": "Recomanació de qüestionaris psicològics basats en els símptomes detectats."
+                        },
+                        "risks": {
+                            "title": "Detecció de Riscos",
+                            "text": "Alerta sobre llenguatge relacionat amb suïcidi, autolesió o violència. IMPRESCINDIBLE revisió humana."
+                        }
+                    }
+                },
+                "simulator": {
+                    "title": "Simulador Clínic (Roleplay)",
+                    "text": "Entrena les teves habilitats amb pacients virtuals. Tria una patologia o perfil, i xateja (text o veu) amb una IA que simula ser un pacient.",
+                    "availability": {
+                        "title": "Disponibilitat:",
+                        "list": {
+                            "0": "Disponible segons el teu pla.",
+                            "1": "Els casos no guarden historial clínic real.",
+                            "2": "Ideal per a supervisió o pràctica d'estudiants."
+                        }
+                    }
+                }
+            },
+            "export": {
+                "title": "7. Privacitat i Exportació",
+                "text": "Les teves dades i les dels teus pacients són teves. Complim amb GDPR rigorosament.",
+                "csv": {
+                    "title": "Exportació CSV (Excel)",
+                    "text": "Descarrega llistats estructurats de les teves dades per a anàlisis externes o còpies de seguretat.",
+                    "list": {
+                        "0": "<strong>Pacients:</strong> Dades demogràfiques i de contacte.",
+                        "1": "<strong>Sessions:</strong> Registre de dates, durada i estats."
+                    }
+                },
+                "pdf": {
+                    "title": "Informes PDF",
+                    "text": "Genera documents imprimibles amb el teu logotip per a entregar a pacients o derivacions.",
+                    "list": {
+                        "0": "<strong>Informe de Sessió:</strong> Resum clínic, notes i recomanacions.",
+                        "1": "<strong>Historial Clínic:</strong> Resum de tota la trajectòria del pacient."
+                    }
+                }
+            },
+            "settings": {
+                "title": "8. Configuració",
+                "agenda": {
+                    "title": "Agenda",
+                    "list": {
+                        "0": "Defineix el teu <strong>horari laboral</strong> (dies i hores).",
+                        "1": "Estableix la <strong>durada per defecte</strong> de les sessions.",
+                        "2": "Gestiona <strong>dies festius</strong> o absències."
+                    }
+                },
+                "google": {
+                    "title": "Google Calendar",
+                    "text": "Connecta el teu compte de Google per evitar conflictes.",
+                    "list": {
+                        "0": "Les cites de PsicoAIssist apareixeran al teu Google Calendar.",
+                        "1": "Els esdeveniments privats de Google Calendar bloquejaran la teva disponibilitat a PsicoAIssist."
+                    }
+                },
+                "branding": {
+                    "title": "Marca Personal (Branding)",
+                    "text": "Personalitza l'aparença dels informes i la plataforma.",
+                    "list": {
+                        "0": "Puja el teu <strong>Logotip</strong>.",
+                        "1": "Defineix el <strong>Nom de la Clínica</strong>.",
+                        "2": "Tria el <strong>Color Corporatiu</strong> predominant."
+                    }
+                },
+                "note": "Aquests elements apareixeran a les capçaleres dels PDF exportats.",
+                "ai": {
+                    "title": "Configuració d'IA",
+                    "text": "Ajusta la sensibilitat de l'anàlisi de riscos, l'idioma per defecte de sortida i l'estil dels resums (més tècnic o més divulgatiu)."
+                },
+                "notifications": {
+                    "title": "Notificacions",
+                    "list": {
+                        "0": "Activa/desactiva avisos per email de noves cites.",
+                        "1": "Gestiona les alertes de sistema i novetats."
+                    }
+                },
+                "account": {
+                    "title": "Gestió de Compte i Esborrat",
+                    "text": "Pots modificar el teu email, contrasenya i dades de facturació. <br/><br/><strong>Zona de Perill:</strong> Si decideixes marxar, pots sol·licitar l'<strong>eliminació permanent</strong> del teu compte i totes les dades associades.",
+                    "process": {
+                        "title": "Procés d'Eliminació:",
+                        "list": {
+                            "0": "Només des de la versió web d'escriptori.",
+                            "1": "S'enviarà un email de confirmació final.",
+                            "2": "Un cop confirmat, l'esborrat és <strong>irreversible</strong> en 30 dies."
+                        }
+                    }
+                }
+            }
+        },
+        "QuickGuide": {
+            "title": "Guia Ràpida",
+            "subtitle": "Accions freqüents en menys d'un minut. Tot el directe i al gra.",
+            "back": "Tornar a Documentació",
+            "cheatSheet": "Cheat Sheet",
+            "agenda": {
+                "title": "📅 Gestió d'Agenda",
+                "create": {
+                    "title": "Crear una Nova Cita",
+                    "steps": {
+                        "0": "Vés a <strong>Sessions</strong> al menú.",
+                        "1": "Fes clic en un buit o a <strong>\"Nova Sessió\"</strong>.",
+                        "2": "Selecciona el <strong>Pacient</strong> i confirma l'hora.",
+                        "3": "Llest!"
+                    }
+                },
+                "sync": {
+                    "title": "Sincronitzar Google Calendar",
+                    "steps": {
+                        "0": "Vés a <strong>Ajustes > Preferències</strong>.",
+                        "1": "Busca la secció <strong>Google Calendar</strong>.",
+                        "2": "Activa <strong>Importar esdeveniments</strong>.",
+                        "3": "Completa l'autenticació amb Google."
+                    },
+                    "note": "*Truc: Això permet que les teves cites de PsicoAIssist apareguin al teu calendari."
+                }
+            },
+            "patients": {
+                "title": "👥 Pacients i Dashboard",
+                "add": {
+                    "title": "Afegir Pacient",
+                    "steps": {
+                        "0": "Fes clic a <strong>Clients</strong>.",
+                        "1": "Botó <strong>\"Afegir Pacient\"</strong>.",
+                        "2": "Omple Nom i Email obligatoris.",
+                        "3": "Desa."
+                    }
+                },
+                "dashboard": {
+                    "title": "Personalitzar Dashboard",
+                    "steps": {
+                        "0": "A la pàgina <strong>Inici</strong>.",
+                        "1": "Botó <strong>\"Llibreria de Widgets\"</strong>.",
+                        "2": "Activa/Desactiva els panells desitjats.",
+                        "3": "Es desa automàticament."
+                    }
+                }
+            },
+            "tips": {
+                "config": {
+                    "title": "Trucs de Configuració",
+                    "list": {
+                        "0": "<strong>Canviar Pla/Tarifa:</strong> A <em>Ajustes > Facturació</em>. Consulta si és Basic, Pro, Premium o clíniques.",
+                        "1": "<strong>Vacances:</strong> A <em>Ajustes > Agenda > Bloquejos</em>. Usa \"Bloquejar Dia Complet\" en lloc d'esborrar sessions."
+                    }
+                },
+                "professional": {
+                    "title": "Per a Professionals",
+                    "list": {
+                        "0": "<strong>Notes Completes:</strong> La IA necessita context. Escriu notes post-sessió per millorar els \"Temes Recurrents\".",
+                        "1": "<strong>Marcar Assistència:</strong> Usa \"Realitzada\" o \"Cancel·lada\". Les cites \"Pendents\" no sumen a estadístiques."
+                    }
+                },
+                "manager": {
+                    "title": "Per a Gestors",
+                    "list": {
+                        "0": "<strong>Grups:</strong> Crea grups (ex. \"Tardes\") si gestiones molts doctors per filtrar ràpid.",
+                        "1": "<strong>Vista Unificada:</strong> En seleccionar un grup, veuràs una agenda combinada ideal per a buits."
+                    }
+                }
+            },
+            "troubleshooting": {
+                "title": "Problemes Comuns?",
+                "google": {
+                    "title": "\"No veig les meves cites de Google\"",
+                    "text": "Assegura't que l'interruptor \"Importar esdeveniments\" està activat a Ajustes i que has donat tots els permisos sol·licitats a la pantalla de Google."
+                },
+                "dashboard": {
+                    "title": "\"El Dashboard està buit\"",
+                    "text": "Si acabes de registrar-te, és normal. Crea el teu primer pacient i primera sessió per començar a veure dades i gràfiques."
+                }
+            }
+        },
+        "Tutorials": {
+            "title": "Video Tutorials",
+            "subtitle": "Aprèn veient. Guies visuals per dominar la plataforma.",
+            "back": "Tornar a Documentació",
+            "videos": {
+                "0": {
+                    "title": "Com crear la teva primera sessió",
+                    "description": "Aprèn pas a pas com agendar una cita i vincular-la a un pacient.",
+                    "category": "Bàsic",
+                    "duration": "2:15"
+                },
+                "1": {
+                    "title": "Interpretació del Dashboard d'IA",
+                    "description": "Descobreix què signifiquen les mètriques de benestar i temes recurrents.",
+                    "category": "Avançat",
+                    "duration": "4:30"
+                },
+                "2": {
+                    "title": "Configurar Google Calendar",
+                    "description": "Sincronitza la teva agenda personal amb la plataforma per evitar conflictes.",
+                    "category": "Configuració",
+                    "duration": "1:45"
+                },
+                "3": {
+                    "title": "Gestió per a Secretaris (Agenda Managers)",
+                    "description": "Com gestionar múltiples doctors i crear grups de professionals.",
+                    "category": "Rols",
+                    "duration": "3:20"
+                }
+            },
+            "callToAction": {
+                "title": "Busques quelcom específic?",
+                "text": "Estem creant nous tutorials cada setmana. Si necessites ajuda amb alguna cosa concreta, contacta'ns.",
+                "button": "Sol·licitar Tutorial"
+            },
+            "comingSoon": "Pròximament... Estem gravant nous continguts.",
+            "disclaimer": {
+                "title": "Nota Important",
+                "text": "Els vídeos mostrats són simulacions amb actors ficticis. No s'utilitzen dades de pacients reals en aquests exemples."
+            }
+        },
+        "Reference": {
+            "title": "Glosari i Referència",
+            "subtitle": "Definicions clau i detalls tècnics per a usuaris avançats i desenvolupadors.",
+            "sectionTitle": "Referència Tècnica",
+            "back": "Tornar a Documentació",
+            "glossary": {
+                "title": "Glosari de Termes",
+                "items": {
+                    "manager": {
+                        "title": "Agenda Manager",
+                        "text": "Rol d'usuari amb permisos per gestionar calendaris d'altres professionals (\"Managed Professionals\"), però sense accés a dades clíniques confidencials mostrades a les estadístiques detallades."
+                    },
+                    "themes": {
+                        "title": "Temes Recurrents (IA)",
+                        "text": "Algoritme de processament de llenguatge natural que analitza les notes de sessió anonimitzades per extreure patrons temàtics (ex. \"Ansietat laboral\", \"Conflicte familiar\") i visualitzar-los al dashboard."
+                    },
+                    "sentiment": {
+                        "title": "Sentiment Analysis",
+                        "text": "Mètrica de benestar calculada analitzant el to emocional de les notes clíniques. Es presenta com una tendència (Positiva, Neutra, Negativa) al llarg del temps."
+                    }
+                }
+            },
+            "api": {
+                "title": "API Reference (Bàsic)",
+                "text": "PsicoAIssist ofereix una API RESTful per a integracions personalitzades. Per obtenir accés complet a la documentació de l'API (Swagger), contacta amb suport."
+            }
         }
     },
     "Metadata": {

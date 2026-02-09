@@ -2530,6 +2530,463 @@
         "contact": {
             "text": "Can't find what you're looking for?",
             "link": "Contact support"
+        },
+        "Manual": {
+            "title": "User Manual",
+            "subtitle": "Complete PsicoAIssist Guide: From initial setup to advanced AI usage and reporting.",
+            "back": "Back to Documentation",
+            "officialDocs": "Official Documentation",
+            "index": {
+                "title": "TABLE OF CONTENTS",
+                "items": {
+                    "intro": "1. Introduction",
+                    "roles": "2. User Roles",
+                    "plans": "3. Plans & Pricing",
+                    "steps": "4. First Steps",
+                    "dashboard": "5. Dashboard",
+                    "features": "6. Features",
+                    "export": "7. Privacy & Export",
+                    "settings": "8. Settings"
+                }
+            },
+            "intro": {
+                "title": "1. Introduction to PsicoAIssist",
+                "text": "Welcome to PsicoAIssist, the comprehensive platform designed to modernize and simplify psychology practice management. Our mission is to allow professionals to focus on what really matters: their patients, while technology handles administration and provides AI-based clinical support tools.",
+                "capabilities": {
+                    "title": "What can you do with PsicoAIssist?",
+                    "ai": {
+                        "title": "🤖 Artificial Intelligence",
+                        "list": {
+                            "0": "<strong>Automated Transcription:</strong> Convert your session audio to text with high accuracy.",
+                            "1": "<strong>Emotional Analysis:</strong> Detect sentiment patterns and recurring themes.",
+                            "2": "<strong>Report Generation:</strong> Create draft clinical reports, summaries, and work plans in seconds.",
+                            "3": "<strong>Clinical Assistant:</strong> Receive non-prescriptive suggestions on possible intervention lines."
+                        }
+                    },
+                    "management": {
+                        "title": "👥 Patient Management",
+                        "list": {
+                            "0": "Secure and centralized digital records.",
+                            "1": "Session history and progress tracking.",
+                            "2": "Storage of documents and private notes."
+                        }
+                    },
+                    "agenda": {
+                        "title": "📅 Smart Agenda",
+                        "list": {
+                            "0": "Management of individual, couple, and group appointments.",
+                            "1": "Two-way synchronization with <strong>Google Calendar</strong>.",
+                            "2": "Automated reminders."
+                        }
+                    },
+                    "extras": {
+                        "title": "✨ Extra Tools",
+                        "list": {
+                            "0": "<strong>Integrated Video Conferencing</strong> with whiteboard and secure chat.",
+                            "1": "<strong>Clinical Simulator:</strong> Practice complex cases with AI-generated virtual patients."
+                        }
+                    }
+                }
+            },
+            "roles": {
+                "title": "2. User Roles",
+                "text": "The platform adapts to different professional profiles within a practice or clinic:",
+                "professional": {
+                    "title": "Professional (Psychologist/Psychiatrist)",
+                    "desc": "The main user who treats patients.",
+                    "list": {
+                        "0": "Manages their own agenda and patients.",
+                        "1": "Conducts sessions and uses AI tools.",
+                        "2": "Full access to clinical data of their patients."
+                    }
+                },
+                "manager": {
+                    "title": "Agenda Manager (Secretary/Administration)",
+                    "desc": "Support profile for appointment management, ideal for clinics.",
+                    "list": {
+                        "0": "Can view and manage the agenda of multiple professionals.",
+                        "1": "Can create, move, and cancel appointments.",
+                        "2": "<strong>NO access</strong> to sensitive clinical data (notes, transcriptions, chats)."
+                    }
+                }
+            },
+            "plans": {
+                "title": "3. Plans & Subscriptions",
+                "text": "PsicoAIssist operates on a flexible subscription model. You can change plans at any time from the <em>Billing</em> section.",
+                "languages": "🌍 <strong>Multilingual Support:</strong> The AI understands and processes sessions in <strong>over 50 languages</strong> (Catalan, Spanish, English, French, etc.), generating reports in the language configured in the platform.",
+                "resetPolicy": {
+                    "title": "⚠️ Monthly Reset Policy",
+                    "text": "AI minutes and storage space for your plan reset on the 1st of each calendar month. Unused minutes do NOT roll over to the next month.",
+                    "note": "Exception: Separately purchased 'Extra Packs' do not expire until used."
+                },
+                "individual": {
+                    "title": "Individual Plans"
+                },
+                "group": {
+                    "title": "Group Plans"
+                },
+                "extras": {
+                    "title": "Extras"
+                },
+                "fairUse": {
+                    "title": "Fair Use Policy",
+                    "text": "AI usage and storage are subject to reasonable limits to ensure service stability. Sharing individual accounts is prohibited and monitored.",
+                    "warning": "Non-compliance may result in account suspension."
+                }
+            },
+            "steps": {
+                "title": "4. First Steps",
+                "access": {
+                    "title": "Access",
+                    "text": "You can access from any modern browser (Chrome, Edge, Safari, Firefox). We recommend Chrome for the best audio recording experience."
+                },
+                "config": {
+                    "title": "Initial Configuration",
+                    "text": "Before starting, we recommend:",
+                    "list": {
+                        "0": "Go to <strong>Settings</strong> and complete your profile.",
+                        "1": "Configure your <strong>Availability</strong> in Agenda.",
+                        "2": "If using Google Calendar, enable synchronization in <em>Preferences</em>."
+                    }
+                }
+            },
+            "dashboard": {
+                "title": "5. Main Dashboard",
+                "text": "Your command center. The information you see depends on your role.",
+                "professional": {
+                    "title": "Professional View",
+                    "text": "You'll see upcoming appointments, recent activity summary, and global patient statistics.",
+                    "widgets": "Featured Widgets:",
+                    "list": {
+                        "0": "<strong>General Wellness:</strong> Average mood detected in recent sessions.",
+                        "1": "<strong>Risk Alerts:</strong> Indicators of suicidal ideation or self-harm (informational only).",
+                        "2": "<strong>Upcoming Sessions:</strong> Quick access to start video conference or recording."
+                    },
+                    "note": "* Data updates in real-time after processing each session."
+                },
+                "manager": {
+                    "title": "Manager View",
+                    "text": "You'll see a unified calendar with appointments for all assigned professionals, facilitating rescheduling and gap management."
+                }
+            },
+            "features": {
+                "title": "6. Key Features",
+                "patients": {
+                    "title": "Patient Management",
+                    "text": "Create detailed profiles with contact data, general private notes, and session history. Search and filter your patient list quickly."
+                },
+                "sessions": {
+                    "title": "Sessions & Transcription",
+                    "text": "The core of PsicoAIssist. You can conduct in-person sessions (recording audio) or remote (video conference).",
+                    "flow": {
+                        "title": "Standard Workflow:",
+                        "step1": {
+                            "title": "Create Session:",
+                            "text": "From agenda or patient profile. Define if in-person or online."
+                        },
+                        "step2": {
+                            "title": "During Session:",
+                            "text": "Press <strong>\"Record\"</strong> or <strong>\"Start Video Conference\"</strong>.",
+                            "list": {
+                                "0": "Audio is securely recorded.",
+                                "1": "Take manual <em>Quick Notes</em> during the session without stopping recording."
+                            }
+                        },
+                        "step3": {
+                            "title": "Finish & Process:",
+                            "text": "When done, press <strong>\"Finish\"</strong>. The system will ask for confirmation and start processing audio. <br/>This usually takes 30-50% of the audio duration (e.g., 1h audio takes ~20min).",
+                            "note": "You can continue working on other things while it processes in the background."
+                        },
+                        "step4": {
+                            "title": "Review:",
+                            "text": "Once ready, you'll receive a notification. Access details to view:",
+                            "list": {
+                                "0": "Full transcription (with speaker identification).",
+                                "1": "AI-generated clinical summary.",
+                                "2": "Intervention suggestions and risk analysis."
+                            }
+                        }
+                    },
+                    "cancelNote": "If you cancel or delete a session before it processes, audio is immediately deleted and doesn't count towards plan limits."
+                },
+                "video": {
+                    "title": "Video Conferencing",
+                    "text": "Proprietary encrypted system, no need for external Zoom or Meets.",
+                    "step1": {
+                        "title": "Send Link",
+                        "text": "When creating an online session, you can email the link to the patient with one click."
+                    },
+                    "step2": {
+                        "title": "Waiting Room",
+                        "text": "Patient enters a virtual waiting room until you join."
+                    },
+                    "step3": {
+                        "title": "Recording",
+                        "text": "Video call audio is automatically recorded for transcription (requires consent, see Privacy)."
+                    }
+                },
+                "ai": {
+                    "title": "AI Tools & Whiteboard",
+                    "text": "After processing, AI offers several analysis modules:",
+                    "types": {
+                        "summary": {
+                            "title": "Factual Summary",
+                            "text": "What was said, key points, and agreements."
+                        },
+                        "emotional": {
+                            "title": "Emotional Analysis",
+                            "text": "Conversation tone, moments of tension or calm."
+                        },
+                        "themes": {
+                            "title": "Recurring Themes",
+                            "text": "Identification of patterns across multiple sessions."
+                        },
+                        "tests": {
+                            "title": "Test Suggestion",
+                            "text": "Recommendation of psychological questionnaires based on detected symptoms."
+                        },
+                        "risks": {
+                            "title": "Risk Detection",
+                            "text": "Alerts on language related to suicide, self-harm, or violence. HUMAN review is MANDATORY."
+                        }
+                    }
+                },
+                "simulator": {
+                    "title": "Clinical Simulator (Roleplay)",
+                    "text": "Train your skills with virtual patients. Choose a pathology or profile, and chat (text or voice) with an AI simulating a patient.",
+                    "availability": {
+                        "title": "Availability:",
+                        "list": {
+                            "0": "Available according to your plan.",
+                            "1": "Cases do not save real clinical history.",
+                            "2": "Ideal for supervision or student practice."
+                        }
+                    }
+                }
+            },
+            "export": {
+                "title": "7. Privacy & Export",
+                "text": "Your data and your patients' data are yours. We strictly comply with GDPR.",
+                "csv": {
+                    "title": "CSV Export (Excel)",
+                    "text": "Download structured lists of your data for external analysis or backups.",
+                    "list": {
+                        "0": "<strong>Patients:</strong> Demographic and contact data.",
+                        "1": "<strong>Sessions:</strong> Date, duration, and status log."
+                    }
+                },
+                "pdf": {
+                    "title": "PDF Reports",
+                    "text": "Generate printable documents with your logo to hand to patients or referrals.",
+                    "list": {
+                        "0": "<strong>Session Report:</strong> Clinical summary, notes, and recommendations.",
+                        "1": "<strong>Clinical History:</strong> Summary of patient's entire trajectory."
+                    }
+                }
+            },
+            "settings": {
+                "title": "8. Settings",
+                "agenda": {
+                    "title": "Agenda",
+                    "list": {
+                        "0": "Define your <strong>working hours</strong> (days and times).",
+                        "1": "Set <strong>default session duration</strong>.",
+                        "2": "Manage <strong>holidays</strong> or absences."
+                    }
+                },
+                "google": {
+                    "title": "Google Calendar",
+                    "text": "Connect your Google account to avoid conflicts.",
+                    "list": {
+                        "0": "PsicoAIssist appointments will appear on your Google Calendar.",
+                        "1": "Private Google Calendar events will block your availability in PsicoAIssist."
+                    }
+                },
+                "branding": {
+                    "title": "Personal Branding",
+                    "text": "Customize report and platform appearance.",
+                    "list": {
+                        "0": "Upload your <strong>Logo</strong>.",
+                        "1": "Define <strong>Clinic Name</strong>.",
+                        "2": "Choose <strong>Corporate Color</strong>."
+                    }
+                },
+                "note": "These elements will appear on exported PDF headers.",
+                "ai": {
+                    "title": "AI Configuration",
+                    "text": "Adjust risk analysis sensitivity, default output language, and summary style (more technical or more layman)."
+                },
+                "notifications": {
+                    "title": "Notifications",
+                    "list": {
+                        "0": "Enable/disable email alerts for new appointments.",
+                        "1": "Manage system alerts and news."
+                    }
+                },
+                "account": {
+                    "title": "Account Management & Deletion",
+                    "text": "You can modify your email, password, and billing info. <br/><br/><strong>Danger Zone:</strong> If you decide to leave, you can request <strong>permanent deletion</strong> of your account and all associated data.",
+                    "process": {
+                        "title": "Deletion Process:",
+                        "list": {
+                            "0": "Only from desktop web version.",
+                            "1": "Final confirmation email will be sent.",
+                            "2": "Once confirmed, deletion is <strong>irreversible</strong> in 30 days."
+                        }
+                    }
+                }
+            }
+        },
+        "QuickGuide": {
+            "title": "Quick Guide",
+            "subtitle": "Frequent actions in less than a minute. Straight to the point.",
+            "back": "Back to Documentation",
+            "cheatSheet": "Cheat Sheet",
+            "agenda": {
+                "title": "📅 Agenda Management",
+                "create": {
+                    "title": "Create New Appointment",
+                    "steps": {
+                        "0": "Go to <strong>Sessions</strong> in menu.",
+                        "1": "Click empty slot or <strong>\"New Session\"</strong>.",
+                        "2": "Select <strong>Patient</strong> and confirm time.",
+                        "3": "Done!"
+                    }
+                },
+                "sync": {
+                    "title": "Google Calendar Sync",
+                    "steps": {
+                        "0": "Go to <strong>Settings > Preferences</strong>.",
+                        "1": "Find <strong>Google Calendar</strong> section.",
+                        "2": "Enable <strong>Import events</strong>.",
+                        "3": "Complete Google authentication."
+                    },
+                    "note": "*Tip: This allows your PsicoAIssist appointments to appear on your calendar."
+                }
+            },
+            "patients": {
+                "title": "👥 Patients & Dashboard",
+                "add": {
+                    "title": "Add Patient",
+                    "steps": {
+                        "0": "Click <strong>Clients</strong>.",
+                        "1": "Button <strong>\"Add Patient\"</strong>.",
+                        "2": "Fill Name and Email (required).",
+                        "3": "Save."
+                    }
+                },
+                "dashboard": {
+                    "title": "Customize Dashboard",
+                    "steps": {
+                        "0": "On <strong>Home</strong> page.",
+                        "1": "Button <strong>\"Widget Library\"</strong>.",
+                        "2": "Toggle desired panels.",
+                        "3": "Saves automatically."
+                    }
+                }
+            },
+            "tips": {
+                "config": {
+                    "title": "Configuration Tips",
+                    "list": {
+                        "0": "<strong>Change Plan:</strong> In <em>Settings > Billing</em>. Check if Basic, Pro, Premium, or Clinic.",
+                        "1": "<strong>Vacation:</strong> In <em>Settings > Agenda > Blocks</em>. Use \"Block Full Day\" instead of deleting sessions."
+                    }
+                },
+                "professional": {
+                    "title": "For Professionals",
+                    "list": {
+                        "0": "<strong>Full Notes:</strong> AI needs context. Write post-session notes to improve \"Recurring Themes\".",
+                        "1": "<strong>Mark Attendance:</strong> Use \"Completed\" or \"Cancelled\". \"Pending\" apps don't count in stats."
+                    }
+                },
+                "manager": {
+                    "title": "For Managers",
+                    "list": {
+                        "0": "<strong>Groups:</strong> Create groups (e.g. \"Afternoons\") if managing many doctors for quick filtering.",
+                        "1": "<strong>Unified View:</strong> Selecting a group shows a combined agenda ideal for finding gaps."
+                    }
+                }
+            },
+            "troubleshooting": {
+                "title": "Common Issues?",
+                "google": {
+                    "title": "\"I don't see my Google appointments\"",
+                    "text": "Ensure \"Import events\" switch is on in Settings and you granted all requested permissions on Google screen."
+                },
+                "dashboard": {
+                    "title": "\"Dashboard is empty\"",
+                    "text": "If you just registered, this is normal. Create your first patient and session to start seeing data and charts."
+                }
+            }
+        },
+        "Tutorials": {
+            "title": "Video Tutorials",
+            "subtitle": "Learn by watching. Visual guides to master the platform.",
+            "back": "Back to Documentation",
+            "videos": {
+                "0": {
+                    "title": "How to create your first session",
+                    "description": "Learn step-by-step how to schedule an appointment and link it to a patient.",
+                    "category": "Basic",
+                    "duration": "2:15"
+                },
+                "1": {
+                    "title": "Interpreting AI Dashboard",
+                    "description": "Discover what wellness metrics and recurring themes mean.",
+                    "category": "Advanced",
+                    "duration": "4:30"
+                },
+                "2": {
+                    "title": "Configuring Google Calendar",
+                    "description": "Sync your personal agenda with the platform to avoid conflicts.",
+                    "category": "Configuration",
+                    "duration": "1:45"
+                },
+                "3": {
+                    "title": "Management for Secretaries (Agenda Managers)",
+                    "description": "How to manage multiple doctors and create professional groups.",
+                    "category": "Roles",
+                    "duration": "3:20"
+                }
+            },
+            "callToAction": {
+                "title": "Looking for something specific?",
+                "text": "We are creating new tutorials every week. If you need help with something specific, contact us.",
+                "button": "Request Tutorial"
+            },
+            "comingSoon": "Coming Soon... We are recording new content.",
+            "disclaimer": {
+                "title": "Important Note",
+                "text": "The videos shown are simulations with fictional actors. No real patient data is used in these examples."
+            }
+        },
+        "Reference": {
+            "title": "Glossary & Reference",
+            "subtitle": "Key definitions and technical details for advanced users and developers.",
+            "sectionTitle": "Technical Reference",
+            "back": "Back to Documentation",
+            "glossary": {
+                "title": "Glossary of Terms",
+                "items": {
+                    "manager": {
+                        "title": "Agenda Manager",
+                        "text": "User role with permissions to manage calendars of other professionals (\"Managed Professionals\"), but without access to confidential clinical data shown in detailed statistics."
+                    },
+                    "themes": {
+                        "title": "Recurring Themes (AI)",
+                        "text": "Natural language processing algorithm that analyzes anonymized session notes to extract thematic patterns (e.g., \"Work anxiety\", \"Family conflict\") and visualize them on the dashboard."
+                    },
+                    "sentiment": {
+                        "title": "Sentiment Analysis",
+                        "text": "Wellness metric calculated by analyzing the emotional tone of clinical notes. Presented as a trend (Positive, Neutral, Negative) over time."
+                    }
+                }
+            },
+            "api": {
+                "title": "API Reference (Basic)",
+                "text": "PsicoAIssist offers a RESTful API for custom integrations. To obtain full access to API documentation (Swagger), contact support."
+            }
         }
     },
     "Metadata": {

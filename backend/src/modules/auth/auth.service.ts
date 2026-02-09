@@ -53,9 +53,15 @@ export class AuthService {
         throw new UnauthorizedException('Tu solicitud de registro ha sido rechazada.');
       }
 
+      // Allow INACTIVE if verified (for payment completion)
       if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED && user.status !== UserStatus.DELETED) {
-        this.logger.warn(`Login attempt with inactive user: ${email}`);
-        throw new UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
+        // Special case: INACTIVE but VERIFIED -> Allow login to complete payment
+        if (user.status === UserStatus.INACTIVE && user.verified) {
+          // Allowed to proceed to check password
+        } else {
+          this.logger.warn(`Login attempt with inactive user: ${email}`);
+          throw new UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
+        }
       }
 
       if (!user.verified) {
@@ -207,24 +213,12 @@ export class AuthService {
       });
 
       if (existingUser) {
-        // Permitir re-registro si el usuario está marcado como eliminado o inactivo (soft delete previo)
-        if (existingUser.status === UserStatus.INACTIVE || existingUser.status === UserStatus.DELETED) {
-          // New Behavior: Don't archive, tell them to login
-          throw new ConflictException('Tu cuenta está en periodo de gracia. Por favor inicia sesión para reactivarla.');
-          /*
-          const newEmail = `archived_${Date.now()}_${existingUser.email}`;
-          this.logger.log(`Archiving old inactive/deleted user to allow re-registration: ${existingUser.email} -> ${newEmail}`);
-          await this.prisma.user.update({
-            where: { id: existingUser.id },
-            data: {
-              email: newEmail,
-              status: UserStatus.DELETED
-            }
-          });
-          */
-          // Continue to create new user...
+        if (existingUser.status === UserStatus.DELETED) {
+          throw new ConflictException('Esta cuenta está en periodo de gracia de eliminación. Por favor inicia sesión para reactivarla.');
+        } else if (existingUser.status === UserStatus.INACTIVE) {
+          throw new ConflictException('Ya existe una cuenta con este correo pendiente de activación. Por favor inicia sesión para completar el proceso.');
         } else {
-          throw new ConflictException('El email ya está registrado');
+          throw new ConflictException('El email ya está registrado.');
         }
       }
 
@@ -285,7 +279,7 @@ export class AuthService {
         isSuccess: true,
       });
 
-      // Enviar email de verificación - REMOVED: Verification/Welcome email will be sent after Payment
+      // Enviar email de verificación
       const verificationToken = uuidv4();
 
       // Update user with verification token (kept for future use or manual verification)
@@ -297,10 +291,6 @@ export class AuthService {
         }
       });
 
-      /* 
-       * DISABLED: We do not send verification email now. 
-       * User must pay first. Verification will be implicit via Payment Webhook.
-       
       try {
         await this.emailService.sendVerificationEmail(
           user.email,
@@ -313,10 +303,9 @@ export class AuthService {
       } catch (emailError) {
         this.logger.warn(`Failed to send verification email to ${user.email}: ${emailError.message}`);
       }
-      */
 
-      // No generamos tokens ni login automático
-      // Devolvemos solo el usuario y flag de verificación/pago requerido
+      // No generamos tokens explícitamente para el flujo de email
+      // El usuario debe verificar su email primero
 
       return {
         user: {
@@ -344,13 +333,7 @@ export class AuthService {
         },
         tokens: null, // No tokens
         encryptionKey: null, // No key access yet
-        // Custom flag to tell frontend to redirect to payment
-        // We can reuse verificationRequired or add a new one if DTO allows.
-        // For now using verificationRequired as "Steps Required" signal, but ideally we'd add `paymentRequired` to DTO.
-        // Since DTO is strict in NestJS if validation pipes are on, we might need to update DTO or just rely on status=INACTIVE check.
-        // Let's assume we can add a dynamic property or use existing structure.
-        // Checking AuthResponseDto... it has `message`.
-        message: 'Registro iniciado. Por favor completa el pago para activar tu cuenta.',
+        message: 'Registro completado. Por favor verifica tu email.',
       };
     } catch (error) {
       this.logger.error(`Error registering user: ${error.message}`);
@@ -392,25 +375,42 @@ export class AuthService {
         };
       }
 
+      // Auto-verify Google users
+      // If plan is 'demo' or undefined, we might activate them? 
+      // Current requirement: "con google ya estara verificado".
+      // But they still need to pay if they chose a paid plan.
+
+      // Determine target status
+      // We keep INACTIVE if they need to pay.
+      // If they are registering without a plan (e.g. invite?) or demo, maybe ACTIVE?
+      // For now, consistent with Email flow: INACTIVE until payment/activation.
+      // BUT they are VERIFIED.
+
       const updatedUser = await this.prisma.user.update({
         where: { id: user.id },
         data: {
           professionalNumber,
           country,
           isPendingRegistration: false,
-          status: UserStatus.INACTIVE, // Changed to INACTIVE to require payment
-          verified: false, // Verification/Payment required
+          status: UserStatus.INACTIVE, // Payment required
+          verified: true, // Google trusted
           role: UserRole.PSYCHOLOGIST,
           updatedAt: new Date(),
         } as any,
       });
 
-      // Similar to standard register, we return user but NO tokens
+      // Generate tokens immediately for Google users so they can proceed to Payment authenticated
+      const tokens = await this.generateTokens(updatedUser);
+      const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(updatedUser.id);
+
       return {
-        message: 'Registro de Google completado. Por favor completa el pago para activar tu cuenta.',
+        message: 'Registro de Google completado.',
         user: updatedUser as any,
-        tokens: null,
-        encryptionKey: null,
+        tokens,
+        encryptionKey: {
+          id: encryptionKey.id,
+          key: encryptionKey.keyValue,
+        },
       };
 
     } catch (error) {
@@ -521,7 +521,8 @@ export class AuthService {
       data: {
         verified: true,
         verificationToken: null,
-        status: UserStatus.ACTIVE // Ensure active if it wasn't
+        // status: UserStatus.ACTIVE // DO NOT ACTIVATE YET. Wait for payment.
+        // If they are INACTIVE, they can now login (due to verified=true) but will be redirected to payment.
       },
     });
 

@@ -1,14 +1,17 @@
 import { Link } from '@/navigation';
 import { ArrowLeft, BookOpen, Code, Database } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function ReferencePage() {
+    const t = useTranslations('Docs.Reference');
+
     return (
         <div className="min-h-screen bg-slate-50 py-12">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="mb-8">
                     <Link href="/docs" className="flex items-center text-slate-500 hover:text-slate-900 transition-colors">
                         <ArrowLeft className="w-4 h-4 mr-2" />
-                        Volver a Documentación
+                        {t('back')}
                     </Link>
                 </div>
 
@@ -18,11 +21,11 @@ export default function ReferencePage() {
                             <div className="p-3 bg-white/10 rounded-lg backdrop-blur-sm">
                                 <BookOpen className="w-6 h-6 text-white" />
                             </div>
-                            <span className="text-slate-300 font-medium">Referencia Técnica</span>
+                            <span className="text-slate-300 font-medium">{t('sectionTitle')}</span>
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-bold mb-4">Glosario y Referencia</h1>
+                        <h1 className="text-3xl md:text-4xl font-bold mb-4">{t('title')}</h1>
                         <p className="text-slate-400 text-lg max-w-2xl">
-                            Definiciones clave y detalles técnicos para usuarios avanzados y desarrolladores.
+                            {t('subtitle')}
                         </p>
                     </div>
 
@@ -32,25 +35,25 @@ export default function ReferencePage() {
                             <section className="mb-12">
                                 <h2 className="flex items-center gap-2 text-2xl font-bold text-slate-900 mb-6">
                                     <Database className="w-6 h-6 text-blue-600" />
-                                    Glosario de Términos
+                                    {t('glossary.title')}
                                 </h2>
                                 <div className="grid gap-6">
                                     <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                                        <h3 className="font-bold text-slate-900">Agenda Manager</h3>
+                                        <h3 className="font-bold text-slate-900">{t('glossary.items.manager.title')}</h3>
                                         <p className="text-sm text-slate-600 mt-1">
-                                            Rol de usuario con permisos para gestionar calendarios de otros profesionales ("Managed Professionals"), pero sin acceso a datos clínicos confidenciales mostrados en las estadísticas detalladas.
+                                            {t('glossary.items.manager.text')}
                                         </p>
                                     </div>
                                     <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                                        <h3 className="font-bold text-slate-900">Temas Recurrentes (AI)</h3>
+                                        <h3 className="font-bold text-slate-900">{t('glossary.items.themes.title')}</h3>
                                         <p className="text-sm text-slate-600 mt-1">
-                                            Algoritmo de procesamiento de lenguaje natural que analiza las notas de sesión anónimizadas para extraer patrones temáticos (ej. "Ansiedad laboral", "Conflicto familiar") y visualizarlos en el dashboard.
+                                            {t('glossary.items.themes.text')}
                                         </p>
                                     </div>
                                     <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                                        <h3 className="font-bold text-slate-900">Sentiment Analysis</h3>
+                                        <h3 className="font-bold text-slate-900">{t('glossary.items.sentiment.title')}</h3>
                                         <p className="text-sm text-slate-600 mt-1">
-                                            Métrica de bienestar calculada analizando el tono emocional de las notas clínicas. Se presenta como una tendencia (Positiva, Neutra, Negativa) a lo largo del tiempo.
+                                            {t('glossary.items.sentiment.text')}
                                         </p>
                                     </div>
                                 </div>
@@ -61,11 +64,10 @@ export default function ReferencePage() {
                             <section>
                                 <h2 className="flex items-center gap-2 text-2xl font-bold text-slate-900 mb-6">
                                     <Code className="w-6 h-6 text-purple-600" />
-                                    API Reference (Básico)
+                                    {t('api.title')}
                                 </h2>
                                 <p className="text-slate-600 mb-4">
-                                    PsicoAIssist ofrece una API RESTful para integraciones personalizadas.
-                                    Para obtener acceso completo a la documentación de la API (Swagger), contacte con soporte.
+                                    {t('api.text')}
                                 </p>
 
                                 <div className="bg-slate-900 rounded-xl p-6 overflow-x-auto text-sm text-slate-300 font-mono">

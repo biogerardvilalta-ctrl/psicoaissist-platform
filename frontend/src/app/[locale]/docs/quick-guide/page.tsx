@@ -1,7 +1,10 @@
 import { Link } from '@/navigation';
 import { ArrowLeft, Zap, CheckCircle2, HelpCircle, Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function QuickGuidePage() {
+    const t = useTranslations('Docs.QuickGuide');
+
     return (
         <div className="min-h-screen bg-slate-50 py-12">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -9,7 +12,7 @@ export default function QuickGuidePage() {
                 <div className="mb-8">
                     <Link href="/docs" className="flex items-center text-slate-500 hover:text-slate-900 transition-colors">
                         <ArrowLeft className="w-4 h-4 mr-2" />
-                        Volver a Documentación
+                        {t('back')}
                     </Link>
                 </div>
 
@@ -20,11 +23,11 @@ export default function QuickGuidePage() {
                             <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
                                 <Zap className="w-6 h-6 text-white" />
                             </div>
-                            <span className="text-amber-100 font-medium">Cheat Sheet</span>
+                            <span className="text-amber-100 font-medium">{t('cheatSheet')}</span>
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-bold mb-4">Guía Rápida</h1>
+                        <h1 className="text-3xl md:text-4xl font-bold mb-4">{t('title')}</h1>
                         <p className="text-amber-100 text-lg max-w-2xl">
-                            Acciones frecuentes en menos de un minuto. Todo lo directo y al grano.
+                            {t('subtitle')}
                         </p>
                     </div>
 
@@ -33,54 +36,43 @@ export default function QuickGuidePage() {
                         {/* Quick Actions Grid */}
                         <div className="grid md:grid-cols-2 gap-8 mb-12">
                             <div className="space-y-6">
-                                <h2 className="text-2xl font-bold text-slate-900 border-b pb-2">📅 Gestión de Agenda</h2>
+                                <h2 className="text-2xl font-bold text-slate-900 border-b pb-2">{t('agenda.title')}</h2>
 
                                 <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                                    <h3 className="font-semibold text-lg mb-3 text-slate-800">Crear una Nueva Cita</h3>
+                                    <h3 className="font-semibold text-lg mb-3 text-slate-800">{t('agenda.create.title')}</h3>
                                     <ol className="space-y-3 text-slate-600 list-decimal list-inside marker:text-amber-600 marker:font-bold">
-                                        <li>Vaya a <strong>Sesiones</strong> en el menú.</li>
-                                        <li>Haga clic en un hueco vacío o en <strong>"Nueva Sesión"</strong>.</li>
-                                        <li>Seleccione el <strong>Paciente</strong> y confirme hora.</li>
+                                        {['0', '1', '2'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`agenda.create.steps.${i}`) }} />)}
                                         <li className="text-green-600 font-medium flex items-center gap-2">
-                                            <CheckCircle2 className="w-4 h-4" /> ¡Listo!
+                                            <CheckCircle2 className="w-4 h-4" /> {t('agenda.create.steps.3')}
                                         </li>
                                     </ol>
                                 </div>
 
                                 <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                                    <h3 className="font-semibold text-lg mb-3 text-slate-800">Sincronizar Google Calendar</h3>
+                                    <h3 className="font-semibold text-lg mb-3 text-slate-800">{t('agenda.sync.title')}</h3>
                                     <ol className="space-y-3 text-slate-600 list-decimal list-inside marker:text-amber-600 marker:font-bold">
-                                        <li>Vaya a <strong>Ajustes &gt; Preferencias</strong>.</li>
-                                        <li>Busque la sección <strong>Google Calendar</strong>.</li>
-                                        <li>Active <strong>Importar eventos</strong>.</li>
-                                        <li>Complete la autenticación con Google.</li>
+                                        {['0', '1', '2', '3'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`agenda.sync.steps.${i}`) }} />)}
                                     </ol>
                                     <p className="mt-2 text-xs text-slate-500 italic">
-                                        *Truco: Esto permite que sus citas de PsicoAIssist aparezcan en su calendario.
+                                        {t('agenda.sync.note')}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="space-y-6">
-                                <h2 className="text-2xl font-bold text-slate-900 border-b pb-2">👥 Pacientes y Dashboard</h2>
+                                <h2 className="text-2xl font-bold text-slate-900 border-b pb-2">{t('patients.title')}</h2>
 
                                 <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                                    <h3 className="font-semibold text-lg mb-3 text-slate-800">Añadir Paciente</h3>
+                                    <h3 className="font-semibold text-lg mb-3 text-slate-800">{t('patients.add.title')}</h3>
                                     <ol className="space-y-3 text-slate-600 list-decimal list-inside marker:text-amber-600 marker:font-bold">
-                                        <li>Click en <strong>Clientes</strong>.</li>
-                                        <li>Botón <strong>"Añadir Paciente"</strong>.</li>
-                                        <li>Rellene Nombre y Email obligatorios.</li>
-                                        <li>Guardar.</li>
+                                        {['0', '1', '2', '3'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`patients.add.steps.${i}`) }} />)}
                                     </ol>
                                 </div>
 
                                 <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                                    <h3 className="font-semibold text-lg mb-3 text-slate-800">Personalizar Dashboard</h3>
+                                    <h3 className="font-semibold text-lg mb-3 text-slate-800">{t('patients.dashboard.title')}</h3>
                                     <ol className="space-y-3 text-slate-600 list-decimal list-inside marker:text-amber-600 marker:font-bold">
-                                        <li>En página <strong>Inicio</strong>.</li>
-                                        <li>Botón <strong>"Librería de Widgets"</strong>.</li>
-                                        <li>Active/Desactive los paneles deseados.</li>
-                                        <li>Se guarda automáticamente.</li>
+                                        {['0', '1', '2', '3'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`patients.dashboard.steps.${i}`) }} />)}
                                     </ol>
                                 </div>
                             </div>
@@ -90,31 +82,28 @@ export default function QuickGuidePage() {
                         <div className="grid md:grid-cols-3 gap-6 mb-12">
                             <div className="bg-amber-50 p-6 rounded-xl border border-amber-100">
                                 <h3 className="font-bold text-amber-900 mb-3 flex items-center gap-2">
-                                    <Zap className="w-5 h-5" /> Trucos Configuración
+                                    <Zap className="w-5 h-5" /> {t('tips.config.title')}
                                 </h3>
                                 <ul className="space-y-3 text-sm text-amber-800">
-                                    <li><strong>Cambiar Plan/Tarifa:</strong> En <em>Ajustes &gt; Facturación</em>. Consulte si es Basic, Pro, Premium o clínicas.</li>
-                                    <li><strong>Vacaciones:</strong> En <em>Ajustes &gt; Agenda &gt; Bloqueos</em>. Use "Bloquear Día Completo" en lugar de borrar sesiones.</li>
+                                    {['0', '1'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`tips.config.list.${i}`) }} />)}
                                 </ul>
                             </div>
 
                             <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
                                 <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
-                                    <CheckCircle2 className="w-5 h-5" /> Para Profesionales
+                                    <CheckCircle2 className="w-5 h-5" /> {t('tips.professional.title')}
                                 </h3>
                                 <ul className="space-y-3 text-sm text-blue-800">
-                                    <li><strong>Notas Completas:</strong> La IA necesita contexto. Escriba notas post-sesión para mejorar los "Temas Recurrentes".</li>
-                                    <li><strong>Marcar Asistencia:</strong> Use "Realizada" o "Cancelada". Las citas "Pendientes" no suman en estadísticas.</li>
+                                    {['0', '1'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`tips.professional.list.${i}`) }} />)}
                                 </ul>
                             </div>
 
                             <div className="bg-purple-50 p-6 rounded-xl border border-purple-100">
                                 <h3 className="font-bold text-purple-900 mb-3 flex items-center gap-2">
-                                    <Users className="w-5 h-5" /> Para Gestores
+                                    <Users className="w-5 h-5" /> {t('tips.manager.title')}
                                 </h3>
                                 <ul className="space-y-3 text-sm text-purple-800">
-                                    <li><strong>Grupos:</strong> Cree grupos (ej. "Tardes") si gestiona muchos doctores para filtrar rápido.</li>
-                                    <li><strong>Vista Unificada:</strong> Al seleccionar un grupo, verá una agenda combinada ideal para huecos.</li>
+                                    {['0', '1'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`tips.manager.list.${i}`) }} />)}
                                 </ul>
                             </div>
                         </div>
@@ -123,20 +112,20 @@ export default function QuickGuidePage() {
                         <div className="bg-slate-100 rounded-2xl p-8 border border-slate-200">
                             <div className="flex items-center gap-3 mb-6">
                                 <HelpCircle className="w-6 h-6 text-slate-600" />
-                                <h2 className="text-2xl font-bold text-slate-900">¿Problemas Comunes?</h2>
+                                <h2 className="text-2xl font-bold text-slate-900">{t('troubleshooting.title')}</h2>
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div>
-                                    <h4 className="font-bold text-slate-800 mb-2">"No veo mis citas de Google"</h4>
+                                    <h4 className="font-bold text-slate-800 mb-2">{t('troubleshooting.google.title')}</h4>
                                     <p className="text-slate-600 text-sm leading-relaxed">
-                                        Asegúrese de que el interruptor "Importar eventos" esté activado en Ajustes y que haya dado todos los permisos solicitados en la pantalla de Google.
+                                        {t('troubleshooting.google.text')}
                                     </p>
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-800 mb-2">"El Dashboard está vacío"</h4>
+                                    <h4 className="font-bold text-slate-800 mb-2">{t('troubleshooting.dashboard.title')}</h4>
                                     <p className="text-slate-600 text-sm leading-relaxed">
-                                        Si acaba de registrarse, es normal. Cree su primer paciente y primera sesión para empezar a ver datos y gráficas.
+                                        {t('troubleshooting.dashboard.text')}
                                     </p>
                                 </div>
                             </div>
