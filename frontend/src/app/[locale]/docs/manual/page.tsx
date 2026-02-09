@@ -1,5 +1,5 @@
 import { Link } from '@/navigation';
-import { ArrowLeft, Book, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Book, AlertCircle, Play, Mic, CheckCircle2 } from 'lucide-react';
 
 export default function ManualPage() {
     return (
@@ -131,6 +131,9 @@ export default function ManualPage() {
                                 Planes y Suscripciones
                             </h2>
                             <p className="leading-relaxed text-lg text-slate-600 mb-6">PsicoAIssist ofrece cinco niveles de servicio, divididos en opciones individuales y para grupos. Puede consultar su plan actual en <strong>Perfil {'>'} Suscripción</strong>.</p>
+                            <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 text-blue-900 not-prose rounded-r">
+                                <strong>Idiomas:</strong> La plataforma está disponible en Español, Catalán e Inglés. Puede cambiar el idioma de la interfaz desde el icono del mundo 🌐 en la <strong>barra de navegación superior</strong>.
+                            </div>
 
                             <div className="my-6 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-900 not-prose rounded-r flex gap-3">
                                 <AlertCircle className="h-6 w-6 text-amber-600 shrink-0" />
@@ -581,8 +584,100 @@ export default function ManualPage() {
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Gestión de Sesiones</h3>
                             <p>
-                                En <strong>Sesiones</strong>, use la vista de calendario para crear citas. Marque las sesiones como "Realizada" o "Cancelada" para mantener las estadísticas precisas.
+                                En <strong>Sesiones</strong>, use la vista de calendario para crear citas.
                             </p>
+                            <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-6 not-prose">
+                                <h4 className="font-bold text-slate-900 mb-4">Flujo de una Sesión Estándar</h4>
+                                <ol className="relative border-l border-slate-200 ml-3 space-y-6">
+                                    <li className="mb-10 ml-6">
+                                        <span className="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-4 ring-white">
+                                            <Play className="w-4 h-4 text-blue-600" />
+                                        </span>
+                                        <h5 className="font-bold text-slate-900 mb-1">1. Iniciar Sesión</h5>
+                                        <p className="text-sm text-slate-600">
+                                            Al llegar el paciente, pulse el botón de <strong>Iniciar</strong> en la cita. Esto abre el panel de sesión y activa el cronómetro.
+                                        </p>
+                                    </li>
+                                    <li className="mb-10 ml-6">
+                                        <span className="absolute flex items-center justify-center w-8 h-8 bg-amber-100 rounded-full -left-4 ring-4 ring-white">
+                                            <AlertCircle className="w-4 h-4 text-amber-600" />
+                                        </span>
+                                        <h5 className="font-bold text-slate-900 mb-1">2. Consentimiento y Verificaciones</h5>
+                                        <p className="text-sm text-slate-600">
+                                            Aparecerá una ventana emergente obligatoria. Debe marcar las casillas de:
+                                        </p>
+                                        <ul className="list-disc pl-4 mt-2 text-xs text-slate-500 space-y-1">
+                                            <li><strong>Consentimiento Informado:</strong> El paciente autoriza el uso de IA.</li>
+                                            <li><strong>Paciente Menor:</strong> Si aplica, active esta casilla para ajustar la protección de datos.</li>
+                                        </ul>
+                                    </li>
+                                    <li className="mb-10 ml-6">
+                                        <span className="absolute flex items-center justify-center w-8 h-8 bg-red-100 rounded-full -left-4 ring-4 ring-white">
+                                            <Mic className="w-4 h-4 text-red-600" />
+                                        </span>
+                                        <h5 className="font-bold text-slate-900 mb-1">3. Grabación y Activación IA</h5>
+                                        <p className="text-sm text-slate-600">
+                                            <strong>Importante:</strong> La IA no escucha automáticamente. Debe pulsar el botón <strong>Grabar</strong> (micrófono) cuando quiera que empiece la transcripción y el análisis.
+                                        </p>
+                                        <p className="text-xs text-slate-500 mt-1 italic">
+                                            * Puede pausar y reanudar la grabación en cualquier momento de la sesión.
+                                        </p>
+                                    </li>
+                                    <li className="ml-6">
+                                        <span className="absolute flex items-center justify-center w-8 h-8 bg-green-100 rounded-full -left-4 ring-4 ring-white">
+                                            <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                        </span>
+                                        <h5 className="font-bold text-slate-900 mb-1">4. Finalizar y Generar Informes</h5>
+                                        <p className="text-sm text-slate-600">
+                                            Al terminar, pulse <strong>Finalizar Sesión</strong>. El sistema procesará el audio capturado y generará automáticamente:
+                                        </p>
+                                        <ul className="list-disc pl-4 mt-2 text-xs text-slate-500 space-y-1">
+                                            <li>Transcripción completa.</li>
+                                            <li>Resumen de la sesión.</li>
+                                            <li>Informe de IA (según su plan).</li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                            </div>
+                            <p className="mt-4 text-sm text-slate-500">
+                                Marque las sesiones canceladas o no presentadas como "Cancelada" para que no computen en sus estadísticas ni facturación.
+                            </p>
+
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Videoconsulta y Telemedicina</h3>
+                            <p>
+                                La plataforma incluye un sistema de videollamadas integrado que permite realizar sesiones remotas.
+                            </p>
+                            <div className="my-6 space-y-4 not-prose">
+                                <div className="flex gap-4 items-start p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                    <div className="bg-emerald-100 p-2 rounded-lg text-emerald-700 shrink-0">
+                                        <Play className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-slate-800 text-sm">1. Iniciar Sesión</h4>
+                                        <p className="text-slate-600 text-xs mt-1">Al entrar en la sala, pulse <strong>Iniciar Sesión</strong>. Esto activa el cronómetro de duración y cambia el estado de la cita a "En Curso".</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 items-start p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                    <div className="bg-blue-100 p-2 rounded-lg text-blue-700 shrink-0">
+                                        <Mic className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-slate-800 text-sm">2. Iniciar Grabación (IA)</h4>
+                                        <p className="text-slate-600 text-xs mt-1">Para obtener transcripción y análisis de IA, pulse <strong>Grabar</strong>. Es necesario para que se generen los resúmenes automáticos. (Requiere consentimiento).</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 items-start p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                    <div className="bg-slate-100 p-2 rounded-lg text-slate-700 shrink-0">
+                                        <CheckCircle2 className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-slate-800 text-sm">3. Finalizar Sesión</h4>
+                                        <p className="text-slate-600 text-xs mt-1">Al terminar, pulse <strong>Finalizar Sesión</strong>. El sistema guardará todo, marcará la cita como "Completada" y generará el informe clínico con IA (si su plan lo permite).</p>
+                                    </div>
+                                </div>
+                            </div>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">Análisis IA de Sesiones</h3>
                             <p>
@@ -627,6 +722,14 @@ export default function ManualPage() {
                             <p>
                                 Acceda desde el menú "Simulador" para practicar con pacientes virtuales. La IA le dará feedback sobre su empatía y técnica al terminar la sesión simulada. Las sesiones tienen una duración máxima de 45 minutos.
                             </p>
+                            <div className="mt-4 bg-slate-50 border-l-4 border-indigo-400 p-4 rounded-r">
+                                <strong>Disponibilidad por Plan:</strong>
+                                <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-slate-700">
+                                    <li><strong>Basic:</strong> No incluido.</li>
+                                    <li><strong>Pro/Start:</strong> 5 casos prácticos al mes.</li>
+                                    <li><strong>Premium/Clinics:</strong> Casos ilimitados.</li>
+                                </ul>
+                            </div>
                         </section>
 
                         <hr className="my-8 border-slate-200" />
@@ -697,7 +800,7 @@ export default function ManualPage() {
                             <p className="text-sm text-slate-500 mt-2"><i>Nota: Esta funcionalidad es exclusiva para usuarios con plan Premium o superior.</i></p>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🤖 Inteligencia Artificial</h3>
-                            <p><strong>Idioma Preferido:</strong> Define en qué idioma generará la IA los informes automáticos.</p>
+                            <p><strong>Idioma de la IA:</strong> El idioma de los análisis e informes generados por la Inteligencia Artificial se sincroniza automáticamente con el idioma seleccionado en la interfaz (barra de navegación superior).</p>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🔔 Notificaciones</h3>
                             <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">
