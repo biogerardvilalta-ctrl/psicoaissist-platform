@@ -354,8 +354,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [saveSession]);
 
   // Logout function
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     console.log('👋 Logging out user');
+    try {
+      await AuthAPI.logout();
+    } catch (e) {
+      console.error('Error calling logout API', e);
+    }
     clearSession();
     dispatch({ type: 'LOGOUT' });
   }, [clearSession]);

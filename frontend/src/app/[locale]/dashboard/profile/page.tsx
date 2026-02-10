@@ -21,7 +21,7 @@ import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-m
 import { Zap } from 'lucide-react';
 // ... inside component
 export default function ProfilePage() {
-    const { user, login, reloadUser } = useAuth();
+    const { user, login, reloadUser, logout } = useAuth();
     const { toast } = useToast();
     const { openCustomerPortal, loading: paymentsLoading } = usePayments();
     const t = useTranslations('Dashboard.Profile');
@@ -83,7 +83,7 @@ export default function ProfilePage() {
                 title: t('toasts.accountDeleted'),
                 description: t('toasts.accountDeletedDesc'),
             });
-            // Force logout
+            await logout(); // Ensure client session is cleared
             window.location.href = '/auth/login';
         } catch (error) {
             toast({
@@ -506,13 +506,13 @@ export default function ProfilePage() {
                         )}
 
                         {/* General Action Buttons */}
-                        <div className="pt-4 border-t flex justify-end gap-3">
-                            <Button variant="outline" onClick={() => openCustomerPortal()} disabled={paymentsLoading}>
+                        <div className="pt-4 border-t flex flex-col md:flex-row md:justify-end gap-3">
+                            <Button variant="outline" onClick={() => openCustomerPortal()} disabled={paymentsLoading} className="w-full md:w-auto">
                                 {paymentsLoading ? t('subscription.loading') : t('subscription.managePayments')}
                             </Button>
                             <Button
                                 onClick={() => setIsUpgradeModalOpen(true)}
-                                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+                                className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
                             >
                                 <Zap className="w-4 h-4 mr-2" />
                                 {t('subscription.changePlan')}
