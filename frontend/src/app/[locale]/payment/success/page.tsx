@@ -12,7 +12,9 @@ export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const [sessionId, setSessionId] = useState<string>('');
   const [planName, setPlanName] = useState<string>('');
-  const { reloadUser } = useAuth();
+  const { reloadUser, user } = useAuth(); // Get user to check status
+  const [isVerifying, setIsVerifying] = useState(true);
+  const [isActivated, setIsActivated] = useState(false);
 
   useEffect(() => {
     const sessionIdParam = searchParams.get('session_id') || '';
@@ -27,7 +29,6 @@ export default function PaymentSuccessPage() {
       'premium': t('plans.premium')
     };
     setPlanName(planNames[planParam] || planParam || t('plans.selected'));
-    setPlanName(planNames[planParam] || planParam || t('plans.selected'));
 
     if (sessionIdParam) {
       // Synchronous Verification to ensure user is active immediately
@@ -41,15 +42,25 @@ export default function PaymentSuccessPage() {
               // Force reload user to update status/limits locally
               console.log('Payment verified. Reloading user profile...');
               await reloadUser();
-              // Optional: Force hard reload if context isn't enough or to clear valid-but-stale state
-              // setTimeout(() => window.location.reload(), 1000); 
+              setIsActivated(true);
             }
           })
-          .catch(err => console.error('Verification failed', err));
+          .catch(err => console.error('Verification failed', err))
+          .finally(() => setIsVerifying(false));
       });
+    } else {
+      setIsVerifying(false);
     }
 
   }, [searchParams]);
+
+  // Handle case where user is already active (revisiting page)
+  useEffect(() => {
+    if (user?.status === 'ACTIVE') {
+      setIsActivated(true);
+      setIsVerifying(false);
+    }
+  }, [user?.status]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center px-4">
@@ -67,6 +78,25 @@ export default function PaymentSuccessPage() {
         <p className="text-gray-600 mb-4">
           {t('message', { plan: planName })}
         </p>
+
+        {/* Status Indicator */}
+        <div className="mb-6">
+          {isVerifying ? (
+            <div className="flex items-center justify-center text-blue-600 gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <span className="text-sm font-medium">Verificando activación...</span>
+            </div>
+          ) : isActivated ? (
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+              <CheckCircle className="w-3 h-3 mr-1" />
+              Cuenta Activada
+            </div>
+          ) : (
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-medium">
+              Pendiente de activación
+            </div>
+          )}
+        </div>
 
         {/* Demo mode indicator */}
         {sessionId.includes('demo') && (
@@ -90,13 +120,22 @@ export default function PaymentSuccessPage() {
 
         {/* Action buttons */}
         <div className="space-y-3">
-          <Link
-            href="/dashboard"
-            className="w-full inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            {t('actions.goToDashboard')}
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Link>
+          {isActivated ? (
+            <Link
+              href="/dashboard"
+              className="w-full inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              {t('actions.goToDashboard')}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          ) : (
+            <button
+              disabled
+              className="w-full inline-flex items-center justify-center px-6 py-3 bg-gray-300 text-white font-medium rounded-lg cursor-not-allowed"
+            >
+              {isVerifying ? 'Activando...' : 'Esperando confirmación...'}
+            </button>
+          )}
 
           <Link
             href="/"
