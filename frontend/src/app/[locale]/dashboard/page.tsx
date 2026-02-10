@@ -101,6 +101,7 @@ export default function DashboardPage() {
   const { isAgendaManager, isAdmin } = useRole();
   const [managedProfessionals, setManagedProfessionals] = useState<User[]>([]);
   const [selectedProfessionalId, setSelectedProfessionalId] = useState<string>('all');
+  const [viewAsUser, setViewAsUser] = useState(false);
 
   useEffect(() => {
     // Check role safely without dependency
@@ -337,7 +338,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {isAdmin() ? (
+        {isAdmin() && !viewAsUser ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
             <div className="p-6 bg-purple-50 rounded-full ring-1 ring-purple-100">
               <Shield className="w-16 h-16 text-purple-600" />
@@ -365,125 +366,135 @@ export default function DashboardPage() {
                 {t('Admin.myProfile')}
               </Button>
             </div>
-          </div>
-        ) : isAgendaManager() ? (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-slate-800">{t('Manager.assignedProfessionals')}</h2>
-            {managedProfessionals.filter(p => p.role !== 'PROFESSIONAL_GROUP').length === 0 ? (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <UserIcon className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-500">{t('Manager.noAssigned')}</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {managedProfessionals
-                  .filter(pro => pro.role !== 'PROFESSIONAL_GROUP')
-                  .map(pro => (
-                    <Card
-                      key={pro.id}
-                      className="cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-200 group"
-                      onClick={() => router.push(`/dashboard/sessions?professionalId=${pro.id}`)}
-                    >
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-4">
-                          <Avatar className="h-16 w-16 ring-2 ring-slate-100 group-hover:ring-blue-200 transition-all">
-                            <AvatarFallback className="text-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
-                              {pro.firstName?.[0]}{pro.lastName?.[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-lg text-slate-800 group-hover:text-blue-600 transition-colors">
-                              {pro.firstName} {pro.lastName}
-                            </h3>
-                            <p className="text-sm text-slate-500">{pro.email}</p>
-                          </div>
-                          <ArrowRight className="h-5 w-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-              </div>
-            )}
-
-            <GroupsSection
-              groups={managedProfessionals.filter(p => p.role === 'PROFESSIONAL_GROUP')}
-              professionals={managedProfessionals.filter(p => p.role !== 'PROFESSIONAL_GROUP')}
-              onGroupChange={() => {
-                // Refresh data
-                const checkAndLoad = async () => {
-                  if (user?.role === 'AGENDA_MANAGER') {
-                    try {
-                      const pros = await UserAPI.getManagedProfessionals();
-                      setManagedProfessionals(pros);
-                    } catch (e) { console.error(e); }
-                  }
-                };
-                checkAndLoad();
-              }}
-            />
-          </div>
-        ) : (
-          // Full dashboard for Psychologists
-          <>
-            {isLoaded ? (
-              <DashboardGrid
-                items={layout}
-                renderItem={renderItem}
-                onSave={handleSaveLayout}
-                defaultItems={DEFAULT_LAYOUT}
-                headerActions={
-                  <Sheet open={isLibraryOpen} onOpenChange={setIsLibraryOpen}>
-                    <SheetTrigger asChild>
-                      <Button variant="outline" size="sm" className="gap-2">
-                        <PlusCircle className="h-4 w-4" />
-                        <span className="hidden sm:inline">{t('Library.openButton')}</span>
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                      <SheetHeader>
-                        <SheetTitle>{t('Library.title')}</SheetTitle>
-                        <SheetDescription>
-                          {t('Library.description')}
-                        </SheetDescription>
-                      </SheetHeader>
-                      <div className="mt-6 space-y-4 h-[calc(100vh-140px)] overflow-y-auto pr-2 pb-4">
-                        {WIDGET_IDS.filter(w => w.id !== 'referralWidget').map(widget => {
-                          const isActive = layout.includes(widget.id);
-                          return (
-                            <div key={widget.id} className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-                              <div>
-                                <h4 className="font-medium text-sm">{t(`Widgets.${widget.id}`)}</h4>
-                                <span className="text-xs text-muted-foreground">{t(`Widgets.categories.${widget.category}`)}</span>
-                              </div>
-                              <Button
-                                variant={isActive ? "secondary" : "default"}
-                                size="sm"
-                                onClick={() => handleAddWidget(widget.id)}
-                              >
-                                {isActive ? t('Library.hide') : t('Library.add')}
-                              </Button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </SheetContent>
-                  </Sheet>
-                }
-              />
-            ) : (
-              <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-              </div>
-            )}
-
-            <div className="mt-8">
-              <RecentActivity />
+            <div className="pt-4">
+              <Button
+                variant="ghost"
+                onClick={() => setViewAsUser(true)}
+                className="text-slate-500 hover:text-slate-800"
+              >
+                Ver Dashboard como Usuario
+              </Button>
             </div>
-          </>
+          </div>
+          </div>
+      ) : isAgendaManager() ? (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-semibold text-slate-800">{t('Manager.assignedProfessionals')}</h2>
+        {managedProfessionals.filter(p => p.role !== 'PROFESSIONAL_GROUP').length === 0 ? (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <UserIcon className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500">{t('Manager.noAssigned')}</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {managedProfessionals
+              .filter(pro => pro.role !== 'PROFESSIONAL_GROUP')
+              .map(pro => (
+                <Card
+                  key={pro.id}
+                  className="cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-200 group"
+                  onClick={() => router.push(`/dashboard/sessions?professionalId=${pro.id}`)}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-16 w-16 ring-2 ring-slate-100 group-hover:ring-blue-200 transition-all">
+                        <AvatarFallback className="text-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
+                          {pro.firstName?.[0]}{pro.lastName?.[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg text-slate-800 group-hover:text-blue-600 transition-colors">
+                          {pro.firstName} {pro.lastName}
+                        </h3>
+                        <p className="text-sm text-slate-500">{pro.email}</p>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
         )}
+
+        <GroupsSection
+          groups={managedProfessionals.filter(p => p.role === 'PROFESSIONAL_GROUP')}
+          professionals={managedProfessionals.filter(p => p.role !== 'PROFESSIONAL_GROUP')}
+          onGroupChange={() => {
+            // Refresh data
+            const checkAndLoad = async () => {
+              if (user?.role === 'AGENDA_MANAGER') {
+                try {
+                  const pros = await UserAPI.getManagedProfessionals();
+                  setManagedProfessionals(pros);
+                } catch (e) { console.error(e); }
+              }
+            };
+            checkAndLoad();
+          }}
+        />
       </div>
-    </ProtectedRoute>
+      ) : (
+      // Full dashboard for Psychologists
+      <>
+        {isLoaded ? (
+          <DashboardGrid
+            items={layout}
+            renderItem={renderItem}
+            onSave={handleSaveLayout}
+            defaultItems={DEFAULT_LAYOUT}
+            headerActions={
+              <Sheet open={isLibraryOpen} onOpenChange={setIsLibraryOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <PlusCircle className="h-4 w-4" />
+                    <span className="hidden sm:inline">{t('Library.openButton')}</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>{t('Library.title')}</SheetTitle>
+                    <SheetDescription>
+                      {t('Library.description')}
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-4 h-[calc(100vh-140px)] overflow-y-auto pr-2 pb-4">
+                    {WIDGET_IDS.filter(w => w.id !== 'referralWidget').map(widget => {
+                      const isActive = layout.includes(widget.id);
+                      return (
+                        <div key={widget.id} className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+                          <div>
+                            <h4 className="font-medium text-sm">{t(`Widgets.${widget.id}`)}</h4>
+                            <span className="text-xs text-muted-foreground">{t(`Widgets.categories.${widget.category}`)}</span>
+                          </div>
+                          <Button
+                            variant={isActive ? "secondary" : "default"}
+                            size="sm"
+                            onClick={() => handleAddWidget(widget.id)}
+                          >
+                            {isActive ? t('Library.hide') : t('Library.add')}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            }
+          />
+        ) : (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          </div>
+        )}
+
+        <div className="mt-8">
+          <RecentActivity />
+        </div>
+      </>
+        )}
+    </div>
+    </ProtectedRoute >
   );
 }
