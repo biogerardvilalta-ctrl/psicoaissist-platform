@@ -62,7 +62,12 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-    origin: true, // Allow all origins (fixes deployment connection issues)
+    origin: [
+      'https://psicoaissist.com',
+      'https://www.psicoaissist.com',
+      'http://localhost:3000',
+      'http://localhost:3001'
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
@@ -109,3 +114,4 @@ async function bootstrap() {
 
 bootstrap();// restart trigger mié 07 ene 2026 17:12:19 CET
 // restart trigger vie 09 ene 2026 15:30:12 CET
+// restart trigger mar 10 feb 2026 14:39:40 CET
