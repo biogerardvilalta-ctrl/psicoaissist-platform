@@ -124,7 +124,9 @@ export class StripeService {
         subscription: 'sub_demo_' + Date.now(),
       };
     }
-    return this.stripe.checkout.sessions.retrieve(sessionId);
+    return this.stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ['subscription'],
+    });
   }
 
   async createPortalSession(customerId: string) {

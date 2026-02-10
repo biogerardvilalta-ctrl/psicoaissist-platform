@@ -372,7 +372,36 @@ export class PaymentsService {
       return; // Done
     }
 
-    // The subscription will be handled by the subscription.created webhook
+    // The subscription will be handled by the subscription.created webhook normally,
+    // BUT we add this synchronous check to be robust against webhook failures.
+    if (session.subscription && typeof session.subscription !== 'string') {
+      const subscription = session.subscription as Stripe.Subscription;
+      this.logger.log(`[SYNC] Creating subscription ${subscription.id} synchronously for user ${userId}`);
+
+      await this.prisma.subscription.upsert({
+        where: { userId: userId },
+        update: {
+          stripeSubscriptionId: subscription.id,
+          status: subscription.status,
+          planType: planType,
+          currentPeriodStart: new Date(subscription.current_period_start * 1000),
+          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          updatedAt: new Date(),
+          canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
+        },
+        create: {
+          userId: userId,
+          stripeSubscriptionId: subscription.id,
+          status: subscription.status,
+          planType: planType,
+          currentPeriodStart: new Date(subscription.current_period_start * 1000),
+          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
+        }
+      });
+      this.logger.log(`[SYNC] Subscription ${subscription.id} created/updated synchronously.`);
+    }
+
     this.logger.log(`Checkout session completed for user ${userId} with plan ${planType}`);
 
     // Check if this was an initial payment (registration flow)
