@@ -63,6 +63,7 @@ function UserModal({
     role: 'PSYCHOLOGIST',
     country: 'España',
     professionalNumber: '',
+    plan: '',
     // Usage Limits
     transcriptionMinutesUsed: 0,
     extraTranscriptionMinutes: 0,
@@ -83,6 +84,7 @@ function UserModal({
         role: userToEdit.role || 'PSYCHOLOGIST',
         country: userToEdit.country || 'España',
         professionalNumber: userToEdit.professionalNumber || '',
+        plan: userToEdit.subscription?.planType || '',
         transcriptionMinutesUsed: userToEdit.transcriptionMinutesUsed || 0,
         extraTranscriptionMinutes: userToEdit.extraTranscriptionMinutes || 0,
         simulatorUsageCount: userToEdit.simulatorUsageCount || 0,
@@ -97,6 +99,7 @@ function UserModal({
         role: 'PSYCHOLOGIST',
         country: 'España',
         professionalNumber: '',
+        plan: '',
         transcriptionMinutesUsed: 0,
         extraTranscriptionMinutes: 0,
         simulatorUsageCount: 0,
@@ -178,6 +181,20 @@ function UserModal({
               <option value="ADMIN">Administrador</option>
               <option value="AGENDA_MANAGER">Gestor de Agenda</option>
             </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Plan de Suscripción (Forzar)</label>
+            <select className="mt-1 block w-full border rounded-md p-2"
+              value={formData.plan} onChange={e => setFormData({ ...formData, plan: e.target.value })}>
+              <option value="">-- Mantener actual --</option>
+              <option value="basic">Basic</option>
+              <option value="pro">Pro</option>
+              <option value="premium">Premium</option>
+              <option value="business">Business</option>
+              <option value="premium_plus">Premium Plus</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">⚠️ Asignar un plan activará al usuario automáticamente.</p>
           </div>
 
 

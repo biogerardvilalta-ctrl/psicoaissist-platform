@@ -206,6 +206,11 @@ export class UsersService {
         updatedAt: new Date(),
       };
 
+      if (updateUserDto.plan) {
+        await this.paymentsService.forceSubscription(id, updateUserDto.plan);
+        delete updateData.plan;
+      }
+
       if (updateUserDto.email) {
         updateData.email = updateUserDto.email.toLowerCase();
       }

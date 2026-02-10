@@ -524,6 +524,59 @@ export class PaymentsService {
     }
   }
 
+  async forceSubscription(userId: string, planType: string) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (!user) throw new NotFoundException('User not found');
+
+      const fakeSubId = `sub_manual_${Date.now()}`;
+
+      await this.prisma.subscription.upsert({
+        where: { userId: user.id },
+        update: {
+          status: 'active',
+          planType: planType,
+          stripeSubscriptionId: fakeSubId,
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30)),
+          updatedAt: new Date(),
+          canceledAt: null,
+        },
+        create: {
+          userId: user.id,
+          status: 'active',
+          planType: planType,
+          stripeSubscriptionId: fakeSubId,
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: new Date(new Date().setDate(new Date().getDate() + 30)),
+          canceledAt: null,
+        }
+      });
+
+      if (user.status !== 'ACTIVE') {
+        await this.prisma.user.update({
+          where: { id: userId },
+          data: { status: 'ACTIVE' }
+        });
+      }
+
+      this.logger.log(`Forced subscription for user ${userId} to plan ${planType}`);
+
+      await this.auditService.log({
+        userId: userId,
+        action: AuditAction.SUBSCRIPTION_CHANGE,
+        resourceType: 'SUBSCRIPTION',
+        resourceId: fakeSubId,
+        details: `Suscripción forzada manualmente a ${planType}`,
+        isSuccess: true,
+      });
+
+    } catch (error) {
+      this.logger.error(`Error forcing subscription: ${error.message}`);
+      throw error;
+    }
+  }
+
   // ... (rest)
 
 

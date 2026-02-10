@@ -76,6 +76,11 @@ export class UpdateUserDto {
   @IsString()
   country?: string;
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  plan?: string;
+
   // New Settings Fields
   @ApiProperty({ required: false })
   @IsOptional()
