@@ -1,7 +1,7 @@
 'use client';
 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useRole } from '@/hooks/useRole';
 import { Heart, User, Settings, LogOut, Menu, X, Shield, LayoutDashboard, Users, FileText, Calendar, PieChart, Mic } from 'lucide-react';
@@ -41,6 +41,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             console.error('Error al cerrar sesión:', error);
         }
     };
+
+    // Force redirect for INACTIVE users trying to access dashboard
+    // They must complete payment first.
+    useEffect(() => {
+        if (user && user.status === 'INACTIVE') {
+            // Avoid redirect loop if already on payment pages (though this layout is for dashboard)
+            router.push('/payment/plans');
+        }
+    }, [user, router]);
+
 
     const navItems = [
         { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard, show: true },

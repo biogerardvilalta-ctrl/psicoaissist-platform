@@ -202,15 +202,18 @@ export class PaymentsService {
 
   async verifyCheckoutSession(sessionId: string, userId: string) {
     try {
-      this.logger.log(`Verifying checkout session ${sessionId} for user ${userId}`);
+      this.logger.log(`[DEBUG] Starting verifyCheckoutSession for session ${sessionId} user ${userId}`);
 
       // 1. Retrieve session from Stripe
       // Note: In demo mode, retrieving a random session ID will return mock success.
       // In real mode, it retrieves actual status.
       let session;
       try {
+        this.logger.log(`[DEBUG] Retrieving session from Stripe...`);
         session = await this.stripeService.retrieveCheckoutSession(sessionId);
+        this.logger.log(`[DEBUG] Session retrieved: ${session?.id}, status: ${session?.payment_status}`);
       } catch (e) {
+        this.logger.error(`[DEBUG] Failed to retrieve session: ${e.message}`);
         throw new NotFoundException('Session not found');
       }
 
@@ -229,9 +232,12 @@ export class PaymentsService {
       if (session.payment_status === 'paid' || session.payment_status === 'no_payment_required') {
         // 4. Trigger completion logic (Reuse Webhook Handler Logic)
         // We cast to Stripe.Checkout.Session as our service handles it
+        this.logger.log(`[DEBUG] Calling handleCheckoutSessionCompleted...`);
         await this.handleCheckoutSessionCompleted(session as Stripe.Checkout.Session);
+        this.logger.log(`[DEBUG] handleCheckoutSessionCompleted finished successfully.`);
         return { success: true, status: 'paid' };
       } else {
+        this.logger.log(`[DEBUG] Payment not paid. Status: ${session.payment_status}`);
         return { success: false, status: session.payment_status };
       }
 

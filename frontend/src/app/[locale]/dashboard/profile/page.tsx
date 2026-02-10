@@ -74,7 +74,7 @@ export default function ProfilePage() {
     const { cancelSubscription } = usePayments();
 
     const handleDeleteAccount = async () => {
-        if (deleteConfirmation !== 'BORRAR') return;
+        if (deleteConfirmation !== t('dialogs.deleteAccount.deleteWord')) return;
 
         setIsDeleting(true);
         try {
@@ -602,7 +602,7 @@ export default function ProfilePage() {
                         <DialogDescription>
                             {t('dialogs.deleteAccount.description')}
                             <br /><br />
-                            Escribe <strong>{t('dialogs.deleteAccount.deleteWord')}</strong> abajo para confirmar.
+                            {t('dialogs.deleteAccount.confirmText', { text: t('dialogs.deleteAccount.deleteWord') })}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-2">
@@ -618,7 +618,7 @@ export default function ProfilePage() {
                         <Button
                             variant="destructive"
                             onClick={handleDeleteAccount}
-                            disabled={deleteConfirmation !== 'BORRAR' || isDeleting}
+                            disabled={deleteConfirmation !== t('dialogs.deleteAccount.deleteWord') || isDeleting}
                             className="bg-red-600 hover:bg-red-700"
                         >
                             {isDeleting ? t('dialogs.deleteAccount.deleting') : t('dialogs.deleteAccount.confirm')}

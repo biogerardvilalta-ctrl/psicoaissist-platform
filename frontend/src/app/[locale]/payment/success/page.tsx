@@ -2,6 +2,7 @@
 
 import { CheckCircle, ArrowRight, Home } from 'lucide-react';
 import { Link } from '@/navigation';
+import { useAuth } from '@/contexts/auth-context';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -11,6 +12,7 @@ export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const [sessionId, setSessionId] = useState<string>('');
   const [planName, setPlanName] = useState<string>('');
+  const { reloadUser } = useAuth();
 
   useEffect(() => {
     const sessionIdParam = searchParams.get('session_id') || '';
@@ -33,12 +35,14 @@ export default function PaymentSuccessPage() {
       console.log('Verifying session:', sessionIdParam);
       import('@/lib/payments-api').then(({ PaymentsAPI }) => {
         PaymentsAPI.verifySession(sessionIdParam)
-          .then(result => {
+          .then(async (result) => {
             console.log('Verification result:', result);
             if (result.success) {
               // Force reload user to update status/limits locally
-              // We can trigger this via window reload or AuthContext if available
-              // For simplicity and robustness, specific timeout reload
+              console.log('Payment verified. Reloading user profile...');
+              await reloadUser();
+              // Optional: Force hard reload if context isn't enough or to clear valid-but-stale state
+              // setTimeout(() => window.location.reload(), 1000); 
             }
           })
           .catch(err => console.error('Verification failed', err));
