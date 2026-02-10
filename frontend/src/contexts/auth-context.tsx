@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode, useRef } from 'react';
 import { AuthAPI } from '@/lib/auth-api';
 import type { AuthState, AuthTokens, User, LoginRequest, RegisterRequest, EncryptionKey } from '@/types/auth';
+import { useRouter, usePathname } from '@/navigation';
+import { useLocale } from 'next-intl';
 
 // Auth Actions
 type AuthAction =
@@ -183,6 +185,9 @@ interface AuthProviderProps {
 // Auth Provider Component
 export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = useLocale();
 
   // Save tokens and user to storage
   const saveSession = useCallback((user: User, tokens: AuthTokens, encryptionKey?: EncryptionKey, remember: boolean = true) => {
@@ -253,6 +258,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
 
           dispatch({ type: 'RESTORE_SESSION', payload: { user, tokens, encryptionKey } });
+
+          // Sync Language if different
+          if (user.preferredLanguage && user.preferredLanguage !== locale) {
+            console.log(`🔄 Syncing locale to user preference: ${user.preferredLanguage}`);
+            router.replace(pathname, { locale: user.preferredLanguage });
+          }
+
           return true;
         } else {
           // Only clear if we really have nothing
@@ -267,7 +279,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     dispatch({ type: 'SET_LOADING', payload: false });
     return false;
-  }, [clearSession]);
+  }, [clearSession, router, pathname, locale]);
 
   // Login function
   const login = useCallback(async (credentials: LoginRequest, remember: boolean = false) => {
@@ -287,6 +299,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       saveSession(user, tokens, encryptionKey, remember);
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user, tokens, encryptionKey } });
 
+      // Sync Language if different
+      if (user.preferredLanguage && user.preferredLanguage !== locale) {
+        console.log(`🔄 Syncing locale to user preference: ${user.preferredLanguage}`);
+        router.replace(pathname, { locale: user.preferredLanguage });
+      }
+
       console.log('✅ Login successful for:', user.email);
 
     } catch (error) {
@@ -295,7 +313,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       clearSession();
       throw error;
     }
-  }, [saveSession, clearSession]);
+  }, [saveSession, clearSession, router, pathname, locale]);
 
   // Register function
   const register = useCallback(async (userData: RegisterRequest): Promise<{ success: boolean; user?: User }> => {
