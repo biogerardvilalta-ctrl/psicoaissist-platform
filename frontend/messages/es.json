@@ -2263,16 +2263,10 @@
         },
         "Success": {
             "title": "¡Pago Completado!",
-            "message": "Tu suscripción al <strong>{plan}</strong> ha sido activada exitosamente. Ya puedes acceder a todas las funciones de PsicoAIssist.",
-            "plans": {
-                "basic": "Plan Básico",
-                "pro": "Plan Pro",
-                "premium": "Plan Premium",
-                "selected": "Plan seleccionado"
-            },
+            "message": "Gracias por suscribirte al plan {plan}. Tu cuenta ha sido activada correctamente.",
             "demo": {
                 "title": "Modo Demo",
-                "message": "Esta es una simulación de pago con fines de prueba"
+                "message": "Estás viendo una simulación del proceso de pago."
             },
             "next": {
                 "title": "¿Qué sigue?",
@@ -2288,6 +2282,12 @@
             "support": {
                 "message": "¿Necesitas ayuda?",
                 "link": "Contacta soporte"
+            },
+            "plans": {
+                "selected": "Seleccionado",
+                "basic": "Básico",
+                "pro": "Pro",
+                "premium": "Premium"
             }
         }
     },
@@ -3285,38 +3285,5 @@
         "loadError": "No se pudo cargar la información.",
         "loadDraftError": "No se pudo cargar el borrador.",
         "loadSessionsError": "No se pudieron cargar las sesiones del paciente."
-    },
-    "Payment": {
-        "Success": {
-            "title": "¡Pago Completado!",
-            "message": "Gracias por suscribirte al plan {plan}. Tu cuenta ha sido activada correctamente.",
-            "demo": {
-                "title": "Modo Demo",
-                "message": "Estás viendo una simulación del proceso de pago."
-            },
-            "next": {
-                "title": "¿Qué sigue?",
-                "dashboard": "Accede a tu dashboard personal",
-                "profile": "Configura tu perfil profesional",
-                "firstSession": "Comienza tu primera sesión",
-                "exploreAI": "Explora las funciones de IA"
-            },
-            "actions": {
-                "goToDashboard": "Ir al Dashboard",
-                "backHome": "Volver al inicio"
-            },
-            "support": {
-                "message": "¿Necesitas ayuda?",
-                "link": "Contacta soporte"
-            },
-            "plans": {
-                "selected": "Seleccionado",
-                "basic": "Básico",
-                "pro": "Pro",
-                "premium": "Premium"
-            }
-        }
     }
-}
-}
 }

@@ -2252,31 +2252,31 @@
         },
         "Success": {
             "title": "Payment Completed!",
-            "message": "Your subscription to <strong>{plan}</strong> has been successfully activated. You can now access all PsicoAIssist features.",
-            "plans": {
-                "basic": "Basic Plan",
-                "pro": "Pro Plan",
-                "premium": "Premium Plan",
-                "selected": "Selected plan"
-            },
+            "message": "Thank you for subscribing to the {plan} plan. Your account has been successfully activated.",
             "demo": {
                 "title": "Demo Mode",
-                "message": "This is a payment simulation for testing purposes"
+                "message": "You are viewing a payment process simulation."
             },
             "next": {
                 "title": "What's next?",
                 "dashboard": "Access your personal dashboard",
-                "profile": "Configure your professional profile",
+                "profile": "Set up your professional profile",
                 "firstSession": "Start your first session",
                 "exploreAI": "Explore AI features"
             },
             "actions": {
                 "goToDashboard": "Go to Dashboard",
-                "backHome": "Back to home"
+                "backHome": "Back to Home"
             },
             "support": {
                 "message": "Need help?",
                 "link": "Contact support"
+            },
+            "plans": {
+                "selected": "Selected",
+                "basic": "Basic",
+                "pro": "Pro",
+                "premium": "Premium"
             }
         }
     },

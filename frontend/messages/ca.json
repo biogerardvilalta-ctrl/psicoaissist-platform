@@ -2253,16 +2253,10 @@
         },
         "Success": {
             "title": "Pagament Completat!",
-            "message": "La teva subscripció al <strong>{plan}</strong> ha estat activada amb èxit. Ja pots accedir a totes les funcions de PsicoAIssist.",
-            "plans": {
-                "basic": "Pla Bàsic",
-                "pro": "Pla Pro",
-                "premium": "Pla Premium",
-                "selected": "Pla seleccionat"
-            },
+            "message": "Gràcies per subscriure't al pla {plan}. El teu compte s'ha activat correctament.",
             "demo": {
                 "title": "Mode Demo",
-                "message": "Aquesta és una simulació de pagament amb fins de prova"
+                "message": "Estàs veient una simulació del procés de pagament."
             },
             "next": {
                 "title": "Què segueix?",
@@ -2278,6 +2272,12 @@
             "support": {
                 "message": "Necessites ajuda?",
                 "link": "Contacta suport"
+            },
+            "plans": {
+                "selected": "Seleccionat",
+                "basic": "Bàsic",
+                "pro": "Pro",
+                "premium": "Premium"
             }
         }
     },
