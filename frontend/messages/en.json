@@ -2277,6 +2277,15 @@
                 "basic": "Basic",
                 "pro": "Pro",
                 "premium": "Premium"
+            },
+            "status": {
+                "verifying": "Verifying activation...",
+                "activated": "Account Activated",
+                "pending": "Activation Pending"
+            },
+            "button": {
+                "verifying": "Activating...",
+                "retry": "Check Status Again"
             }
         }
     },

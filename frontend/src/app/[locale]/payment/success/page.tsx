@@ -51,8 +51,27 @@ export default function PaymentSuccessPage() {
     } else {
       setIsVerifying(false);
     }
-
   }, [searchParams]);
+
+  const handleRetry = () => {
+    setIsVerifying(true);
+    const sessionIdParam = searchParams.get('session_id');
+    if (sessionIdParam) {
+      import('@/lib/payments-api').then(({ PaymentsAPI }) => {
+        PaymentsAPI.verifySession(sessionIdParam)
+          .then(async (result) => {
+            if (result.success) {
+              await reloadUser();
+              setIsActivated(true);
+            }
+          })
+          .finally(() => setIsVerifying(false));
+      });
+    } else {
+      // Fallback: just reload user if logic depends on status only
+      reloadUser().finally(() => setIsVerifying(false));
+    }
+  };
 
   // Handle case where user is already active (revisiting page)
   useEffect(() => {
@@ -84,16 +103,16 @@ export default function PaymentSuccessPage() {
           {isVerifying ? (
             <div className="flex items-center justify-center text-blue-600 gap-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-              <span className="text-sm font-medium">Verificando activación...</span>
+              <span className="text-sm font-medium">{t('status.verifying')}</span>
             </div>
           ) : isActivated ? (
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
               <CheckCircle className="w-3 h-3 mr-1" />
-              Cuenta Activada
+              {t('status.activated')}
             </div>
           ) : (
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-medium">
-              Pendiente de activación
+              {t('status.pending')}
             </div>
           )}
         </div>
@@ -130,10 +149,14 @@ export default function PaymentSuccessPage() {
             </Link>
           ) : (
             <button
-              disabled
-              className="w-full inline-flex items-center justify-center px-6 py-3 bg-gray-300 text-white font-medium rounded-lg cursor-not-allowed"
+              onClick={handleRetry}
+              disabled={isVerifying}
+              className={`w-full inline-flex items-center justify-center px-6 py-3 font-medium rounded-lg transition-colors ${isVerifying
+                ? 'bg-gray-300 text-white cursor-not-allowed'
+                : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                }`}
             >
-              {isVerifying ? 'Activando...' : 'Esperando confirmación...'}
+              {isVerifying ? t('button.verifying') : t('button.retry')}
             </button>
           )}
 
@@ -151,6 +174,6 @@ export default function PaymentSuccessPage() {
           {t('support.message')} <a href="/contact" className="text-blue-600 hover:underline">{t('support.link')}</a>
         </p>
       </div>
-    </div>
-  );
+
+      );
 }

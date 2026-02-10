@@ -2288,6 +2288,15 @@
                 "basic": "Básico",
                 "pro": "Pro",
                 "premium": "Premium"
+            },
+            "status": {
+                "verifying": "Verificando activación...",
+                "activated": "Cuenta Activada",
+                "pending": "Pendiente de activación"
+            },
+            "button": {
+                "verifying": "Activando...",
+                "retry": "Comprobar estado de nuevo"
             }
         }
     },

@@ -2278,6 +2278,15 @@
                 "basic": "Bàsic",
                 "pro": "Pro",
                 "premium": "Premium"
+            },
+            "status": {
+                "verifying": "Verificant activació...",
+                "activated": "Compte Activat",
+                "pending": "Pendent d'activació"
+            },
+            "button": {
+                "verifying": "Activant...",
+                "retry": "Comprovar estat de nou"
             }
         }
     },
