@@ -6,7 +6,7 @@ export default registerAs('stripe', () => ({
   secretKey: process.env.STRIPE_SECRET_KEY || 'sk_test_...',
   publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_...',
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || 'whsec_...',
-  successUrl: (process.env.FRONTEND_URL || 'http://localhost:3000') + '/payment/success',
+  successUrl: (process.env.FRONTEND_URL || 'http://localhost:3000') + '/payment/success?session_id={CHECKOUT_SESSION_ID}',
   cancelUrl: (process.env.FRONTEND_URL || 'http://localhost:3000') + '/payment/cancel',
   plans: {
     basic: {
