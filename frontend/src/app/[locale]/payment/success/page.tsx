@@ -152,8 +152,8 @@ export default function PaymentSuccessPage() {
               onClick={handleRetry}
               disabled={isVerifying}
               className={`w-full inline-flex items-center justify-center px-6 py-3 font-medium rounded-lg transition-colors ${isVerifying
-                ? 'bg-gray-300 text-white cursor-not-allowed'
-                : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                  ? 'bg-gray-300 text-white cursor-not-allowed'
+                  : 'bg-yellow-500 text-white hover:bg-yellow-600'
                 }`}
             >
               {isVerifying ? t('button.verifying') : t('button.retry')}
@@ -174,6 +174,6 @@ export default function PaymentSuccessPage() {
           {t('support.message')} <a href="/contact" className="text-blue-600 hover:underline">{t('support.link')}</a>
         </p>
       </div>
-
-      );
+    </div>
+  );
 }
