@@ -60,10 +60,10 @@ export default function PaymentCancelPage() {
           </p>
           <div className="space-y-2">
             <a
-              href="mailto:soporte@psicoaissist.com"
+              href="mailto:suport@psicoaissist.com"
               className="block text-sm text-blue-600 hover:underline"
             >
-              📧 soporte@psicoaissist.com
+              📧 suport@psicoaissist.com
             </a>
             <a
               href="/chat"

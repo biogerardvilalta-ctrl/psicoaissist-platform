@@ -112,6 +112,7 @@
     "common": {
         "copyright": "© {year} PsicoAIssist. All rights reserved.",
         "support": "PsicoAIssist Support",
+        "cta_dashboard": "Go to Dashboard",
         "spam_notice": "If you do not receive the email in your inbox, please check your spam folder and mark it as not spam."
     }
 }

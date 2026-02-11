@@ -149,7 +149,7 @@ export class EmailService {
             <div style="text-align: center; margin: 30px 0;">
               <a href="https://psicoaissist.com/dashboard" 
                  style="background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Ir al Dashboard
+                ${common('cta_dashboard')}
               </a>
             </div>
             <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
@@ -208,7 +208,7 @@ export class EmailService {
             </div>
             <p style="color: #666; font-size: 14px;">
               ${t('help')}
-              <a href="mailto:soporte@psicoaissist.com">soporte@psicoaissist.com</a>
+              <a href="mailto:suport@psicoaissist.com">suport@psicoaissist.com</a>
             </p>
             <p style="color: #999; font-size: 11px; margin-top: 10px; text-align: center;">
               ${common('spam_notice')}
@@ -234,7 +234,7 @@ export class EmailService {
 
         Dashboard: https://psicoaissist.com/dashboard
 
-        ${t('help')} soporte@psicoaissist.com
+        ${t('help')} suport@psicoaissist.com
 
         ${common('spam_notice')}
 
