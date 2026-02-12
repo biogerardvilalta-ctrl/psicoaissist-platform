@@ -804,7 +804,7 @@ export class AuthService {
 
     if (user) {
       if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED) {
-        if (user.status === UserStatus.DELETED || user.status === UserStatus.INACTIVE) {
+        if (user.status === UserStatus.DELETED) {
           await this.prisma.user.update({
             where: { id: user.id },
             data: { status: UserStatus.ACTIVE }
