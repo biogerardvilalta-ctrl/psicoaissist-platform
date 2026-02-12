@@ -19,6 +19,9 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
+# Explicitly copy i18n files to dist folder (workaround for nest-cli assets issue in Docker)
+COPY src/i18n ./dist/src/i18n
+
 # Production Stage
 FROM node:20-alpine AS runner
 

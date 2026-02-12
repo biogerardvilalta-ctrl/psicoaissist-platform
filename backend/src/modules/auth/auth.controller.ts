@@ -12,6 +12,7 @@ import {
   Header,
   Query,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Response, Request } from 'express';
@@ -33,7 +34,10 @@ import { CompleteGoogleRegisterDto } from './dto/complete-google-register.dto';
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(private readonly authService: AuthService) { }
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService
+  ) { }
 
   @ApiOperation({ summary: 'Login con Google' })
   @Get('google')
@@ -315,26 +319,46 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Logout de usuario' })
   @ApiResponse({ status: 200, description: 'Logout exitoso' })
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(
-    @Req() req: Request & { user: any },
+    @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
+    // Extract token manually since we removed the Guard to allow clearing cookies even with expired tokens
+    const authHeader = req.headers.authorization;
+    let userId = null;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      try {
+        const payload = this.jwtService.decode(token) as any;
+        if (payload && payload.sub) {
+          userId = payload.sub;
+        }
+      } catch (e) {
+        // Ignore invalid tokens, we just want to clear cookies
+      }
+    }
+
     try {
-      await this.authService.logout(req.user.id);
+      if (userId) {
+        await this.authService.logout(userId);
+        this.logger.log(`User logged out: ${userId}`);
+      } else {
+        this.logger.log(`Anonymous/Invalid Session Logout`);
+      }
 
       // Limpiar cookies
       response.clearCookie('accessToken', { path: '/' });
       response.clearCookie('refreshToken', { path: '/' });
 
-      this.logger.log(`User logged out: ${req.user.id}`);
-
       return { message: 'Logout exitoso' };
     } catch (error) {
       this.logger.error(`Logout error: ${error.message}`);
-      throw error;
+      // Don't throw, just ensure cookies are cleared
+      response.clearCookie('accessToken', { path: '/' });
+      response.clearCookie('refreshToken', { path: '/' });
+      return { message: 'Logout exitoso (con error interno controlado)' };
     }
   }
 
