@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRole } from '@/hooks/useRole';
-import { Database, Server, Activity, HardDrive, ShieldCheck, AlertTriangle } from 'lucide-react';
-
+import { Database, Server, Activity, HardDrive, ShieldCheck, AlertTriangle, Trash2 } from 'lucide-react';
+import { AdminAPI } from '@/lib/admin-api';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SystemPage() {
     const { isAdmin } = useRole();
+    const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
 
     const [stats, setStats] = useState({
         dbStatus: 'Connected',
@@ -16,6 +19,38 @@ export default function SystemPage() {
         version: '1.2.0',
         nodeVersion: 'v18.16.0'
     });
+
+    const handleCleanup = async () => {
+        if (!confirm('¿Estás seguro de que quieres eliminar permanentemente los usuarios borrados? Esta acción NO se puede deshacer.')) {
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const result = await AdminAPI.cleanupSoftDeletedUsers();
+            if (result.success) {
+                toast({
+                    title: "Limpieza completada",
+                    description: result.message,
+                    variant: "default"
+                });
+            } else {
+                toast({
+                    title: "Error",
+                    description: "No se pudo completar la limpieza",
+                    variant: "destructive"
+                });
+            }
+        } catch (error: any) {
+            toast({
+                title: "Error",
+                description: error.message || 'Error al limpiar usuarios',
+                variant: "destructive"
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     if (!isAdmin()) {
         return <div className="p-8 text-center text-red-600">Estado del Sistema</div>;
@@ -137,6 +172,20 @@ export default function SystemPage() {
                             <AlertTriangle className="w-6 h-6 text-red-500 mb-2" />
                             <div className="font-medium text-red-900">Reiniciar Servicios</div>
                             <div className="text-xs text-red-700">Solo en caso de emergencia</div>
+                        </button>
+                        <button
+                            className="p-4 border border-red-100 bg-red-50 rounded-lg hover:bg-red-100 text-left transition-colors relative"
+                            onClick={handleCleanup}
+                            disabled={isLoading}
+                        >
+                            <Trash2 className="w-6 h-6 text-red-500 mb-2" />
+                            <div className="font-medium text-red-900">Limpiar Reciclage</div>
+                            <div className="text-xs text-red-700">Eliminar usuarios borrados</div>
+                            {isLoading && (
+                                <div className="absolute inset-0 bg-white/50 flex items-center justify-center rounded-lg">
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
+                                </div>
+                            )}
                         </button>
                     </div>
                 </div>

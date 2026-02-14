@@ -1011,6 +1011,21 @@ export class AdminController {
     return user;
   }
 
+
+  @Delete('users/cleanup')
+  async cleanupSoftDeletedUsers() {
+    const result = await this.usersService.deleteSoftDeletedUsers();
+
+    await this.logAdminAction('USER_CLEANUP', {
+      deletedCount: result.count
+    });
+
+    return {
+      success: true,
+      message: `Limpieza completada. ${result.count} usuarios eliminados permanentemente.`
+    };
+  }
+
   @Delete('users/:id')
   async deleteUser(@Param('id') id: string, @Body() body: { reason: string }) {
     // Soft delete or hard delete based on requirements
@@ -1188,6 +1203,10 @@ export class AdminController {
         auditAction = AuditAction.UPDATE;
         resourceType = 'USER';
         details = `Usuario verificado manualmente por admin`;
+      } else if (action === 'USER_CLEANUP') {
+        auditAction = AuditAction.DELETE;
+        resourceType = 'SYSTEM';
+        details = `Limpieza de usuarios eliminados. Total: ${metadata.deletedCount}`;
       }
 
       await this.auditService.log({

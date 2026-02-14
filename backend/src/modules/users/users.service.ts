@@ -1041,4 +1041,63 @@ export class UsersService {
       verified: user.verified,
     };
   }
+
+  /**
+   * Eliminar físicamente todos los usuarios con status DELETED
+   * ADVERTENCIA: Esta acción es irreversible
+   */
+  async deleteSoftDeletedUsers(): Promise<{ count: number }> {
+    try {
+      // 1. Find users to be deleted
+      const usersToDelete = await this.prisma.user.findMany({
+        where: { status: UserStatus.DELETED },
+        select: { id: true, email: true }
+      });
+
+      if (usersToDelete.length === 0) {
+        return { count: 0 };
+      }
+
+      const userIds = usersToDelete.map(u => u.id);
+      this.logger.log(`Starting cleanup of ${userIds.length} soft-deleted users...`);
+
+      // 2. Delete related SimulationReports (no cascade on schema usually, check schema)
+      await this.prisma.simulationReport.deleteMany({
+        where: { userId: { in: userIds } }
+      });
+
+      // 3. Delete related AdminTasks (assignedTo or userId)
+      await this.prisma.adminTask.deleteMany({
+        where: {
+          OR: [
+            { userId: { in: userIds } },
+            { assignedTo: { in: userIds } }
+          ]
+        }
+      });
+
+      // 4. Delete Notifications
+      await this.prisma.notification.deleteMany({
+        where: { userId: { in: userIds } }
+      });
+
+      // 5. Delete AuditLogs (userId)
+      await this.prisma.auditLog.deleteMany({
+        where: { userId: { in: userIds } }
+      });
+
+      // 6. Delete the Users
+      // This will Cascade: Sessions, Clients, Reports, Subscriptions, etc. (based on Schema definitions)
+      const result = await this.prisma.user.deleteMany({
+        where: { id: { in: userIds } }
+      });
+
+      this.logger.log(`Cleanup complete. Deleted ${result.count} users.`);
+
+      return { count: result.count };
+    } catch (error) {
+      this.logger.error(`Error deleting soft-deleted users: ${error.message}`);
+      throw error;
+    }
+  }
 }

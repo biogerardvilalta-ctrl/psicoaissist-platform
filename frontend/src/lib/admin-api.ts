@@ -293,4 +293,15 @@ export class AdminAPI {
       throw new Error('Error al verificar el usuario');
     }
   }
+
+  static async cleanupSoftDeletedUsers(): Promise<{ success: boolean; message: string }> {
+    try {
+      console.log('🧹 Cleaning up soft-deleted users...');
+      const response = await httpClient.delete(`${this.BASE_URL}/users/cleanup`);
+      return response as any;
+    } catch (error) {
+      console.error('❌ Error cleaning up users:', error);
+      throw new Error('Error al realizar la limpieza de usuarios');
+    }
+  }
 }
