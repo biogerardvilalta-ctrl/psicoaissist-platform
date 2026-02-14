@@ -42,7 +42,9 @@ export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: Consent
                         {t('title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {t('description').split('{clientName}')[0]}<strong>{clientName}</strong>{t('description').split('{clientName}')[1]}
+                        {t.rich('description', {
+                            clientName: () => <strong>{clientName}</strong>
+                        })}
                     </DialogDescription>
                 </DialogHeader>
 

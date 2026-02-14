@@ -38,11 +38,12 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
     const [permissionError, setPermissionError] = useState<string | null>(null);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const streamRecorderRef = useRef<MediaRecorder | null>(null); // New recorder for chunks
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const chunksRef = useRef<Blob[]>([]);
-    // const chunkIntervalRef = useRef<NodeJS.Timeout | null>(null); // Removed: timeslice handles this
     const shouldRestartRef = useRef(true);
     const isLimitReachedRef = useRef(isLimitReached);
+    const streamRef = useRef<MediaStream | null>(null); // Keep reference to stream
 
     // Sync ref
     useEffect(() => {
@@ -59,11 +60,21 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
     useEffect(() => {
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-                mediaRecorderRef.current.stop();
-            }
+            stopRecordersAndTracks();
         };
     }, []);
+
+    const stopRecordersAndTracks = () => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop();
+        }
+        if (streamRecorderRef.current && streamRecorderRef.current.state !== 'inactive') {
+            streamRecorderRef.current.stop();
+        }
+        if (streamRef.current && !inputStream) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+        }
+    };
 
     // Stop recording if limit reached
     useEffect(() => {
@@ -74,7 +85,23 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
         }
     }, [isLimitReached, isRecording]);
 
-    // ...
+    const startStreamCheckLoop = (recorder: MediaRecorder) => {
+        // Start the stream recorder for a chunk
+        try {
+            if (recorder.state === 'inactive') {
+                recorder.start();
+                // Schedule stop in 5 seconds
+                setTimeout(() => {
+                    if (shouldRestartRef.current && recorder.state === 'recording') {
+                        recorder.stop();
+                    }
+                }, 5000);
+            }
+        } catch (e) {
+            console.error("Error in stream loop:", e);
+        }
+    };
+
     const startRecording = async () => {
         console.log('startRecording called. isLimitReached:', isLimitReached);
         if (isLimitReached) {
@@ -91,6 +118,7 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
             } else {
                 stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             }
+            streamRef.current = stream;
 
             let mimeType = 'audio/webm';
             if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
@@ -99,37 +127,54 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
                 mimeType = 'audio/mp4';
             }
 
+            // 1. Setup Main Recorder (Archival)
             const mediaRecorder = new MediaRecorder(stream, { mimeType });
             mediaRecorderRef.current = mediaRecorder;
             chunksRef.current = [];
-            shouldRestartRef.current = true; // Use ref
 
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     chunksRef.current.push(event.data);
-
-                    // Prevention: Do not emit stream data if limit is reached
-                    if (onStreamData && !isLimitReachedRef.current) {
-                        onStreamData(event.data);
-                    }
                 }
             };
 
             mediaRecorder.onstop = () => {
-                // Final stop -> Save full blob
-                // Prevention: If limit reached, discard blob to prevent transcription error on empty/partial files
+                // Final full blob assembly
                 if (isLimitReachedRef.current) {
-                    console.log('[AudioRecorder] Limit reached, discarding final blob to prevent transcription error.');
-                    if (!inputStream) stream.getTracks().forEach(track => track.stop());
-                    return;
+                    console.log('[AudioRecorder] Limit reached, discarding final blob.');
+                } else {
+                    const blob = new Blob(chunksRef.current, { type: mimeType });
+                    onAudioData(blob);
                 }
-
-                const blob = new Blob(chunksRef.current, { type: mimeType });
-                onAudioData(blob);
-                if (!inputStream) stream.getTracks().forEach(track => track.stop()); // Stop mic access
+                if (!inputStream) stream.getTracks().forEach(track => track.stop());
             };
 
-            mediaRecorder.start(5000); // 5s timeslice
+            // 2. Setup Stream Recorder (AI Chunks)
+            const streamRecorder = new MediaRecorder(stream, { mimeType });
+            streamRecorderRef.current = streamRecorder;
+            shouldRestartRef.current = true;
+
+            streamRecorder.ondataavailable = (event) => {
+                // We get the data on stop (or timeslice if we used it, but here we use stop/start)
+                // If we use stop(), this event fires with the full blob since start()
+                if (event.data.size > 0 && onStreamData && !isLimitReachedRef.current) {
+                    onStreamData(event.data);
+                }
+            };
+
+            streamRecorder.onstop = () => {
+                // When this recorder stops, it means a chunk is finished. 
+                // Immediately restart it if we are still recording.
+                if (shouldRestartRef.current) {
+                    startStreamCheckLoop(streamRecorder);
+                }
+            };
+
+
+            // Start both
+            mediaRecorder.start(1000); // Main recorder gathers chunks every 1s for safety/memory
+            startStreamCheckLoop(streamRecorder); // Starts the ping-pong loop
+
             setIsRecording(true);
             onRecordingStatusChange?.(true);
             setPermissionError(null);
@@ -144,46 +189,25 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
         }
     };
 
-    // Effect to manage the chunking interval when recording - REMOVED
-    // useEffect(() => {
-    //     if (isRecording && mediaRecorderRef.current) {
-    //         chunkIntervalRef.current = setInterval(() => {
-    //             if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-    //                 mediaRecorderRef.current.stop(); // Triggers onstop, which restarts if shouldRestart=true
-    //             }
-    //         }, 5000); // 5 seconds interval
-    //     }
-
-    //     return () => {
-    //         if (chunkIntervalRef.current) {
-    //             clearInterval(chunkIntervalRef.current);
-    //         }
-    //     };
-    // }, [isRecording]);
-
     const stopRecording = () => {
-        if (mediaRecorderRef.current && isRecording) {
-            // Signal onstop that this is the final stop
-            // We need to access the 'shouldRestart' variable from closure? 
-            // Better to use a ref or modify handling. 
-            // Actually, we can't easily access the closure variable 'shouldRestart' from here.
-            // Let's rely on a ref.
-            shouldRestartRef.current = false;
+        shouldRestartRef.current = false; // Stop the loop
 
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
             mediaRecorderRef.current.stop();
-            setIsRecording(false);
-            onRecordingStatusChange?.(false);
-
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-                timerRef.current = null;
-            }
-            // if (chunkIntervalRef.current) {
-            //     clearInterval(chunkIntervalRef.current);
-            //     chunkIntervalRef.current = null;
-            // }
-            setRecordingTime(0);
         }
+
+        if (streamRecorderRef.current && streamRecorderRef.current.state !== 'inactive') {
+            streamRecorderRef.current.stop();
+        }
+
+        setIsRecording(false);
+        onRecordingStatusChange?.(false);
+
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+        setRecordingTime(0);
     };
 
 

@@ -59,8 +59,9 @@ export class TranscriptionService {
                 }
 
             } catch (dErr) {
-                console.warn("Duration check warning:", dErr);
-                if ((dErr as any).status === 403) throw dErr;
+                console.warn("Duration check warning (non-fatal):", dErr);
+                // Do not throw, just log. Transcription can proceed even if duration check fails.
+                // If usage limits are critical, we might want to throw, but for stability, we proceed.
             } finally {
                 // Immediate cleanup of duration check file
                 if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);

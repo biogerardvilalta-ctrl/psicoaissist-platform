@@ -802,6 +802,7 @@
                 "CREATE": "Nuevo registro",
                 "UPDATE": "Actualización",
                 "DELETE": "Eliminación",
+                "LOGOUT": "Cierre de sesión",
                 "LOGIN": "Inicio de sesión",
                 "LOGIN_SUCCESS": "Inicio de sesión exitoso",
                 "CREATE_SESSION": "Sesión Programada",

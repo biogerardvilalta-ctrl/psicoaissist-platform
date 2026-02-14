@@ -788,6 +788,7 @@
                 "CREATE": "Nou registre",
                 "UPDATE": "Actualització",
                 "DELETE": "Eliminació",
+                "LOGOUT": "Tancament de sessió",
                 "LOGIN": "Inici de sessió",
                 "LOGIN_SUCCESS": "Inici de sessió correcte",
                 "CREATE_SESSION": "Sessió Programada",

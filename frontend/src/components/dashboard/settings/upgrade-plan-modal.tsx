@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Crown, ArrowRight, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePayments } from '@/hooks/usePayments';
 import { useAuth } from '@/contexts/auth-context';
 import { useTranslations } from 'next-intl';
@@ -73,6 +73,14 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
     const [showPlans, setShowPlans] = useState(initialViewPlans);
     const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
     const [confirmingPlanId, setConfirmingPlanId] = useState<string | null>(null);
+
+    // Reset state when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setShowPlans(initialViewPlans);
+            setConfirmingPlanId(null);
+        }
+    }, [isOpen, initialViewPlans]);
 
     // Map plans to include translations
     const upgradePlans = upgradePlansBase.map(plan => ({
@@ -339,7 +347,9 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
                                     </div>
                                 </div>
                             )}
-                            <Button variant="ghost" className="w-full" onClick={() => setShowPlans(false)}>{t('buttons.back')}</Button>
+                            <Button variant="ghost" className="w-full" onClick={() => initialViewPlans ? onClose() : setShowPlans(false)}>
+                                {initialViewPlans ? t('buttons.cancel') : t('buttons.back')}
+                            </Button>
                         </div>
                     </>
                 )}

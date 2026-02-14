@@ -24,11 +24,18 @@ export function NotificationBell() {
 
     // Helper to translate notification content
     const getTranslatedContent = (text: string, data?: any) => {
-        // If text is a key (e.g. 'notifications.payment.success'), translate it
-        if (text && (text.startsWith('notifications.') || text.includes('.'))) {
+        // Validation: If it's a long text with spaces, assume it's already a message, not a key
+        if (!text || text.includes(' ')) return text;
+
+        // If it looks like a key (starts with notifications. or has dots but no spaces)
+        if (text.startsWith('notifications.') || (text.includes('.') && !text.includes(' '))) {
             const key = text.replace(/^notifications\./, '');
             try {
-                return t(key, data) || text;
+                // If translation exists, return it. If not, return valid text
+                const translated = t(key, data);
+                // If the key is returned (common in some i18n libs on missing), fallback to text
+                if (translated === key || translated.includes('notifications.')) return text;
+                return translated;
             } catch (e) {
                 return text;
             }
