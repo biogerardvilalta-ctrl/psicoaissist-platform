@@ -11,6 +11,7 @@ import {
   Logger,
   Header,
   Query,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
@@ -26,8 +27,10 @@ import {
   AuthResponseDto,
   ChangePasswordDto,
   RefreshTokenDto,
+  VerifyPasswordDto,
 } from './dto/auth.dto';
 import { CompleteGoogleRegisterDto } from './dto/complete-google-register.dto';
+import { EncryptionService } from '../encryption/encryption.service';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -421,5 +424,24 @@ export class AuthController {
       this.logger.error(`Update profile error: ${error.message}`);
       throw error;
     }
+  }
+
+  @ApiOperation({ summary: 'Verificar contraseña (Sudo Mode)' })
+  @ApiResponse({ status: 200, description: 'Contraseña verificada correctamente' })
+  @ApiResponse({ status: 401, description: 'Contraseña incorrecta' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('verify-password')
+  async verifyPassword(
+    @Req() req: Request & { user: any },
+    @Body() dto: VerifyPasswordDto,
+  ): Promise<{ verified: boolean }> {
+    const isVerified = await this.authService.verifySessionPassword(req.user.id, dto);
+
+    if (!isVerified) {
+      throw new UnauthorizedException('Contraseña incorrecta');
+    }
+
+    return { verified: true };
   }
 }

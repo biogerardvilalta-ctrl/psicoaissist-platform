@@ -184,4 +184,14 @@ export class AuthAPI {
       throw error;
     }
   }
+
+  static async verifyPassword(password: string): Promise<boolean> {
+    try {
+      const response = await httpClient.post(`${this.BASE_URL}/verify-password`, { password });
+      // Response is { verified: true }
+      return (response as any).data?.verified || (response as any).verified === true;
+    } catch (error) {
+      return false;
+    }
+  }
 }

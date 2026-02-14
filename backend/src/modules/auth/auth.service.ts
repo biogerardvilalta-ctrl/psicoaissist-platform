@@ -5,7 +5,7 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { UsersService } from '../users/users.service';
 import { EmailService } from '../email/email.service';
-import { LoginDto, RegisterDto, TokensDto, AuthResponseDto } from './dto/auth.dto';
+import { LoginDto, RegisterDto, TokensDto, AuthResponseDto, VerifyPasswordDto } from './dto/auth.dto';
 import { CompleteGoogleRegisterDto } from './dto/complete-google-register.dto';
 import { AuditService } from '../audit/audit.service';
 import { UserRole, UserStatus, AuditAction } from '@prisma/client';
@@ -861,5 +861,69 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  /**
+   * Verifica la contraseña del usuario para sesiones sensibles (Sudo Mode)
+   */
+  async verifySessionPassword(userId: string, dto: VerifyPasswordDto): Promise<boolean> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('Usuario no encontrado');
+      }
+
+      let passwordToCheck = dto.password;
+
+      // Handle encryption if present
+      if (dto.encryptedData) {
+        try {
+          const decryptedJson = await this.encryptionService.decryptAsymmetric(dto.encryptedData);
+          const credentials = JSON.parse(decryptedJson);
+          passwordToCheck = credentials.password;
+        } catch (error) {
+          this.logger.error(`Decryption failed in verifySessionPassword: ${error.message}`);
+          throw new UnauthorizedException('Fallo al desencriptar credenciales');
+        }
+      }
+
+      if (!passwordToCheck) {
+        throw new UnauthorizedException('Contraseña requerida');
+      }
+
+      const isPasswordValid = await this.encryptionService.comparePassword(
+        passwordToCheck,
+        user.passwordHash,
+      );
+
+      if (!isPasswordValid) {
+        await this.auditService.log({
+          userId,
+          action: AuditAction.LOGIN_FAILED, // Reusing login failed as strict equivalent
+          resourceType: 'USER',
+          resourceId: userId,
+          details: 'Fallo de verificación de contraseña (Sudo Mode)',
+          isSuccess: false,
+        });
+        return false;
+      }
+
+      await this.auditService.log({
+        userId,
+        action: AuditAction.LOGIN_SUCCESS,
+        resourceType: 'USER',
+        resourceId: userId,
+        details: 'Verificación de contraseña exitosa (Sudo Mode)',
+        isSuccess: true,
+      });
+
+      return true;
+    } catch (error) {
+      this.logger.error(`Error verifying session password: ${error.message}`);
+      throw error;
+    }
   }
 }

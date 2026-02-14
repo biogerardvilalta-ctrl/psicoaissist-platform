@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import AdminRoute from '@/components/auth/AdminRoute';
 import { AdminHeader } from '@/components/layout';
+import AdminSudoGate from '@/components/auth/AdminSudoGate';
 
 export const metadata: Metadata = {
   title: 'Panel de Administración - PsicoAIssist',
@@ -17,12 +18,14 @@ export default function AdminLayout({
   return (
     <AdminRoute>
       <NotificationProvider>
-        <div className="min-h-screen bg-gray-50">
-          <AdminHeader />
-          <main>
-            {children}
-          </main>
-        </div>
+        <AdminSudoGate>
+          <div className="min-h-screen bg-gray-50">
+            <AdminHeader />
+            <main>
+              {children}
+            </main>
+          </div>
+        </AdminSudoGate>
       </NotificationProvider>
     </AdminRoute>
   );

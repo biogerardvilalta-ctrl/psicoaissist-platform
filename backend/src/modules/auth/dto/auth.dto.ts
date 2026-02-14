@@ -228,3 +228,16 @@ export class UpdateProfileDto {
   @IsOptional()
   hourlyRate?: number;
 }
+
+export class VerifyPasswordDto {
+  @ApiProperty({ example: 'password123', description: 'Contraseña del usuario' })
+  @IsString()
+  @MinLength(6)
+  @IsOptional() // Optional if encryptedData is present
+  password?: string;
+
+  @ApiProperty({ description: 'Datos contrasena encriptados (RSA-OAEP Base64)', required: false })
+  @IsString()
+  @IsOptional()
+  encryptedData?: string;
+}
