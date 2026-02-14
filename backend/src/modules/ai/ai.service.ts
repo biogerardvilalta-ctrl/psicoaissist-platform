@@ -925,12 +925,24 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
         }
 
         try {
+            // SLIDING WINDOW OPTIMIZATION:
+            // Limit context to the last ~4000 characters (approx 5-10 mins of conversation)
+            // This focuses the AI on the *immediate* context for "Live Suggestions" and reduces token costs/latency.
+            const MAX_CONTEXT_LENGTH = 4000;
+            let effectiveContext = context;
+
+            if (context.length > MAX_CONTEXT_LENGTH) {
+                // Take the last N chars
+                effectiveContext = "...(contexto previo truncado)... " + context.slice(-MAX_CONTEXT_LENGTH);
+                console.log(`[AiService] Sliding Window applied. Truncated context from ${context.length} to ${effectiveContext.length} chars.`);
+            }
+
             // Combine System Prompt + Context
             const combinedPrompt = `
 ${LIVE_SESSION_SYSTEM_PROMPT}
 
-CONTEXT ACTUAL (Text viu de la sessió):
-"${context || '(Sessió iniciada, sense text encara)'}"
+CONTEXT ACTUAL (Text viu de la sessió - Últims minuts):
+"${effectiveContext || '(Sessió iniciada, sense text encara)'}"
 
 Genera suggeriments en temps real format JSON.
 `;

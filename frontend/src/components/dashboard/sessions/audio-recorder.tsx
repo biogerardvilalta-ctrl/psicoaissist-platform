@@ -40,7 +40,7 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const chunksRef = useRef<Blob[]>([]);
-    const chunkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    // const chunkIntervalRef = useRef<NodeJS.Timeout | null>(null); // Removed: timeslice handles this
     const shouldRestartRef = useRef(true);
     const isLimitReachedRef = useRef(isLimitReached);
 
@@ -116,28 +116,20 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
             };
 
             mediaRecorder.onstop = () => {
-                if (shouldRestartRef.current) {
-                    // Periodic stop -> Restart
-                    if (mediaRecorder.state === 'inactive') {
-                        mediaRecorder.start();
-                    }
-                } else {
-                    // Final stop -> Save full blob
-
-                    // Prevention: If limit reached, discard blob to prevent transcription error on empty/partial files
-                    if (isLimitReachedRef.current) {
-                        console.log('[AudioRecorder] Limit reached, discarding final blob to prevent transcription error.');
-                        if (!inputStream) stream.getTracks().forEach(track => track.stop());
-                        return;
-                    }
-
-                    const blob = new Blob(chunksRef.current, { type: mimeType });
-                    onAudioData(blob);
-                    if (!inputStream) stream.getTracks().forEach(track => track.stop()); // Stop mic access
+                // Final stop -> Save full blob
+                // Prevention: If limit reached, discard blob to prevent transcription error on empty/partial files
+                if (isLimitReachedRef.current) {
+                    console.log('[AudioRecorder] Limit reached, discarding final blob to prevent transcription error.');
+                    if (!inputStream) stream.getTracks().forEach(track => track.stop());
+                    return;
                 }
+
+                const blob = new Blob(chunksRef.current, { type: mimeType });
+                onAudioData(blob);
+                if (!inputStream) stream.getTracks().forEach(track => track.stop()); // Stop mic access
             };
 
-            mediaRecorder.start(); // No timeslice
+            mediaRecorder.start(5000); // 5s timeslice
             setIsRecording(true);
             onRecordingStatusChange?.(true);
             setPermissionError(null);
@@ -152,22 +144,22 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
         }
     };
 
-    // Effect to manage the chunking interval when recording
-    useEffect(() => {
-        if (isRecording && mediaRecorderRef.current) {
-            chunkIntervalRef.current = setInterval(() => {
-                if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-                    mediaRecorderRef.current.stop(); // Triggers onstop, which restarts if shouldRestart=true
-                }
-            }, 5000); // 5 seconds interval
-        }
+    // Effect to manage the chunking interval when recording - REMOVED
+    // useEffect(() => {
+    //     if (isRecording && mediaRecorderRef.current) {
+    //         chunkIntervalRef.current = setInterval(() => {
+    //             if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+    //                 mediaRecorderRef.current.stop(); // Triggers onstop, which restarts if shouldRestart=true
+    //             }
+    //         }, 5000); // 5 seconds interval
+    //     }
 
-        return () => {
-            if (chunkIntervalRef.current) {
-                clearInterval(chunkIntervalRef.current);
-            }
-        };
-    }, [isRecording]);
+    //     return () => {
+    //         if (chunkIntervalRef.current) {
+    //             clearInterval(chunkIntervalRef.current);
+    //         }
+    //     };
+    // }, [isRecording]);
 
     const stopRecording = () => {
         if (mediaRecorderRef.current && isRecording) {
@@ -186,10 +178,10 @@ export const AudioRecorder = forwardRef<AudioRecorderHandle, AudioRecorderProps>
                 clearInterval(timerRef.current);
                 timerRef.current = null;
             }
-            if (chunkIntervalRef.current) {
-                clearInterval(chunkIntervalRef.current);
-                chunkIntervalRef.current = null;
-            }
+            // if (chunkIntervalRef.current) {
+            //     clearInterval(chunkIntervalRef.current);
+            //     chunkIntervalRef.current = null;
+            // }
             setRecordingTime(0);
         }
     };

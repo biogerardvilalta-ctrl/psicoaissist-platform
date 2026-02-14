@@ -20,25 +20,31 @@ export class TranscriptionService {
     }
 
     async transcribeAudio(file: Express.Multer.File, userId: string, skipUsageTracking: boolean = false): Promise<string> {
-        console.log(`🎤 Processing audio file: ${file.originalname} (${file.size} bytes, mimetype: ${file.mimetype}) for user ${userId}. SkipUsage: ${skipUsageTracking}`);
+        console.log(`🎤 Processing audio request (INLINE): ${file.originalname} (${file.size} bytes, mimetype: ${file.mimetype}) for user ${userId}. SkipUsage: ${skipUsageTracking}`);
 
         if (!this.genAI) {
             console.warn('GEMINI_API_KEY missing, returning mock transcription.');
             return "Error: Clave de API de Gemini no configurada.";
         }
 
-        const tempFilePath = path.join("/tmp", `audio_${Date.now()}_${file.originalname}`);
-
         try {
-            // Write buffer to temporary file for upload
-            fs.writeFileSync(tempFilePath, file.buffer);
-            console.log(`Saved temp file: ${tempFilePath}`);
-
             // Calculate duration to check limits
-            try {
-                // Use get-audio-duration for better CJS/ESM compatibility
-                const durationSeconds = await getAudioDurationInSeconds(tempFilePath);
+            // Note: getAudioDurationInSeconds might expect a file path. 
+            // For inline optimization, if we want to keep duration check we might need to write temp file JUST for duration check
+            // OR use a buffer-based duration library.
+            // To be safe and compliant with legacy logic, we WILL write a temp file just for duration check, 
+            // BUT we will NOT upload it to Google. This is still faster than Upload.
+            // A better optimization would be to estimate duration from bytes if PCM/WAV, but for WebM it's hard.
 
+            // FAST PATH: If file is small (< 10KB), it's likely noise or empty.
+            if (file.size < 5000) return "";
+
+            const tempFilePath = path.join("/tmp", `duration_check_${Date.now()}_${userId}.webm`);
+            let durationSeconds = 0;
+
+            try {
+                fs.writeFileSync(tempFilePath, file.buffer);
+                durationSeconds = await getAudioDurationInSeconds(tempFilePath);
                 console.log(`Audio duration: ${durationSeconds} seconds`);
 
                 // Check limit (round up to next minute for limit checking safe-guarding)
@@ -52,24 +58,20 @@ export class TranscriptionService {
                     console.log(`[TranscriptionService] Skipping increment for user ${userId} (Live Session)`);
                 }
 
-            } catch (err) {
-                console.error("Error calculating duration or checking limits:", err);
-                if (err.status === 403) throw err;
-                // Continue if just duration error, but log it
+            } catch (dErr) {
+                console.warn("Duration check warning:", dErr);
+                if ((dErr as any).status === 403) throw dErr;
+            } finally {
+                // Immediate cleanup of duration check file
+                if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
             }
 
-            // Use GoogleAIFileManager to upload
-            // Dynamic import for ESM module
-            const { GoogleAIFileManager } = await import("@google/generative-ai/server");
-            const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+            // --- INLINE TRANSCRIPTION ---
 
-            // Determine correct MIME type
+            // Determine MIME type
             let mimeType = file.mimetype;
-            console.log(`[TranscriptionService] Received file: ${file.originalname}, size: ${file.size}, mime: ${file.mimetype}`);
-
             // Fallback for generic or missing mimetype
             if (!mimeType || mimeType === 'application/octet-stream') {
-                console.warn(`[TranscriptionService] Invalid/generic mimeType '${mimeType}'. Detecting from extension...`);
                 const ext = file.originalname.split('.').pop()?.toLowerCase();
                 const mimeMap: { [key: string]: string } = {
                     'mp3': 'audio/mp3',
@@ -80,45 +82,20 @@ export class TranscriptionService {
                     'aac': 'audio/aac',
                     'flac': 'audio/flac'
                 };
-                mimeType = mimeMap[ext || ''] || 'audio/mp3'; // Default to mp3 if unknown
-                console.log(`[TranscriptionService] Resolved mimeType to: ${mimeType}`);
+                mimeType = mimeMap[ext || ''] || 'audio/mp3';
             } else {
-                // Strip parameters (e.g. ";codecs=opus")
                 mimeType = mimeType.split(';')[0];
             }
 
-            const uploadResponse = await fileManager.uploadFile(tempFilePath, {
-                mimeType: mimeType,
-                displayName: "Session Audio",
-            });
-
-            console.log(`Uploaded file: ${uploadResponse.file.name} (${uploadResponse.file.uri})`);
-
-            // Wait for file to check state
-            let fileState = await fileManager.getFile(uploadResponse.file.name);
-            console.log(`Initial file state: ${fileState.state}`);
-
-            // Wait while processing
-            while (fileState.state === "PROCESSING") {
-                console.log(`Waiting for file ${fileState.name} to process...`);
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                fileState = await fileManager.getFile(uploadResponse.file.name);
-            }
-
-            if (fileState.state === "FAILED") {
-                throw new Error("File processing failed by Gemini.");
-            }
-
-            console.log(`File processing complete. State: ${fileState.state}`);
 
             // Using gemini-2.0-flash
             const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
             const result = await model.generateContent([
                 {
-                    fileData: {
-                        mimeType: uploadResponse.file.mimeType,
-                        fileUri: uploadResponse.file.uri
+                    inlineData: {
+                        mimeType: mimeType,
+                        data: file.buffer.toString('base64')
                     }
                 },
                 { text: "Eres un transcriptor experto multilingüe. Tu tarea es transcribir el audio literalmente (verbatim) en el idioma EXACTO en que se habla.\n\nREGLAS CRÍTICAS DE IDIOMA:\n1. DETECCIÓN AUTOMÁTICA: Si el audio es Catalán, transcribe en Catalán. Si es Español, en Español. Si es Inglés, en Inglés.\n2. PROHIBIDO TRADUCIR: Bajo ninguna circunstancia traduzcas lo que se dice. Debes ser un espejo fiel del audio.\n3. Si hay mezcla de idiomas, transcribe cada frase en su idioma original.\n\nOtras reglas:\n- Si no hay voz clara, devuelve cadena vacía.\n- Identifica hablantes si es posible ('Psicólogo/a:', 'Paciente:').\n- Separa intervenciones." }
@@ -127,23 +104,13 @@ export class TranscriptionService {
             const response = await result.response;
             const text = response.text();
 
-            console.log('📝 Transcription success, length:', text.length);
+            console.log('📝 Transcription success (Inline), length:', text.length);
             return text;
 
         } catch (error) {
             console.error('Gemini Transcription failed:', error);
             // Return error message to client cleanly
             throw new Error(`Error en la transcripción: ${(error as any).message}`);
-        } finally {
-            // Clean up temp file
-            if (fs.existsSync(tempFilePath)) {
-                try {
-                    fs.unlinkSync(tempFilePath);
-                    console.log(`Deleted temp file: ${tempFilePath}`);
-                } catch (e) {
-                    console.error("Error deleting temp file:", e);
-                }
-            }
         }
     }
 }
