@@ -281,7 +281,7 @@ export default function ClientsPage() {
                                                     </Badge>
                                                 </div>
 
-                                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                                                     <div className="flex flex-col gap-1 min-w-0">
                                                         <span className="text-xs text-muted-foreground">{t('table.headers.contact')}</span>
                                                         <span className="truncate" title={client.email || ''}>{client.email || '-'}</span>
@@ -371,7 +371,7 @@ export default function ClientsPage() {
                                         ) : (
                                             filteredClients.map((client) => (
                                                 <TableRow key={client.id}>
-                                                    <TableCell className="max-w-[200px] lg:max-w-[300px]">
+                                                    <TableCell className="max-w-[200px] lg:max-w-full max-w-[300px]">
                                                         <div className="flex items-center gap-3">
                                                             <Avatar>
                                                                 <AvatarFallback>

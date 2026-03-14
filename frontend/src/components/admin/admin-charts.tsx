@@ -80,7 +80,7 @@ export default function AdminCharts({ revenueData, loading = false }: AdminChart
         </div>
 
         {/* Summary stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-gray-900">€{totalRevenue}</p>
             <p className="text-xs text-gray-500">Total</p>
@@ -133,7 +133,7 @@ export default function AdminCharts({ revenueData, loading = false }: AdminChart
         </div>
 
         {/* Summary stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-gray-900">{totalSubscriptions}</p>
             <p className="text-xs text-gray-500">Total</p>

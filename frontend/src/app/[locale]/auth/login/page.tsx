@@ -279,7 +279,7 @@ export default function LoginPage() {
                 <span className="opacity-75">admin@psicoaissist.com</span>
               </button>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, email: 'basic@plan.com', password: 'password123' }))}

@@ -366,7 +366,7 @@ export default function SimulatorPage() {
             </div>
 
             <Tabs defaultValue="simulator" className="flex-1 flex flex-col min-h-0" onValueChange={handleTabChange}>
-                <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 max-w-full max-w-[400px]">
                     <TabsTrigger value="simulator">{t('tabs.simulator')}</TabsTrigger>
                     <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
                 </TabsList>
@@ -534,7 +534,7 @@ export default function SimulatorPage() {
 
                                     {/* Voice Settings Panel */}
                                     {showSettings && (
-                                        <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100 grid grid-cols-2 gap-4">
+                                        <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div>
                                                 <label className="text-xs font-semibold text-gray-500 block mb-1">{t('active.speed')} ({ttsRate}x)</label>
                                                 <input

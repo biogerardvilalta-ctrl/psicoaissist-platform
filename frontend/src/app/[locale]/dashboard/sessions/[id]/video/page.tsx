@@ -522,7 +522,7 @@ export default function ProfessionalVideoPage({ params }: { params: { id: string
                     <Card className="h-[30%] sm:h-[40%] min-h-[150px] lg:min-h-[250px] bg-slate-900 border-slate-800 text-slate-100 flex flex-col overflow-hidden shrink-0">
                         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
                             <div className="px-3 pt-2 border-b border-slate-800 bg-slate-950/50">
-                                <TabsList className="bg-slate-800/50 border border-slate-700/50 w-full grid grid-cols-2 h-8">
+                                <TabsList className="bg-slate-800/50 border border-slate-700/50 w-full grid grid-cols-1 sm:grid-cols-2 h-8">
                                     <TabsTrigger value="transcription" className="text-xs data-[state=active]:bg-slate-700 data-[state=active]:text-white">{t('transcriptionTab')}</TabsTrigger>
                                     <TabsTrigger value="notes" className="text-xs data-[state=active]:bg-slate-700 data-[state=active]:text-white">{t('notesTab')}</TabsTrigger>
                                 </TabsList>

@@ -522,7 +522,7 @@ export default function SessionDetailPage({ params }: { params: { id: string, lo
                         </CardHeader>
                         <CardContent>
                             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                                <TabsList className="grid w-full grid-cols-2 mb-4">
+                                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 mb-4">
                                     <TabsTrigger value="transcription">{t('transcriptionTab')}</TabsTrigger>
                                     <TabsTrigger value="clinical_notes">{t('clinicalNotesTab')}</TabsTrigger>
                                 </TabsList>
@@ -605,7 +605,7 @@ export default function SessionDetailPage({ params }: { params: { id: string, lo
                                 </CardHeader>
                                 <CardContent>
                                     <Tabs defaultValue="summary" className="w-full">
-                                        <TabsList className="grid w-full grid-cols-2 mb-4">
+                                        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 mb-4">
                                             <TabsTrigger value="summary">{t('sessionSummaryTab')}</TabsTrigger>
                                             <TabsTrigger value="analysis">{t('clinicalAnalysisTab')}</TabsTrigger>
                                         </TabsList>

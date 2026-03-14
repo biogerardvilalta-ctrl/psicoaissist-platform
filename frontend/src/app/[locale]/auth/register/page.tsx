@@ -295,7 +295,7 @@ export default function RegisterPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             {/* Name fields */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
                   {t('firstName')}
@@ -348,7 +348,7 @@ export default function RegisterPage() {
 
 
             {/* Professional Fields - B2B Requirement */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="professionalNumber" className="block text-sm font-medium text-gray-700">
                   {t('professionalNumber')}

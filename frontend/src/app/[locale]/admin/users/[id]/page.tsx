@@ -232,7 +232,7 @@ export default function AdminUserDetailPage() {
                                     <Activity className="w-4 h-4 mr-2" />
                                     Estadísticas de Uso
                                 </h3>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="bg-gray-50 p-3 rounded-lg text-center">
                                         <p className="text-xs text-gray-500 uppercase">Sesiones</p>
                                         <p className="text-xl font-bold text-blue-600">{user._count?.sessions || 0}</p>

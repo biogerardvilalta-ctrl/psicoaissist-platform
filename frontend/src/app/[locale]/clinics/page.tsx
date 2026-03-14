@@ -166,7 +166,7 @@ export default function ClinicsPage() {
 
                         {/* Minimal Visual: Agenda Manager UI */}
                         <div className="mt-12 lg:mt-0 relative">
-                            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-3xl -z-10" />
+                            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-full max-w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-3xl -z-10" />
                             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
                                 <div className="bg-gray-50 border-b border-gray-200 p-4 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export default function ClinicsPage() {
                                     </div>
 
                                     {/* Mock Calendar Grid */}
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {/* Col 1 */}
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 mb-2">

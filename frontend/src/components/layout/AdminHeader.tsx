@@ -134,7 +134,7 @@ export default function AdminHeader() {
                     <Menu className="w-6 h-6" />
                   </button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-white text-gray-900">
+                <SheetContent side="left" className="w-full max-w-[300px] sm:w-[400px] bg-white text-gray-900">
                   <div className="flex flex-col h-full">
                     <div className="mb-8">
                       <SheetTitle className="text-xl font-bold text-gray-900 mb-2">PsicoAIssist</SheetTitle>

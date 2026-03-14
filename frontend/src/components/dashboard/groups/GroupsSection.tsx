@@ -78,7 +78,7 @@ export function GroupsSection({ groups, professionals, onGroupChange }: GroupsSe
                             <Plus className="mr-2 h-4 w-4" /> Crear Grupo
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-full max-w-[425px]">
                         <DialogHeader>
                             <DialogTitle>Crear Nuevo Grupo</DialogTitle>
                         </DialogHeader>

@@ -143,7 +143,7 @@ function UserModal({
         <h2 className="text-xl font-bold text-gray-900">{userToEdit ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
         {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Nombre</label>
               <input type="text" required className="mt-1 block w-full border rounded-md p-2"
@@ -201,7 +201,7 @@ function UserModal({
           {/* Usage Limits Section */}
           <div className="border-t pt-4 mt-4">
             <h3 className="text-sm font-medium text-gray-900 mb-3">Límites de Uso</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Minutos Transcritos (Usados)</label>
                 <input
@@ -676,7 +676,7 @@ export default function UsersPage() {
                   </div>
 
                   {/* Stats & Info Grid */}
-                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-lg">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-lg">
                     <div className="flex flex-col">
                       <span className="text-gray-400 text-[10px] uppercase">Sesiones</span>
                       <span className="font-medium">{user._count?.sessions || 0}</span>

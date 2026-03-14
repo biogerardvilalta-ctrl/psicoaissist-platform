@@ -161,7 +161,7 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[600px] p-8 flex flex-col items-center text-center gap-6">
+            <DialogContent className="sm:max-w-full max-w-[600px] p-8 flex flex-col items-center text-center gap-6">
                 {confirmingPlanId ? (
                     <>
                         <div className="h-16 w-16 bg-amber-100 rounded-full flex items-center justify-center mb-2">
@@ -171,7 +171,7 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
                             <DialogTitle className="text-2xl font-extrabold text-slate-900 leading-tight">
                                 {t('confirmation.title')}
                             </DialogTitle>
-                            <div className="text-slate-600 text-sm leading-relaxed max-w-[400px] mx-auto bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <div className="text-slate-600 text-sm leading-relaxed max-w-full max-w-[400px] mx-auto bg-slate-50 p-4 rounded-lg border border-slate-200">
                                 <p className="font-semibold text-slate-800 mb-2">
                                     {t('confirmation.message', { planName: upgradePlans.find(p => p.id === confirmingPlanId)?.name || '' })}
                                 </p>
@@ -212,7 +212,7 @@ export function UpgradePlanModal({ isOpen, onClose, limitType = 'transcription',
                             <DialogTitle className="text-2xl font-extrabold text-slate-900 leading-tight">
                                 {title}
                             </DialogTitle>
-                            <div className="text-slate-500 text-sm leading-relaxed max-w-[350px] mx-auto">
+                            <div className="text-slate-500 text-sm leading-relaxed max-w-full max-w-[350px] mx-auto">
                                 <p>{description}</p>
                                 <p className="mt-2 font-medium text-slate-700">
                                     {(isSimulator && visiblePlans.some(p => p.id === 'simulator_pack')) ? t('callToAction.simulator') :
