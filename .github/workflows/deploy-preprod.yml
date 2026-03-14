@@ -1,0 +1,61 @@
+name: Deploy to Pre-Production
+
+on:
+  push:
+    branches:
+      - preprod
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST_PREPROD }}
+          username: ${{ secrets.SERVER_USER_PREPROD }}
+          key: ${{ secrets.SERVER_SSH_KEY_PREPROD }}
+          port: ${{ secrets.SERVER_PORT_PREPROD || '22' }}
+          script: |
+            cd ${{ secrets.SERVER_PATH_PREPROD || '~/psicoaissist-platform' }}
+            git pull origin preprod
+            
+            # Crear/Actualizar el archivo .env.preprod con los secrets
+            cat << 'EOF' > .env.preprod
+            NODE_ENV=production
+            POSTGRES_DB=${{ secrets.PREPROD_POSTGRES_DB }}
+            POSTGRES_USER=${{ secrets.PREPROD_POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.PREPROD_POSTGRES_PASSWORD }}
+            REDIS_PASSWORD=${{ secrets.PREPROD_REDIS_PASSWORD }}
+            JWT_SECRET=${{ secrets.PREPROD_JWT_SECRET }}
+            JWT_REFRESH_SECRET=${{ secrets.PREPROD_JWT_REFRESH_SECRET }}
+            ENCRYPTION_KEY="${{ secrets.PREPROD_ENCRYPTION_KEY }}"
+            STRIPE_SECRET_KEY=${{ secrets.PREPROD_STRIPE_SECRET_KEY }}
+            STRIPE_WEBHOOK_SECRET=${{ secrets.PREPROD_STRIPE_WEBHOOK_SECRET }}
+            STRIPE_CURRENCY=${{ secrets.PREPROD_STRIPE_CURRENCY || 'eur' }}
+            SMTP_HOST=${{ secrets.PREPROD_SMTP_HOST }}
+            SMTP_PORT=${{ secrets.PREPROD_SMTP_PORT }}
+            SMTP_USER=${{ secrets.PREPROD_SMTP_USER }}
+            SMTP_PASS=${{ secrets.PREPROD_SMTP_PASS }}
+            SMTP_FROM=${{ secrets.PREPROD_SMTP_FROM }}
+            GOOGLE_API_KEY=${{ secrets.PREPROD_GOOGLE_API_KEY }}
+            OPENAI_API_KEY=${{ secrets.PREPROD_OPENAI_API_KEY }}
+            GEMINI_API_KEY=${{ secrets.PREPROD_GEMINI_API_KEY }}
+            NEXT_PUBLIC_API_URL=${{ secrets.PREPROD_NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_SOCKET_URL=${{ secrets.PREPROD_NEXT_PUBLIC_SOCKET_URL }}
+            FRONTEND_URL=${{ secrets.PREPROD_FRONTEND_URL }}
+            GOOGLE_CLIENT_ID=${{ secrets.PREPROD_GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ secrets.PREPROD_GOOGLE_CLIENT_SECRET }}
+            GOOGLE_REDIRECT_URI=${{ secrets.PREPROD_GOOGLE_REDIRECT_URI }}
+            TURN_SECRET=${{ secrets.PREPROD_TURN_SECRET }}
+            TURN_REALM=${{ secrets.PREPROD_TURN_REALM }}
+            EXTERNAL_IP=${{ secrets.PREPROD_EXTERNAL_IP }}
+            EOF
+            
+            chmod 600 .env.preprod
+            chmod +x deploy.sh
+            ./deploy.sh preprod
