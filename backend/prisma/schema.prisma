@@ -45,7 +45,7 @@ model User {
   googleWatchId             String?            @map("google_watch_id")
   googleWatchResourceId     String?            @map("google_watch_resource_id")
   brandingConfig            Json?              @map("branding_config")
-  googleImportCalendar      Boolean            @default(true)
+  googleImportCalendar      Boolean            @default(true) @map("google_import_calendar")
   referralCode              String?            @unique @map("referral_code")
   referralCredits           Int                @default(0) @map("referral_credits")
   referralsCount            Int                @default(0) @map("referrals_count")
@@ -252,15 +252,15 @@ model AuditLog {
 
 model SimulationReport {
   id                   String   @id @default(uuid())
-  userId               String
-  createdAt            DateTime @default(now())
-  patientName          String
+  userId               String   @map("user_id")
+  createdAt            DateTime @default(now()) @map("created_at")
+  patientName          String   @map("patient_name")
   difficulty           String
   scenario             String?
-  empathyScore         Int
-  effectivenessScore   Int
-  professionalismScore Int
-  feedbackMarkdown     String
+  empathyScore         Int      @map("empathy_score")
+  effectivenessScore   Int      @map("effectiveness_score")
+  professionalismScore Int      @map("professionalism_score")
+  feedbackMarkdown     String   @map("feedback_markdown")
   user                 User     @relation(fields: [userId], references: [id])
 
   @@map("simulation_reports")
