@@ -67,7 +67,7 @@ export function TestimonialsSection() {
         </div>
 
         {/* Stats */}
-        <div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8 md:grid-cols-4">
           <div className="text-center">
             <div className="text-3xl font-bold text-blue-600">500+</div>
             <div className="text-sm text-gray-600">{t('stats.psychologists')}</div>

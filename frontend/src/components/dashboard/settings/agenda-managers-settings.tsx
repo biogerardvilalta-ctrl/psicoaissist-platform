@@ -76,7 +76,7 @@ export function AgendaManagersSettings() {
             {/* Create Form */}
             <div className="bg-gray-50/50 p-4 rounded-lg border border-gray-100 dark:bg-gray-800/20 dark:border-gray-800">
                 <form onSubmit={handleCreate} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <input
                             type="text"
                             placeholder="Nombre"
@@ -94,7 +94,7 @@ export function AgendaManagersSettings() {
                             onChange={(e) => setNewManager({ ...newManager, lastName: e.target.value })}
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <input
                             type="email"
                             placeholder="Email"

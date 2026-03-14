@@ -349,7 +349,7 @@ export default function DashboardPage() {
                 {t('Admin.description')}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 min-w-[300px] justify-center pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 min-w-full max-w-[300px] justify-center pt-4">
               <Button
                 onClick={() => router.push('/admin')}
                 className="gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all h-12 px-8 text-base"

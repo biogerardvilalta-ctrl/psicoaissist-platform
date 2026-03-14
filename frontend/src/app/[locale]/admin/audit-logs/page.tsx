@@ -143,7 +143,7 @@ export default function AdminLogsPage() {
                         </div>
 
                         {/* Date Range */}
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div>
                                 <label className="block text-xs font-medium text-gray-500 mb-1">Desde</label>
                                 <input
@@ -399,7 +399,7 @@ export default function AdminLogsPage() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
                                         Fecha y Hora

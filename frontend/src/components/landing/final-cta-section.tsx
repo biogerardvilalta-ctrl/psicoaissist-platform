@@ -39,7 +39,7 @@ export function FinalCTASection() {
             </p>
 
             {/* Value Props Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-12">
               {[
                 { label: t('features.setup'), icon: Check },
                 { label: t('features.secure'), icon: Shield },
