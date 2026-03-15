@@ -70,7 +70,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    env_file: .env.prod
+    env_file: .env
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/${POSTGRES_DB}
       REDIS_HOST: 127.0.0.1
@@ -90,7 +90,7 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
-    env_file: .env.prod
+    env_file: .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
