@@ -31,7 +31,7 @@ docker compose -f $COMPOSE_FILE -p $PROJECT_NAME rm -f
 
 # 4. Construcción (Build)
 echo "🏗️ Construyendo imágenes (esto puede tardar)..."
-docker compose -f $COMPOSE_FILE -p $PROJECT_NAME build --no-cache
+docker compose -f $COMPOSE_FILE -p $PROJECT_NAME build
 
 # 5. Arranque
 echo "🔥 Arrancando plataforma..."
