@@ -1,6 +1,5 @@
 'use client';
 
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useRole } from '@/hooks/useRole';
@@ -43,14 +42,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
 
     // Force redirect for INACTIVE users trying to access dashboard
-    // They must complete payment first.
     useEffect(() => {
         if (user && user.status === 'INACTIVE') {
-            // Avoid redirect loop if already on payment pages (though this layout is for dashboard)
             router.push('/payment/plans');
         }
     }, [user, router]);
 
+    // Close mobile menu on resize to desktop
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 1280) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Prevent body scroll when mobile menu is open
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [isMobileMenuOpen]);
 
     const navItems = [
         { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard, show: true },
@@ -64,21 +81,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     return (
         <NotificationProvider>
-            <div className="min-h-screen bg-gray-50 flex flex-col">
+            <div className="min-h-screen bg-gray-50/80 flex flex-col" id="dashboard-layout">
                 {/* Header */}
-                <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex h-16 items-center justify-between">
+                <header className="glass-strong shadow-soft border-b border-gray-200/60 sticky top-0 z-50" id="dashboard-header">
+                    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex h-16 items-center justify-between gap-4">
                             {/* Logo and Desktop Nav */}
-                            <div className="flex items-center gap-8">
-                                <Link href="/dashboard" className="flex items-center flex-shrink-0">
-                                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
-                                        <Heart className="w-5 h-5 text-white" />
+                            <div className="flex items-center gap-6 lg:gap-8 min-w-0">
+                                <Link href="/dashboard" className="flex items-center flex-shrink-0 group" id="dashboard-logo">
+                                    <div className="w-8 h-8 bg-gradient-primary rounded-xl flex items-center justify-center mr-2.5 shadow-glow-primary transition-transform duration-300 group-hover:scale-105">
+                                        <Heart className="w-4.5 h-4.5 text-white" />
                                     </div>
-                                    <h1 className="text-xl font-bold text-gray-900 hidden sm:block">PsicoAIssist</h1>
+                                    <h1 className="text-lg font-bold text-gray-900 hidden sm:block tracking-tight">
+                                        Psico<span className="text-gradient-primary">AIssist</span>
+                                    </h1>
                                 </Link>
 
-                                <nav className="hidden xl:flex items-center gap-4">
+                                <nav className="hidden xl:flex items-center gap-1" id="dashboard-nav">
                                     {navItems.map((item) => {
                                         const Icon = item.icon;
                                         const isActive = pathname === item.href;
@@ -86,12 +105,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                             <Link
                                                 key={item.href}
                                                 href={item.href}
-                                                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                                                    ? 'bg-blue-50 text-blue-700'
-                                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                                                    } ${item.extraMargin ? 'ml-8' : ''}`}
+                                                className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
+                                                    ? 'bg-primary/10 text-primary shadow-sm'
+                                                    : 'text-gray-600 hover:bg-gray-100/70 hover:text-gray-900'
+                                                    } ${item.extraMargin ? 'ml-4' : ''}`}
+                                                id={`nav-${item.href.replace(/\//g, '-')}`}
                                             >
-                                                <Icon className="w-4 h-4 mr-2" />
+                                                <Icon className={`w-4 h-4 mr-2 ${isActive ? 'text-primary' : ''}`} />
                                                 {item.name}
                                             </Link>
                                         );
@@ -100,40 +120,42 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </div>
 
                             {/* Right section */}
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 sm:gap-3">
                                 {/* Admin Link if capable */}
                                 {user?.role === 'ADMIN' && (
-                                    <Link href="/admin">
-                                        <Button variant="ghost" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50">
-                                            <Shield className="w-4 h-4 mr-2" />
-                                            {t('adminPanel')}
+                                    <Link href="/admin" className="hidden sm:block">
+                                        <Button variant="ghost" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 gap-2 text-sm" id="admin-panel-link">
+                                            <Shield className="w-4 h-4" />
+                                            <span className="hidden lg:inline">{t('adminPanel')}</span>
                                         </Button>
                                     </Link>
                                 )}
 
-                                <div className="h-6 w-px bg-gray-200" />
-                                <LanguageSwitcher />
+                                <div className="hidden sm:block h-5 w-px bg-gray-200" />
+                                <div className="hidden sm:block">
+                                    <LanguageSwitcher />
+                                </div>
                                 <NotificationBell />
 
                                 {/* User Menu */}
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarFallback className="bg-blue-100 text-blue-600">
+                                        <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-gray-100 hover:ring-primary/20 transition-all" id="user-menu-trigger">
+                                            <Avatar className="h-9 w-9">
+                                                <AvatarFallback className="bg-gradient-primary text-white text-xs font-semibold">
                                                     {user?.firstName?.[0]}{user?.lastName?.[0]}
                                                 </AvatarFallback>
                                             </Avatar>
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                                        <DropdownMenuLabel className="font-normal">
-                                            <div className="flex flex-col space-y-1">
-                                                <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
-                                                <p className="text-xs leading-none text-muted-foreground">
+                                    <DropdownMenuContent className="w-60 rounded-xl shadow-elevated border-gray-200/80" align="end" forceMount>
+                                        <DropdownMenuLabel className="font-normal p-3">
+                                            <div className="flex flex-col space-y-1.5">
+                                                <p className="text-sm font-semibold leading-none text-gray-900">{user?.firstName} {user?.lastName}</p>
+                                                <p className="text-xs leading-none text-gray-500">
                                                     {user?.email}
                                                 </p>
-                                                <Badge variant="outline" className="mt-1 w-fit text-[10px] pointer-events-none">
+                                                <Badge variant="outline" className="mt-1.5 w-fit text-2xs pointer-events-none font-semibold">
                                                     {user?.role === 'PSYCHOLOGIST_PREMIUM' ? tHeader('roles.premium') :
                                                         user?.role === 'PSYCHOLOGIST' ? tHeader('roles.psychologist') :
                                                             user?.role === 'MANAGER' || user?.role === 'AGENDA_MANAGER' ? tHeader('roles.manager') :
@@ -145,21 +167,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                         <DropdownMenuSeparator />
                                         {!isAgendaManager() && (
                                             <DropdownMenuItem asChild>
-                                                <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center">
-                                                    <Settings className="mr-2 h-4 w-4" />
+                                                <Link href="/dashboard/settings" className="w-full cursor-pointer flex items-center py-2.5" id="menu-settings">
+                                                    <Settings className="mr-2.5 h-4 w-4 text-gray-500" />
                                                     <span>{tHeader('settings')}</span>
                                                 </Link>
                                             </DropdownMenuItem>
                                         )}
                                         <DropdownMenuItem asChild>
-                                            <Link href="/dashboard/profile" className="w-full cursor-pointer flex items-center">
-                                                <User className="mr-2 h-4 w-4" />
+                                            <Link href="/dashboard/profile" className="w-full cursor-pointer flex items-center py-2.5" id="menu-profile">
+                                                <User className="mr-2.5 h-4 w-4 text-gray-500" />
                                                 <span>{tHeader('profile')}</span>
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
-                                            <LogOut className="mr-2 h-4 w-4" />
+                                        <DropdownMenuItem
+                                            onClick={handleLogout}
+                                            className="text-red-600 focus:text-red-600 cursor-pointer py-2.5"
+                                            id="menu-logout"
+                                        >
+                                            <LogOut className="mr-2.5 h-4 w-4" />
                                             <span>{tHeader('logout')}</span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -167,47 +193,73 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                                 {/* Mobile menu button */}
                                 <button
-                                    className="xl:hidden p-2 text-gray-600"
+                                    className="xl:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 focus-ring"
                                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                    aria-label="Toggle navigation"
+                                    id="dashboard-mobile-toggle"
                                 >
-                                    {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                    {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                                 </button>
                             </div>
                         </div>
                     </div>
+                </header>
 
-                    {/* Mobile Nav */}
-                    {isMobileMenuOpen && (
-                        <div className="xl:hidden border-t">
-                            <div className="space-y-1 px-4 pb-3 pt-2">
-                                {navItems.map((item) => (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className={`block px-3 py-2 rounded-md text-base font-medium ${pathname === item.href
-                                            ? 'bg-blue-50 text-blue-700'
-                                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                {/* Mobile Nav Overlay */}
+                {isMobileMenuOpen && (
+                    <div className="fixed inset-0 z-40 xl:hidden" style={{ top: '64px' }}>
+                        {/* Backdrop */}
+                        <div
+                            className="absolute inset-0 bg-black/20 backdrop-blur-sm animate-fade-in"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        />
+
+                        {/* Menu Panel */}
+                        <div className="absolute top-0 left-0 right-0 bg-white shadow-elevated animate-fade-in-down max-h-[calc(100vh-4rem)] overflow-y-auto" id="dashboard-mobile-menu">
+                            <div className="px-4 py-4 space-y-1">
+                                {navItems.map((item) => {
+                                    const Icon = item.icon;
+                                    const isActive = pathname === item.href;
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className={`flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${isActive
+                                                ? 'bg-primary/10 text-primary'
+                                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                             }`}
-                                    >
-                                        {item.name}
-                                    </Link>
-                                ))}
+                                        >
+                                            <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-primary' : 'text-gray-400'}`} />
+                                            {item.name}
+                                        </Link>
+                                    );
+                                })}
+
+                                {/* Mobile-only items */}
                                 {user?.role === 'ADMIN' && (
                                     <Link
                                         href="/admin"
                                         onClick={() => setIsMobileMenuOpen(false)}
+                                        className="flex items-center px-4 py-3 rounded-xl text-base font-medium text-purple-600 hover:bg-purple-50 transition-all duration-200"
                                     >
+                                        <Shield className="w-5 h-5 mr-3" />
                                         {t('adminPanel')}
                                     </Link>
                                 )}
+
+                                {/* Language switcher in mobile */}
+                                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 mt-2">
+                                    <span className="text-sm font-medium text-gray-600">Idioma</span>
+                                    <LanguageSwitcher />
+                                </div>
                             </div>
                         </div>
-                    )}
-                </header>
+                    </div>
+                )}
 
                 {/* Main Content */}
-                <main className="flex-1">
+                <main className="flex-1 animate-fade-in" id="dashboard-main">
                     {children}
                 </main>
 

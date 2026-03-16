@@ -335,16 +335,19 @@ export default function SimulatorPage() {
     const [limitMessage, setLimitMessage] = useState("");
 
     return (
-        <div className={`container mx-auto p-4 md:p-6 max-w-5xl flex flex-col gap-4 md:gap-6 ${isFixedLayout ? 'h-[calc(100dvh-100px)] md:h-[calc(100vh-140px)] overflow-hidden' : 'h-auto min-h-[calc(100dvh-140px)] pb-20'}`}>
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-                    <p className="text-gray-500">{t('subtitle')}</p>
-                </div>
-                <div className="flex items-center gap-4">
-                    {status === 'active' && startTime && (
-                        <div className="bg-slate-100 px-4 py-2 rounded-lg font-mono text-sm font-medium flex items-center gap-2 border border-slate-200">
-                            <History className="w-4 h-4 text-slate-500" />
+        <div className={`mx-auto w-full max-w-5xl flex flex-col ${isFixedLayout
+            ? (status === 'active'
+                ? 'h-[100dvh] md:h-[calc(100vh-80px)] overflow-hidden p-0 md:p-6 gap-0 md:gap-3'
+                : 'h-[calc(100dvh-64px)] md:h-[calc(100vh-80px)] overflow-hidden p-3 sm:p-4 md:p-6 gap-2 md:gap-4')
+            : 'h-auto min-h-[calc(100dvh-64px)] p-3 sm:p-4 md:p-6 gap-3 md:gap-6 pb-20'
+        }`}>
+            {/* Header — compact on mobile when active */}
+            {status === 'active' && startTime ? (
+                <div className="flex items-center justify-between gap-2 px-3 py-2 md:px-0 md:py-0 bg-white md:bg-transparent border-b md:border-0 border-gray-100 shrink-0 z-10">
+                    <h1 className="text-sm sm:text-base md:text-2xl font-bold text-gray-900 truncate">{t('title')}</h1>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <div className="bg-slate-100 px-2.5 py-1.5 md:px-4 md:py-2 rounded-lg font-mono text-xs md:text-sm font-semibold flex items-center gap-1.5 border border-slate-200">
+                            <History className="w-3 h-3 md:w-4 md:h-4 text-slate-500" />
                             <span id="session-timer">
                                 {(() => {
                                     const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -355,18 +358,25 @@ export default function SimulatorPage() {
                                 })()}
                             </span>
                         </div>
-                    )}
-                    {status === 'active' && (
-                        <Button variant="destructive" onClick={handleEndSession}>
-                            <Square className="w-4 h-4 mr-2" />
-                            {t('endSession')}
+                        <Button variant="destructive" size="sm" onClick={handleEndSession} className="text-xs md:text-sm px-2.5 md:px-4 h-8 md:h-9">
+                            <Square className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                            <span className="hidden sm:inline">{t('endSession')}</span>
+                            <span className="sm:hidden">Fin</span>
                         </Button>
-                    )}
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div className="flex items-center justify-between shrink-0">
+                    <div>
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">{t('title')}</h1>
+                        <p className="text-gray-500 text-sm md:text-base">{t('subtitle')}</p>
+                    </div>
+                </div>
+            )}
 
-            <Tabs defaultValue="simulator" className="flex-1 flex flex-col min-h-0" onValueChange={handleTabChange}>
-                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 max-w-full max-w-[400px]">
+            <Tabs defaultValue="simulator" className={`flex-1 flex flex-col min-h-0 ${status === 'active' ? '' : ''}`} onValueChange={handleTabChange}>
+                {/* Hide tabs when session is active on mobile to save space */}
+                <TabsList className={`grid w-full grid-cols-2 max-w-[400px] shrink-0 ${status === 'active' ? 'hidden md:grid' : ''}`}>
                     <TabsTrigger value="simulator">{t('tabs.simulator')}</TabsTrigger>
                     <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
                 </TabsList>
@@ -438,49 +448,48 @@ export default function SimulatorPage() {
 
                     {/* ACTIVE SESSION */}
                     {status === 'active' && profile && (
-                        <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 h-full overflow-hidden mt-4 grid-rows-[auto_1fr] md:grid-rows-1">
-                            {/* Patient Profile Sidebar - Collapsible on Mobile */}
-                            <Card className="md:col-span-1 flex flex-col md:h-full overflow-hidden shrink-0">
-                                <CardHeader className="p-4 md:p-6 pb-2 md:pb-6 cursor-pointer md:cursor-default" onClick={() => {
-                                    // Simple toggle for mobile view details
+                        <div className="flex-1 flex flex-col md:grid md:grid-cols-4 gap-0 md:gap-4 h-full overflow-hidden mt-0 md:mt-3 min-h-0">
+                            {/* Patient Profile — Horizontal compact strip on mobile, sidebar on desktop */}
+                            <Card className="md:col-span-1 flex flex-col md:h-full overflow-hidden shrink-0 rounded-none md:rounded-xl border-x-0 md:border-x border-t-0 md:border-t">
+                                <CardHeader className="p-2.5 px-3 md:p-5 pb-2 md:pb-4 cursor-pointer md:cursor-default" onClick={() => {
                                     const content = document.getElementById('profile-content');
                                     if (content) content.classList.toggle('hidden');
                                     const icon = document.getElementById('profile-chevron');
                                     if (icon) icon.classList.toggle('rotate-180');
                                 }}>
-                                    <div className="flex items-center justify-between">
-                                        <CardTitle className="flex items-start gap-2 break-words text-lg md:text-xl leading-tight">
-                                            <User className="w-5 h-5 mt-1 shrink-0" />
-                                            <span>{profile.name}</span>
-                                        </CardTitle>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                            <User className="w-4 h-4 shrink-0 text-gray-500" />
+                                            <div className="min-w-0 flex-1">
+                                                <CardTitle className="text-sm md:text-base font-semibold truncate leading-tight">
+                                                    {profile.name}
+                                                </CardTitle>
+                                                <CardDescription className="text-xs truncate flex items-center gap-1.5">
+                                                    {profile.age} años <span className="w-1 h-1 rounded-full bg-gray-300 inline-block"></span> <span className="truncate">{profile.condition}</span>
+                                                </CardDescription>
+                                            </div>
+                                        </div>
                                         {/* Chevron for mobile only */}
-                                        <div id="profile-chevron" className="md:hidden transition-transform duration-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6" /></svg>
+                                        <div id="profile-chevron" className="md:hidden transition-transform duration-200 shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                                         </div>
                                     </div>
-                                    <CardDescription className="flex items-center gap-2">
-                                        {profile.age} años
-                                        <span className="md:hidden inline-block w-1 h-1 rounded-full bg-gray-400 mx-1"></span>
-                                        <span className="md:hidden text-xs truncate max-w-[150px]">{profile.condition}</span>
-                                    </CardDescription>
                                 </CardHeader>
 
-                                {/* Content - Hidden by default on mobile (via CSS class toggle logic handled in click above for simplicity, or just use state if preferred, but CSS is valid too. Let's strictly use state for React best practices safely, or default hidden on mobile) */}
-                                {/* Actually, let's use a standard React state for this small UI toggle to be cleaner than direct DOM manip. */}
-                                <CardContent id="profile-content" className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar hidden md:block p-4 pt-0 md:p-6 md:pt-0">
+                                <CardContent id="profile-content" className="space-y-3 flex-1 overflow-y-auto pr-2 scrollbar-hide hidden md:block px-3 pt-0 md:px-5 md:pt-0 pb-3 md:pb-5">
                                     <div>
-                                        <h4 className="text-xs font-semibold uppercase text-gray-500 mb-1">{t('active.reasonForConsultation')}</h4>
-                                        <p className="text-sm font-medium">{profile.condition}</p>
+                                        <h4 className="text-2xs font-semibold uppercase text-gray-400 tracking-wider mb-0.5">{t('active.reasonForConsultation')}</h4>
+                                        <p className="text-xs md:text-sm font-medium text-gray-800">{profile.condition}</p>
                                     </div>
                                     <div>
-                                        <h4 className="text-xs font-semibold uppercase text-gray-500 mb-1">{t('active.context')}</h4>
-                                        <p className="text-sm text-gray-600">{profile.scenario}</p>
+                                        <h4 className="text-2xs font-semibold uppercase text-gray-400 tracking-wider mb-0.5">{t('active.context')}</h4>
+                                        <p className="text-xs md:text-sm text-gray-600 leading-relaxed">{profile.scenario}</p>
                                     </div>
                                     <div>
-                                        <h4 className="text-xs font-semibold uppercase text-gray-500 mb-1">{t('active.traits')}</h4>
+                                        <h4 className="text-2xs font-semibold uppercase text-gray-400 tracking-wider mb-0.5">{t('active.traits')}</h4>
                                         <div className="flex flex-wrap gap-1">
                                             {(profile.traits || []).map(t => (
-                                                <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                                                <Badge key={t} variant="secondary" className="text-2xs md:text-xs px-1.5 py-0">{t}</Badge>
                                             ))}
                                         </div>
                                     </div>
@@ -488,21 +497,21 @@ export default function SimulatorPage() {
                             </Card>
 
                             {/* Chat Area */}
-                            <Card className="md:col-span-3 flex flex-col h-full overflow-hidden min-h-0">
+                            <Card className="md:col-span-3 flex flex-col flex-1 overflow-hidden min-h-0 rounded-none md:rounded-xl border-x-0 md:border-x">
                                 <div
                                     ref={chatContainerRef}
-                                    className="flex-1 overflow-y-auto p-4 space-y-4"
+                                    className="flex-1 overflow-y-auto px-3 py-3 md:p-4 space-y-3 md:space-y-4"
                                 >
                                     {messages.length === 0 && (
-                                        <div className="text-center text-gray-400 py-10">
+                                        <div className="text-center text-gray-400 py-6 md:py-10 text-sm">
                                             {t('active.chatPlaceholder')}
                                         </div>
                                     )}
                                     {messages.map((m, i) => (
                                         <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`max-w-[80%] p-3 rounded-lg ${m.role === 'user'
-                                                ? 'bg-blue-600 text-white rounded-br-none'
-                                                : 'bg-gray-100 text-gray-900 rounded-bl-none'
+                                            <div className={`max-w-[85%] md:max-w-[75%] px-3 py-2.5 md:p-3 rounded-2xl text-[13px] sm:text-sm leading-relaxed ${m.role === 'user'
+                                                ? 'bg-blue-600 text-white rounded-br-sm'
+                                                : 'bg-gray-100 text-gray-800 rounded-bl-sm'
                                                 }`}>
                                                 {m.parts}
                                             </div>
@@ -510,22 +519,22 @@ export default function SimulatorPage() {
                                     ))}
                                 </div>
 
-                                {/* Controls */}
-                                <div className="p-4 border-t bg-white">
+                                {/* Controls — compact on mobile */}
+                                <div className="px-3 py-2.5 md:p-4 border-t bg-white/95 backdrop-blur-sm shrink-0 space-y-2">
                                     {/* Transcript Preview */}
                                     {(transcript || interimTranscript) && (
-                                        <div className="mb-2 p-2 bg-gray-50 text-gray-500 italic text-sm rounded border">
+                                        <div className="p-2 bg-gray-50 text-gray-500 italic text-xs md:text-sm rounded-lg border border-gray-100">
                                             "{transcript} {interimTranscript}"
                                         </div>
                                     )}
 
-                                    {/* Voice Settings Toggle */}
-                                    <div className="flex justify-end mb-2">
+                                    {/* Voice Settings Toggle — smaller on mobile */}
+                                    <div className="flex justify-end">
                                         <Button
                                             variant="ghost"
                                             size="sm"
                                             onClick={() => setShowSettings(!showSettings)}
-                                            className={`text-xs ${showSettings ? 'text-blue-600 bg-blue-50' : 'text-gray-500'}`}
+                                            className={`text-2xs md:text-xs h-7 px-2 ${showSettings ? 'text-blue-600 bg-blue-50' : 'text-gray-400'}`}
                                         >
                                             <Settings2 className="w-3 h-3 mr-1" />
                                             {t('active.voiceSettings')}
@@ -534,9 +543,9 @@ export default function SimulatorPage() {
 
                                     {/* Voice Settings Panel */}
                                     {showSettings && (
-                                        <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="p-2.5 md:p-3 bg-gray-50 rounded-lg border border-gray-100 grid grid-cols-2 gap-3 md:gap-4">
                                             <div>
-                                                <label className="text-xs font-semibold text-gray-500 block mb-1">{t('active.speed')} ({ttsRate}x)</label>
+                                                <label className="text-2xs md:text-xs font-semibold text-gray-500 block mb-1">{t('active.speed')} ({ttsRate}x)</label>
                                                 <input
                                                     type="range"
                                                     min="0.5"
@@ -544,11 +553,11 @@ export default function SimulatorPage() {
                                                     step="0.1"
                                                     value={ttsRate}
                                                     onChange={(e) => setTtsRate(parseFloat(e.target.value))}
-                                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                                    className="w-full h-1.5 md:h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="text-xs font-semibold text-gray-500 block mb-1">{t('active.pitch')} ({ttsPitch})</label>
+                                                <label className="text-2xs md:text-xs font-semibold text-gray-500 block mb-1">{t('active.pitch')} ({ttsPitch})</label>
                                                 <input
                                                     type="range"
                                                     min="0.5"
@@ -556,57 +565,55 @@ export default function SimulatorPage() {
                                                     step="0.1"
                                                     value={ttsPitch}
                                                     onChange={(e) => setTtsPitch(parseFloat(e.target.value))}
-                                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                                    className="w-full h-1.5 md:h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                                                 />
                                             </div>
                                         </div>
                                     )}
 
-                                    <div className="flex items-center gap-2">
-                                        <form
-                                            className="flex-1 flex gap-2"
-                                            onSubmit={(e) => {
-                                                e.preventDefault();
-                                                const input = e.currentTarget.elements.namedItem('message') as HTMLInputElement;
-                                                if (input.value.trim()) {
-                                                    handleSendMessage(input.value);
-                                                    input.value = '';
-                                                }
-                                            }}
-                                        >
-                                            <input
-                                                name="message"
-                                                type="text"
-                                                placeholder={t('active.inputPlaceholder')}
-                                                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                disabled={isListening}
-                                            />
-                                            <Button type="submit" size="sm" disabled={isListening}>
-                                                {t('active.sendButton')}
-                                            </Button>
-                                        </form>
-                                    </div>
-
-                                    <div className="flex items-center gap-2 mt-2">
-                                        <Button
-                                            size="lg"
-                                            variant={isListening ? "destructive" : "default"}
-                                            onClick={isListening ? handleStopRecording : startListening}
-                                            className={`w-full transition-all ${isListening ? 'animate-pulse' : ''}`}
-                                        >
-                                            {isListening ? (
-                                                <>
-                                                    <MicOff className="w-5 h-5 mr-2" />
-                                                    {t('active.stopAndSend')}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Mic className="w-5 h-5 mr-2" />
-                                                    {t('active.speak')}
-                                                </>
-                                            )}
+                                    {/* Text input + send */}
+                                    <form
+                                        className="flex items-center gap-2"
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            const input = e.currentTarget.elements.namedItem('message') as HTMLInputElement;
+                                            if (input.value.trim()) {
+                                                handleSendMessage(input.value);
+                                                input.value = '';
+                                            }
+                                        }}
+                                    >
+                                        <input
+                                            name="message"
+                                            type="text"
+                                            placeholder={t('active.inputPlaceholder')}
+                                            className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all min-w-0"
+                                            disabled={isListening}
+                                        />
+                                        <Button type="submit" size="sm" disabled={isListening} className="shrink-0 h-9 px-3 md:px-4 text-xs md:text-sm rounded-xl">
+                                            {t('active.sendButton')}
                                         </Button>
-                                    </div>
+                                    </form>
+
+                                    {/* Voice button */}
+                                    <Button
+                                        size="default"
+                                        variant={isListening ? "destructive" : "default"}
+                                        onClick={isListening ? handleStopRecording : startListening}
+                                        className={`w-full transition-all rounded-xl h-10 md:h-11 text-sm ${isListening ? 'animate-pulse' : ''}`}
+                                    >
+                                        {isListening ? (
+                                            <>
+                                                <MicOff className="w-4 h-4 mr-2" />
+                                                {t('active.stopAndSend')}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Mic className="w-4 h-4 mr-2" />
+                                                {t('active.speak')}
+                                            </>
+                                        )}
+                                    </Button>
                                 </div>
                             </Card>
                         </div>

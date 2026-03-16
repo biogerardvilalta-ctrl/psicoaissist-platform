@@ -1,214 +1,226 @@
 'use client';
 
 import { Link } from '@/navigation';
-import { useState } from 'react';
-import { Menu, X, Heart, LogIn, UserPlus, Building2, Scale } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, X, Heart, LogIn, UserPlus, Building2, Scale, ChevronRight } from 'lucide-react';
 import LanguageSwitcher from '@/components/language-switcher';
 import { useTranslations } from 'next-intl';
 
 export function Header() {
   const t = useTranslations('Landing.Header');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isMenuOpen]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gray-900">PsicoAIssist</span>
-          </Link>
+  const navLinks = [
+    { href: '/#features', label: t('nav.features') },
+    { href: '/simulator/try', label: t('nav.simulator') },
+    { href: '/#pricing', label: t('nav.pricing') },
+    ...(process.env.NODE_ENV !== 'production' ? [{ href: '/#testimonials', label: t('nav.testimonials') }] : []),
+    { href: '/docs', label: t('nav.docs') },
+    { href: '/blog', label: t('nav.blog') },
+  ];
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-4 lg:space-x-8">
-            <Link
-              href="/#features"
-              className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
-            >
-              {t('nav.features')}
+  return (
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? 'glass-strong shadow-soft border-b border-gray-200/50'
+            : 'bg-white/60 backdrop-blur-sm'
+        }`}
+        id="main-header"
+      >
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 gap-4">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 group" id="header-logo">
+              <div className="w-9 h-9 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow-primary transition-transform duration-300 group-hover:scale-105">
+                <Heart className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gray-900 tracking-tight">
+                Psico<span className="text-gradient-primary">AIssist</span>
+              </span>
             </Link>
-            <Link
-              href="/simulator/try"
-              className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
-            >
-              {t('nav.simulator')}
-            </Link>
-            <Link
-              href="/#pricing"
-              className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
-            >
-              {t('nav.pricing')}
-            </Link>
-            {process.env.NODE_ENV !== 'production' && (
-              <Link
-                href="/#testimonials"
-                className="text-sm lg:text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
-              >
-                {t('nav.testimonials')}
-              </Link>
-            )}
-            <div className="hidden lg:flex items-center space-x-8">
-              <Link
-                href="/docs"
-                className="text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
-              >
-                {t('nav.docs')}
-              </Link>
-              <Link
-                href="/blog"
-                className="text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
-              >
-                {t('nav.blog')}
-              </Link>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center gap-1" id="desktop-nav">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="relative px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100/70 transition-all duration-200"
+                >
+                  {link.label}
+                </Link>
+              ))}
               <Link
                 href="/legal?tab=terms"
-                className="flex items-center text-base text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100/70 transition-all duration-200"
               >
-                <Scale className="w-4 h-4 mr-1.5" />
+                <Scale className="w-3.5 h-3.5 mr-1.5" />
                 {t('nav.legal')}
               </Link>
-              <LanguageSwitcher />
-            </div>
-          </nav>
-
-          {/* Desktop CTA buttons */}
-          <div className="hidden lg:flex items-center space-x-2 lg:space-x-4 flex-shrink-0">
-            <Link
-              href="/clinics"
-              className="hidden xl:inline-flex items-center px-3 py-1.5 text-xs bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors"
-            >
-              <Building2 className="w-3 h-3 mr-1" />
-              {t('cta.clinics')}
-            </Link>
-            <Link
-              href="/auth/login"
-              className="inline-flex items-center px-3 py-2 text-sm lg:text-base text-gray-700 font-medium hover:text-blue-600 transition-colors whitespace-nowrap"
-            >
-              <LogIn className="w-4 h-4 mr-2" />
-              {t('cta.login')}
-            </Link>
-            <Link
-              href="/auth/register"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm lg:text-base font-medium rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
-            >
-              <UserPlus className="w-4 h-4 mr-2" />
-              {t('cta.tryFree')}
-            </Link>
-          </div>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={toggleMenu}
-            className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-          >
-            {isMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 py-4 absolute top-16 left-0 right-0 bg-white shadow-lg z-40 px-4">
-            <nav className="space-y-4">
-              <Link
-                href="/#features"
-                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.features')}
-              </Link>
-              <Link
-                href="/simulator/try"
-                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.simulator')}
-              </Link>
-              <Link
-                href="/#pricing"
-                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.pricing')}
-              </Link>
-              {process.env.NODE_ENV !== 'production' && (
-                <Link
-                  href="/#testimonials"
-                  className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.testimonials')}
-                </Link>
-              )}
-              <Link
-                href="/docs"
-                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.docs')}
-              </Link>
-              <Link
-                href="/blog"
-                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.blog')}
-              </Link>
-              <Link
-                href="/legal?tab=terms"
-                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center">
-                  <Scale className="w-4 h-4 mr-2" />
-                  {t('nav.legal')}
-                </div>
-              </Link>
-              <Link
-                href="/clinics"
-                className="block text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('cta.clinics')}
-              </Link>
-              <div className="flex items-center justify-between pt-2">
-                <span className="text-sm font-medium text-gray-700">{t('nav.language')}</span>
+              <div className="ml-1">
                 <LanguageSwitcher />
               </div>
-              <div className="pt-4 border-t border-gray-200 space-y-3">
+            </nav>
+
+            {/* Desktop CTA buttons */}
+            <div className="hidden lg:flex items-center gap-2 flex-shrink-0" id="desktop-cta">
+              <Link
+                href="/clinics"
+                className="hidden xl:inline-flex items-center px-3 py-1.5 text-xs bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
+                id="clinics-cta"
+              >
+                <Building2 className="w-3.5 h-3.5 mr-1.5" />
+                {t('cta.clinics')}
+              </Link>
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:text-gray-900 hover:bg-gray-100/70 rounded-lg transition-all duration-200"
+                id="login-cta"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                {t('cta.login')}
+              </Link>
+              <Link
+                href="/auth/register"
+                className="inline-flex items-center px-5 py-2.5 bg-gradient-primary text-white text-sm font-semibold rounded-xl hover:shadow-glow-primary transition-all duration-300 hover:scale-[1.02] btn-shimmer"
+                id="register-cta"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                {t('cta.tryFree')}
+              </Link>
+            </div>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={toggleMenu}
+              className="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 focus-ring"
+              aria-label="Toggle menu"
+              id="mobile-menu-toggle"
+            >
+              {isMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Navigation Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm animate-fade-in"
+            onClick={() => setIsMenuOpen(false)}
+          />
+
+          {/* Menu Panel */}
+          <div className="absolute top-16 left-0 right-0 bg-white shadow-elevated animate-fade-in-down max-h-[calc(100vh-4rem)] overflow-y-auto" id="mobile-menu">
+            <div className="px-4 py-5 space-y-1">
+              {/* Nav Links */}
+              <nav className="space-y-1 stagger-children">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-xl transition-all duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  </Link>
+                ))}
+
                 <Link
-                  href="/auth/login"
-                  className="block text-gray-700 font-medium hover:text-blue-600 transition-colors"
+                  href="/legal?tab=terms"
+                  className="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-xl transition-all duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <div className="flex items-center">
-                    <LogIn className="w-4 h-4 mr-2" />
-                    {t('cta.login')}
+                    <Scale className="w-4 h-4 mr-2.5 text-gray-500" />
+                    {t('nav.legal')}
                   </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </Link>
+
+                <Link
+                  href="/clinics"
+                  className="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-xl transition-all duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className="flex items-center">
+                    <Building2 className="w-4 h-4 mr-2.5 text-gray-500" />
+                    {t('cta.clinics')}
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </Link>
+              </nav>
+
+              {/* Language */}
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50">
+                <span className="text-sm font-medium text-gray-600">{t('nav.language')}</span>
+                <LanguageSwitcher />
+              </div>
+
+              {/* CTA Section */}
+              <div className="pt-4 space-y-3 border-t border-gray-100 mt-3">
+                <Link
+                  href="/auth/login"
+                  className="flex items-center justify-center w-full px-4 py-3 text-gray-700 font-semibold hover:bg-gray-50 rounded-xl transition-all duration-200 border border-gray-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  {t('cta.login')}
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block w-full text-center px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center justify-center w-full px-4 py-3.5 bg-gradient-primary text-white font-semibold rounded-xl shadow-glow-primary transition-all duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <div className="flex items-center justify-center">
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    {t('cta.tryFree')}
-                  </div>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  {t('cta.tryFree')}
                 </Link>
               </div>
-            </nav>
+            </div>
           </div>
-        )}
-      </div>
-    </header>
+        </div>
+      )}
+    </>
   );
 }

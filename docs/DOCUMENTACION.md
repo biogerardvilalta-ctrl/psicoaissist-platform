@@ -521,6 +521,37 @@ Todos los endpoints están bajo el prefijo `/api/v1`. La documentación Swagger 
 - **`UpgradePlanModal`** — Modal para upgrade de plan con Stripe
 - **`NotificationsPanel`** — Panel de notificaciones en tiempo real
 
+### Sistema de Diseño y Responsive (Refactoring v2 — Marzo 2026)
+
+La plataforma ha sido refactorizada con un nuevo sistema de diseño premium y mobile-first:
+
+#### Tokens de diseño (`globals.css`)
+- **Paleta refinada**: Blues cálidos (HSL 231) + acento púrpura (HSL 262)
+- **Gradientes**: `gradient-primary`, `gradient-hero`, `gradient-cta`, `gradient-mesh`
+- **Sombras**: `shadow-card`, `shadow-card-hover`, `shadow-elevated`, `shadow-glow-primary`
+- **Glassmorphism**: Clases `.glass` y `.glass-strong` con backdrop-blur
+- **Animaciones**: `fadeIn`, `fadeInUp`, `slideIn`, `scaleIn`, `stagger-children`, `blob`, `shimmer`
+
+#### Componentes refactorizados
+- **Header** — Glassmorphism con scroll detection, mobile overlay con backdrop, body scroll lock
+- **Hero Section** — Gradient mesh animated background, feature chips con glass, CTA shimmer
+- **Features Section** — Dot-pattern background, stagger animations, responsive grid (1→2→4)
+- **FAQ Section** — CSS-grid smooth accordion, active ring state, icon rotation
+- **Testimonials** — Unique author gradients, reveal-on-hover quote, stats en cards
+- **Pricing** — Dark billing toggle, gradient popular badge, ring offset, circular checks
+- **Final CTA** — Layered backgrounds (gradient+mesh+dots), responsive value props (2×2→4)
+- **Footer** — Darker bg (gray-950), gradient logo, hover-reveal icons
+- **Dashboard Layout** — Glassmorphism header, gradient avatar, mobile overlay con language switcher, max-width 1440px
+- **Dashboard Page** — Staggered cards, animated alerts, refined widget library
+
+#### Principios responsive
+- **Mobile-first**: Todos los breakpoints de menor a mayor (`sm:`, `md:`, `lg:`, `xl:`)
+- **Container responsive**: Padding adaptativo (16px → 24px → 32px)
+- **Textos adaptativos**: Tamaños base pequeños que escalan (`text-sm sm:text-base lg:text-lg`)
+- **Overflow prevention**: `overflow-x-hidden` en body, `min-w-0` en flex items
+- **Touch-friendly**: Mínimo 44px de área de toque en elementos interactivos
+- **Body scroll lock**: Mobile menu bloquea scroll del body
+
 ---
 
 ## 8. Autenticación y Seguridad

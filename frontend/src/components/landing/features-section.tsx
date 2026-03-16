@@ -1,3 +1,5 @@
+'use client';
+
 import { Brain, Shield, Mic, FileText, BarChart3, Users, Clock, Lock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -5,42 +7,66 @@ const featuresConfig = [
   {
     id: 'transcription',
     icon: Mic,
-    color: 'bg-blue-100 text-blue-600',
+    gradient: 'from-blue-500 to-blue-600',
+    bgLight: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+    ring: 'ring-blue-100',
   },
   {
     id: 'analysis',
     icon: Brain,
-    color: 'bg-purple-100 text-purple-600',
+    gradient: 'from-purple-500 to-purple-600',
+    bgLight: 'bg-purple-50',
+    iconColor: 'text-purple-600',
+    ring: 'ring-purple-100',
   },
   {
     id: 'reports',
     icon: FileText,
-    color: 'bg-green-100 text-green-600',
+    gradient: 'from-emerald-500 to-emerald-600',
+    bgLight: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    ring: 'ring-emerald-100',
   },
   {
     id: 'security',
     icon: Shield,
-    color: 'bg-red-100 text-red-600',
+    gradient: 'from-rose-500 to-rose-600',
+    bgLight: 'bg-rose-50',
+    iconColor: 'text-rose-600',
+    ring: 'ring-rose-100',
   },
   {
     id: 'analytics',
     icon: BarChart3,
-    color: 'bg-yellow-100 text-yellow-600',
+    gradient: 'from-amber-500 to-amber-600',
+    bgLight: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+    ring: 'ring-amber-100',
   },
   {
     id: 'clients',
     icon: Users,
-    color: 'bg-indigo-100 text-indigo-600',
+    gradient: 'from-indigo-500 to-indigo-600',
+    bgLight: 'bg-indigo-50',
+    iconColor: 'text-indigo-600',
+    ring: 'ring-indigo-100',
   },
   {
     id: 'time',
     icon: Clock,
-    color: 'bg-pink-100 text-pink-600',
+    gradient: 'from-pink-500 to-pink-600',
+    bgLight: 'bg-pink-50',
+    iconColor: 'text-pink-600',
+    ring: 'ring-pink-100',
   },
   {
     id: 'privacy',
     icon: Lock,
-    color: 'bg-teal-100 text-teal-600',
+    gradient: 'from-teal-500 to-teal-600',
+    bgLight: 'bg-teal-50',
+    iconColor: 'text-teal-600',
+    ring: 'ring-teal-100',
   },
 ];
 
@@ -48,61 +74,68 @@ export function FeaturesSection() {
   const t = useTranslations('Landing.Features');
 
   return (
-    <section id="features" className="py-16 bg-white sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="features" className="relative py-16 bg-white sm:py-20 lg:py-28">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center">
-          <h2 className="text-base font-semibold text-blue-600 tracking-wide uppercase">
+        <div className="text-center max-w-3xl mx-auto animate-fade-in-up">
+          <div className="inline-flex items-center rounded-full bg-blue-50 px-4 py-1.5 text-sm font-semibold text-blue-600 ring-1 ring-inset ring-blue-100 mb-4">
             {t('badge')}
-          </h2>
-          <p className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl tracking-tight">
             {t('title')}
-          </p>
-          <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
+          </h2>
+          <p className="mt-4 text-base text-gray-600 sm:text-lg leading-relaxed">
             {t('description')}
           </p>
         </div>
 
-        {/* Features grid */}
-        <div className="mt-16">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {featuresConfig.map((feature, index) => (
+        {/* Features grid — 2 cols on mobile, 4 on desktop */}
+        <div className="mt-12 sm:mt-16 lg:mt-20">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 stagger-children">
+            {featuresConfig.map((feature) => (
               <div
                 key={feature.id}
-                className="relative group"
+                className="group relative"
               >
-                <div className="h-full p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                  {/* Icon */}
-                  <div className={`inline-flex p-3 rounded-lg ${feature.color}`}>
-                    <feature.icon className="h-6 w-6" aria-hidden="true" />
+                <div className="h-full p-5 sm:p-6 bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                  {/* Icon with gradient bg on hover */}
+                  <div className={`inline-flex p-3 rounded-xl ${feature.bgLight} ring-1 ${feature.ring} group-hover:shadow-sm transition-all duration-300`}>
+                    <feature.icon className={`h-5 w-5 sm:h-6 sm:w-6 ${feature.iconColor}`} aria-hidden="true" />
                   </div>
 
                   {/* Content */}
                   <div className="mt-4">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-snug">
                       {t(`items.${feature.id}.title`)}
                     </h3>
-                    <p className="mt-2 text-sm text-gray-600 leading-relaxed">
+                    <p className="mt-2 text-sm text-gray-500 leading-relaxed">
                       {t(`items.${feature.id}.description`)}
                     </p>
                   </div>
-
-                  {/* Hover effect */}
-                  <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10 group-hover:ring-blue-500/20" />
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center justify-center space-x-2 text-sm text-gray-500">
-            <span>✓ {t('bottom.trial')}</span>
-            <span>•</span>
-            <span>✓ {t('bottom.card')}</span>
-            <span>•</span>
-            <span>✓ {t('bottom.support')}</span>
+        {/* Bottom trust indicators */}
+        <div className="mt-12 sm:mt-16 text-center animate-fade-in">
+          <div className="inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-500">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              {t('bottom.trial')}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              {t('bottom.card')}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              {t('bottom.support')}
+            </span>
           </div>
         </div>
       </div>
