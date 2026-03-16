@@ -1,31 +1,15 @@
+'use client';
+
 import { Star, Quote } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 const testimonialsConfig = [
-  {
-    image: '/avatars/maria.jpg', // Placeholder
-    rating: 5,
-  },
-  {
-    image: '/avatars/carlos.jpg', // Placeholder
-    rating: 5,
-  },
-  {
-    image: '/avatars/ana.jpg', // Placeholder
-    rating: 5,
-  },
-  {
-    image: '/avatars/luis.jpg', // Placeholder
-    rating: 5,
-  },
-  {
-    image: '/avatars/elena.jpg', // Placeholder
-    rating: 5,
-  },
-  {
-    image: '/avatars/roberto.jpg', // Placeholder
-    rating: 5,
-  },
+  { image: '/avatars/maria.jpg', rating: 5, gradient: 'from-blue-500 to-indigo-600' },
+  { image: '/avatars/carlos.jpg', rating: 5, gradient: 'from-purple-500 to-pink-600' },
+  { image: '/avatars/ana.jpg', rating: 5, gradient: 'from-emerald-500 to-teal-600' },
+  { image: '/avatars/luis.jpg', rating: 5, gradient: 'from-amber-500 to-orange-600' },
+  { image: '/avatars/elena.jpg', rating: 5, gradient: 'from-rose-500 to-pink-600' },
+  { image: '/avatars/roberto.jpg', rating: 5, gradient: 'from-cyan-500 to-blue-600' },
 ];
 
 export function TestimonialsSection() {
@@ -38,9 +22,6 @@ export function TestimonialsSection() {
 
   const items = t.raw('items') as any[];
 
-  // Names and locations placeholders/hardcoded for demo purposes as they weren't in JSON
-  // If we wanted them translated we should have added them to JSON.
-  // For now I will recreate the original names array logic inside the map or separate array.
   const authorData = [
     { name: 'Dr. María González', location: 'Madrid, España' },
     { name: 'Dr. Carlos Mendoza', location: 'Barcelona, España' },
@@ -51,43 +32,42 @@ export function TestimonialsSection() {
   ];
 
   return (
-    <section id="testimonials" className="py-16 bg-white sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="testimonials" className="relative py-16 bg-white sm:py-20 lg:py-28 overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-50 rounded-full -translate-x-1/2 -translate-y-1/2 opacity-50" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-50 rounded-full translate-x-1/2 translate-y-1/2 opacity-50" />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center">
-          <h2 className="text-base font-semibold text-blue-600 tracking-wide uppercase">
+        <div className="text-center animate-fade-in-up">
+          <div className="inline-flex items-center rounded-full bg-blue-50 px-4 py-1.5 text-sm font-semibold text-blue-600 ring-1 ring-inset ring-blue-100 mb-4">
             {t('badge')}
-          </h2>
-          <p className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl tracking-tight">
             {t('title')}
-          </p>
-          <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
+          </h2>
+          <p className="mt-4 max-w-2xl mx-auto text-base text-gray-600 sm:text-lg leading-relaxed">
             {t('description')}
           </p>
         </div>
 
         {/* Stats */}
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8 md:grid-cols-4">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">500+</div>
-            <div className="text-sm text-gray-600">{t('stats.psychologists')}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">15,000+</div>
-            <div className="text-sm text-gray-600">{t('stats.sessions')}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">98%</div>
-            <div className="text-sm text-gray-600">{t('stats.satisfaction')}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-yellow-600">4.9/5</div>
-            <div className="text-sm text-gray-600">{t('stats.rating')}</div>
-          </div>
+        <div className="mt-10 sm:mt-12 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
+          {[
+            { value: '500+', color: 'text-blue-600', label: t('stats.psychologists') },
+            { value: '15,000+', color: 'text-emerald-600', label: t('stats.sessions') },
+            { value: '98%', color: 'text-purple-600', label: t('stats.satisfaction') },
+            { value: '4.9/5', color: 'text-amber-600', label: t('stats.rating') },
+          ].map((stat, i) => (
+            <div key={i} className="text-center p-4 bg-gray-50/80 rounded-xl border border-gray-100">
+              <div className={`text-2xl sm:text-3xl font-bold ${stat.color} animate-count-up`}>{stat.value}</div>
+              <div className="text-xs sm:text-sm text-gray-500 mt-1">{stat.label}</div>
+            </div>
+          ))}
         </div>
 
         {/* Testimonials grid */}
-        <div className="mt-16 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="mt-10 sm:mt-14 grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 stagger-children">
           {items.map((item, index) => {
             const config = testimonialsConfig[index] || testimonialsConfig[0];
             const author = authorData[index] || authorData[0];
@@ -95,40 +75,41 @@ export function TestimonialsSection() {
             return (
               <div
                 key={index}
-                className="relative bg-white p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                className="relative bg-white p-6 sm:p-8 rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 group"
+                id={`testimonial-${index}`}
               >
                 {/* Quote icon */}
-                <div className="absolute top-6 right-6">
-                  <Quote className="h-8 w-8 text-gray-200" />
+                <div className="absolute top-5 right-5 sm:top-6 sm:right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Quote className="h-6 w-6 sm:h-8 sm:w-8 text-blue-100" />
                 </div>
 
                 {/* Rating */}
-                <div className="flex items-center">
+                <div className="flex items-center gap-0.5">
                   {[...Array(config.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    <Star key={i} className="h-4 w-4 text-amber-400 fill-current" />
                   ))}
                 </div>
 
                 {/* Quote */}
-                <blockquote className="mt-4 text-gray-900 leading-relaxed">
-                  "{item.quote}"
+                <blockquote className="mt-4 text-sm sm:text-base text-gray-800 leading-relaxed font-medium">
+                  &ldquo;{item.quote}&rdquo;
                 </blockquote>
 
                 {/* Highlight */}
-                <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
+                <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs sm:text-sm font-medium ring-1 ring-inset ring-blue-100">
                   {item.highlight}
                 </div>
 
                 {/* Author */}
-                <div className="mt-6 flex items-center">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
+                <div className="mt-5 flex items-center gap-3 pt-4 border-t border-gray-100">
+                  <div className={`h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-gradient-to-br ${config.gradient} flex items-center justify-center text-white font-bold text-sm shadow-sm`}>
                     {author.name.split(' ').map((n: string) => n[0]).join('')}
                   </div>
-                  <div className="ml-4">
-                    <div className="text-base font-semibold text-gray-900">
+                  <div>
+                    <div className="text-sm font-semibold text-gray-900">
                       {author.name}
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-500">
                       {item.role} • {author.location}
                     </div>
                   </div>
@@ -139,20 +120,22 @@ export function TestimonialsSection() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-lg text-gray-600 mb-6">
+        <div className="mt-12 sm:mt-16 text-center animate-fade-in">
+          <p className="text-base sm:text-lg text-gray-600 mb-6">
             {t('cta.title')}
           </p>
-          <div className="inline-flex flex-col sm:flex-row gap-4">
+          <div className="inline-flex flex-col sm:flex-row gap-3 sm:gap-4">
             <a
               href="/auth/register"
-              className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center justify-center px-7 py-3 bg-gradient-primary text-white text-sm font-semibold rounded-xl shadow-glow-primary hover:shadow-elevated transition-all duration-300 hover:scale-[1.02]"
+              id="testimonials-cta-trial"
             >
               {t('cta.trial')}
             </a>
             <a
               href="/case-studies"
-              className="inline-flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center justify-center px-7 py-3 border-2 border-gray-200 text-sm font-semibold text-gray-700 bg-white rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+              id="testimonials-cta-cases"
             >
               {t('cta.cases')}
             </a>

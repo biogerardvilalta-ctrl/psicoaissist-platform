@@ -7,7 +7,11 @@ import '../../styles/globals.css'
 import { NextIntlClientProvider, useMessages } from 'next-intl'
 import { getTranslations } from 'next-intl/server';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
 type Props = {
   params: { locale: string };
@@ -72,6 +76,11 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
         'max-snippet': -1,
       },
     },
+    viewport: {
+      width: 'device-width',
+      initialScale: 1,
+      maximumScale: 5,
+    },
   };
 }
 
@@ -86,8 +95,8 @@ export default function RootLayout({
   const messages = useMessages();
 
   return (
-    <html lang={locale}>
-      <body className={inter.className}>
+    <html lang={locale} className={inter.variable}>
+      <body className={`${inter.className} min-h-screen overflow-x-hidden`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
