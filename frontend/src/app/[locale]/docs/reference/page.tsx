@@ -38,24 +38,14 @@ export default function ReferencePage() {
                                     {t('glossary.title')}
                                 </h2>
                                 <div className="grid gap-6">
-                                    <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                                        <h3 className="font-bold text-slate-900">{t('glossary.items.manager.title')}</h3>
-                                        <p className="text-sm text-slate-600 mt-1">
-                                            {t('glossary.items.manager.text')}
-                                        </p>
-                                    </div>
-                                    <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                                        <h3 className="font-bold text-slate-900">{t('glossary.items.themes.title')}</h3>
-                                        <p className="text-sm text-slate-600 mt-1">
-                                            {t('glossary.items.themes.text')}
-                                        </p>
-                                    </div>
-                                    <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                                        <h3 className="font-bold text-slate-900">{t('glossary.items.sentiment.title')}</h3>
-                                        <p className="text-sm text-slate-600 mt-1">
-                                            {t('glossary.items.sentiment.text')}
-                                        </p>
-                                    </div>
+                                    {['manager', 'themes', 'sentiment', 'transcription', 'extraPack', 'simulator', 'reportEvolution', 'reportDischarge', 'branding', 'buffer', 'blocks', 'consent'].map(key => (
+                                        <div key={key} className="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                                            <h3 className="font-bold text-slate-900">{t(`glossary.items.${key}.title`)}</h3>
+                                            <p className="text-sm text-slate-600 mt-1">
+                                                {t(`glossary.items.${key}.text`)}
+                                            </p>
+                                        </div>
+                                    ))}
                                 </div>
                             </section>
 

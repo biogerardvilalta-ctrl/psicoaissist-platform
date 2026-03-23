@@ -2505,7 +2505,7 @@
         "cards": {
             "manual": {
                 "title": "Manual d'Usuari",
-                "description": "Documentació completa sobre totes les funcionalitats de la plataforma. Aprèn sobre rols, gestió de pacients, facturació i anàlisi d'IA.",
+                "description": "Documentació completa sobre totes les funcionalitats de la plataforma. Aprèn sobre rols, gestió de pacients, informes, estadístiques i anàlisi d'IA.",
                 "link": "Llegir Manual"
             },
             "quickGuide": {
@@ -2530,7 +2530,7 @@
         },
         "Manual": {
             "title": "Manual d'Usuari",
-            "subtitle": "Guia completa de PsicoAIssist: Des de la configuració inicial fins a l'ús avançat de la IA i els informes.",
+            "subtitle": "Guia completa de PsicoAIssist: Des de la configuració inicial fins a l'ús avançat de la IA, informes i estadístiques.",
             "back": "Tornar a Documentació",
             "officialDocs": "Documentació Oficial",
             "index": {
@@ -2539,7 +2539,7 @@
                     "intro": "1. Introducció",
                     "roles": "2. Rols d'Usuari",
                     "plans": "3. Plans i Preus",
-                    "steps": "4. Primeros Pasos",
+                    "steps": "4. Primers Passos",
                     "dashboard": "5. Dashboard",
                     "features": "6. Funcionalitats",
                     "profile": "7. Perfil i Subscripció",
@@ -2553,304 +2553,381 @@
                 "capabilities": {
                     "title": "Què pots fer amb PsicoAIssist?",
                     "ai": {
-                        "title": "🤖 Intel·ligència Artificial",
+                        "title": "🧠 Intel·ligència Artificial i Clínica",
                         "list": {
-                            "0": "<strong>Transcripció Automàtica:</strong> Converteix l'àudio de les teves sessions a text amb alta precisió.",
-                            "1": "<strong>Anàlisi Emocional:</strong> Detecta patrons de sentiment i temes recurrents.",
-                            "2": "<strong>Generació d'Informes:</strong> Crea esborranys d'informes clínics, resums i plans de treball en segons.",
-                            "3": "<strong>Assistent Clínic:</strong> Rep suggeriments no prescriptius sobre possibles línies d'intervenció."
+                            "0": "<strong>Transcripció Automàtica:</strong> Converteix l'àudio de les teves sessions a text amb alta precisió en més de 50 idiomes.",
+                            "1": "<strong>Anàlisi IA:</strong> Resums fàctics, elements emocionals, indicadors narratius i suggeriments orientatius generats automàticament.",
+                            "2": "<strong>Analítiques:</strong> Detecció de tendències d'ànim, temes recurrents, tècniques terapèutiques i tests suggerits al Dashboard.",
+                            "3": "<strong>Simulador Clínic:</strong> Roleplay amb pacients virtuals generats per IA per practicar casos complexos."
                         }
                     },
                     "management": {
-                        "title": "👥 Gestió de Pacients",
+                        "title": "📋 Gestió i Documentació",
                         "list": {
-                            "0": "Expedients digitals segurs i centralitzats.",
-                            "1": "Historial de sessions i seguiment de progrés.",
-                            "2": "Emmagatzematge de documents i notes privades."
+                            "0": "<strong>Expedient Digital:</strong> Perfils de pacients amb dades de contacte, diagnòstic, nivell de risc, notes privades i historial complet.",
+                            "1": "<strong>Generació d'Informes:</strong> Informes clínics en PDF i Word (Evolució, Alta, Derivació, Sessió Individual i personalitzats) amb un clic.",
+                            "2": "<strong>Emmagatzematge Segur:</strong> Xifrat de dades sensibles i compliment GDPR rigorós."
                         }
                     },
                     "agenda": {
-                        "title": "📅 Agenda Intel·ligent",
+                        "title": "📅 Agenda i Negoci",
                         "list": {
-                            "0": "Gestió de cites individuals, de parella i de grup.",
-                            "1": "Sincronització bidireccional amb <strong>Google Calendar</strong>.",
-                            "2": "Recordatoris automàtics."
+                            "0": "<strong>Calendari Intel·ligent:</strong> Cites individuals, de parella, grupals i familiars amb buffers automàtics entre sessions.",
+                            "1": "<strong>Sincronització Google Calendar:</strong> Bidireccional — les teves cites apareixen a Google i els esdeveniments de Google bloquegen la teva disponibilitat.",
+                            "2": "<strong>Control d'Ingressos:</strong> Estimació de guanys en temps real basada en la teva tarifa per hora configurable."
                         }
                     },
                     "extras": {
-                        "title": "✨ Eines Extra",
+                        "title": "🚀 Extras i Equips",
                         "list": {
-                            "0": "<strong>Videoconferència integrada</strong> amb pissarra i xat segur.",
-                            "1": "<strong>Simulador Clínic:</strong> Practica casos complexos amb pacients virtuals generats per IA."
+                            "0": "<strong>Gestió d'Equips:</strong> Rols Professional, Agenda Manager i Administrador per a clíniques amb múltiples professionals.",
+                            "1": "<strong>Branding Personalitzat:</strong> El teu logotip, colors corporatius i nom de clínica als informes PDF i Word (Pla Premium).",
+                            "2": "<strong>Videoconferència Integrada:</strong> Sistema propi encriptat sense necessitat de Zoom o Google Meet."
                         }
                     }
                 }
             },
             "roles": {
                 "title": "2. Rols d'Usuari",
-                "text": "La plataforma s'adapta a diferents perfils professionals dins d'una consulta o clínica:",
+                "text": "El sistema distingeix principalment entre tres rols amb interfícies adaptades:",
                 "professional": {
-                    "title": "Professional (Psicòleg/Psiquiatre)",
-                    "desc": "L'usuari principal que atén pacients.",
+                    "title": "Professional (Psicòleg/a)",
+                    "desc": "L'usuari principal (terapeuta/psicòleg) que atén pacients directament.",
                     "list": {
-                        "0": "Gestiona la seva pròpia agenda i pacients.",
-                        "1": "Realitza sessions i utilitza les eines d'IA.",
-                        "2": "Accés complet a les dades clíniques dels seus pacients."
+                        "0": "Gestiona la seva pròpia agenda, pacients i sessions amb total autonomia.",
+                        "1": "Dashboard analític personalitzable amb 16 widgets i eines d'IA completes.",
+                        "2": "Accés a Estadístiques, Informes, Simulador i configuració de facturació."
                     }
                 },
                 "manager": {
                     "title": "Agenda Manager (Secretaria/Administració)",
-                    "desc": "Perfil de suport per a la gestió de cites, ideal per a clíniques.",
+                    "desc": "Rol administratiu per a secretaris o personal de suport a clíniques. S'activa com a complement addicional des de la secció Ajustes > Gestors d'Agenda del professional.",
                     "list": {
-                        "0": "Pot veure i gestionar l'agenda de múltiples professionals.",
-                        "1": "Pot crear, moure i cancel·lar cites.",
-                        "2": "<strong>NO té accés</strong> a dades clíniques sensibles (notes, transcripcions, xats)."
+                        "0": "Gestió d'agendes de múltiples professionals i creació de Grups de Professionals per filtrar ràpidament.",
+                        "1": "Pot crear, moure i cancel·lar cites, i veure la llista de pacients dels professionals assignats.",
+                        "2": "<strong>NO té accés</strong> a dades clíniques sensibles: notes de sessió, transcripcions, informes d'IA, estadístiques ni simulador."
                     }
                 }
             },
             "plans": {
-                "title": "3. Plans i Suscripcions",
-                "text": "PsicoAIssist funciona mitjançant un model de subscripció flexible. Pots canviar de pla en qualsevol moment des de la secció de <em>Facturació</em>.",
-                "languages": "🌍 <strong>Suport Multilíngüe:</strong> La IA entén i processa sessions en <strong>més de 50 idiomes</strong> (Català, Castellà, Anglès, Francès, etc.), generant els informes en l'idioma que tinguis configurat a la plataforma.",
+                "title": "3. Plans i Subscripcions",
+                "text": "PsicoAIssist ofereix un model de subscripció flexible amb cinc nivells de servei. Pots consultar el teu pla actual a <strong>Perfil > Subscripció</strong> i canviar-lo en qualsevol moment amb el botó 'Millorar Pla'.",
+                "languages": "🌍 <strong>Suport Multilíngüe:</strong> La plataforma està disponible en Català, Castellà i Anglès. Pots canviar l'idioma de la interfície des de la icona del món 🌐 a la <strong>barra de navegació superior</strong>. La IA entén i processa sessions en <strong>més de 50 idiomes</strong>, generant els informes en l'idioma configurat.",
                 "resetPolicy": {
                     "title": "⚠️ Política de Reinici Mensual",
-                    "text": "Els minuts d'IA i l'espai d'emmagatzematge del teu pla es reinicien el dia 1 de cada mes natural. Els minuts no consumides NO s'acumulen per al mes següent.",
+                    "text": "Tots els comptadors d'ús (minuts de transcripció, casos de simulador, etc.) són mensuals i es reinicien a zero en la data de renovació de la teva subscripció. Els recursos no consumits NO s'acumulen per al mes següent.",
                     "note": "Excepció: Els 'Packs Extra' comprats a part no caduquen fins a esgotar-se."
                 },
                 "individual": {
-                    "title": "Plans Individuals"
+                    "title": "Plans Individuals",
+                    "basic": {
+                        "title": "Pla Basic",
+                        "description": "Perfecte per a psicòlegs independents que comencen.",
+                        "features": "Fins a 25 pacients actius, 10 hores de transcripció (només text), agenda i facturació bàsica. No inclou IA generativa, simulador clínic ni sincronització amb Google Calendar."
+                    },
+                    "pro": {
+                        "title": "Pla Pro",
+                        "description": "L'opció més popular per a pràctica professional.",
+                        "features": "Pacients il·limitats, 15h (900 min) de Transcripció + IA, Sincronització Google Calendar, Simulador Clínic (5 casos/mes), 50GB emmagatzematge i suport prioritari."
+                    },
+                    "premium": {
+                        "title": "Pla Premium",
+                        "description": "Per a especialistes amb alt volum de treball.",
+                        "features": "Tot el de Pro, 50h (3.000 min) de Transcripció + IA, Simulador Clínic Il·limitat, 1TB emmagatzematge, Suport Prioritari + Videotrucada i Branding Personalitzat (logotip, colors i nom de clínica als informes)."
+                    }
                 },
                 "group": {
-                    "title": "Plans per a Grups"
+                    "title": "Plans Grupals i Corporatius",
+                    "clinics": {
+                        "title": "Pla Clinics / Institucions",
+                        "description": "Per a Centres de Salut, Universitats i Hospitals. Inclou: Usuaris il·limitats, IA Corporativa (5.000+ min/mes), Simulador a mida, Accés API, Compliance Avançat i Facturació unificada."
+                    }
                 },
                 "extras": {
-                    "title": "Extres"
+                    "title": "Extres i Complements",
+                    "agenda": {
+                        "title": "Agenda Manager",
+                        "description": "Permet afegir un usuari administratiu per delegar la gestió de cites i pacients sense accés a dades clíniques."
+                    },
+                    "minutes": {
+                        "title": "Pack Minuts IA",
+                        "description": "Afegeix minuts extra d'IA/Transcripció per cobrir pics de treball puntuals. No caduquen a final de mes."
+                    },
+                    "simulator": {
+                        "title": "Pack Simulador",
+                        "description": "Pack de 10 casos clínics addicionals per ampliar la formació pràctica. No caduquen a final de mes."
+                    },
+                    "onboarding": {
+                        "title": "Sessió Onboarding",
+                        "description": "Sessió personalitzada de 45 minuts per configurar el compte, importar dades i garantir el funcionament correcte amb suport directe."
+                    }
                 },
                 "fairUse": {
                     "title": "Política d'Ús Just (Fair Use)",
-                    "text": "L'ús de la IA i l'emmagatzematge està subjecte a límits raonables per garantir l'estabilitat del servei. L'ús compartit de comptes individuals està prohibit i monitoritzat.",
-                    "warning": "L'incompliment pot comportar la suspensió del compte."
+                    "text": "Per garantir l'estabilitat del sistema, els plans amb característiques 'Il·limitades' estan subjectes a límits raonables de seguretat mensual. L'ús compartit de comptes individuals està prohibit i monitoritzat.",
+                    "warning": "L'ús per sobre d'aquests límits es considera abusiu i pot comportar la suspensió temporal del compte."
                 }
             },
             "steps": {
                 "title": "4. Primers Passos",
                 "access": {
-                    "title": "Accés",
-                    "text": "Pots accedir des de qualsevol navegador modern (Chrome, Edge, Safari, Firefox). Recomanem Chrome per a la millor experiència amb la gravació d'àudio."
+                    "title": "Accés Inicial",
+                    "text": "Accedeix amb les teves credencials (email i contrasenya) a la pàgina d'inici de sessió segura. Pots registrar-te des de la pàgina principal i verificar el teu email per activar el compte. Recomanem Chrome per a la millor experiència amb la gravació d'àudio."
                 },
                 "config": {
-                    "title": "Configuració Inicial",
-                    "text": "Abans de començar, et recomanem:",
+                    "title": "Configuració Inicial (Recomanat)",
+                    "text": "Abans de començar a citar pacients, dirigeix-te a <strong>Ajustes</strong> per configurar:",
                     "list": {
-                        "0": "Anar a <strong>Ajustes</strong> i completar el teu perfil.",
-                        "1": "Configurar la teva <strong>Disponibilitat Horària</strong> a l'Agenda.",
-                        "2": "Si uses Google Calendar, activar la sincronització a <em>Preferències</em>."
+                        "0": "<strong>Horari Laboral:</strong> Defineix l'hora d'inici i fi per a cada dia de la setmana, i la durada per defecte de les sessions (ej. 60 min).",
+                        "1": "<strong>Tarifa:</strong> Estableix el teu preu per hora perquè el sistema calculi els teus ingressos estimats al Dashboard.",
+                        "2": "<strong>Google Calendar:</strong> Activa la sincronització bidireccional a la secció Agenda perquè les teves cites apareguin al teu calendari personal i viceversa."
                     }
                 }
             },
             "dashboard": {
-                "title": "5. Dashboard Principal",
-                "text": "El teu centre de comandament. La informació que veus depèn del teu rol.",
+                "title": "5. El Dashboard",
+                "text": "El Dashboard és el centre de control principal i el seu disseny s'adapta dinàmicament segons el teu rol.",
                 "professional": {
                     "title": "Vista Professional",
-                    "text": "Veuràs les teves properes cites, un resum de l'activitat recent i estadístiques globals dels teus pacients.",
-                    "widgets": "Widgets destacats:",
+                    "text": "És un panell modular i <strong>personalitzable</strong>. Pots afegir o treure 'Widgets' des de la <strong>Llibreria de Widgets</strong> (botó a la cantonada superior dreta).",
+                    "widgets": "Widgets Disponibles (16 en total):",
                     "list": {
-                        "0": "<strong>Benestar General:</strong> Mitjana de l'estat d'ànim detectat en les últimes sessions.",
-                        "1": "<strong>Alertes de Risc:</strong> Indicadors d'ideació suïcida o autolesió (només informatiu).",
-                        "2": "<strong>Pròximes Sessions:</strong> Accés ràpid per iniciar videoconferència o gravació."
+                        "0": "<strong>Operatius:</strong> Sessions d'Avui (amb vista d'agenda completa), Notes Pendents de revisió, Agenda pròxims 7 dies, i Activitat Recent amb historial d'accions.",
+                        "1": "<strong>Analítics (Negoci):</strong> Sessions del Mes, Pacients Actius, Ingressos Estimats (basats en tarifa/hora), Taxa d'Assistència i Taxa de Cancel·lació amb indicadors de tendència.",
+                        "2": "<strong>Clínics (IA):</strong> Temes Recurrents (gràfic de temes detectats per la IA), Tendència de Benestar (sentiment al llarg del temps), Distribució de Tipus de Sessió, Tests Suggerits i Tècniques Terapèutiques detectades."
                     },
-                    "note": "* Les dades s'actualitzen en temps real després de processar cada sessió."
+                    "note": "<strong>Nota:</strong> Els widgets clínics requereixen que completes les teves notes de sessió perquè la IA pugui generar dades útils. Pots arrossegar els widgets per reordenar-los i la configuració es desa automàticament."
                 },
                 "manager": {
-                    "title": "Vista Manager",
-                    "text": "Veuràs un calendari unificat amb les cites de tots els professionals assignats, facilitant la reprogramació i gestió de buits."
+                    "title": "Vista Agenda Manager",
+                    "text": "El teu Dashboard mostra Tarjetes de Professionals assignats. Fes clic en una tarjeta per accedir a l'agenda específica d'aquell professional. També pots crear i gestionar <strong>Grups de Professionals</strong> (ex. 'Equip Matí', 'Especialistes Infantils') per filtrar ràpidament i veure agendes combinades, ideal per trobar buits disponibles."
                 }
             },
             "features": {
-                "title": "6. Funcionalitats Clau",
+                "title": "6. Funcionalitats Principals",
                 "patients": {
                     "title": "Gestió de Pacients",
-                    "text": "Crea perfils detallats amb dades de contacte, notes privades generals i històric de sessions. Pots cercar i filtrar la teva llista de pacients ràpidament."
+                    "text": "La secció <strong>Clients</strong> al menú lateral et permet gestionar tots els teus pacients. Pots afegir nous pacients amb el botó 'Afegir Pacient', cercar per nom o email, i accedir al perfil complet de cada pacient amb les seves dades de contacte, diagnòstic preliminar, nivell de risc (Baix, Mitjà, Alt, Crític), notes privades i historial de sessions. Els pacients es poden <strong>Arxivar</strong> (desactivar sense esborrar) i <strong>Restaurar</strong> des de la pestanya 'Arxivats'. L'eliminació permanent només és possible des de la vista d'arxivats. Al crear un pacient, pots marcar els consentiments de protecció de dades i ús d'IA."
                 },
                 "sessions": {
-                    "title": "Sessions i Transcripció",
-                    "text": "El nucli de PsicoAIssist.  Pots realitzar sessions presencials (gravant àudio) o remotes (videoconferència).",
+                    "title": "Gestió de Sessions",
+                    "text": "A la secció <strong>Sessions</strong>, utilitza la vista de calendari per crear i gestionar cites. Pots triar entre sessions Individuals, Grupals, de Parella o Familiars, i afegir notes preliminars opcionals.",
                     "flow": {
-                        "title": "Flux de Treball Habitual:",
+                        "title": "Flux d'una Sessió Estàndard:",
                         "step1": {
-                            "title": "Crear Sessió:",
-                            "text": "Des de l'agenda o el perfil del pacient. Defineix si és presencial o online."
+                            "title": "1. Iniciar Sessió:",
+                            "text": "Quan arribi el pacient, prem el botó <strong>Iniciar</strong> a la cita. Apareixerà una finestra de Consentiment Informat obligatòria on cal marcar que el pacient autoritza l'ús d'IA i, si escau, que és menor d'edat (per ajustar filtres de seguretat addicionals)."
                         },
                         "step2": {
-                            "title": "Durant la Sessió:",
-                            "text": "Prem <strong>\"Gravar\"</strong> o <strong>\"Iniciar Videoconferència\"</strong>.",
+                            "title": "2. Gravació i Activació IA:",
+                            "text": "<strong>Important:</strong> La IA no escolta automàticament. Cal prémer el botó <strong>Gravar</strong> (micròfon) quan vulguis que comenci la transcripció i l'anàlisi.",
                             "list": {
-                                "0": "L'àudio es grava de forma segura.",
-                                "1": "Pots prendre <em>Notes Ràpides</em> manuals durant la sessió sense aturar la gravació."
+                                "0": "L'àudio es grava de forma segura i xifrada. Pots pausar i reprendre la gravació en qualsevol moment.",
+                                "1": "Pots prendre <em>Notes Clíniques Privades</em> i indicar la <em>Metodologia/Tècniques Aplicades</em> durant la sessió sense aturar la gravació."
                             }
                         },
                         "step3": {
-                            "title": "Finalitzar i Processar:",
-                            "text": "En acabar, prem <strong>\"Finalitzar\"</strong>. El sistema demanarà confirmació i començarà a processar l'àudio. <br/>Aquest procés sol trigar entre el 30% i el 50% de la durada de l'àudio (ex: 1h d'àudio triga ~20min).",
-                            "note": "Pots seguir treballant en altres coses mentre es processa en segon pla."
+                            "title": "3. Finalitzar i Generar Informes:",
+                            "text": "En acabar, prem <strong>Finalitzar Sessió</strong>. El sistema processarà l'àudio capturat i generarà automàticament:",
+                            "note": "Pots seguir treballant en altres coses mentre es processa en segon pla. Rebràs una notificació quan estigui llest."
                         },
                         "step4": {
-                            "title": "Revisió:",
-                            "text": "Un cop llesta, rebràs una notificació. Accedeix al detall per veure:",
+                            "title": "4. Revisió de l'Informe IA:",
+                            "text": "Un cop processada, accedeix al detall de la sessió per veure dos apartats principals:",
                             "list": {
-                                "0": "Transcripció completa (amb identificació de parlants).",
-                                "1": "Resum clínic generat per IA.",
-                                "2": "Suggeriments d'intervenció i anàlisi de riscos."
+                                "0": "Resum de Sessió: Transcripció completa, resum fàctic i elements emocionals inferits.",
+                                "1": "Anàlisi Clínic: Indicadors narratius, suggeriments orientatius, línies de treball possibles i instruments d'avaluació suggerits.",
+                                "2": "Nota: L'anàlisi no constitueix una valoració clínica, diagnòstica ni una avaluació de risc. Sempre requereix revisió humana."
                             }
                         }
                     },
-                    "cancelNote": "Si cancel·les o esborres una sessió abans que es processi, l'àudio s'elimina immediatament i no compta per als límits del teu pla."
+                    "cancelNote": "Marca les sessions cancel·lades o no presentades com a 'Cancel·lada' perquè no computin a les teves estadístiques ni facturació. L'àudio de sessions cancel·lades s'elimina immediatament."
                 },
                 "video": {
-                    "title": "Videoconferència",
-                    "text": "Sistema propi encriptat, sense necessitat de Zoom o Meets externs.",
+                    "title": "Videoconsulta i Telemedicina",
+                    "text": "La plataforma inclou un sistema de videotrucades integrat que permet realitzar sessions remotes sense necessitat de Zoom o Google Meet.",
                     "step1": {
-                        "title": "Enviament d'Enllaç",
-                        "text": "Al crear una sessió online, pots enviar l'enllaç al pacient per email amb un clic."
+                        "title": "1. Iniciar Sessió",
+                        "text": "En entrar a la sala, prem <strong>Iniciar Sessió</strong>. Això activa el cronòmetre de durada i canvia l'estat de la cita a 'En Curs'. Pots enviar l'<strong>enllaç al pacient per email</strong> amb un sol clic."
                     },
                     "step2": {
-                        "title": "Sala d'Espera",
-                        "text": "El pacient entra a una sala d'espera virtual fins que tu t'uneixes."
+                        "title": "2. Gravació (IA)",
+                        "text": "Per obtenir transcripció i anàlisi d'IA, prem <strong>Gravar</strong>. És necessari perquè es generin els resums automàtics. El panell lateral et permet escriure Notes Privades i veure la transcripció en temps real."
                     },
                     "step3": {
-                        "title": "Gravació",
-                        "text": "L'àudio de la videotrucada es grava automàticament per a la transcripció (requereix consentiment, veure Privacitat)."
+                        "title": "3. Finalitzar Sessió",
+                        "text": "En acabar, prem <strong>Finalitzar</strong>. El sistema desarà tot, marcarà la cita com a 'Completada' i generarà l'informe clínic amb IA (si el teu pla ho permet). Indica la qualitat de connexió durant la sessió."
                     }
                 },
                 "ai": {
-                    "title": "Eines d'IA i Pissarra",
-                    "text": "Després del processament, la IA ofereix diversos mòduls d'anàlisi:",
+                    "title": "Anàlisi IA de Sessions",
+                    "text": "La IA actua com un 'mirall' del contingut de la sessió, proporcionant 5 tipus d'informació per assistir al professional, sense substituir mai el seu criteri clínic:",
                     "types": {
                         "summary": {
-                            "title": "Resum Fàctic",
-                            "text": "Què s'ha dit, punts clau i acords."
+                            "title": "📝 Resum Fàctic",
+                            "text": "Síntesi objectiva del que s'ha parlat a la sessió, ideal per copiar a la història clínica reduint el temps de redacció. Inclou punts clau i acords."
                         },
                         "emotional": {
-                            "title": "Anàlisi Emocional",
-                            "text": "To de la conversa, moments de tensió o calma."
+                            "title": "🎭 Elements Emocionals i Narratius",
+                            "text": "Detecta paraules clau (tristesa, ràbia...) i patrons discursius (absoluts com 'sempre', ruminació) per alertar de possibles incongruències o àrees d'atenció."
                         },
                         "themes": {
-                            "title": "Temes Recurrents",
-                            "text": "Identificació de patrons al llarg de múltiples sessions."
+                            "title": "🏷️ Temes Emergents",
+                            "text": "Classifica automàticament el contingut en àrees temàtiques (Ansietat, Trauma, Autoestima, Relacions, Dol...) per no perdre de vista eixos latents al llarg de múltiples sessions."
                         },
                         "tests": {
-                            "title": "Suggeriment de Tests",
-                            "text": "Recomanació de qüestionaris psicològics basats en els símptomes detectats."
+                            "title": "💡 Suggeriments de Tests (Orientatiu)",
+                            "text": "Si detecta indicadors d'un tema (ej. Ansietat), suggereix valorar instruments validats (BAI, STAI, PHQ-9...), sense 'assignar-los' automàticament. Sempre a criteri del professional."
                         },
                         "risks": {
-                            "title": "Detecció de Riscos",
-                            "text": "Alerta sobre llenguatge relacionat amb suïcidi, autolesió o violència. IMPRESCINDIBLE revisió humana."
+                            "title": "🚩 Marcadors de Risc",
+                            "text": "Identifica llenguatge de risc potencial (autolesió, ideació suïcida, violència) per a revisió prioritària del professional. IMPRESCINDIBLE revisió humana — no és un diagnòstic."
+                        }
+                    }
+                },
+                "reports": {
+                    "title": "Informes Clínics",
+                    "text": "La secció <strong>Informes</strong> al menú lateral et permet crear, editar i descarregar documents clínics professionals. Pots crear informes nous des de la pàgina d'informes amb el botó 'Nou Informe'.",
+                    "types": {
+                        "title": "Tipus d'Informes Disponibles:",
+                        "list": {
+                            "0": "<strong>Informe d'Evolució:</strong> Document de seguiment periodic que resumeix el progrés del pacient al llarg de diverses sessions.",
+                            "1": "<strong>Informe d'Alta:</strong> Document formal de finalització del tractament amb recomanacions de manteniment.",
+                            "2": "<strong>Informe de Derivació:</strong> Per a remetre un pacient a un altre professional amb el resum clínic pertinent.",
+                            "3": "<strong>Informe de Sessió Individual:</strong> Resum detallat d'una sessió específica amb transcripció i anàlisi IA.",
+                            "4": "<strong>Informe Personalitzat:</strong> Format lliure per a qualsevol altre tipus de document clínic."
+                        }
+                    },
+                    "workflow": {
+                        "title": "Flux de Treball:",
+                        "list": {
+                            "0": "Selecciona el pacient i el tipus d'informe.",
+                            "1": "La IA genera un esborrany basat en les sessions i notes existents.",
+                            "2": "Edita i revisa l'esborrany (estat 'Esborrany').",
+                            "3": "Finalitza l'informe (estat 'Completat').",
+                            "4": "Descarrega en format <strong>PDF</strong> (amb logotip si tens Branding activat) o <strong>Word (.docx)</strong> per a edicions addicionals."
+                        }
+                    }
+                },
+                "statistics": {
+                    "title": "Estadístiques i Analítiques",
+                    "text": "La secció <strong>Estadístiques</strong> al menú lateral et proporciona una visió completa i detallada de la teva activitat clínica. Pots filtrar les dades per pacient individual o veure la visió global, i ajustar el rang temporal (1 mes, 3 mesos, 6 mesos o 1 any).",
+                    "tabs": {
+                        "title": "Pestanyes Disponibles:",
+                        "list": {
+                            "0": "<strong>Resum General:</strong> Sessions del mes, ingressos estimats, pacients actius, agenda pròxims 7 dies, notes pendents i gràfic de càrrega setmanal. Gràfic principal interactiu de sessions, ingressos o pacients al llarg del temps.",
+                            "1": "<strong>Detall Clínic:</strong> Distribució de tipus de sessió (Individual, Parella, Grupal, Familiar), tests suggerits per la IA i tècniques terapèutiques detectades, amb gràfics de barres i percentatges.",
+                            "2": "<strong>Pacients i Adherència:</strong> Taxa d'assistència i taxa de cancel·lació amb tendències mensuals. Ideal per identificar patrons d'abandonament o millora en l'adherència al tractament.",
+                            "3": "<strong>Temes i Tendències (IA):</strong> Gràfic de temes recurrents detectats automàticament per la IA (Ansietat, Trauma, Autoestima, etc.) i tendència de benestar emocional al llarg del temps."
                         }
                     }
                 },
                 "simulator": {
                     "title": "Simulador Clínic (Roleplay)",
-                    "text": "Entrena les teves habilitats amb pacients virtuals. Tria una patologia o perfil, i xateja (text o veu) amb una IA que simula ser un pacient.",
+                    "text": "Accedeix des del menú <strong>Simulador</strong> per practicar amb pacients virtuals generats per IA. Tria una patologia o perfil, i conversa (text o veu) amb una IA que simula ser un pacient. La IA et donarà feedback sobre la teva empatia i tècnica en acabar la sessió simulada. Les sessions tenen una durada màxima de 45 minuts.",
                     "availability": {
-                        "title": "Disponibilitat:",
+                        "title": "Disponibilitat per Pla:",
                         "list": {
-                            "0": "Disponible segons el teu pla.",
-                            "1": "Els casos no guarden historial clínic real.",
-                            "2": "Ideal per a supervisió o pràctica d'estudiants."
+                            "0": "<strong>Basic:</strong> No inclòs. El menú Simulador no apareix.",
+                            "1": "<strong>Pro:</strong> 5 casos pràctics al mes. Es reinicien amb la renovació.",
+                            "2": "<strong>Premium/Clinics:</strong> Casos il·limitats."
                         }
                     }
                 }
             },
             "profile": {
                 "title": "7. Perfil i Subscripció",
-                "text": "Gestioneu el vostre compte, seguretat i subscripció des de l'apartat de Perfil.",
+                "text": "Gestiona el teu compte, seguretat i subscripció des de l'apartat de <strong>Perfil</strong> (accessible des del menú d'usuari a la cantonada superior dreta).",
                 "subscription": {
                     "title": "Gestió de Subscripció",
-                    "text": "Aquí podeu veure el vostre pla actual, estat de pagaments i propera data de renovació.",
+                    "text": "Aquí pots veure el teu pla actual (Demo, Basic, Pro, Premium), l'estat de pagaments (Actiu/Inactiu), cicle de facturació (Mensual/Anual) i propera data de renovació.",
                     "list": [
-                        "<strong>Canviar Pla:</strong> Utilitzeu el botó 'Millorar Pla' per accedir a noves funcionalitats.",
-                        "<strong>Límits d'Ús:</strong> Les barres de progrés mostren el consum de pacients, minuts d'IA i casos de simulador."
+                        "<strong>Canviar Pla:</strong> Utilitza el botó 'Millorar Pla' per accedir al modal de plans i seleccionar un nou nivell. El canvi s'aplica immediatament amb prorrateig.",
+                        "<strong>Límits d'Ús:</strong> Les barres de progrés mostren el consum de: Pacients Actius (amb límit segons pla), Minuts de Transcripció IA (base + pack extra separat) i Casos de Simulador. El sistema consumeix primer el pla base i després els packs extra."
                     ]
                 },
                 "packs": {
-                    "title": "Packs Extra i Límits",
-                    "text": "Si esgota els recursos mensuals abans de la renovació, pot adquirir Packs Extra.",
+                    "title": "Packs Extra, Complements i Add-ons",
+                    "text": "Si esgotas els recursos mensuals abans de la renovació, pots adquirir Packs Extra. A la secció 'Add-ons' del teu perfil veuràs els complements actius.",
                     "list": [
-                        "<strong>Pack Minutos IA:</strong> Afegeix minuts de transcripció.",
-                        "<strong>Pack Simulador:</strong> Afegeix casos clínics addicionals.",
-                        "<strong>Prioritat:</strong> El sistema consumeix primer el pla base i després els packs extra (que no caduquen a final de mes)."
+                        "<strong>Pack Minuts IA:</strong> Afegeix minuts de transcripció addicionals. Apareixen separats a la barra d'ús amb etiqueta 'Pack Extra'. No caduquen a final de mes.",
+                        "<strong>Pack Simulador:</strong> Afegeix 10 casos clínics addicionals. No caduquen a final de mes.",
+                        "<strong>Agenda Manager:</strong> Si tens activat aquest complement, apareixerà a la secció d'Add-ons amb el seu estat. Permet que un secretari/a gestioni la teva agenda."
                     ]
                 },
                 "security": {
                     "title": "Seguretat del Compte",
-                    "text": "Podeu canviar la vostra contrasenya o eliminar el compte permanentment des de la 'Zona de Perill'."
+                    "text": "A la part inferior del Perfil trobaràs dues seccions crítiques: <strong>Seguretat</strong> per canviar la contrasenya, i la <strong>Zona de Perill</strong> amb dues accions: Cancel·lar Subscripció (manté el compte però desactiva el pla de pagament) i Eliminar Compte (esborra permanentment totes les dades). L'eliminació requereix escriure la paraula de confirmació."
                 }
             },
             "export": {
-                "title": "8. Privacitat i Exportació",
-                "text": "Les teves dades i les dels teus pacients són teves. Complim amb GDPR rigorosament.",
+                "title": "8. Privacitat i Exportació de Dades",
+                "text": "PsicoAIssist et permet descarregar tota la teva informació en qualsevol moment, garantint el teu dret a la portabilitat de dades (RGPD). Accedeix a les opcions d'exportació des de <strong>Ajustes > Privacitat</strong> al menú de la plataforma.",
                 "csv": {
-                    "title": "Exportació CSV (Excel)",
-                    "text": "Descarrega llistats estructurats de les teves dades per a anàlisis externes o còpies de seguretat.",
+                    "title": "📊 Exportar Dades (CSV/Excel)",
+                    "text": "Descarrega un full de càlcul amb el llistat complet de les teves sessions, pacients i dades associades.",
                     "list": {
-                        "0": "<strong>Pacients:</strong> Dades demogràfiques i de contacte.",
-                        "1": "<strong>Sessions:</strong> Registre de dates, durada i estats."
+                        "0": "<strong>Dades Desencriptades:</strong> Noms reals de clients, dates de sessions, contingut de notes i informació de contacte desxifrada.",
+                        "1": "<strong>Format:</strong> Fitxer .CSV compatible amb Excel, Numbers i Google Sheets. El nom del fitxer inclou la data de l'exportació."
                     }
                 },
                 "pdf": {
-                    "title": "Informes PDF",
-                    "text": "Genera documents imprimibles amb el teu logotip per a entregar a pacients o derivacions.",
+                    "title": "📂 Exportar Tots els Informes (PDF)",
+                    "text": "Genera un arxiu ZIP comprimit amb tots els teus informes clínics en format PDF.",
                     "list": {
-                        "0": "<strong>Informe de Sessió:</strong> Resum clínic, notes i recomanacions.",
-                        "1": "<strong>Historial Clínic:</strong> Resum de tota la trajectòria del pacient."
+                        "0": "<strong>Tots els Informes:</strong> Inclou historial complet d'informes d'Evolució, Alta, Derivació i Sessió Individual.",
+                        "1": "<strong>Format:</strong> Arxius PDF individuals organitzats dins d'un fitxer .ZIP descarregable amb un sol clic."
                     }
                 }
             },
             "settings": {
-                "title": "9. Configuració",
+                "title": "9. Configuració Detallada",
                 "agenda": {
-                    "title": "Agenda",
+                    "title": "📅 Agenda i Calendari",
                     "list": {
-                        "0": "Defineix el teu <strong>horari laboral</strong> (dies i hores).",
-                        "1": "Estableix la <strong>durada per defecte</strong> de les sessions.",
-                        "2": "Gestiona <strong>dies festius</strong> o absències."
+                        "0": "<strong>Horari Setmanal:</strong> Defineix per a cada dia de la setmana (dilluns a diumenge) si estàs disponible, amb l'hora d'inici i fi personalitzades. Activa/desactiva dies individuals amb una casella de verificació.",
+                        "1": "<strong>Durada per Defecte:</strong> Temps estàndard de les teves sessions (ej. 60 min). <strong>Buffer:</strong> Temps de descans automàtic entre cites (ej. 10 min) per evitar solapaments. <strong>Tarifa:</strong> Preu per hora per calcular ingressos estimats.",
+                        "2": "<strong>Bloquejos:</strong> Bloqueja dies complets (vacances, festius) o franges horàries parcials (ej. 13:00-15:00 per dinar). Els dies complets apareixen en vermell i les franges parcials en ambre. Pots eliminar bloquejos fent clic a la 'x'."
                     }
                 },
                 "google": {
-                    "title": "Google Calendar",
-                    "text": "Connecta el teu compte de Google per evitar conflictes.",
+                    "title": "🔗 Google Calendar",
+                    "text": "L'integració amb Google Calendar és bidireccional i es configura des de la secció Agenda d'Ajustes:",
                     "list": {
-                        "0": "Les cites de PsicoAIssist apareixeran al teu Google Calendar.",
-                        "1": "Els esdeveniments privats de Google Calendar bloquejaran la teva disponibilitat a PsicoAIssist."
+                        "0": "<strong>Importar:</strong> Els esdeveniments del teu Google Calendar personal bloquegen forats a PsicoAIssist, evitant conflictes automàticament.",
+                        "1": "<strong>Exportar:</strong> Les sessions creades a PsicoAIssist apareixen al teu Google Calendar amb els detalls de la cita."
                     }
                 },
                 "branding": {
-                    "title": "Marca Personal (Branding)",
-                    "text": "Personalitza l'aparença dels informes i la plataforma.",
+                    "title": "🎨 Marca Personal i Personalització d'Informes (Només Premium)",
+                    "text": "Personalitza l'aparença dels teus informes clínics (PDF i Word) per reflectir la teva identitat corporativa. Accedeix des d'<strong>Ajustes > Marca Personal</strong>.",
                     "list": {
-                        "0": "Puja el teu <strong>Logotip</strong>.",
-                        "1": "Defineix el <strong>Nom de la Clínica</strong>.",
-                        "2": "Tria el <strong>Color Corporatiu</strong> predominant."
-                    }
+                        "0": "<strong>Nom de l'Empresa:</strong> Apareixerà a la capçalera de tots els documents generats (informes PDF i Word).",
+                        "1": "<strong>Colors Corporatius:</strong> Defineix un color primari i secundari que s'aplicarà a títols i elements gràfics dels informes.",
+                        "2": "<strong>Logotip:</strong> Puja el teu logotip perquè aparegui a la cantonada superior dels teus informes amb un aspecte professional."
+                    },
+                    "note": "Nota: Aquesta funcionalitat és exclusiva per a usuaris amb pla Premium o superior."
                 },
-                "note": "Aquests elements apareixeran a les capçaleres dels PDF exportats.",
+                "managers": {
+                    "title": "👥 Gestors d'Agenda",
+                    "text": "Si tens el complement Agenda Manager activat, des d'<strong>Ajustes > Gestors d'Agenda</strong> pots gestionar quins secretaris/es tenen accés a la teva agenda. Pots afegir nous gestors per email i revocar l'accés en qualsevol moment."
+                },
                 "notifications": {
-                    "title": "Notificacions",
+                    "title": "🔔 Notificacions",
                     "list": {
-                        "0": "Activa/desactiva avisos per email de noves cites.",
-                        "1": "Gestiona les alertes de sistema i novetats."
+                        "0": "<strong>Recordatoris a Pacients:</strong> El sistema envia un correu al pacient 24h abans de la cita (requereix email a la fitxa del pacient). Activa/desactiva aquesta opció des d'Ajustes > Notificacions.",
+                        "1": "<strong>Resum d'Agenda (Professional):</strong> Si actives aquesta opció, rebràs un correu diari a les 20:00h amb el llistat de visites del dia següent."
                     }
                 },
                 "account": {
-                    "title": "Gestió de Compte i Esborrat",
-                    "text": "Pots modificar el teu email, contrasenya i dades de facturació. <br/><br/><strong>Zona de Perill:</strong> Si decideixes marxar, pots sol·licitar l'<strong>eliminació permanent</strong> del teu compte i totes les dades associades.",
+                    "title": "🛑 Gestió de Compte i Baixa",
+                    "text": "La teva privacitat és fonamental. Si decideixes donar de baixa el teu compte (des de <strong>Perfil > Eliminar Compte</strong>), el sistema iniciarà un procés segur i irreversible.",
                     "process": {
-                        "title": "Procés d'Eliminació:",
+                        "title": "Procés d'Eliminació i Recuperació (90 dies):",
                         "list": {
-                            "0": "Només des de la versió web d'escriptori.",
-                            "1": "S'enviarà un email de confirmació final.",
-                            "2": "Un cop confirmat, l'esborrat és <strong>irreversible</strong> en 30 dies."
+                            "0": "<strong>Inici (Dia 0):</strong> El teu compte es marca com a 'Eliminat'. Ja no podràs accedir, però les teves dades segueixen encriptades als nostres servidors.",
+                            "1": "<strong>Període de Gràcia (90 dies):</strong> Durant aquest temps, si et penedeixes, simplement <strong>inicia sessió</strong> de nou per reactivar el teu compte i totes les dades automàticament.",
+                            "2": "<strong>Esborrat Definitiu (Dia 91):</strong> El sistema executa automàticament un procés d'<strong>Anonimització Irreversible</strong>. El teu nom, email i dades de contacte s'esborren per sempre, complint amb el RGPD."
                         }
                     }
                 }
@@ -2908,22 +2985,25 @@
                 "config": {
                     "title": "Trucs de Configuració",
                     "list": {
-                        "0": "<strong>Canviar Pla/Tarifa:</strong> A <em>Ajustes > Facturació</em>. Consulta si és Basic, Pro, Premium o clíniques.",
-                        "1": "<strong>Vacances:</strong> A <em>Ajustes > Agenda > Bloquejos</em>. Usa \"Bloquejar Dia Complet\" en lloc d'esborrar sessions."
+                        "0": "<strong>Canviar Pla:</strong> A <em>Perfil > Subscripció > Millorar Pla</em>. Compara els plans Basic, Pro i Premium.",
+                        "1": "<strong>Vacances:</strong> A <em>Ajustes > Agenda > Bloquejos</em>. Usa \"Bloquejar Dia Complet\" per marcar dies no laborables sense esborrar sessions.",
+                        "2": "<strong>Tarifa:</strong> Configura el teu preu per hora a <em>Ajustes > Agenda</em> perquè els ingressos estimats es calculin correctament."
                     }
                 },
                 "professional": {
                     "title": "Per a Professionals",
                     "list": {
-                        "0": "<strong>Notes Completes:</strong> La IA necessita context. Escriu notes post-sessió per millorar els \"Temes Recurrents\".",
-                        "1": "<strong>Marcar Assistència:</strong> Usa \"Realitzada\" o \"Cancel·lada\". Les cites \"Pendents\" no sumen a estadístiques."
+                        "0": "<strong>Notes Completes:</strong> La IA necessita context. Escriu notes post-sessió per millorar els \"Temes Recurrents\" i la \"Tendència de Benestar\".",
+                        "1": "<strong>Marcar Assistència:</strong> Usa \"Realitzada\" o \"Cancel·lada\". Les cites \"Pendents\" no sumen a estadístiques ni facturació.",
+                        "2": "<strong>Informes:</strong> Pots generar informes d'Evolució o Alta des d'<em>Informes > Nou Informe</em>. La IA genera un esborrany basat en les sessions del pacient.",
+                        "3": "<strong>Exportar Dades:</strong> Des d'<em>Ajustes > Privacitat</em> pots descarregar totes les teves dades en CSV o tots els informes en un ZIP de PDFs."
                     }
                 },
                 "manager": {
                     "title": "Per a Gestors",
                     "list": {
-                        "0": "<strong>Grups:</strong> Crea grups (ex. \"Tardes\") si gestiones molts doctors per filtrar ràpid.",
-                        "1": "<strong>Vista Unificada:</strong> En seleccionar un grup, veuràs una agenda combinada ideal per a buits."
+                        "0": "<strong>Grups:</strong> Crea grups (ex. \"Tardes\") si gestiones molts doctors per filtrar ràpid i veure agendes combinades.",
+                        "1": "<strong>Vista Unificada:</strong> En seleccionar un grup, veuràs una agenda combinada ideal per trobar buits disponibles."
                     }
                 }
             },
@@ -2931,11 +3011,19 @@
                 "title": "Problemes Comuns?",
                 "google": {
                     "title": "\"No veig les meves cites de Google\"",
-                    "text": "Assegura't que l'interruptor \"Importar esdeveniments\" està activat a Ajustes i que has donat tots els permisos sol·licitats a la pantalla de Google."
+                    "text": "Assegura't que l'interruptor \"Importar esdeveniments\" està activat a Ajustes > Agenda i que has donat tots els permisos sol·licitats a la pantalla de Google."
                 },
                 "dashboard": {
                     "title": "\"El Dashboard està buit\"",
-                    "text": "Si acabes de registrar-te, és normal. Crea el teu primer pacient i primera sessió per començar a veure dades i gràfiques."
+                    "text": "Si acabes de registrar-te, és normal. Crea el teu primer pacient i primera sessió per començar a veure dades i gràfiques. Els widgets d'IA necessiten sessions amb notes completades."
+                },
+                "reports": {
+                    "title": "\"L'informe es queda en esborrany\"",
+                    "text": "Assegura't de fer clic a 'Finalitzar' per completar l'informe. Un cop completat podràs descarregar-lo en PDF o Word."
+                },
+                "ai": {
+                    "title": "\"No es genera l'anàlisi IA\"",
+                    "text": "Comprova que has premut el botó 'Gravar' durant la sessió. La IA només analitza l'àudio capturat. Verifica també que no has esgotat els teus minuts d'IA al Perfil > Subscripció > Límits."
                 }
             }
         },
@@ -2990,21 +3078,57 @@
                 "items": {
                     "manager": {
                         "title": "Agenda Manager",
-                        "text": "Rol d'usuari amb permisos per gestionar calendaris d'altres professionals (\"Managed Professionals\"), però sense accés a dades clíniques confidencials mostrades a les estadístiques detallades."
+                        "text": "Rol administratiu amb permisos per gestionar calendaris i cites d'altres professionals (\"Managed Professionals\"), crear grups de professionals i veure la llista de pacients. No té accés a dades clíniques sensibles com notes, transcripcions, informes d'IA ni estadístiques."
                     },
                     "themes": {
                         "title": "Temes Recurrents (IA)",
-                        "text": "Algoritme de processament de llenguatge natural que analitza les notes de sessió anonimitzades per extreure patrons temàtics (ex. \"Ansietat laboral\", \"Conflicte familiar\") i visualitzar-los al dashboard."
+                        "text": "Algoritme de processament de llenguatge natural que analitza les notes de sessió anonimitzades per extreure patrons temàtics (ex. \"Ansietat laboral\", \"Conflicte familiar\"). Visible al Dashboard i a Estadístiques > Temes i Tendències."
                     },
                     "sentiment": {
-                        "title": "Sentiment Analysis",
-                        "text": "Mètrica de benestar calculada analitzant el to emocional de les notes clíniques. Es presenta com una tendència (Positiva, Neutra, Negativa) al llarg del temps."
+                        "title": "Tendència de Benestar (Sentiment Analysis)",
+                        "text": "Mètrica de benestar calculada analitzant el to emocional de les notes clíniques i transcripcions. Es presenta com un gràfic de tendència (0-100) al llarg del temps, visible al Dashboard i a Estadístiques."
+                    },
+                    "transcription": {
+                        "title": "Transcripció IA",
+                        "text": "Procés automàtic de conversió de l'àudio gravat durant una sessió a text. Suporta més de 50 idiomes. Consumeix minuts del pla de subscripció. La transcripció apareix a la secció 'Transcripció (IA)' del detall de cada sessió."
+                    },
+                    "extraPack": {
+                        "title": "Pack Extra",
+                        "text": "Complement adquirible per afegir recursos addicionals (minuts d'IA o casos de simulador) al teu pla. A diferència dels recursos del pla base, els packs extra no caduquen a final de mes — es consumeixen fins a esgotar-se."
+                    },
+                    "simulator": {
+                        "title": "Simulador Clínic",
+                        "text": "Eina de formació que genera pacients virtuals amb perfils i patologies específiques. Permet practicar tècniques terapèutiques sense pacients reals. Sessions limitades a 45 min. Disponibilitat segons pla (Pro: 5/mes, Premium: il·limitat)."
+                    },
+                    "reportEvolution": {
+                        "title": "Informe d'Evolució",
+                        "text": "Document clínic de seguiment periòdic que resumeix el progrés del pacient al llarg de múltiples sessions. Es genera automàticament per la IA i es pot editar manualment. Descarregable en PDF i Word."
+                    },
+                    "reportDischarge": {
+                        "title": "Informe d'Alta",
+                        "text": "Document formal de finalització del tractament amb el resum del procés terapèutic i recomanacions de manteniment. Descarregable en PDF i Word."
+                    },
+                    "branding": {
+                        "title": "Branding (Marca Personal)",
+                        "text": "Funcionalitat exclusiva del pla Premium que permet personalitzar els informes PDF i Word amb el logotip, nom de clínica i colors corporatius del professional."
+                    },
+                    "buffer": {
+                        "title": "Buffer entre Sessions",
+                        "text": "Temps de descans automàtic entre cites consecutives (ex. 10 min) configurable a Ajustes > Agenda. Evita solapaments i permet una transició adequada entre pacients."
+                    },
+                    "blocks": {
+                        "title": "Bloquejos d'Agenda",
+                        "text": "Sistema per marcar com a no disponible dies complets (vacances, festius) o franges horàries parcials (ex. pausa de dinar). Es gestiona des d'Ajustes > Agenda > Bloquejos."
+                    },
+                    "consent": {
+                        "title": "Consentiment Informat",
+                        "text": "Finestra obligatòria que apareix en iniciar una sessió, on cal confirmar que el pacient autoritza l'ús de la IA i, si escau, que és menor d'edat. Requisit legal per al processament de dades."
                     }
                 }
             },
             "api": {
                 "title": "API Reference (Bàsic)",
-                "text": "PsicoAIssist ofereix una API RESTful per a integracions personalitzades. Per obtenir accés complet a la documentació de l'API (Swagger), contacta amb suport."
+                "text": "PsicoAIssist ofereix una API RESTful per a integracions personalitzades (disponible en plans Clinics/Institucions). Per obtenir accés complet a la documentació de l'API (Swagger), contacta amb suport."
             }
         }
     },
