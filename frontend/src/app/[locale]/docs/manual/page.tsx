@@ -114,7 +114,7 @@ export default function ManualPage() {
                                     <h3 className="font-bold text-slate-900 text-lg mb-2">📅 {t('roles.manager.title')}</h3>
                                     <p className="text-sm text-slate-700 mb-4">{t('roles.manager.desc')}</p>
                                     <ul className="space-y-2">
-                                        {['0', '1', '2'].map(i => <li key={i} className="flex items-center text-sm text-slate-600">{t(`roles.manager.list.${i}`)}</li>)}
+                                        {['0', '1', '2'].map(i => <li key={i} className="flex items-center text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw(`roles.manager.list.${i}`) }} />)}
                                     </ul>
                                 </div>
                             </div>
@@ -196,7 +196,7 @@ export default function ManualPage() {
                             <p className="text-xs text-slate-400 mt-2" dangerouslySetInnerHTML={{ __html: t.raw('dashboard.professional.note') }} />
 
                             <h3 className="font-bold text-lg mt-6 text-slate-800 block">{t('dashboard.manager.title')}</h3>
-                            <p>{t('dashboard.manager.text')}</p>
+                            <p dangerouslySetInnerHTML={{ __html: t.raw('dashboard.manager.text') }} />
                         </section>
 
                         {/* 6. Funcionalidades */}
@@ -207,13 +207,13 @@ export default function ManualPage() {
                                 <div className="p-1 bg-green-100 rounded text-green-700"><CheckCircle2 className="h-5 w-5" /></div>
                                 {t('features.patients.title')}
                             </h3>
-                            <p>{t('features.patients.text')}</p>
+                            <p dangerouslySetInnerHTML={{ __html: t.raw('features.patients.text') }} />
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block flex items-center gap-2">
                                 <div className="p-1 bg-purple-100 rounded text-purple-700"><Mic className="h-5 w-5" /></div>
                                 {t('features.sessions.title')}
                             </h3>
-                            <p className="mb-4">{t('features.sessions.text')}</p>
+                            <p className="mb-4" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.text') }} />
 
                             <div className="space-y-4 border-l-2 border-slate-200 pl-4">
                                 <h4 className="font-bold text-slate-700">{t('features.sessions.flow.title')}</h4>
@@ -259,7 +259,7 @@ export default function ManualPage() {
                             </ol>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🧠 {t('features.ai.title')}</h3>
-                            <p className="mb-4">{t('features.ai.text')}</p>
+                            <p className="mb-4" dangerouslySetInnerHTML={{ __html: t.raw('features.ai.text') }} />
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div className="p-4 border rounded-lg bg-white shadow-sm">
                                     <h4 className="font-bold text-slate-900 mb-1">{t('features.ai.types.summary.title')}</h4>
@@ -413,13 +413,13 @@ export default function ManualPage() {
                             </ul>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🔗 {t('settings.google.title')}</h3>
-                            <p>{t('settings.google.text')}</p>
+                            <p dangerouslySetInnerHTML={{ __html: t.raw('settings.google.text') }} />
                             <ul className="list-disc pl-5 mt-2 space-y-2 text-slate-700">
                                 {['0', '1'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`settings.google.list.${i}`) }} />)}
                             </ul>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🎨 {t('settings.branding.title')}</h3>
-                            <p>{t('settings.branding.text')}</p>
+                            <p dangerouslySetInnerHTML={{ __html: t.raw('settings.branding.text') }} />
                             <ul className="list-disc pl-5 mt-2 space-y-2 text-slate-700">
                                 {['0', '1', '2'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`settings.branding.list.${i}`) }} />)}
                             </ul>
