@@ -22,7 +22,7 @@ export default function ManualPage() {
                         <div className="p-3 bg-blue-100 rounded-lg">
                             <Book className="h-8 w-8 text-blue-600" />
                         </div>
-                        <span className="text-sm font-semibold text-blue-600 tracking-wider uppercase">{t('officialDocs')}</span>
+                        <span className="text-sm font-semibold text-blue-600 tracking-wider uppercase" dangerouslySetInnerHTML={{ __html: t.raw('officialDocs') }} />
                     </div>
                     <h1 className="text-4xl font-bold text-slate-900 mb-4">{t('title')}</h1>
                     <p className="text-xl text-slate-600 max-w-2xl">{t('subtitle')}</p>
@@ -101,7 +101,7 @@ export default function ManualPage() {
                         {/* 2. Roles de Usuario */}
                         <section id="roles" className="mb-16 scroll-mt-20 border-t pt-12">
                             <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('roles.title')}</h2>
-                            <p className="mb-6">{t('roles.text')}</p>
+                            <p className="mb-6" dangerouslySetInnerHTML={{ __html: t.raw('roles.text') }} />
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
                                     <h3 className="font-bold text-blue-900 text-lg mb-2">👤 {t('roles.professional.title')}</h3>
@@ -112,7 +112,7 @@ export default function ManualPage() {
                                 </div>
                                 <div className="bg-slate-50 p-6 rounded-lg border border-slate-200">
                                     <h3 className="font-bold text-slate-900 text-lg mb-2">📅 {t('roles.manager.title')}</h3>
-                                    <p className="text-sm text-slate-700 mb-4">{t('roles.manager.desc')}</p>
+                                    <p className="text-sm text-slate-700 mb-4" dangerouslySetInnerHTML={{ __html: t.raw('roles.manager.desc') }} />
                                     <ul className="space-y-2">
                                         {['0', '1', '2'].map(i => <li key={i} className="flex items-center text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw(`roles.manager.list.${i}`) }} />)}
                                     </ul>
@@ -174,7 +174,7 @@ export default function ManualPage() {
                                     <strong>{t('steps.access.title')}:</strong> {t('steps.access.text')}
                                 </li>
                                 <li>
-                                    <strong>{t('steps.config.title')}:</strong> {t('steps.config.text')}
+                                    <strong>{t('steps.config.title')}:</strong> <span dangerouslySetInnerHTML={{ __html: t.raw('steps.config.text') }} />
                                     <ul className="list-disc pl-5 mt-2 space-y-1 text-slate-600">
                                         {['0', '1', '2'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`steps.config.list.${i}`) }} />)}
                                     </ul>
@@ -185,7 +185,7 @@ export default function ManualPage() {
                         {/* 5. Dashboard */}
                         <section id="dashboard" className="mb-16 scroll-mt-20 border-t pt-12">
                             <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('dashboard.title')}</h2>
-                            <p>{t('dashboard.text')}</p>
+                            <p dangerouslySetInnerHTML={{ __html: t.raw('dashboard.text') }} />
 
                             <h3 className="font-bold text-lg mt-4 text-slate-800 block">{t('dashboard.professional.title')}</h3>
                             <p dangerouslySetInnerHTML={{ __html: t.raw('dashboard.professional.text') }} />
@@ -219,23 +219,23 @@ export default function ManualPage() {
                                 <h4 className="font-bold text-slate-700">{t('features.sessions.flow.title')}</h4>
                                 <div className="space-y-4">
                                     <div>
-                                        <span className="font-bold text-slate-900">{t('features.sessions.flow.step1.title')}</span>
-                                        <p className="text-sm text-slate-600">{t('features.sessions.flow.step1.text')}</p>
+                                        <span className="font-bold text-slate-900" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.flow.step1.title') }} />
+                                        <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.flow.step1.text') }} />
                                     </div>
                                     <div>
-                                        <span className="font-bold text-slate-900">{t('features.sessions.flow.step2.title')}</span>
-                                        <p className="text-sm text-slate-600">{t('features.sessions.flow.step2.text')}</p>
+                                        <span className="font-bold text-slate-900" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.flow.step2.title') }} />
+                                        <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.flow.step2.text') }} />
                                         <ul className="list-disc pl-5 text-sm text-slate-500 mt-1">
                                             {['0', '1'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`features.sessions.flow.step2.list.${i}`) }} />)}
                                         </ul>
                                     </div>
                                     <div>
-                                        <span className="font-bold text-slate-900">{t('features.sessions.flow.step3.title')}</span>
+                                        <span className="font-bold text-slate-900" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.flow.step3.title') }} />
                                         <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.flow.step3.text') }} />
                                         <p className="text-xs text-slate-400 italic mt-1">{t('features.sessions.flow.step3.note')}</p>
                                     </div>
                                     <div>
-                                        <span className="font-bold text-slate-900">{t('features.sessions.flow.step4.title')}</span>
+                                        <span className="font-bold text-slate-900" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.flow.step4.title') }} />
                                         <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('features.sessions.flow.step4.text') }} />
                                         <ul className="list-disc pl-5 text-sm text-slate-500 mt-1">
                                             {['0', '1', '2'].map(i => <li key={i}>{t(`features.sessions.flow.step4.list.${i}`)}</li>)}
@@ -253,9 +253,9 @@ export default function ManualPage() {
                             </h3>
                             <p className="mb-4">{t('features.video.text')}</p>
                             <ol className="list-decimal pl-5 space-y-2 text-slate-700">
-                                <li><strong dangerouslySetInnerHTML={{ __html: t.raw('features.video.step1.title') }} /> - {t('features.video.step1.text')}</li>
-                                <li><strong dangerouslySetInnerHTML={{ __html: t.raw('features.video.step2.title') }} /> - {t('features.video.step2.text')}</li>
-                                <li><strong dangerouslySetInnerHTML={{ __html: t.raw('features.video.step3.title') }} /> - {t('features.video.step3.text')}</li>
+                                <li><strong dangerouslySetInnerHTML={{ __html: t.raw('features.video.step1.title') }} /> - <span dangerouslySetInnerHTML={{ __html: t.raw('features.video.step1.text') }} /></li>
+                                <li><strong dangerouslySetInnerHTML={{ __html: t.raw('features.video.step2.title') }} /> - <span dangerouslySetInnerHTML={{ __html: t.raw('features.video.step2.text') }} /></li>
+                                <li><strong dangerouslySetInnerHTML={{ __html: t.raw('features.video.step3.title') }} /> - <span dangerouslySetInnerHTML={{ __html: t.raw('features.video.step3.text') }} /></li>
                             </ol>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🧠 {t('features.ai.title')}</h3>
@@ -263,23 +263,23 @@ export default function ManualPage() {
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div className="p-4 border rounded-lg bg-white shadow-sm">
                                     <h4 className="font-bold text-slate-900 mb-1">{t('features.ai.types.summary.title')}</h4>
-                                    <p className="text-sm text-slate-600">{t('features.ai.types.summary.text')}</p>
+                                    <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('features.ai.types.summary.text') }} />
                                 </div>
                                 <div className="p-4 border rounded-lg bg-white shadow-sm">
                                     <h4 className="font-bold text-slate-900 mb-1">{t('features.ai.types.emotional.title')}</h4>
-                                    <p className="text-sm text-slate-600">{t('features.ai.types.emotional.text')}</p>
+                                    <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('features.ai.types.emotional.text') }} />
                                 </div>
                                 <div className="p-4 border rounded-lg bg-white shadow-sm">
                                     <h4 className="font-bold text-slate-900 mb-1">{t('features.ai.types.themes.title')}</h4>
-                                    <p className="text-sm text-slate-600">{t('features.ai.types.themes.text')}</p>
+                                    <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('features.ai.types.themes.text') }} />
                                 </div>
                                 <div className="p-4 border rounded-lg bg-white shadow-sm">
                                     <h4 className="font-bold text-slate-900 mb-1">{t('features.ai.types.tests.title')}</h4>
-                                    <p className="text-sm text-slate-600">{t('features.ai.types.tests.text')}</p>
+                                    <p className="text-sm text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('features.ai.types.tests.text') }} />
                                 </div>
                                 <div className="p-4 border rounded-lg bg-red-50 border-red-100 shadow-sm col-span-2">
                                     <h4 className="font-bold text-red-900 mb-1">{t('features.ai.types.risks.title')}</h4>
-                                    <p className="text-sm text-red-800">{t('features.ai.types.risks.text')}</p>
+                                    <p className="text-sm text-red-800" dangerouslySetInnerHTML={{ __html: t.raw('features.ai.types.risks.text') }} />
                                 </div>
                             </div>
 
@@ -308,9 +308,9 @@ export default function ManualPage() {
                             </div>
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🎭 {t('features.simulator.title')}</h3>
-                            <p className="mb-2">{t('features.simulator.text')}</p>
+                            <p className="mb-2" dangerouslySetInnerHTML={{ __html: t.raw('features.simulator.text') }} />
                             <div className="bg-slate-100 p-3 rounded text-sm">
-                                <span className="font-semibold block mb-1">{t('features.simulator.availability.title')}</span>
+                                <span className="font-semibold block mb-1" dangerouslySetInnerHTML={{ __html: t.raw('features.simulator.availability.title') }} />
                                 <ul className="list-disc pl-5">
                                     {['0', '1', '2'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`features.simulator.availability.list.${i}`) }} />)}
                                 </ul>
@@ -320,7 +320,7 @@ export default function ManualPage() {
                         {/* 7. Perfil y Suscripción */}
                         <section id="profile" className="mb-16 scroll-mt-20 border-t pt-12">
                             <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('profile.title')}</h2>
-                            <p className="mb-6 text-lg text-slate-600">{t('profile.text')}</p>
+                            <p className="mb-6 text-lg text-slate-600" dangerouslySetInnerHTML={{ __html: t.raw('profile.text') }} />
 
                             <div className="grid md:grid-cols-2 gap-6 mb-8">
                                 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
@@ -330,7 +330,7 @@ export default function ManualPage() {
                                         </div>
                                         {t('profile.subscription.title')}
                                     </h3>
-                                    <p className="text-slate-600 mb-4 text-sm">{t('profile.subscription.text')}</p>
+                                    <p className="text-slate-600 mb-4 text-sm" dangerouslySetInnerHTML={{ __html: t.raw('profile.subscription.text') }} />
                                     <ul className="space-y-3">
                                         {['0', '1'].map(i => (
                                             <li key={i} className="flex gap-3 text-sm text-slate-600">
@@ -348,7 +348,7 @@ export default function ManualPage() {
                                         </div>
                                         {t('profile.packs.title')}
                                     </h3>
-                                    <p className="text-slate-600 mb-4 text-sm">{t('profile.packs.text')}</p>
+                                    <p className="text-slate-600 mb-4 text-sm" dangerouslySetInnerHTML={{ __html: t.raw('profile.packs.text') }} />
                                     <ul className="space-y-3">
                                         {['0', '1', '2'].map(i => (
                                             <li key={i} className="flex gap-3 text-sm text-slate-600">
@@ -365,14 +365,14 @@ export default function ManualPage() {
                                     <AlertCircle className="h-5 w-5" />
                                     {t('profile.security.title')}
                                 </h3>
-                                <p className="text-slate-700 text-sm">{t('profile.security.text')}</p>
+                                <p className="text-slate-700 text-sm" dangerouslySetInnerHTML={{ __html: t.raw('profile.security.text') }} />
                             </div>
                         </section>
 
                         {/* 8. Privacidad y Exportación */}
                         <section id="export" className="mb-16 scroll-mt-20 border-t pt-12">
                             <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('export.title')}</h2>
-                            <p className="mb-6">{t('export.text')}</p>
+                            <p className="mb-6" dangerouslySetInnerHTML={{ __html: t.raw('export.text') }} />
 
                             <div className="space-y-6">
                                 <div className="flex gap-4 items-start p-4 border rounded-lg hover:bg-slate-50 transition-colors">
@@ -381,7 +381,7 @@ export default function ManualPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-lg text-slate-900">{t('export.csv.title')}</h3>
-                                        <p className="text-slate-600 mb-2">{t('export.csv.text')}</p>
+                                        <p className="text-slate-600 mb-2" dangerouslySetInnerHTML={{ __html: t.raw('export.csv.text') }} />
                                         <ul className="text-sm text-slate-500 space-y-1">
                                             {['0', '1'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`export.csv.list.${i}`) }} />)}
                                         </ul>
@@ -394,7 +394,7 @@ export default function ManualPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-lg text-slate-900">{t('export.pdf.title')}</h3>
-                                        <p className="text-slate-600 mb-2">{t('export.pdf.text')}</p>
+                                        <p className="text-slate-600 mb-2" dangerouslySetInnerHTML={{ __html: t.raw('export.pdf.text') }} />
                                         <ul className="text-sm text-slate-500 space-y-1">
                                             {['0', '1'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`export.pdf.list.${i}`) }} />)}
                                         </ul>
