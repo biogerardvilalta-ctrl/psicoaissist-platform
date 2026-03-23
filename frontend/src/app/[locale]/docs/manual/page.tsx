@@ -283,6 +283,30 @@ export default function ManualPage() {
                                 </div>
                             </div>
 
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">📄 {t('features.reports.title')}</h3>
+                            <p className="mb-4" dangerouslySetInnerHTML={{ __html: t.raw('features.reports.text') }} />
+                            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm mb-4">
+                                <h4 className="font-bold text-slate-900 mb-2">{t('features.reports.types.title')}</h4>
+                                <ul className="list-disc pl-5 space-y-1 text-sm text-slate-600">
+                                    {['0', '1', '2', '3', '4'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`features.reports.types.list.${i}`) }} />)}
+                                </ul>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                <h4 className="font-bold text-slate-900 mb-2">{t('features.reports.workflow.title')}</h4>
+                                <ol className="list-decimal pl-5 space-y-1 text-sm text-slate-600">
+                                    {['0', '1', '2', '3', '4'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`features.reports.workflow.list.${i}`) }} />)}
+                                </ol>
+                            </div>
+
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">📊 {t('features.statistics.title')}</h3>
+                            <p className="mb-4" dangerouslySetInnerHTML={{ __html: t.raw('features.statistics.text') }} />
+                            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <h4 className="font-bold text-slate-900 mb-2">{t('features.statistics.tabs.title')}</h4>
+                                <ul className="list-disc pl-5 space-y-2 text-sm text-slate-600">
+                                    {['0', '1', '2', '3'].map(i => <li key={i} dangerouslySetInnerHTML={{ __html: t.raw(`features.statistics.tabs.list.${i}`) }} />)}
+                                </ul>
+                            </div>
+
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🎭 {t('features.simulator.title')}</h3>
                             <p className="mb-2">{t('features.simulator.text')}</p>
                             <div className="bg-slate-100 p-3 rounded text-sm">
@@ -401,7 +425,8 @@ export default function ManualPage() {
                             </ul>
                             <p className="text-sm text-slate-500 mt-2"><i>{t('settings.branding.note')}</i></p>
 
-
+                            <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">👥 {t('settings.managers.title')}</h3>
+                            <p dangerouslySetInnerHTML={{ __html: t.raw('settings.managers.text') }} />
 
                             <h3 className="mt-8 mb-3 text-xl font-bold text-slate-800 block">🔔 {t('settings.notifications.title')}</h3>
                             <ul className="list-disc pl-5 space-y-3 marker:text-blue-500">
