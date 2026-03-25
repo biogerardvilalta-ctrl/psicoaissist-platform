@@ -1705,6 +1705,7 @@
                     "policy": "<b>Política de Reinicio Mensual:</b> Todas las cuotas incluidas en los planes (minutos de transcripción, casos de simulador, etc.) se reinician automáticamente al inicio de cada ciclo de facturación mensual. <u>Los recursos no utilizados durante el mes en curso no son acumulables para el mes siguiente.</u>",
                     "items": {
                         "demo": {
+                            "title": "Plan Demo",
                             "subtitle": "Gratuito / Limitada",
                             "badge": "Prueba 14 días",
                             "includes": {
@@ -1727,6 +1728,7 @@
                             }
                         },
                         "basic": {
+                            "title": "Plan Básico",
                             "price": "29€ / mes",
                             "includes": {
                                 "list": [
@@ -1746,6 +1748,7 @@
                             }
                         },
                         "pro": {
+                            "title": "Plan Pro",
                             "price": "59€ / mes",
                             "includes": {
                                 "list": [
@@ -1766,6 +1769,7 @@
                             }
                         },
                         "premium": {
+                            "title": "Plan Premium",
                             "price": "99€ / mes",
                             "includes": {
                                 "list": [
@@ -1798,10 +1802,13 @@
                         "title": "Servicios Adicionales (Extras)",
                         "items": {
                             "agenda": {
+                                "title": "Agenda Manager",
+                                "price": "15€ / mes",
                                 "desc": "Usuario administrativo adicional para gestión de citas. Sin acceso a historias clínicas."
                             },
                             "aiPack": {
                                 "title": "Pack Minutos IA",
+                                "price": "29€ / pack",
                                 "desc": "500 minutos adicionales de procesamiento IA. Pago único, no caducan mientras la suscripción esté activa."
                             },
                             "onboarding": {
@@ -1811,6 +1818,7 @@
                             },
                             "simPack": {
                                 "title": "Pack Simulador",
+                                "price": "19€ / pack",
                                 "desc": "Pack de 10 casos clínicos interactivos adicionales para práctica. Incluye feedback detallado de la IA."
                             }
                         }

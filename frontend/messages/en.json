@@ -1695,6 +1695,7 @@
                     "policy": "<b>Monthly Reset Policy:</b> All quotas included in plans (transcription minutes, simulator cases, etc.) reset automatically at the start of each billing cycle. <u>Unused resources during the current month do not roll over to the next month.</u>",
                     "items": {
                         "demo": {
+                            "title": "Demo Plan",
                             "subtitle": "Free / Limited",
                             "badge": "14-day Trial",
                             "includes": {
@@ -1707,6 +1708,7 @@
                                 ]
                             },
                             "excludes": {
+                                "title": "Limitations:",
                                 "list": [
                                     "No Clinical Simulator",
                                     "Auto-expiry after 14 days",
@@ -1716,6 +1718,7 @@
                             }
                         },
                         "basic": {
+                            "title": "Basic Plan",
                             "price": "29€ / mo",
                             "includes": {
                                 "list": [
@@ -1735,6 +1738,7 @@
                             }
                         },
                         "pro": {
+                            "title": "Pro Plan",
                             "price": "59€ / mo",
                             "includes": {
                                 "list": [
@@ -1755,6 +1759,7 @@
                             }
                         },
                         "premium": {
+                            "title": "Premium Plan",
                             "price": "99€ / mo",
                             "includes": {
                                 "list": [
@@ -1787,10 +1792,13 @@
                         "title": "Additional Services (Extras)",
                         "items": {
                             "agenda": {
+                                "title": "Agenda Manager",
+                                "price": "15€ / mo",
                                 "desc": "Additional administrative user for appointment management. No access to clinical records."
                             },
                             "aiPack": {
                                 "title": "AI Minutes Pack",
+                                "price": "29€ / pack",
                                 "desc": "500 additional AI processing minutes. One-time payment, do not expire while subscription is active."
                             },
                             "onboarding": {
@@ -1800,6 +1808,7 @@
                             },
                             "simPack": {
                                 "title": "Simulator Pack",
+                                "price": "19€ / pack",
                                 "desc": "Pack of 10 additional interactive clinical cases for practice. Includes detailed AI feedback."
                             }
                         }

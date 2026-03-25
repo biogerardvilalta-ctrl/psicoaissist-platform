@@ -1695,6 +1695,7 @@
                     "policy": "<b>Política de Reinici Mensual:</b> Totes les quotes incloses als plans (minuts de transcripció, casos de simulador, etc.) es reinicien automàticament a l'inici de cada cicle de facturació mensual. <u>Els recursos no utilitzats durant el mes en curs no són acumulables per al mes següent.</u>",
                     "items": {
                         "demo": {
+                            "title": "Pla Demo",
                             "subtitle": "Gratuït / Limitada",
                             "badge": "Prova 14 dies",
                             "includes": {
@@ -1717,6 +1718,7 @@
                             }
                         },
                         "basic": {
+                            "title": "Pla Bàsic",
                             "price": "29€ / mes",
                             "includes": {
                                 "list": [
@@ -1736,6 +1738,7 @@
                             }
                         },
                         "pro": {
+                            "title": "Pla Pro",
                             "price": "59€ / mes",
                             "includes": {
                                 "list": [
@@ -1756,6 +1759,7 @@
                             }
                         },
                         "premium": {
+                            "title": "Pla Premium",
                             "price": "99€ / mes",
                             "includes": {
                                 "list": [
@@ -1788,10 +1792,13 @@
                         "title": "Serveis Addicionals (Extras)",
                         "items": {
                             "agenda": {
+                                "title": "Agenda Manager",
+                                "price": "15€ / mes",
                                 "desc": "Usuari administratiu addicional per a gestió de cites. Sense accés a històries clíniques."
                             },
                             "aiPack": {
                                 "title": "Pack Minuts IA",
+                                "price": "29€ / pack",
                                 "desc": "500 minuts addicionals de processament IA. Pagament únic, no caduquen mentre la subscripció estigui activa."
                             },
                             "onboarding": {
@@ -1801,6 +1808,7 @@
                             },
                             "simPack": {
                                 "title": "Pack Simulador",
+                                "price": "19€ / pack",
                                 "desc": "Pack de 10 casos clínics interactius addicionals per a pràctica. Inclou feedback detallat de la IA."
                             }
                         }
