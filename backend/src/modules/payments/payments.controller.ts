@@ -28,12 +28,14 @@ import {
   PlanType
 } from './dto/payments.dto';
 import { Request } from 'express';
+import { PrismaService } from '../../common/prisma/prisma.service';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,
     private readonly usageLimitsService: UsageLimitsService,
+    private readonly prisma: PrismaService,
   ) { }
 
   @Get('plans')
@@ -41,13 +43,10 @@ export class PaymentsController {
     return this.paymentsService.getAvailablePlans();
   }
 
-  @Get('test')
-  async testEndpoint() {
-    return { message: 'Payments controller working!', timestamp: new Date().toISOString() };
-  }
 
   @Post('simulate-success')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async simulateSuccess(@Body() body: { userId: string }) {
     return this.paymentsService.simulatePaymentSuccess(body.userId);
   }
@@ -89,7 +88,25 @@ export class PaymentsController {
   async createInitialCheckoutSession(
     @Body() body: { userId: string; plan: string; interval: string },
   ) {
-    // Public endpoint for registration flow
+    // Validate that userId exists and is in a valid registration state
+    if (!body.userId || !body.plan || !body.interval) {
+      throw new BadRequestException('userId, plan, and interval are required');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: body.userId },
+      include: { subscription: true },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid user');
+    }
+
+    // Only allow checkout for users in registration flow (INACTIVE + verified)
+    if (user.subscription && user.subscription.status === 'active') {
+      throw new BadRequestException('User already has an active subscription');
+    }
+
     return this.paymentsService.createInitialCheckoutSession(
       body.userId,
       body.plan,

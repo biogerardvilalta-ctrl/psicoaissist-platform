@@ -11,16 +11,23 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AiService } from '../ai/ai.service';
 import { Logger, UseGuards } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt'; // You might need to import JwtModule in SessionsModule
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { PLAN_FEATURES } from '../payments/plan-features';
 import { UsageLimitsService } from '../payments/usage-limits.service';
 
 @WebSocketGateway({
     cors: {
-        origin: '*', // Adjust in production
+        origin: [
+            'https://psicoaissist.com',
+            'https://www.psicoaissist.com',
+            'http://localhost:3000',
+            'http://localhost:3001',
+        ],
+        credentials: true,
     },
-    namespace: 'sessions', // Optional namespace
+    namespace: 'sessions',
 })
 export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
@@ -39,6 +46,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     constructor(
         private readonly aiService: AiService,
         private readonly jwtService: JwtService,
+        private readonly configService: ConfigService,
         private readonly prisma: PrismaService,
         private readonly usageLimitsService: UsageLimitsService,
     ) { }
@@ -75,7 +83,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         try {
             const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
             if (token) {
-                const payload = this.jwtService.decode(token) as any;
+                const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get('JWT_SECRET') }) as any;
                 if (payload && payload.sub) {
                     const userId = payload.sub;
                     // Stop any existing tracking for this socket to be safe
@@ -152,7 +160,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
                 return;
             }
 
-            const payload = this.jwtService.decode(token) as any;
+            const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get('JWT_SECRET') }) as any;
             if (!payload || !payload.sub) {
                 client.emit('debug_log', { message: "Invalid Token Payload" });
                 return;
@@ -240,7 +248,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         if (!token) return;
 
         try {
-            const payload = this.jwtService.decode(token) as any;
+            const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get('JWT_SECRET') }) as any;
             if (payload && payload.sub) {
                 const userId = payload.sub;
 
@@ -300,8 +308,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
             if (token) {
                 try {
-                    const payload = this.jwtService.decode(token) as any;
-                    // console.log(`[SessionsGateway] Token decoded`, payload.sub);
+                    const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get('JWT_SECRET') }) as any;
                     if (payload && payload.sub) {
                         roomId = data.sessionId;
                         identity = 'host';

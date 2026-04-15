@@ -94,8 +94,8 @@ export class FeatureGuard implements CanActivate {
         break;
 
       default:
-        // Unknown feature, allow by default
-        return true;
+        // Unknown feature requirement - deny by default for security
+        throw new ForbiddenException(`Feature '${requiredFeature}' is not recognized`);
     }
 
     return true;

@@ -181,7 +181,11 @@ export class UsersController {
   @Roles(UserRole.ADMIN, UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   @UseGuards(RolesGuard)
   @Patch(':id/dashboard-layout')
-  async updateDashboardLayout(@Param('id') id: string, @Body() body: { layout: any }) {
+  async updateDashboardLayout(@Req() req: any, @Param('id') id: string, @Body() body: { layout: any }) {
+    // SECURITY: Verify ownership - users can only update their own layout
+    if (req.user.id !== id && req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN) {
+      throw new BadRequestException('No tienes permisos para modificar el layout de otro usuario');
+    }
     try {
       return await this.usersService.updateDashboardLayout(id, body.layout);
     } catch (error) {

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, UseGuards, Req, Query } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, UseGuards, Req, Query, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AiService } from './ai.service';
 import { TranscriptionService } from './transcription.service';
@@ -27,7 +27,22 @@ export class AiController {
     }
 
     @Post('transcribe')
-    @UseInterceptors(FileInterceptor('audio'))
+    @UseInterceptors(FileInterceptor('audio', {
+        fileFilter: (req, file, cb) => {
+            // Only allow audio file types
+            const allowedMimes = [
+                'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/wave',
+                'audio/ogg', 'audio/webm', 'audio/x-m4a', 'audio/mp4',
+                'audio/flac', 'audio/x-wav', 'video/webm', // browsers sometimes send audio as video/webm
+            ];
+            if (allowedMimes.includes(file.mimetype)) {
+                cb(null, true);
+            } else {
+                cb(new BadRequestException(`Invalid audio format: ${file.mimetype}. Allowed: mp3, wav, ogg, webm, m4a, flac`), false);
+            }
+        },
+        limits: { fileSize: 50 * 1024 * 1024 } // 50MB max
+    }))
     async transcribeAudio(
         @UploadedFile() file: Express.Multer.File,
         @Req() req,

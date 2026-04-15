@@ -28,6 +28,7 @@ import {
   ChangePasswordDto,
   RefreshTokenDto,
   VerifyPasswordDto,
+  UpdateProfileDto,
 } from './dto/auth.dto';
 import { CompleteGoogleRegisterDto } from './dto/complete-google-register.dto';
 import { EncryptionService } from '../encryption/encryption.service';
@@ -415,7 +416,7 @@ export class AuthController {
   @Patch('me')
   async updateProfile(
     @Req() req: Request & { user: any },
-    @Body() updateProfileDto: any, // Debería ser UpdateProfileDto, pero para evitar import circular si es necesario
+    @Body() updateProfileDto: UpdateProfileDto,
   ) {
     try {
       const result = await this.authService.updateProfile(req.user.id, updateProfileDto);
