@@ -53,6 +53,11 @@ export class AuthService {
         throw new UnauthorizedException('Tu solicitud de registro ha sido rechazada.');
       }
 
+      if (!user.verified) {
+        this.logger.warn(`Login attempt with unverified user: ${email}`);
+        throw new UnauthorizedException('Cuenta no verificada. Por favor revisa tu correo electrónico para verificar tu cuenta.');
+      }
+
       // Allow INACTIVE if verified (for payment completion)
       if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED && user.status !== UserStatus.DELETED) {
         // Special case: INACTIVE but VERIFIED -> Allow login to complete payment
@@ -62,11 +67,6 @@ export class AuthService {
           this.logger.warn(`Login attempt with inactive user: ${email}`);
           throw new UnauthorizedException('Cuenta inactiva. Contacte al administrador.');
         }
-      }
-
-      if (!user.verified) {
-        this.logger.warn(`Login attempt with unverified user: ${email}`);
-        throw new UnauthorizedException('Cuenta no verificada. Por favor revisa tu correo electrónico para verificar tu cuenta.');
       }
 
       let isPasswordValid = false;
