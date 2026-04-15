@@ -358,6 +358,7 @@ export class AuthService {
 
       const user = await this.prisma.user.findUnique({
         where: { email: payload.email },
+        include: { subscription: true },
       });
 
       if (!user) {
@@ -380,11 +381,12 @@ export class AuthService {
       // Current requirement: "con google ya estara verificado".
       // But they still need to pay if they chose a paid plan.
 
-      // Determine target status
-      // We keep INACTIVE if they need to pay.
-      // If they are registering without a plan (e.g. invite?) or demo, maybe ACTIVE?
-      // For now, consistent with Email flow: INACTIVE until payment/activation.
-      // BUT they are VERIFIED.
+      // Determine target status based on subscription:
+      // Users without a subscription (free/demo plan) get ACTIVE directly.
+      // Users with a pending paid plan remain INACTIVE until payment is completed.
+      // Google users are always verified.
+      const hasPaidSubscription = !!user.subscription;
+      const targetStatus = hasPaidSubscription ? UserStatus.INACTIVE : UserStatus.ACTIVE;
 
       const updatedUser = await this.prisma.user.update({
         where: { id: user.id },
@@ -392,12 +394,17 @@ export class AuthService {
           professionalNumber,
           country,
           isPendingRegistration: false,
-          status: UserStatus.INACTIVE, // Payment required
+          status: targetStatus,
           verified: true, // Google trusted
           role: UserRole.PSYCHOLOGIST,
           updatedAt: new Date(),
         } as any,
+        include: { subscription: true },
       });
+
+      if (targetStatus === UserStatus.ACTIVE) {
+        this.logger.log(`Demo/free Google user activated upon profile completion: ${user.email}`);
+      }
 
       // Generate tokens immediately for Google users so they can proceed to Payment authenticated
       const tokens = await this.generateTokens(updatedUser);
@@ -489,7 +496,7 @@ export class AuthService {
         where: { id: payload.sub },
       });
 
-      if (!user || user.status !== UserStatus.ACTIVE) {
+      if (!user || (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED)) {
         throw new UnauthorizedException('Usuario no válido');
       }
 
@@ -516,15 +523,25 @@ export class AuthService {
       throw new UnauthorizedException('Token de verificación inválido');
     }
 
-    await this.prisma.user.update({
+    // Determine if user should be activated immediately:
+    // Users without a subscription (free/demo plan) get activated directly.
+    // Users with a pending paid plan remain INACTIVE until payment is completed.
+    const hasPaidSubscription = !!user.subscription;
+    const newStatus = hasPaidSubscription ? user.status : UserStatus.ACTIVE;
+
+    const updatedUser = await this.prisma.user.update({
       where: { id: user.id },
       data: {
         verified: true,
         verificationToken: null,
-        // status: UserStatus.ACTIVE // DO NOT ACTIVATE YET. Wait for payment.
-        // If they are INACTIVE, they can now login (due to verified=true) but will be redirected to payment.
+        status: newStatus,
       },
+      include: { subscription: true },
     });
+
+    if (newStatus === UserStatus.ACTIVE) {
+      this.logger.log(`Demo/free user activated upon email verification: ${user.email}`);
+    }
 
     await this.auditService.log({
       userId: user.id,
@@ -546,32 +563,32 @@ export class AuthService {
       this.logger.warn(`Could not send welcome email after verification: ${e.message}`);
     }
 
-    // Generate Tokens for Auto-Login
-    const tokens = await this.generateTokens(user);
-    const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(user.id);
+    // Generate Tokens for Auto-Login (use updatedUser which has the correct status)
+    const tokens = await this.generateTokens(updatedUser);
+    const encryptionKey = await this.encryptionService.getOrCreateEncryptionKey(updatedUser.id);
 
     return {
       user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        status: user.status,
-        enableReminders: user.enableReminders,
-        defaultDuration: user.defaultDuration,
-        bufferTime: user.bufferTime,
-        workStartHour: user.workStartHour,
-        workEndHour: user.workEndHour,
-        preferredLanguage: user.preferredLanguage,
-        scheduleConfig: user.scheduleConfig as any,
-        dashboardLayout: user.dashboardLayout as any,
-        hourlyRate: user.hourlyRate,
-        referralCode: user.referralCode,
-        referralsCount: user.referralsCount,
-        subscription: user.subscription,
-        simulatorUsageCount: user.simulatorUsageCount,
-        agendaManagerEnabled: user.agendaManagerEnabled,
+        id: updatedUser.id,
+        email: updatedUser.email,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        role: updatedUser.role,
+        status: updatedUser.status,
+        enableReminders: updatedUser.enableReminders,
+        defaultDuration: updatedUser.defaultDuration,
+        bufferTime: updatedUser.bufferTime,
+        workStartHour: updatedUser.workStartHour,
+        workEndHour: updatedUser.workEndHour,
+        preferredLanguage: updatedUser.preferredLanguage,
+        scheduleConfig: updatedUser.scheduleConfig as any,
+        dashboardLayout: updatedUser.dashboardLayout as any,
+        hourlyRate: updatedUser.hourlyRate,
+        referralCode: updatedUser.referralCode,
+        referralsCount: updatedUser.referralsCount,
+        subscription: updatedUser.subscription,
+        simulatorUsageCount: updatedUser.simulatorUsageCount,
+        agendaManagerEnabled: updatedUser.agendaManagerEnabled,
         hasOnboardingPack: false, // Default or fetch
       },
       tokens,
