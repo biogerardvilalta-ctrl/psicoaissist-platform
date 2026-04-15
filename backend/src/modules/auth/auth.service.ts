@@ -79,8 +79,7 @@ export class AuthService {
       }
 
       if (!isPasswordValid) {
-        this.logger.warn(`Failed login attempt for user: ${email} (Invalid Password)`);
-        console.log(`[DEBUG] Password mismatch for ${email}. Provided: ${password.substring(0, 3)}***`);
+        this.logger.warn(`Failed login attempt for user: ${email}`);
         await this.logAuthAttempt(user.id, false);
         return null;
       }
@@ -89,9 +88,7 @@ export class AuthService {
       const { passwordHash, ...result } = user;
       return result;
     } catch (error) {
-      console.log(`[DEBUG] Error validating user ${email}:`, error);
-      // Log the full stack trace for internal server errors
-      this.logger.error(`Error validating user ${email}: ${error.message}`, error.stack);
+      this.logger.error(`Error validating user ${email}: ${error.message}`);
       throw error;
     }
   }
@@ -149,6 +146,20 @@ export class AuthService {
         resourceId: user.id,
         details: 'Usuario reactivado automáticamente por Login',
       });
+    }
+
+    // Auto-fix for Stuck Demo Users
+    // Users registered before the demo fix might be stuck in INACTIVE status despite being verified.
+    if (user.status === UserStatus.INACTIVE && user.verified && !user.subscription) {
+      this.logger.log(`Auto-activating stuck demo user on login: ${user.email}`);
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          status: UserStatus.ACTIVE,
+          updatedAt: new Date()
+        }
+      });
+      user.status = UserStatus.ACTIVE; // Update local object for token generation
     }
 
     // Backfill Referral Code (Migration for existing users)
