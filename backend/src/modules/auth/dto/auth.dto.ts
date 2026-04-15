@@ -227,6 +227,14 @@ export class UpdateProfileDto {
   @ApiProperty({ required: false })
   @IsOptional()
   hourlyRate?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  brandingConfig?: any;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  googleImportCalendar?: boolean;
 }
 
 export class VerifyPasswordDto {

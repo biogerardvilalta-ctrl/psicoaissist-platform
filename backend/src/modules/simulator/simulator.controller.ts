@@ -1,4 +1,5 @@
 import { Controller, Post, Get, Body, UseGuards, Request, Query } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { SimulatorService, PatientProfile } from './simulator.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
@@ -101,6 +102,7 @@ export class SimulatorController {
     // === PUBLIC DEMO ROUTES ===
 
     @Public()
+    @Throttle({ default: { ttl: 60000, limit: 5 } })
     @Get('demo/start')
     async startDemo() {
         // Hardcoded demo case to save AI costs and ensure quality
@@ -115,6 +117,7 @@ export class SimulatorController {
     }
 
     @Public()
+    @Throttle({ default: { ttl: 60000, limit: 3 } })
     @Post('demo/chat')
     async chatDemo(@Body() dto: ChatDto) {
         // Limit history length strictly to prevent abuse
