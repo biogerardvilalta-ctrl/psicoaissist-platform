@@ -4,6 +4,7 @@ import { AiController } from './ai.controller';
 import { AiService } from './ai.service';
 import { TranscriptionService } from './transcription.service';
 import { GeminiProvider } from './providers/gemini.provider';
+import { VectorStoreService } from './vector-store.service';
 import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
@@ -13,11 +14,12 @@ import { PaymentsModule } from '../payments/payments.module';
         AiService,
         TranscriptionService,
         GeminiProvider,
+        VectorStoreService,
         {
             provide: 'AI_PROVIDER',
             useExisting: GeminiProvider // Alias to the concrete class
         }
     ],
-    exports: [AiService, TranscriptionService, 'AI_PROVIDER', GeminiProvider],
+    exports: [AiService, TranscriptionService, 'AI_PROVIDER', GeminiProvider, VectorStoreService],
 })
 export class AiModule { }

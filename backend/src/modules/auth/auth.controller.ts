@@ -334,6 +334,7 @@ export class AuthController {
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
+        await this.authService.blacklistToken(token);
       try {
         const payload = this.jwtService.decode(token) as any;
         if (payload && payload.sub) {

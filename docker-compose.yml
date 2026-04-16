@@ -79,7 +79,8 @@ services:
       REDIS_HOST: 127.0.0.1
       REDIS_PORT: 6379
       PORT: 3001 # Listen directly on 3001 to avoid conflict with Frontend (3000)
-    # Ports mapping removed because network_mode: host invalidates it
+    volumes:
+      - ./backend/data:/usr/src/app/backend/data
 
     # Frontend (Next.js)
   frontend:

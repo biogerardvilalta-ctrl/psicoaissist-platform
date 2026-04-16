@@ -1,4 +1,6 @@
-import { Injectable, UnauthorizedException, ConflictException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, Logger, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../../common/prisma/prisma.service';
@@ -23,6 +25,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
     private readonly auditService: AuditService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) { }
 
   /**
@@ -437,6 +440,43 @@ export class AuthService {
     }
   }
 
+  
+  /**
+   * Agrega un token a la lista negra
+   */
+  async blacklistToken(token: string, type: 'access' | 'refresh' = 'access'): Promise<void> {
+    try {
+      if (!token) return;
+      
+      const payload = this.jwtService.decode(token) as any;
+      if (!payload || !payload.exp) return;
+      
+      const now = Math.floor(Date.now() / 1000);
+      const remainingTime = payload.exp - now;
+      
+      if (remainingTime > 0) {
+        // Almacenamos en Redis con el tiempo de vida restante
+        await this.cacheManager.set(`blacklist_${token}`, 'true', { ttl: remainingTime } as any);
+        this.logger.debug(`Token added to blacklist (${type}). Expires in ${remainingTime}s`);
+      }
+    } catch (error) {
+      this.logger.error(`Error blacklisting token: ${error.message}`);
+    }
+  }
+
+  /**
+   * Verifica si un token está en la lista negra
+   */
+  async isTokenBlacklisted(token: string): Promise<boolean> {
+    try {
+      if (!token) return false;
+      const val = await this.cacheManager.get(`blacklist_${token}`);
+      return val === 'true';
+    } catch (error) {
+      return false;
+    }
+  }
+
   async generateRegistrationToken(user: any): Promise<string> {
     const payload = {
       email: user.email,
@@ -615,7 +655,8 @@ export class AuthService {
    */
   async logout(userId: string): Promise<{ message: string }> {
     try {
-      // En una implementación completa, aquí agregaríamos el token a una blacklist
+      // El token se agrega a la lista negra desde el controlador o vía interceptor si pasamos el token
+      // En este caso, el controlador debería llamar a blacklistToken si le pasamos el token.
       // Por ahora, simplemente loggeamos el evento
       await this.auditService.log({
         userId,

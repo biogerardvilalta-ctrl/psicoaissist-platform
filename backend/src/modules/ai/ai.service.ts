@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { getPromptByType } from './prompt.selector';
 import { AiProvider } from './interfaces/ai-provider.interface';
+import { VectorStoreService } from './vector-store.service';
 
 const FORBIDDEN_WORDS_REGEX = /(ansietat|ansiedad|anxiety|depressió|depresión|depression|trastorn|trastorno|disorder|diagnòstic|diagnóstico|diagnosis|dsm|criteris|criterios|criteria|patologia|patología|pathology|paciente sufre|patient suffers|debe|must|obligatorio|mandatory|compleix criteris|cumple criterios|meets criteria|hauries de|deberías|should|és recomanable que|se recomienda que|it is recommended)/i;
 
@@ -380,7 +381,8 @@ const TEST_MAPPING_MENORS = {
 @Injectable()
 export class AiService {
     constructor(
-        @Inject('AI_PROVIDER') private aiProvider: AiProvider
+        @Inject('AI_PROVIDER') private aiProvider: AiProvider,
+        private vectorStoreService: VectorStoreService
     ) { }
 
     private filterContent(text: string): string | null {
@@ -866,47 +868,46 @@ La interpretació i l’ús de qualsevol instrument correspon exclusivament al p
      */
     async askHelp(question: string, locale: string = 'es'): Promise<string> {
         try {
-            // Hardcoded path to artifacts for this specific environment/agent session
-            const artifactsPath = '/home/ustec/.gemini/antigravity/brain/a5aaae08-9e71-4d91-967c-812d8d3d8817';
+            const languageName = locale === 'ca' ? 'Català' : locale === 'en' ? 'Anglès' : 'Espanyol';
 
-            let context = '';
-            try {
-                const manual = fs.readFileSync(path.join(artifactsPath, 'MANUAL.md'), 'utf-8');
-                const guide = fs.readFileSync(path.join(artifactsPath, 'QUICK_GUIDE.md'), 'utf-8');
-                context = `MANUAL:\n${manual}\n\nGUÍA RÁPIDA:\n${guide}`;
-            } catch (err) {
-                console.warn('[AiService] Could not read documentation files:', err);
-                context = 'Documentación no disponible. Responde basándote en que es una app para psicólogos llamada PsicoAIssist.';
+            // --- RAG: retrieve only the most relevant document chunks ---
+            let context: string;
+            if (this.vectorStoreService.isReady()) {
+                context = await this.vectorStoreService.search(question, 5);
+                console.log(`[AiService] askHelp RAG mode — injecting ${context.length} chars of relevant context.`);
+            } else {
+                // Fallback: basic description if vector store failed to initialize
+                context = 'PsicoAIssist és una plataforma SaaS per a psicòlegs que inclou gestió de pacients, sessions, transcripció amb IA, informes, simulador de casos clínics i videollamades.';
+                console.warn('[AiService] askHelp fallback mode — VectorStore not ready.');
             }
-
-            const languageName = locale === 'ca' ? 'Catalán' : locale === 'en' ? 'Inglés' : 'Español';
 
             const prompt = [
                 `Ets un assistent de suport tècnic per a PsicoAIssist (una plataforma per a psicòlegs).
-                
-                CONTEXT DOCUMENTAL:
-                ${context.substring(0, 30000)} // Limit context size just in case
 
-                PREGUNTA DE L'USUARI:
-                "${question}"
+FRAGMENTS RELLEVANTS DE LA DOCUMENTACIÓ:
+${context}
 
-                INSTRUCCIONS:
-                - Respon de manera breu, amable i directa.
-                - Utilitza la informació del manual si és rellevant.
-                - Si no ho saps, digues que contactin amb suport@psicoaissist.com.
-                - Idioma: Respon SEMPRE en ${languageName}.
-                `,
+PREGUNTA DE L'USUARI:
+"${question}"
+
+INSTRUCCIONS:
+- Respon de manera breu, amable i directa (màxim 3-4 paràgrafs).
+- Basa't exclusivament en els fragments de documentació proporcionats.
+- Si la resposta no es pot extreure dels fragments, indica que contactin amb suport@psicoaissist.com.
+- NO inventis funcionalitats que no estiguin documentades.
+- Idioma: Respon SEMPRE en ${languageName}.`,
             ];
 
             const response = await this.aiProvider.generateText(prompt, {
-                modelName: "gemini-2.0-flash"
+                modelName: "gemini-2.0-flash",
+                maxOutputTokens: 600,
             });
 
             return response;
 
         } catch (error) {
             console.error('Error in askHelp:', error);
-            return "Lo siento, tuve un problema al procesar tu consulta. Por favor intenta de nuevo.";
+            return "Ho sentim, hi ha hagut un problema en processar la teva consulta. Si us plau, torna-ho a provar o contacta amb suport@psicoaissist.com.";
         }
     }
 
