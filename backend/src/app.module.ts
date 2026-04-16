@@ -74,7 +74,6 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
 
     // Cache with Redis
     // TODO: Fix Redis configuration
-    /*
     CacheModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -85,9 +84,8 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
         password: config.get('REDIS_PASSWORD'),
         ttl: config.get('CACHE_TTL') || 300, // 5 minutes default
       }),
-      isGlobal: true,
+      isGlobal: true, 
     }),
-    */
 
     // Core modules
     PrismaModule,
