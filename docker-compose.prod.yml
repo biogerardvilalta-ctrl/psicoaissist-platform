@@ -102,7 +102,7 @@ services:
 volumes:
   postgres_prod_data:
     external: true
-    name: psicoaissist-platform_postgres_beta_data
+    name: psicoaissist_prod_postgres_prod_data
   redis_prod_data:
     external: true
-    name: psicoaissist-platform_redis_beta_data
+    name: psicoaissist_prod_redis_prod_data

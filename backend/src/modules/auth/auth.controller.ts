@@ -129,7 +129,7 @@ export class AuthController {
     const tokens = await this.authService.generateTokens(user);
 
     // Redirect with tokens in query params
-    let redirectUrl = `${frontendUrl}/auth/login?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`;
+    let redirectUrl = `${frontendUrl}/auth/login?google_auth=success`;
 
     // If plan info was preserved from registration state, pass it back to frontend
     // If plan info was preserved from registration state, pass it back to frontend
@@ -444,5 +444,16 @@ export class AuthController {
     }
 
     return { verified: true };
+  }
+
+  @ApiOperation({ summary: 'Recuperar tokens de la cookie de sesión (OAuth)' })
+  @Get('session-tokens')
+  async getSessionTokens(@Req() req: Request) {
+    const accessToken = req.cookies?.accessToken;
+    const refreshToken = req.cookies?.refreshToken;
+    if (!accessToken && !refreshToken) {
+      throw new UnauthorizedException('No session cookies found');
+    }
+    return { accessToken, refreshToken };
   }
 }

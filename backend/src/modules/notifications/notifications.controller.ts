@@ -10,6 +10,9 @@ import {
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('Notifications')
@@ -53,6 +56,8 @@ export class NotificationsController {
     }
 
     @ApiOperation({ summary: 'Send a test notification (Dev only)' })
+    @UseGuards(RolesGuard)
+    @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
     @Post('test')
     async testNotification(@Request() req) {
         return this.notificationsService.create({

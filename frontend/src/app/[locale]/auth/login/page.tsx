@@ -42,6 +42,7 @@ export default function LoginPage() {
     if (isLoading) return;
 
     // Check for Google Login tokens in URL
+    const googleAuthSuccess = searchParams.get('google_auth') === 'success';
     const accessToken = searchParams.get('accessToken');
     const refreshToken = searchParams.get('refreshToken');
 
@@ -80,13 +81,29 @@ export default function LoginPage() {
       setSuccessMessage(t('successMessage'));
     }
 
-    if (accessToken && refreshToken && !processedRef.current) {
+    if ((googleAuthSuccess || (accessToken && refreshToken)) && !processedRef.current) {
       processedRef.current = true;
       const handleGoogleLogin = async () => {
         try {
           // Clear params from URL
           window.history.replaceState({}, '', '/auth/login');
 
+                    let finalAccessToken = accessToken;
+          let finalRefreshToken = refreshToken;
+          
+          if (googleAuthSuccess && !accessToken) {
+              try {
+                  const tokens = await AuthAPI.getSessionTokens();
+                  finalAccessToken = tokens.accessToken;
+                  finalRefreshToken = tokens.refreshToken;
+              } catch (e) {
+                  console.error("Failed to recover session tokens from cookies", e);
+                  throw e;
+              }
+          }
+          
+          if (!finalAccessToken) throw new Error("No access token acquired");
+          
           // Explicitly logout from backend to clear any httpOnly session cookies
           // This prevents the backend from prioritizing an old session over the new tokens
           await AuthAPI.logout().catch(() => { });
@@ -99,15 +116,15 @@ export default function LoginPage() {
           sessionStorage.clear();
 
           // Set tokens in storage for API calls
-          localStorage.setItem('psychoai_access_token', accessToken);
-          localStorage.setItem('psychoai_refresh_token', refreshToken);
+          localStorage.setItem('psychoai_access_token', finalAccessToken!);
+          localStorage.setItem('psychoai_refresh_token', finalRefreshToken!);
 
           // Fetch user profile
           const user = await AuthAPI.getCurrentUser();
 
           if (user) {
             // Update context state atomically
-            await loginWithTokens(user, { accessToken, refreshToken });
+            await loginWithTokens(user, { accessToken: finalAccessToken, refreshToken: finalRefreshToken! });
 
             // Check if there is a pending plan selection from registration
             const plan = searchParams.get('plan');

@@ -194,4 +194,13 @@ export class AuthAPI {
       return false;
     }
   }
+
+  static async getSessionTokens(): Promise<{accessToken: string, refreshToken: string}> {
+    try {
+      const response = await httpClient.get(`${this.BASE_URL}/session-tokens`);
+      return (response as any).data || response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
