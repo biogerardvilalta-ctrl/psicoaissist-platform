@@ -31,7 +31,13 @@ docker compose -f $COMPOSE_FILE -p $PROJECT_NAME rm -f
 
 # 4. Construcción (Build)
 echo "🏗️ Construyendo imágenes (esto puede tardar)..."
-docker compose -f $COMPOSE_FILE -p $PROJECT_NAME build
+# Construcción secuencial para ahorrar RAM
+  echo "🔨 Construyendo base de datos y cache..."
+  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME build postgres redis coturn
+  echo "🔨 Construyendo Backend..."
+  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME build backend
+  echo "🔨 Construyendo Frontend..."
+  docker compose -f $COMPOSE_FILE -p $PROJECT_NAME build frontend
 
 # 5. Arranque
 echo "🔥 Arrancando plataforma..."
