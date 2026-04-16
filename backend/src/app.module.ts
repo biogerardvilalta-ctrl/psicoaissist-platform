@@ -77,7 +77,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     CacheModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
+      useFactory: (config: ConfigService): any => ({
         store: redisStore,
         host: config.get('REDIS_HOST') || 'localhost',
         port: config.get('REDIS_PORT') || 6379,
