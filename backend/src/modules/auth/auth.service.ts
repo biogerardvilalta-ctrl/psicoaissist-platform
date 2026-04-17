@@ -455,7 +455,7 @@ export class AuthService {
       
       if (remainingTime > 0) {
         // Almacenamos en Redis con el tiempo de vida restante
-        await this.cacheManager.set(`blacklist_${token}`, 'true', { ttl: remainingTime } as any);
+        await this.cacheManager.set(`blacklist_${token}`, 'true', remainingTime * 1000 as any);
         this.logger.debug(`Token added to blacklist (${type}). Expires in ${remainingTime}s`);
       }
     } catch (error) {
