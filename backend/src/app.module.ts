@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-yet';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -73,16 +73,18 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     }),
 
     // Cache with Redis
-    // TODO: Fix Redis configuration
     CacheModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService): any => ({
-        store: redisStore,
-        host: config.get('REDIS_HOST') || 'localhost',
-        port: config.get('REDIS_PORT') || 6379,
-        password: config.get('REDIS_PASSWORD'),
-        ttl: config.get('CACHE_TTL') || 300, // 5 minutes default
+      useFactory: async (config: ConfigService) => ({
+        store: await redisStore({
+          socket: {
+            host: config.get('REDIS_HOST') || 'localhost',
+            port: parseInt(config.get('REDIS_PORT') || '6379', 10),
+          },
+          password: config.get('REDIS_PASSWORD'),
+          ttl: (config.get<number>('CACHE_TTL') || 300) * 1000, // ttl in ms
+        }),
       }),
       isGlobal: true, 
     }),
