@@ -8,7 +8,7 @@ set -euo pipefail
 
 BACKUP_DIR="/home/admin/backups"
 DATE=$(date +%Y-%m-%d_%H-%M-%S)
-KEEP_DAYS=7   # Guardar últimos 7 días (ajusta según espacio disponible)
+KEEP_DAYS=30  # Guardar últimos 30 días (ajusta según espacio disponible)
 
 mkdir -p "$BACKUP_DIR"
 
@@ -23,17 +23,19 @@ echo "========================================"
 echo "[1/2] Backup PostgreSQL (psicoaissist)..."
 
 PG_FILE="$BACKUP_DIR/psicoaissist_${DATE}.sql.gz"
+PG_CONTAINER=$(docker ps --format '{{.Names}}' | grep -E "^psicoaissist_(prod|beta|preprod)_db$" | head -1)
 
-if docker ps --format '{{.Names}}' | grep -q "psicoaissist_prod_db"; then
-    docker exec psicoaissist_prod_db pg_dump -U postgres psicoaissist_beta_db | gzip > "$PG_FILE"
+if [ -n "$PG_CONTAINER" ]; then
+    PG_DB=$(docker exec "$PG_CONTAINER" env | grep POSTGRES_DB | cut -d= -f2 || echo "psicoaissist_beta_db")
+    docker exec "$PG_CONTAINER" pg_dump -U postgres "$PG_DB" | gzip > "$PG_FILE"
     if [ -s "$PG_FILE" ]; then
-        echo "  ✅ PostgreSQL OK: $(du -sh "$PG_FILE" | cut -f1)"
+        echo "  ✅ PostgreSQL OK ($PG_CONTAINER): $(du -sh "$PG_FILE" | cut -f1)"
     else
         echo "  ❌ ERROR: Backup PostgreSQL vacío"
         rm -f "$PG_FILE"
     fi
 else
-    echo "  ⚠️  Contenedor psicoaissist_prod_db no está corriendo"
+    echo "  ⚠️  Contenedor PostgreSQL de Psicoaissist no está corriendo"
 fi
 
 # ----------------------------------------------------------
