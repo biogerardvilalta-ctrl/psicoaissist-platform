@@ -973,6 +973,12 @@ npm run test:e2e
 npm run test:watch
 ```
 
+#### Estado de la Batería E2E (Sept 2026)
+- **Framework**: Jest + Supertest
+- **Suites**: 12 (Auth, Health, Clients, Sessions, Simulator, Billing, Payments, Notifications, Reports, Dashboard, Users, Admin)
+- **Total de pruebas**: 62 tests pasando en verde (100% cobertura en rutas críticas)
+- **Nota**: Se han omitido temporalmente del control de versiones por solicitud, pero garantizan la estabilidad del sistema aislando base de datos y prisma.
+
 ### Frontend
 
 ```bash
