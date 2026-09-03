@@ -10,6 +10,7 @@ import { usePayments } from '@/hooks/usePayments';
 import { UserAPI } from '@/lib/user-api';
 import { useTranslations } from 'next-intl';
 import LanguageSwitcher from '@/components/language-switcher';
+import { useToast } from '@/hooks/use-toast';
 
 interface RegisterFormData {
   firstName: string;
@@ -49,6 +50,8 @@ export default function RegisterPage() {
   const searchParams = useSearchParams();
   const { register } = useAuth();
   const { createCheckoutSession, createInitialCheckoutSession } = usePayments();
+  const { toast } = useToast();
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
 
   const selectedPlan = searchParams.get('plan');
   const billingInterval = searchParams.get('interval');
@@ -65,52 +68,66 @@ export default function RegisterPage() {
 
     // Clear error when user starts typing
     if (localError) setLocalError(null);
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: false }));
+    }
+  };
+
+  const getInputClass = (fieldName: string, baseClasses = '') => {
+    const base = `${baseClasses} block w-full px-3 py-2 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2`;
+    if (fieldErrors[fieldName]) {
+      return `${base} border-red-500 ring-red-500 bg-red-50 animate-shake focus:ring-red-500 focus:border-red-500 has-error`;
+    }
+    return `${base} border-gray-300 focus:ring-blue-500 focus:border-blue-500`;
   };
 
   const validateForm = (): boolean => {
+    const newErrors: Record<string, boolean> = {};
+    let errorMsg = '';
+
     if (!formData.firstName.trim()) {
-      setLocalError('El nombre es requerido');
-      return false;
+      newErrors.firstName = true;
+      errorMsg = 'El nombre es requerido';
+    } else if (!formData.lastName.trim()) {
+      newErrors.lastName = true;
+      errorMsg = 'El apellido es requerido';
+    } else if (!formData.email.trim()) {
+      newErrors.email = true;
+      errorMsg = 'El email es requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = true;
+      errorMsg = 'Formato de email inválido';
+    } else if (!formData.professionalNumber.trim()) {
+      newErrors.professionalNumber = true;
+      errorMsg = 'El número profesional es requerido';
+    } else if (formData.password.length < 8) {
+      newErrors.password = true;
+      errorMsg = 'La contraseña debe tener al menos 8 caracteres';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = true;
+      errorMsg = 'Las contraseñas no coinciden';
+    } else if (!legalLiabilityAccepted) {
+      newErrors.legalLiabilityAccepted = true;
+      errorMsg = 'Debes certificar la veracidad de tu habilitación profesional';
+    } else if (!formData.termsAccepted) {
+      newErrors.termsAccepted = true;
+      errorMsg = 'Debes aceptar los términos y condiciones';
     }
 
-    if (!formData.lastName.trim()) {
-      setLocalError('El apellido es requerido');
-      return false;
-    }
-
-    if (!formData.email.trim()) {
-      setLocalError('El email es requerido');
-      return false;
-    }
-
-    if (!formData.professionalNumber.trim()) {
-      setLocalError('El número profesional es requerido');
-      return false;
-    }
-
-    if (!legalLiabilityAccepted) {
-      setLocalError('Debes certificar la veracidad de tu habilitación profesional');
-      return false;
-    }
-
-    if (!formData.termsAccepted) {
-      setLocalError('Debes aceptar los términos y condiciones');
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setLocalError('Formato de email inválido');
-      return false;
-    }
-
-    if (formData.password.length < 8) {
-      setLocalError('La contraseña debe tener al menos 8 caracteres');
-      return false;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setLocalError('Las contraseñas no coinciden');
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      setLocalError(errorMsg);
+      toast({
+        title: t('errorTitle') || "Error en el registro",
+        description: errorMsg,
+        variant: "destructive"
+      });
+      setTimeout(() => {
+        const errorElement = document.querySelector('.has-error');
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
       return false;
     }
 
@@ -193,6 +210,11 @@ export default function RegisterPage() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error en el registro';
       setLocalError(errorMessage);
+      toast({
+        title: t('errorTitle') || "Error en el registro",
+        description: errorMessage,
+        variant: "destructive"
+      });
       setIsSubmitting(false); // Only stop loading if we hit an error (otherwise we are redirecting)
     }
   };
@@ -307,7 +329,7 @@ export default function RegisterPage() {
                   required
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={getInputClass('firstName', 'mt-1')}
                   placeholder={t('firstNamePlaceholder')}
                 />
               </div>
@@ -323,7 +345,7 @@ export default function RegisterPage() {
                   required
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={getInputClass('lastName', 'mt-1')}
                   placeholder={t('lastNamePlaceholder')}
                 />
               </div>
@@ -341,7 +363,7 @@ export default function RegisterPage() {
                 required
                 value={formData.email}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={getInputClass('email', 'mt-1')}
                 placeholder={t('emailPlaceholder')}
               />
             </div>
@@ -360,7 +382,7 @@ export default function RegisterPage() {
                   required
                   value={formData.professionalNumber}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={getInputClass('professionalNumber', 'mt-1 placeholder:text-xs')}
                   placeholder={t('professionalNumberPlaceholder')}
                 />
               </div>
@@ -375,7 +397,7 @@ export default function RegisterPage() {
                   required
                   value={formData.country}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={getInputClass('country', 'mt-1')}
                 >
                   <option value="">{t('countryPlaceholder')}</option>
                   <option value="España">España</option>
@@ -399,7 +421,7 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+                  className={getInputClass('password', 'pr-10')}
                   placeholder={t('passwordPlaceholder')}
                 />
                 <button
@@ -429,7 +451,7 @@ export default function RegisterPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+                  className={getInputClass('confirmPassword', 'pr-10')}
                   placeholder={t('confirmPasswordPlaceholder')}
                 />
                 <button
@@ -459,7 +481,7 @@ export default function RegisterPage() {
                     type="text"
                     value={formData.referralCode}
                     onChange={handleInputChange}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+                    className={getInputClass('referralCode', 'pr-10')}
                     placeholder={t('referralCodePlaceholder')}
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -478,8 +500,8 @@ export default function RegisterPage() {
                   type="checkbox"
                   required
                   checked={legalLiabilityAccepted}
-                  onChange={(e) => setLegalLiabilityAccepted(e.target.checked)}
-                  className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                  onChange={(e) => { setLegalLiabilityAccepted(e.target.checked); if (fieldErrors.legalLiabilityAccepted) setFieldErrors(prev => ({ ...prev, legalLiabilityAccepted: false })); }}
+                  className={`focus:ring-red-500 h-4 w-4 text-red-600 rounded ${fieldErrors.legalLiabilityAccepted ? 'border-red-500 ring-2 ring-red-500 has-error animate-shake' : 'border-gray-300'}`}
                 />
               </div>
               <div className="ml-3 text-sm">
@@ -504,7 +526,7 @@ export default function RegisterPage() {
                   required
                   checked={formData.termsAccepted}
                   onChange={handleInputChange}
-                  className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                  className={`focus:ring-blue-500 h-4 w-4 text-blue-600 rounded ${fieldErrors.termsAccepted ? 'border-red-500 ring-2 ring-red-500 has-error animate-shake' : 'border-gray-300'}`}
                 />
               </div>
               <div className="ml-3 text-sm">

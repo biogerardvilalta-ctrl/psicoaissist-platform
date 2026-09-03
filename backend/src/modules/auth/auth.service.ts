@@ -871,13 +871,26 @@ export class AuthService {
     });
 
     if (user) {
+      const updates: any = {};
+      
       if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED) {
-        if (user.status === UserStatus.DELETED) {
-          await this.prisma.user.update({
-            where: { id: user.id },
-            data: { status: UserStatus.ACTIVE }
-          });
+        if (user.status === UserStatus.DELETED || user.status === UserStatus.INACTIVE) {
+          updates.status = UserStatus.ACTIVE;
         }
+      }
+      
+      // Since Google authenticates the user, we can trust the email and verify them
+      if (!user.verified) {
+        updates.verified = true;
+        updates.verificationToken = null;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: updates,
+          include: { subscription: true }
+        });
       }
     } else {
       // User does NOT exist
