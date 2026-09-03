@@ -647,7 +647,7 @@ export default function UsersPage() {
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
                         <span className="text-sm font-medium text-blue-600">
-                          {user.firstName[0]}{user.lastName[0]}
+                          {(user.firstName?.[0] || '')}{(user.lastName?.[0] || '')}
                         </span>
                       </div>
                       <div className="min-w-0">
@@ -825,7 +825,7 @@ export default function UsersPage() {
                       <div className="flex items-center">
                         <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
                           <span className="text-xs font-medium text-blue-600">
-                            {user.firstName[0]}{user.lastName[0]}
+                            {(user.firstName?.[0] || '')}{(user.lastName?.[0] || '')}
                           </span>
                         </div>
                         <div className="ml-3 min-w-0">
