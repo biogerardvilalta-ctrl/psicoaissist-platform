@@ -58,6 +58,13 @@ export class UsersController {
     return this.usersService.exportData(req.user.id);
   }
 
+  @ApiOperation({ summary: 'Obtener progreso de onboarding' })
+  @ApiResponse({ status: 200, description: 'Estado del onboarding' })
+  @Get('me/onboarding')
+  async getOnboardingStatus(@Req() req: any) {
+    return this.usersService.getOnboardingProgress(req.user.id);
+  }
+
   @ApiOperation({ summary: 'Eliminar mi cuenta' })
   @ApiResponse({ status: 200, description: 'Cuenta eliminada exitosamente' })
   @Delete('me')

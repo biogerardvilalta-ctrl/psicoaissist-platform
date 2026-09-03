@@ -24,6 +24,7 @@ import { RecentActivity, TodaysSessions } from '@/components/dashboard';
 import { useEffect, useState } from 'react';
 import { DashboardAPI, DashboardStats } from '@/lib/dashboard-api';
 import { SessionsAPI } from '@/lib/sessions-api';
+import { OnboardingGuide } from '@/components/dashboard/onboarding/OnboardingGuide';
 import { calculateAdvancedStats, AdvancedStats } from '@/lib/analytics-helper';
 import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
 import { StatsWidget } from '@/components/dashboard/widgets/StatsWidget';
@@ -275,7 +276,35 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
+      <OnboardingGuide />
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-8" id="dashboard-content">
+        
+        {/* Trial Premium Banner */}
+        {user?.trialStartedAt && new Date(user.trialStartedAt).getTime() + 14 * 24 * 60 * 60 * 1000 > Date.now() && !user.subscription && (
+          <div className="mb-6 sm:mb-8 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg p-4 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 p-2 rounded-full">
+                <span className="text-xl">🚀</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">{t('alerts.trialActive.title') || 'Trial Premium Activo'}</h3>
+                <p className="text-indigo-100 text-sm">
+                  {t('alerts.trialActive.description', { 
+                    days: Math.ceil((new Date(user.trialStartedAt).getTime() + 14 * 24 * 60 * 60 * 1000 - Date.now()) / (1000 * 60 * 60 * 24))
+                  }) || `Te quedan ${Math.ceil((new Date(user.trialStartedAt).getTime() + 14 * 24 * 60 * 60 * 1000 - Date.now()) / (1000 * 60 * 60 * 24))} días de Premium gratuito`}
+                </p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              className="bg-white text-purple-700 border-none hover:bg-purple-50 whitespace-nowrap"
+              onClick={() => router.push('/dashboard/profile')}
+            >
+              {t('alerts.trialActive.cta') || 'Ver detalles'}
+            </Button>
+          </div>
+        )}
+
         {/* Welcome Header */}
         <div className="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
           <div className="min-w-0 animate-fade-in-up">

@@ -500,6 +500,7 @@
                 "subtitle": "Detalles de tu plan actual y facturación.",
                 "currentPlan": "Plan Actual",
                 "planDemo": "Plan Demo",
+                "planDemoTrial": "Trial Premium",
                 "paymentMonthly": "Pago Mensual",
                 "paymentAnnual": "Pago Anual",
                 "paymentFree": "Gratuito",
@@ -3389,5 +3390,40 @@
         "loadError": "No se pudo cargar la información.",
         "loadDraftError": "No se pudo cargar el borrador.",
         "loadSessionsError": "No se pudieron cargar las sesiones del paciente."
+    },
+    "Onboarding": {
+        "title": "Guía para empezar",
+        "subtitle": "Completa estos pasos para dominar PsicoAissist",
+        "hide": "Ocultar",
+        "steps": {
+            "create_client": {
+                "title": "Crea tu primer paciente",
+                "desc": "Añade un paciente para poder gestionar sus sesiones.",
+                "action": "Ir a Pacientes"
+            },
+            "create_session": {
+                "title": "Programa una cita",
+                "desc": "Agenda la primera sesión para tu paciente.",
+                "action": "Ir a Sesiones"
+            },
+            "start_session": {
+                "title": "Inicia una sesión",
+                "desc": "Empieza la sesión desde tu calendario o lista de sesiones.",
+                "action": "Iniciar"
+            },
+            "start_recording": {
+                "title": "Activa la grabación",
+                "desc": "Durante la sesión, activa el micrófono para grabar el audio.",
+                "action": "Grabar"
+            },
+            "generate_report": {
+                "title": "Genera un informe",
+                "desc": "Al finalizar, genera el informe clínico automáticamente.",
+                "action": "Ir a Informes"
+            }
+        },
+        "completed": "¡Completado!",
+        "progress": "Completado",
+        "allDone": "¡Has completado todos los pasos!"
     }
 }

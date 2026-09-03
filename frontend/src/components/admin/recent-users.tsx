@@ -122,7 +122,7 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2">
                       <p className="text-sm font-medium text-gray-900 truncate">
-                        {user.firstName} {user.lastName}
+                        {(user.firstName || user.lastName) ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : user.email}
                       </p>
                       {user.role === 'ADMIN' && (
                         <Crown className="w-4 h-4 text-yellow-500 shrink-0" />

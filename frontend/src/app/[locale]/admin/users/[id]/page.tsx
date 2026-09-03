@@ -148,10 +148,12 @@ export default function AdminUserDetailPage() {
                             <div className="text-center mb-6">
                                 <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <span className="text-2xl font-bold text-blue-600">
-                                        {user.firstName?.[0]}{user.lastName?.[0]}
+                                        {((user.firstName ? user.firstName.trim().charAt(0) : '') + (user.lastName ? user.lastName.trim().charAt(0) : '')).toUpperCase() || 'U'}
                                     </span>
                                 </div>
-                                <h1 className="text-xl font-bold text-gray-900">{user.firstName} {user.lastName}</h1>
+                                <h1 className="text-xl font-bold text-gray-900">
+                                    {(user.firstName || user.lastName) ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : user.email}
+                                </h1>
                                 <p className="text-sm text-gray-500 break-all">{user.email}</p>
                                 <div className="mt-3">
                                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${user.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :

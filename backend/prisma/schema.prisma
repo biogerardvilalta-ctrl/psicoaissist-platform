@@ -61,6 +61,7 @@ model User {
   simulatorWarningSent      Boolean            @default(false) @map("simulator_warning_sent")
   clientWarningSent         Boolean            @default(false) @map("client_warning_sent")
   reportWarningSent         Boolean            @default(false) @map("report_warning_sent")
+  trialStartedAt            DateTime?          @map("trial_started_at")
   auditLogs                 AuditLog[]
   clients                   Client[]
   encryptionKeys            EncryptionKey[]

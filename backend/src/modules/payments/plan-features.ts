@@ -66,6 +66,15 @@ export const PLAN_FEATURES: Record<string, PlanFeatures> = {
     simulatorMinutes: PlanLimits.FREE_SIMULATOR_MINUTES,
     supportLevel: 'email',
   },
+  demo_trial: {
+    maxClients: PlanLimits.UNLIMITED,
+    transcriptionMinutes: PlanLimits.PREMIUM_TRANSCRIPTION_MINUTES,
+    reportsPerMonth: PlanLimits.UNLIMITED,
+    simulatorCases: PlanLimits.UNLIMITED,
+    simulatorMinutes: PlanLimits.PREMIUM_SIMULATOR_MINUTES,
+    supportLevel: 'priority',
+    advancedAnalytics: true,
+  },
   basic: {
     maxClients: PlanLimits.BASIC_MAX_CLIENTS,
     transcriptionMinutes: PlanLimits.BASIC_TRANSCRIPTION_MINUTES,

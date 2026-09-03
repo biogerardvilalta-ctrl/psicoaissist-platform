@@ -406,12 +406,25 @@ export default function UsersPage() {
     setRoleFilter(role);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  const getInitials = (firstName?: string | null, lastName?: string | null) => {
+    const f = firstName ? firstName.trim().charAt(0) : '';
+    const l = lastName ? lastName.trim().charAt(0) : '';
+    return (f + l).toUpperCase() || 'U';
+  };
+
+  const formatDate = (dateString?: string | null) => {
+    if (!dateString) return 'Nunca';
+    try {
+      const d = new Date(dateString);
+      if (isNaN(d.getTime())) return '-';
+      return d.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return '-';
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -433,22 +446,23 @@ export default function UsersPage() {
 
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-800'}`}>
-        {labels[status as keyof typeof labels] || status}
+        {labels[status as keyof typeof labels] || status || 'Desconocido'}
       </span>
     );
   };
 
-  const getPlanBadge = (planType: string) => {
+  const getPlanBadge = (planType?: string | null) => {
+    const safePlan = (planType || 'FREE').toUpperCase();
     const colors: Record<string, string> = {
       FREE: 'bg-gray-100 text-gray-800',
       BASIC: 'bg-blue-100 text-blue-800',
       PRO: 'bg-indigo-100 text-indigo-800',
       PREMIUM: 'bg-purple-100 text-purple-800',
-      AGENDA_MANAGER: 'bg-pink-100 text-pink-800', // Added specific color
+      AGENDA_MANAGER: 'bg-pink-100 text-pink-800',
     };
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[planType.toUpperCase()] || colors.FREE}`}>
-        {planType.toUpperCase() === 'AGENDA_MANAGER' ? 'Agenda Manager' : planType.toUpperCase()}
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[safePlan] || colors.FREE}`}>
+        {safePlan === 'AGENDA_MANAGER' ? 'Agenda Manager' : safePlan}
       </span>
     );
   };
@@ -640,19 +654,19 @@ export default function UsersPage() {
           {/* Mobile Card View */}
           <div className="md:hidden pb-20">
             <div className="space-y-4 p-4">
-              {users.map((user) => (
+              {(users || []).map((user) => (
                 <div key={user.id} className="bg-white rounded-lg border shadow-sm p-4 space-y-4">
                   {/* Header: User & Status */}
                   <div className="flex items-start justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
                         <span className="text-sm font-medium text-blue-600">
-                          {user.firstName[0]}{user.lastName[0]}
+                          {getInitials(user.firstName, user.lastName)}
                         </span>
                       </div>
                       <div className="min-w-0">
                         <div className="text-sm font-medium text-gray-900 truncate max-w-[120px]">
-                          {user.firstName} {user.lastName}
+                          {(user.firstName || user.lastName) ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : user.email}
                         </div>
                         <div className="text-xs text-gray-500 truncate max-w-[120px]">
                           {user.email}
@@ -683,7 +697,7 @@ export default function UsersPage() {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-gray-400 text-[10px] uppercase">Reportes</span>
-                      <span className="font-medium">{user._count?.sessions || 0}</span>
+                      <span className="font-medium">{user._count?.reports || 0}</span>
                     </div>
                     <div className="col-span-2 pt-1 border-t border-gray-100 mt-1">
                       <div className="flex justify-between">
@@ -699,11 +713,7 @@ export default function UsersPage() {
                       }`}>
                       {user.role}
                     </span>
-                    {user.subscription && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
-                        {user.subscription.planType}
-                      </span>
-                    )}
+                    {getPlanBadge(user.subscription?.planType || 'FREE')}
                   </div>
 
                   {/* Actions */}
@@ -819,18 +829,18 @@ export default function UsersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {users.map((user) => (
+                {(users || []).map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="px-3 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
                           <span className="text-xs font-medium text-blue-600">
-                            {user.firstName[0]}{user.lastName[0]}
+                            {getInitials(user.firstName, user.lastName)}
                           </span>
                         </div>
                         <div className="ml-3 min-w-0">
-                          <div className="text-sm font-medium text-gray-900 truncate max-w-[120px]" title={`${user.firstName} ${user.lastName}`}>
-                            {user.firstName} {user.lastName}
+                          <div className="text-sm font-medium text-gray-900 truncate max-w-[120px]" title={(user.firstName || user.lastName) ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : user.email}>
+                            {(user.firstName || user.lastName) ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : user.email}
                           </div>
 
                           <div className="mt-0.5">
@@ -879,11 +889,11 @@ export default function UsersPage() {
                     </td>
                     <td className="px-3 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'AGENDA_MANAGER' ? 'bg-pink-100 text-pink-800' :
-                        user.role.startsWith('PSYCHOLOGIST') ? 'bg-green-100 text-green-800' :
+                        user.role?.startsWith('PSYCHOLOGIST') ? 'bg-green-100 text-green-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
                         {user.role === 'AGENDA_MANAGER' ? 'Gestor de Agenda' :
-                          user.role.startsWith('PSYCHOLOGIST') ? 'Psicólogo' :
+                          user.role?.startsWith('PSYCHOLOGIST') ? 'Psicólogo' :
                             user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? 'Admin' : 'Usuario'}
                       </span>
                     </td>
@@ -919,7 +929,7 @@ export default function UsersPage() {
                       </div>
                     </td>
                     <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(user.lastLogin || new Date().toISOString())}
+                      {formatDate(user.lastLogin)}
                     </td>
                     <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(user.createdAt)}
@@ -1000,7 +1010,7 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Usuarios Activos</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u =>
+                  {(users || []).filter(u =>
                     u.status === 'ACTIVE' &&
                     u.role !== 'ADMIN' &&
                     u.role !== 'SUPER_ADMIN'
@@ -1018,7 +1028,7 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Suscripciones Activas</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u =>
+                  {(users || []).filter(u =>
                     u.status === 'ACTIVE' &&
                     u.role !== 'AGENDA_MANAGER' &&
                     u.role !== 'ADMIN' &&
@@ -1037,7 +1047,7 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Gestores de Agenda</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.role === 'AGENDA_MANAGER').length}
+                  {(users || []).filter(u => u.role === 'AGENDA_MANAGER').length}
                 </p>
               </div>
             </div>
@@ -1051,7 +1061,7 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Inactivos</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u =>
+                  {(users || []).filter(u =>
                     u.status === 'SUSPENDED' || u.status === 'DELETED'
                   ).length}
                 </p>
@@ -1066,7 +1076,7 @@ export default function UsersPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Total Usuarios</p>
-                <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{(users || []).length}</p>
               </div>
             </div>
           </div>

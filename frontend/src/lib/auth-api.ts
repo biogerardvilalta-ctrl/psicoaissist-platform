@@ -89,6 +89,16 @@ export class AuthAPI {
     }
   }
 
+  static async resendVerificationEmail(email: string): Promise<{ message: string }> {
+    try {
+      const response = await httpClient.post(`${this.BASE_URL}/resend-verification`, { email });
+      return (response as any).data || response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
   static async getCurrentUser(): Promise<User> {
     try {
       // Add timestamp to prevent browser caching

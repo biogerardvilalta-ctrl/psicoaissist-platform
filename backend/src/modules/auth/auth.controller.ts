@@ -321,6 +321,15 @@ export class AuthController {
     return this.authService.verifyEmail(token);
   }
 
+  @ApiOperation({ summary: 'Reenviar email de verificación' })
+  @ApiResponse({ status: 200, description: 'Solicitud de reenvío procesada' })
+  @Post('resend-verification')
+  async resendVerificationEmail(
+    @Body('email') email: string,
+  ): Promise<{ message: string }> {
+    return this.authService.resendVerificationEmail(email);
+  }
+
   @ApiOperation({ summary: 'Logout de usuario' })
   @ApiResponse({ status: 200, description: 'Logout exitoso' })
   @Post('logout')

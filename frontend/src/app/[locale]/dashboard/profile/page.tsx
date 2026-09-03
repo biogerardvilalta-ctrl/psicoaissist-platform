@@ -186,15 +186,16 @@ export default function ProfilePage() {
     };
 
     // Computed Subscription Object (Defaults to Demo if null)
-    const demoExpirationDate = user?.createdAt
-        ? new Date(new Date(user.createdAt).getTime() + 14 * 24 * 60 * 60 * 1000).toISOString()
+    const isTrialActive = user?.trialStartedAt ? new Date(user.trialStartedAt).getTime() + 14 * 24 * 60 * 60 * 1000 > Date.now() : false;
+    const demoExpirationDate = user?.trialStartedAt
+        ? new Date(new Date(user.trialStartedAt).getTime() + 14 * 24 * 60 * 60 * 1000).toISOString()
         : undefined;
 
     const currentSubscription = user?.subscription || {
         id: 'demo-default',
-        planType: 'DEMO',
+        planType: isTrialActive ? 'demo_trial' : 'DEMO',
         status: 'active',
-        currentPeriodStart: user?.createdAt || new Date().toISOString(),
+        currentPeriodStart: user?.trialStartedAt || user?.createdAt || new Date().toISOString(),
         currentPeriodEnd: demoExpirationDate
     };
 
@@ -276,7 +277,7 @@ export default function ProfilePage() {
                                 <div className="space-y-1">
                                     <p className="text-sm font-medium text-purple-900">{t('subscription.currentPlan')}</p>
                                     <h3 className="text-2xl font-bold text-purple-700 capitalize">
-                                        {currentSubscription.planType === 'DEMO' ? t('subscription.planDemo') : currentSubscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
+                                        {currentSubscription.planType === 'DEMO' ? t('subscription.planDemo') : currentSubscription.planType === 'demo_trial' ? t('subscription.planDemoTrial') : currentSubscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
                                     </h3>
                                 </div>
                                 <div className="flex gap-2">
@@ -298,7 +299,7 @@ export default function ProfilePage() {
                                     <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
                                     <div>
                                         <p className="text-sm font-medium text-slate-700">
-                                            {currentSubscription.planType === 'DEMO' ? t('subscription.expirationDate') : t('subscription.nextRenewal')}
+                                            {['DEMO', 'demo_trial'].includes(currentSubscription.planType) ? t('subscription.expirationDate') : t('subscription.nextRenewal')}
                                         </p>
                                         <p className="text-sm text-slate-500">
                                             {currentSubscription.currentPeriodEnd
@@ -365,12 +366,12 @@ export default function ProfilePage() {
                                 <>
                                     {/* Clinical Cases */}
                                     {/* Clinical Cases */}
-                                    {currentSubscription.planType !== 'BASIC' && (
+                                    {currentSubscription.planType !== 'BASIC' && currentSubscription.planType !== 'DEMO' && (
                                         <SimulatorUsageBar
                                             usage={stats.usage.used || 0}
                                             limit={stats.usage.limit || 0}
                                             extra={stats.usage.extraSimulatorCases || 0}
-                                            planName={currentSubscription.planType === 'DEMO' ? t('subscription.planDemo') : currentSubscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
+                                            planName={currentSubscription.planType === 'demo_trial' ? t('subscription.planDemoTrial') : currentSubscription.planType.toLowerCase().replace('_plus', '').replace(/_/g, ' ')}
                                         />
                                     )}
 
@@ -444,7 +445,7 @@ export default function ProfilePage() {
                                     </div>
 
                                     <p className="text-xs text-muted-foreground pt-2 border-t">
-                                        {currentSubscription.planType === 'DEMO'
+                                        {['DEMO', 'demo_trial'].includes(currentSubscription.planType)
                                             ? t('subscription.demoExpires', { date: currentSubscription.currentPeriodEnd ? new Date(currentSubscription.currentPeriodEnd).toLocaleDateString() : 'N/A' })
                                             : t('subscription.limitsReset', { date: new Date(stats.usage.nextReset).toLocaleDateString() })}
                                     </p>

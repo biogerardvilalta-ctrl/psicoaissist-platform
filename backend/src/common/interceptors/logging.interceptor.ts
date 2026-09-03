@@ -23,6 +23,11 @@ export class LoggingInterceptor implements NestInterceptor {
       const httpContext = context.switchToHttp();
       const request = httpContext.getRequest<RequestWithUser>();
       const response = httpContext.getResponse<Response>();
+      
+      if (!request) {
+        return next.handle();
+      }
+      
       const { method, url, headers, body, ip, user } = request;
 
       // Log request

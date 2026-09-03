@@ -353,6 +353,63 @@ export class AuthService {
       throw error;
     }
   }
+
+  /**
+   * Reenvía el email de verificación a un usuario que aún no ha verificado su cuenta.
+   * Tiene un rate-limit de 1 solicitud cada 5 minutos por email para evitar abusos.
+   */
+  async resendVerificationEmail(email: string): Promise<{ message: string }> {
+    // Always return the same message to avoid email enumeration attacks
+    const genericMessage = 'Si el email está registrado y pendiente de verificación, recibirás un nuevo correo en breve.';
+
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+
+      // Silently return if user not found or already verified
+      if (!user || user.verified) {
+        this.logger.log(`Resend verification skipped for ${email}: user not found or already verified.`);
+        return { message: genericMessage };
+      }
+
+      // Rate limiting: prevent spam (max 1 resend per 5 minutes per email)
+      const rateLimitKey = `resend_verification_${email.toLowerCase()}`;
+      const isRateLimited = await this.cacheManager.get(rateLimitKey);
+      if (isRateLimited) {
+        this.logger.warn(`Resend verification rate-limited for ${email}`);
+        return { message: genericMessage };
+      }
+
+      // Generate a new token and update the user
+      const verificationToken = uuidv4();
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { verificationToken },
+      });
+
+      // Send the email
+      await this.emailService.sendVerificationEmail(
+        user.email,
+        `${user.firstName} ${user.lastName}`,
+        verificationToken,
+        undefined,
+        undefined,
+        user.preferredLanguage
+      );
+
+      // Set rate limit (5 minutes = 300 seconds)
+      await this.cacheManager.set(rateLimitKey, 'true', 300 * 1000 as any);
+
+      this.logger.log(`Verification email resent to ${email}`);
+      return { message: genericMessage };
+    } catch (error) {
+      this.logger.error(`Error resending verification email to ${email}: ${error.message}`);
+      // Return generic message even on error to avoid leaking info
+      return { message: genericMessage };
+    }
+  }
+
   /**
    * Completa el registro de un usuario de Google
    */
@@ -823,6 +880,15 @@ export class AuthService {
       user.referralCode = newCode;
     }
 
+    // Activar trial al primer accés
+    if (!user.trialStartedAt && !user.subscription) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { trialStartedAt: new Date(), updatedAt: new Date() }
+      });
+      user.trialStartedAt = new Date();
+    }
+
     // Get current usage stats
     const clientsCount = await this.prisma.client.count({
       where: {
@@ -832,12 +898,15 @@ export class AuthService {
     });
 
     // Get limits from Plan Features
-    const planType = (user.subscription?.planType || 'demo').toLowerCase();
-    // Import PLAN_FEATURES dynamically to avoid circular dependency issues if any, or just import at top
-    // For now assuming we can import. If not, we'll fix it.
-    // Actually, let's look at imports.
-    // We need to add import { PLAN_FEATURES } from '../payments/plan-features'; at the top.
+    let planType = (user.subscription?.planType || 'demo').toLowerCase();
+    if (!user.subscription && user.trialStartedAt) {
+      const trialEndDate = new Date(user.trialStartedAt.getTime() + 14 * 24 * 60 * 60 * 1000);
+      if (trialEndDate > new Date()) {
+        planType = 'demo_trial';
+      }
+    }
 
+    // Import PLAN_FEATURES dynamically to avoid circular dependency issues if any
     const limits = (await import('../payments/plan-features')).PLAN_FEATURES[planType];
 
     const { passwordHash, ...result } = user;
@@ -871,13 +940,26 @@ export class AuthService {
     });
 
     if (user) {
+      const updates: any = {};
+      
       if (user.status !== UserStatus.ACTIVE && user.status !== UserStatus.VALIDATED) {
-        if (user.status === UserStatus.DELETED) {
-          await this.prisma.user.update({
-            where: { id: user.id },
-            data: { status: UserStatus.ACTIVE }
-          });
+        if (user.status === UserStatus.DELETED || user.status === UserStatus.INACTIVE) {
+          updates.status = UserStatus.ACTIVE;
         }
+      }
+      
+      // Since Google authenticates the user, we can trust the email and verify them
+      if (!user.verified) {
+        updates.verified = true;
+        updates.verificationToken = null;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: updates,
+          include: { subscription: true }
+        });
       }
     } else {
       // User does NOT exist

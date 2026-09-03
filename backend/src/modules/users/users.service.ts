@@ -420,6 +420,52 @@ export class UsersService {
   }
 
   /**
+   * Obtener progreso de onboarding
+   */
+  async getOnboardingProgress(userId: string) {
+    const clientsCount = await this.prisma.client.count({ where: { userId, isActive: true } });
+    const sessionsCount = await this.prisma.session.count({ where: { userId } });
+    
+    // Check if session started (IN_PROGRESS or COMPLETED)
+    const hasStartedSession = await this.prisma.session.count({ 
+      where: { 
+        userId, 
+        status: { in: ['IN_PROGRESS', 'COMPLETED'] } 
+      } 
+    }) > 0;
+    
+    // Check if recorded
+    const hasRecording = await this.prisma.session.count({ 
+      where: { 
+        userId, 
+        encryptedAudioPath: { not: null } 
+      } 
+    }) > 0;
+    
+    // Check if report generated
+    const reportsCount = await this.prisma.report.count({ 
+      where: { session: { userId } } 
+    });
+
+    const steps = [
+      { id: 'create_client', completed: clientsCount > 0 },
+      { id: 'create_session', completed: sessionsCount > 0 },
+      { id: 'start_session', completed: hasStartedSession },
+      { id: 'start_recording', completed: hasRecording },
+      { id: 'generate_report', completed: reportsCount > 0 },
+    ];
+
+    const completedCount = steps.filter(s => s.completed).length;
+
+    return {
+      steps,
+      completedCount,
+      totalSteps: 5,
+      isFullyCompleted: completedCount === 5
+    };
+  }
+
+  /**
    * Actualizar configuración del dashboard
    */
   async updateDashboardLayout(id: string, layout: any): Promise<UserResponseDto> {
