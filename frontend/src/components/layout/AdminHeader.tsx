@@ -88,11 +88,13 @@ export default function AdminHeader() {
                 <button className="flex items-center space-x-3 focus:outline-none">
                   <Avatar className="h-8 w-8 bg-gray-700">
                     <AvatarFallback className="bg-blue-600 text-white">
-                      {user?.firstName?.[0]}{user?.lastName?.[0]}
+                      {((user?.firstName ? user.firstName.trim().charAt(0) : '') + (user?.lastName ? user.lastName.trim().charAt(0) : '')).toUpperCase() || 'A'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="hidden sm:block text-right">
-                    <div className="text-white text-sm font-medium">{user?.firstName}</div>
+                    <div className="text-white text-sm font-medium">
+                      {(user?.firstName || user?.lastName) ? `${user?.firstName || ''} ${user?.lastName || ''}`.trim() : user?.email}
+                    </div>
                     <div className="text-gray-400 text-xs text-xs-custom-color">
                       {user?.role === 'PSYCHOLOGIST_PREMIUM' ? 'Psicólogo Premium' :
                         user?.role === 'PSYCHOLOGIST' ? 'Psicólogo' :
