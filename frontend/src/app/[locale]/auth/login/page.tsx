@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from '@/navigation';
 import { useSearchParams } from 'next/navigation';
 import { Link } from '@/navigation';
-import { Eye, EyeOff, LogIn, Heart, AlertCircle, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, LogIn, Heart, AlertCircle, CheckCircle, Mail, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { AuthAPI } from '@/lib/auth-api';
 import { usePayments } from '@/hooks/usePayments';
@@ -28,6 +28,7 @@ export default function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent'>('idle');
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -201,12 +202,24 @@ export default function LoginPage() {
 
     if (!validateForm()) return;
 
+    setResendState('idle');
     try {
       await login({ email: formData.email, password: formData.password }, formData.rememberMe);
       // Redirect is handled by useEffect when user state changes
     } catch (err: any) {
       console.error('Login error:', err);
       // Error display is handled by AuthContext
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (resendState !== 'idle') return;
+    setResendState('sending');
+    try {
+      await AuthAPI.resendVerificationEmail(formData.email);
+      setResendState('sent');
+    } catch {
+      setResendState('idle');
     }
   };
 
@@ -415,12 +428,43 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Error message */}
+          {/* Error message - unverified account gets special treatment */}
           {error && (
-            <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm">{error}</span>
-            </div>
+            error.toLowerCase().includes('verificad') ? (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+                <div className="flex items-start space-x-2 text-amber-800">
+                  <Mail className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">{t('unverifiedTitle') || 'Cuenta pendiente de verificación'}</p>
+                    <p className="text-sm mt-1 text-amber-700">{t('unverifiedMessage') || 'Revisa tu bandeja de entrada (y la carpeta de spam) para encontrar el enlace de verificación.'}</p>
+                  </div>
+                </div>
+                {resendState === 'sent' ? (
+                  <div className="flex items-center space-x-2 text-green-700 bg-green-50 rounded p-2">
+                    <CheckCircle className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-sm">{t('resendSuccess') || '¡Correo reenviado! Revisa tu bandeja de entrada.'}</span>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={resendState === 'sending'}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 text-sm font-medium text-amber-800 bg-amber-100 hover:bg-amber-200 rounded-lg transition-colors disabled:opacity-60"
+                  >
+                    {resendState === 'sending' ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" />{t('resendSending') || 'Enviando...'}</>
+                    ) : (
+                      <><Mail className="h-4 w-4" />{t('resendButton') || 'Reenviar correo de verificación'}</>
+                    )}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="text-sm">{error}</span>
+              </div>
+            )
           )}
 
           {/* Submit button */}
