@@ -640,7 +640,7 @@ export default function UsersPage() {
           {/* Mobile Card View */}
           <div className="md:hidden pb-20">
             <div className="space-y-4 p-4">
-              {users.map((user) => (
+              {(users || []).map((user) => (
                 <div key={user.id} className="bg-white rounded-lg border shadow-sm p-4 space-y-4">
                   {/* Header: User & Status */}
                   <div className="flex items-start justify-between">
@@ -819,7 +819,7 @@ export default function UsersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {users.map((user) => (
+                {(users || []).map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="px-3 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -879,11 +879,11 @@ export default function UsersPage() {
                     </td>
                     <td className="px-3 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'AGENDA_MANAGER' ? 'bg-pink-100 text-pink-800' :
-                        user.role.startsWith('PSYCHOLOGIST') ? 'bg-green-100 text-green-800' :
+                        user.role?.startsWith('PSYCHOLOGIST') ? 'bg-green-100 text-green-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
                         {user.role === 'AGENDA_MANAGER' ? 'Gestor de Agenda' :
-                          user.role.startsWith('PSYCHOLOGIST') ? 'Psicólogo' :
+                          user.role?.startsWith('PSYCHOLOGIST') ? 'Psicólogo' :
                             user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? 'Admin' : 'Usuario'}
                       </span>
                     </td>
@@ -1000,7 +1000,7 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Usuarios Activos</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u =>
+                  {(users || []).filter(u =>
                     u.status === 'ACTIVE' &&
                     u.role !== 'ADMIN' &&
                     u.role !== 'SUPER_ADMIN'
@@ -1018,7 +1018,7 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Suscripciones Activas</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u =>
+                  {(users || []).filter(u =>
                     u.status === 'ACTIVE' &&
                     u.role !== 'AGENDA_MANAGER' &&
                     u.role !== 'ADMIN' &&
@@ -1037,7 +1037,7 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Gestores de Agenda</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.role === 'AGENDA_MANAGER').length}
+                  {(users || []).filter(u => u.role === 'AGENDA_MANAGER').length}
                 </p>
               </div>
             </div>
@@ -1051,7 +1051,7 @@ export default function UsersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Inactivos</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u =>
+                  {(users || []).filter(u =>
                     u.status === 'SUSPENDED' || u.status === 'DELETED'
                   ).length}
                 </p>
@@ -1066,7 +1066,7 @@ export default function UsersPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Total Usuarios</p>
-                <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{(users || []).length}</p>
               </div>
             </div>
           </div>
