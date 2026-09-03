@@ -438,7 +438,7 @@ export class UsersService {
     const hasRecording = await this.prisma.session.count({ 
       where: { 
         userId, 
-        recordingPath: { not: null } 
+        encryptedAudioPath: { not: null } 
       } 
     }) > 0;
     
