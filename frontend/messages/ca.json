@@ -486,6 +486,7 @@
                 "subtitle": "Detalls del teu pla actual i facturació.",
                 "currentPlan": "Pla Actual",
                 "planDemo": "Pla Demo",
+                "planDemoTrial": "Trial Premium",
                 "paymentMonthly": "Pagament Mensual",
                 "paymentAnnual": "Pagament Anual",
                 "paymentFree": "Gratuït",
@@ -3379,5 +3380,40 @@
         "loadError": "No s'ha pogut carregar la informació.",
         "loadDraftError": "No s'ha pogut carregar l'esborrany.",
         "loadSessionsError": "No s'han pogut carregar les sessions del pacient."
+    },
+    "Onboarding": {
+        "title": "Guia per començar",
+        "subtitle": "Completa aquests passos per dominar PsicoAissist",
+        "hide": "Amagar",
+        "steps": {
+            "create_client": {
+                "title": "Crea el teu primer pacient",
+                "desc": "Afegeix un pacient per poder gestionar les seves sessions.",
+                "action": "Ves a Pacients"
+            },
+            "create_session": {
+                "title": "Programa una cita",
+                "desc": "Agenda la primera sessió per al teu pacient.",
+                "action": "Ves a Sessions"
+            },
+            "start_session": {
+                "title": "Inicia una sessió",
+                "desc": "Comença la sessió des del teu calendari o llista de sessions.",
+                "action": "Iniciar"
+            },
+            "start_recording": {
+                "title": "Activa la gravació",
+                "desc": "Durant la sessió, activa el micròfon per gravar l'àudio.",
+                "action": "Gravar"
+            },
+            "generate_report": {
+                "title": "Genera un informe",
+                "desc": "En finalitzar, genera l'informe clínic automàticament.",
+                "action": "Ves a Informes"
+            }
+        },
+        "completed": "Completat!",
+        "progress": "Completat",
+        "allDone": "Has completat tots els passos!"
     }
 }

@@ -487,6 +487,7 @@
                 "subtitle": "Details of your current plan and billing.",
                 "currentPlan": "Current Plan",
                 "planDemo": "Demo Plan",
+                "planDemoTrial": "Premium Trial",
                 "paymentMonthly": "Monthly Payment",
                 "paymentAnnual": "Annual Payment",
                 "paymentFree": "Free",
@@ -3396,5 +3397,40 @@
         "loadError": "Could not load information.",
         "loadDraftError": "Could not load draft.",
         "loadSessionsError": "Could not load patient sessions."
+    },
+    "Onboarding": {
+        "title": "Getting Started",
+        "subtitle": "Complete these steps to master PsicoAissist",
+        "hide": "Hide",
+        "steps": {
+            "create_client": {
+                "title": "Create your first patient",
+                "desc": "Add a patient to manage their sessions.",
+                "action": "Go to Patients"
+            },
+            "create_session": {
+                "title": "Schedule an appointment",
+                "desc": "Schedule the first session for your patient.",
+                "action": "Go to Sessions"
+            },
+            "start_session": {
+                "title": "Start a session",
+                "desc": "Start the session from your calendar or session list.",
+                "action": "Start"
+            },
+            "start_recording": {
+                "title": "Activate recording",
+                "desc": "During the session, activate the microphone to record audio.",
+                "action": "Record"
+            },
+            "generate_report": {
+                "title": "Generate a report",
+                "desc": "Upon finishing, automatically generate the clinical report.",
+                "action": "Go to Reports"
+            }
+        },
+        "completed": "Completed!",
+        "progress": "Completed",
+        "allDone": "You have completed all steps!"
     }
 }

@@ -880,6 +880,15 @@ export class AuthService {
       user.referralCode = newCode;
     }
 
+    // Activar trial al primer accés
+    if (!user.trialStartedAt && !user.subscription) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { trialStartedAt: new Date(), updatedAt: new Date() }
+      });
+      user.trialStartedAt = new Date();
+    }
+
     // Get current usage stats
     const clientsCount = await this.prisma.client.count({
       where: {
@@ -889,12 +898,15 @@ export class AuthService {
     });
 
     // Get limits from Plan Features
-    const planType = (user.subscription?.planType || 'demo').toLowerCase();
-    // Import PLAN_FEATURES dynamically to avoid circular dependency issues if any, or just import at top
-    // For now assuming we can import. If not, we'll fix it.
-    // Actually, let's look at imports.
-    // We need to add import { PLAN_FEATURES } from '../payments/plan-features'; at the top.
+    let planType = (user.subscription?.planType || 'demo').toLowerCase();
+    if (!user.subscription && user.trialStartedAt) {
+      const trialEndDate = new Date(user.trialStartedAt.getTime() + 14 * 24 * 60 * 60 * 1000);
+      if (trialEndDate > new Date()) {
+        planType = 'demo_trial';
+      }
+    }
 
+    // Import PLAN_FEATURES dynamically to avoid circular dependency issues if any
     const limits = (await import('../payments/plan-features')).PLAN_FEATURES[planType];
 
     const { passwordHash, ...result } = user;

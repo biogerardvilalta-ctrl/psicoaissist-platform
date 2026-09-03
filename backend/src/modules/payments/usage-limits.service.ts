@@ -52,13 +52,26 @@ export class UsageLimitsService {
 
     if (user?.subscription) return user.subscription;
 
-    // Virtual Demo Subscription (Default for new users without sub/role)
-    return {
-      planType: 'DEMO',
-      status: 'active',
-      currentPeriodStart: user.createdAt,
-      currentPeriodEnd: new Date(new Date(user.createdAt).getTime() + 14 * 24 * 60 * 60 * 1000) // 14 days trial
-    };
+    // Virtual Demo/Trial Subscription
+    if (user?.trialStartedAt) {
+      const trialEndDate = new Date(new Date(user.trialStartedAt).getTime() + 14 * 24 * 60 * 60 * 1000);
+      const isInTrial = isAfter(trialEndDate, new Date());
+      
+      return {
+        planType: isInTrial ? 'demo_trial' : 'DEMO',
+        status: 'active',
+        currentPeriodStart: user.trialStartedAt,
+        currentPeriodEnd: trialEndDate,
+      };
+    } else {
+      // User hasn't accessed the dashboard yet, keep as normal demo.
+      return {
+        planType: 'DEMO',
+        status: 'active',
+        currentPeriodStart: user?.createdAt || new Date(),
+        currentPeriodEnd: new Date(new Date(user?.createdAt || new Date()).getTime() + 365 * 24 * 60 * 60 * 1000),
+      };
+    }
   }
 
   async checkClientLimit(userId: string): Promise<void> {

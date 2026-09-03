@@ -6,9 +6,10 @@ export interface User {
   createdAt: string;
   role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP' | 'PSYCHOLOGIST_PREMIUM' | 'MANAGER';
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  trialStartedAt?: string;
   subscription?: {
     id: string;
-    planType: 'BASIC' | 'PRO' | 'PREMIUM' | 'DEMO';
+    planType: 'BASIC' | 'PRO' | 'PREMIUM' | 'DEMO' | 'demo_trial';
     status: string;
     currentPeriodStart?: string;
     currentPeriodEnd?: string;
