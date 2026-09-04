@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { EncryptionService } from '../encryption/encryption.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { PaymentsService } from '../payments/payments.service';
+import { AuditService } from '../audit/audit.service';
 import { UserRole, UserStatus } from '@prisma/client';
 import { ConflictException } from '@nestjs/common';
 
@@ -25,12 +27,18 @@ describe('UsersService', () => {
         comparePassword: jest.fn(),
     };
 
+    const mockAuditService = {
+        log: jest.fn(),
+    };
+
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 UsersService,
                 { provide: PrismaService, useValue: mockPrismaService },
                 { provide: EncryptionService, useValue: mockEncryptionService },
+                { provide: PaymentsService, useValue: {} },
+                { provide: AuditService, useValue: mockAuditService },
             ],
         }).compile();
 

@@ -6,6 +6,9 @@ import { EncryptionService } from '../encryption/encryption.service';
 import { AiService } from '../ai/ai.service';
 import { AuditService } from '../audit/audit.service';
 import { GoogleService } from '../google/google.service';
+import { UsageLimitsService } from '../payments/usage-limits.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { EmailService } from '../email/email.service';
 import { NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { SessionStatus, SessionType } from './dto/sessions.dto';
 
@@ -60,6 +63,9 @@ describe('SessionsService', () => {
                 { provide: AiService, useValue: mockAiService },
                 { provide: AuditService, useValue: mockAuditService },
                 { provide: GoogleService, useValue: mockGoogleService },
+                { provide: UsageLimitsService, useValue: {} },
+                { provide: NotificationsService, useValue: {} },
+                { provide: EmailService, useValue: {} },
             ],
         }).compile();
 
