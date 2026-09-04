@@ -122,7 +122,14 @@ export default function DashboardPage() {
   useEffect(() => {
     if (user) {
       if (user.dashboardLayout && Array.isArray(user.dashboardLayout) && user.dashboardLayout.length > 0) {
-        setLayout(user.dashboardLayout);
+        const cleanedLayout = user.dashboardLayout.filter((id: string) => !id.startsWith('onboarding_'));
+        const finalLayout = cleanedLayout.length > 0 ? cleanedLayout : DEFAULT_LAYOUT;
+        setLayout(finalLayout);
+        
+        // Auto-fix if layout contained legacy onboarding strings
+        if (cleanedLayout.length !== user.dashboardLayout.length) {
+          UserAPI.updateDashboardLayout(user.id, finalLayout).catch(console.error);
+        }
       } else {
         setLayout(DEFAULT_LAYOUT);
       }

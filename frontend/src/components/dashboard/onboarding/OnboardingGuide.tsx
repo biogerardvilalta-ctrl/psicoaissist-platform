@@ -19,55 +19,26 @@ export const OnboardingGuide = () => {
   const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
-    // Load state from user dashboard layout config
-    if (user?.dashboardLayout) {
-      if (user.dashboardLayout.includes('onboarding_dismissed')) {
-        setIsDismissed(true);
-      }
-      if (user.dashboardLayout.includes('onboarding_minimized')) {
-        setIsMinimized(true);
-      }
+    if (typeof window !== 'undefined') {
+      const dismissed = localStorage.getItem('psicoai_onboarding_dismissed');
+      const minimized = localStorage.getItem('psicoai_onboarding_minimized');
+      if (dismissed === 'true') setIsDismissed(true);
+      if (minimized === 'true') setIsMinimized(true);
     }
-  }, [user]);
+  }, []);
 
-  const saveLayout = async (newLayout: string[]) => {
-    if (!user) return;
-    try {
-      await UserAPI.updateDashboardLayout(user.id, newLayout);
-      updateUser({ ...user, dashboardLayout: newLayout });
-    } catch (e) {
-      console.error('Failed to save layout', e);
-    }
-  };
-
-  const handleDismiss = async () => {
+  const handleDismiss = () => {
     setIsDismissed(true);
-    if (user) {
-      const currentLayout = Array.isArray(user.dashboardLayout) ? [...user.dashboardLayout] : [];
-      if (!currentLayout.includes('onboarding_dismissed')) {
-        currentLayout.push('onboarding_dismissed');
-        await saveLayout(currentLayout);
-      }
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('psicoai_onboarding_dismissed', 'true');
     }
   };
 
-  const handleToggleMinimize = async () => {
+  const handleToggleMinimize = () => {
     const newMinimizedState = !isMinimized;
     setIsMinimized(newMinimizedState);
-    
-    if (user) {
-      const currentLayout = Array.isArray(user.dashboardLayout) ? [...user.dashboardLayout] : [];
-      let updatedLayout = currentLayout;
-      
-      if (newMinimizedState && !currentLayout.includes('onboarding_minimized')) {
-        updatedLayout = [...currentLayout, 'onboarding_minimized'];
-      } else if (!newMinimizedState) {
-        updatedLayout = currentLayout.filter(item => item !== 'onboarding_minimized');
-      }
-      
-      if (updatedLayout.length !== currentLayout.length) {
-        await saveLayout(updatedLayout);
-      }
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('psicoai_onboarding_minimized', String(newMinimizedState));
     }
   };
 
