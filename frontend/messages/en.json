@@ -150,6 +150,11 @@
                     "title": "Attention: Payment not completed",
                     "description": "Your account has been created, but payment for the {plan} plan could not be initiated. Please update your subscription.",
                     "button": "Complete Payment"
+                },
+                "trialActive": {
+                    "title": "Premium Trial Active",
+                    "description": "You have {days} days remaining of your Premium trial.",
+                    "cta": "View details"
                 }
             },
             "Widgets": {

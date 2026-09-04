@@ -22,6 +22,7 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { UserRole, UserStatus, AuditAction, AdminTaskStatus, AdminTaskType, AdminTaskPriority, NotificationType } from '@prisma/client';
 
 import { AuditService } from '../audit/audit.service';
+import { BackupService } from './backup.service';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -34,6 +35,7 @@ export class AdminController {
     private readonly notificationsService: NotificationsService,
     private readonly emailService: EmailService,
     private readonly auditService: AuditService,
+    private readonly backupService: BackupService,
   ) { }
 
   @Post('communicate')
@@ -1278,5 +1280,62 @@ export class AdminController {
     });
 
     return task;
+  }
+
+  // Backup Endpoints
+  @Get('backups')
+  async listBackups() {
+    return this.backupService.listBackups();
+  }
+
+  @Post('backups')
+  async createBackup(@Body() body: { type: 'app' | 'mail' | 'all' }) {
+    if (!['app', 'mail', 'all'].includes(body.type)) {
+      throw new BadRequestException('Tipo de backup inválido. Debe ser app, mail o all.');
+    }
+    const result = await this.backupService.createBackup(body.type);
+    
+    await this.auditService.log({
+      userId: 'system-admin',
+      action: AuditAction.CREATE,
+      resourceType: 'BACKUP',
+      details: result.message,
+      metadata: { files: result.files, type: body.type },
+      isSuccess: true
+    });
+    
+    return result;
+  }
+
+  @Post('backups/:filename/restore')
+  async restoreBackup(@Param('filename') filename: string) {
+    const result = await this.backupService.restoreBackup(filename);
+    
+    await this.auditService.log({
+      userId: 'system-admin',
+      action: AuditAction.UPDATE,
+      resourceType: 'BACKUP',
+      details: result.message,
+      metadata: { filename },
+      isSuccess: true
+    });
+    
+    return result;
+  }
+
+  @Delete('backups/:filename')
+  async deleteBackup(@Param('filename') filename: string) {
+    const result = await this.backupService.deleteBackup(filename);
+    
+    await this.auditService.log({
+      userId: 'system-admin',
+      action: AuditAction.DELETE,
+      resourceType: 'BACKUP',
+      details: `Backup eliminado: ${filename}`,
+      metadata: { filename },
+      isSuccess: true
+    });
+    
+    return result;
   }
 }

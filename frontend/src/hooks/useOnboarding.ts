@@ -20,7 +20,7 @@ export function useOnboarding() {
 
   const fetchProgress = useCallback(async () => {
     try {
-      const response = await httpClient.get('/users/me/onboarding');
+      const response = await httpClient.get('/api/v1/users/me/onboarding');
       setData(response as OnboardingData);
       setError(null);
     } catch (err: any) {

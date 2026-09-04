@@ -304,4 +304,49 @@ export class AdminAPI {
       throw new Error('Error al realizar la limpieza de usuarios');
     }
   }
+
+  // Backups
+  static async getBackups(): Promise<any> {
+    try {
+      console.log('📦 Fetching backups list...');
+      const response = await httpClient.get(`${this.BASE_URL}/backups`);
+      return response as any;
+    } catch (error) {
+      console.error('❌ Error fetching backups:', error);
+      throw new Error('Error al cargar la lista de backups');
+    }
+  }
+
+  static async createBackup(type: 'app' | 'mail' | 'all'): Promise<any> {
+    try {
+      console.log(`📦 Creating backup (${type})...`);
+      const response = await httpClient.post(`${this.BASE_URL}/backups`, { type });
+      return response as any;
+    } catch (error) {
+      console.error('❌ Error creating backup:', error);
+      throw new Error('Error al crear el backup');
+    }
+  }
+
+  static async restoreBackup(filename: string): Promise<any> {
+    try {
+      console.log(`📦 Restoring backup: ${filename}...`);
+      const response = await httpClient.post(`${this.BASE_URL}/backups/${filename}/restore`, {});
+      return response as any;
+    } catch (error) {
+      console.error('❌ Error restoring backup:', error);
+      throw new Error('Error al restaurar el backup');
+    }
+  }
+
+  static async deleteBackup(filename: string): Promise<any> {
+    try {
+      console.log(`🗑️ Deleting backup: ${filename}...`);
+      const response = await httpClient.delete(`${this.BASE_URL}/backups/${filename}`);
+      return response as any;
+    } catch (error) {
+      console.error('❌ Error deleting backup:', error);
+      throw new Error('Error al eliminar el backup');
+    }
+  }
 }
