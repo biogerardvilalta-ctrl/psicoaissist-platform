@@ -101,7 +101,7 @@ export const OnboardingGuide = () => {
   const progressPercentage = Math.round((data.completedCount / data.totalSteps) * 100);
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ease-in-out ${isMinimized ? 'w-16 h-16 rounded-full' : 'w-80 rounded-xl'} bg-white shadow-2xl border border-slate-200 overflow-hidden`}>
+    <div className={`fixed bottom-24 right-6 z-40 transition-all duration-300 ease-in-out ${isMinimized ? 'w-16 h-16 rounded-full' : 'w-80 rounded-xl'} bg-white shadow-2xl border border-slate-200 overflow-hidden`}>
       {isMinimized ? (
         <button 
           onClick={handleToggleMinimize}
