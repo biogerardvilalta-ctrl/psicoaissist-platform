@@ -252,3 +252,19 @@ export class VerifyPasswordDto {
   @IsOptional()
   encryptedData?: string;
 }
+export class ForgotPasswordDto {
+  @ApiProperty({ example: 'usuario@ejemplo.com' })
+  @IsEmail()
+  email: string;
+}
+
+export class ResetPasswordDto {
+  @ApiProperty()
+  @IsString()
+  token: string;
+
+  @ApiProperty()
+  @IsString()
+  @MinLength(6)
+  newPassword: string;
+}

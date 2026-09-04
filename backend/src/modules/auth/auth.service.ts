@@ -1078,4 +1078,93 @@ export class AuthService {
       throw error;
     }
   }
+
+  /**
+   * Genera token para recuperación de contraseña
+   */
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const genericMessage = 'Si el correo electrónico está registrado, recibirás instrucciones para restablecer tu contraseña.';
+
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+
+      if (!user) {
+        this.logger.warn(`Forgot password requested for non-existent email: ${email}`);
+        return { message: genericMessage };
+      }
+
+      const resetToken = uuidv4();
+      const resetPasswordExpires = new Date();
+      resetPasswordExpires.setHours(resetPasswordExpires.getHours() + 1); // 1 hour expiry
+
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          resetPasswordToken: resetToken,
+          resetPasswordExpires,
+        },
+      });
+
+      await this.emailService.sendPasswordReset(
+        user.email,
+        resetToken,
+        user.preferredLanguage
+      );
+
+      this.logger.log(`Password reset email sent to: ${email}`);
+      return { message: genericMessage };
+    } catch (error) {
+      this.logger.error(`Error in forgot password: ${error.message}`);
+      return { message: genericMessage }; // Secure generic message even on error
+    }
+  }
+
+  /**
+   * Restablece la contraseña usando el token
+   */
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          resetPasswordToken: token,
+          resetPasswordExpires: {
+            gt: new Date(), // Token has not expired
+          },
+        },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('El enlace para restablecer la contraseña es inválido o ha expirado.');
+      }
+
+      const newPasswordHash = await this.encryptionService.hashPassword(newPassword);
+
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordHash: newPasswordHash,
+          resetPasswordToken: null,
+          resetPasswordExpires: null,
+          updatedAt: new Date(),
+        },
+      });
+
+      await this.auditService.log({
+        userId: user.id,
+        action: AuditAction.PASSWORD_RESET,
+        resourceType: 'USER',
+        resourceId: user.id,
+        details: 'Contraseña restablecida vía forgot-password',
+        isSuccess: true,
+      });
+
+      this.logger.log(`Password successfully reset for user: ${user.id}`);
+      return { message: 'Tu contraseña ha sido restablecida exitosamente. Ahora puedes iniciar sesión.' };
+    } catch (error) {
+      this.logger.error(`Error resetting password: ${error.message}`);
+      throw error;
+    }
+  }
 }

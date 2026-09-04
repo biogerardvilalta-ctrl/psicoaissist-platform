@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -37,6 +38,9 @@ async function bootstrap() {
       enableImplicitConversion: true,
     },
   }));
+
+  // Global exception filter
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Global logging interceptor
   app.useGlobalInterceptors(new LoggingInterceptor());

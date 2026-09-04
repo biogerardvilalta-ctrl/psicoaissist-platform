@@ -98,6 +98,23 @@ export class AuthAPI {
     }
   }
 
+  static async forgotPassword(email: string): Promise<{ message: string }> {
+    try {
+      const response = await httpClient.post(`${this.BASE_URL}/forgot-password`, { email });
+      return (response as any).data || response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    try {
+      const response = await httpClient.post(`${this.BASE_URL}/reset-password`, { token, newPassword });
+      return (response as any).data || response;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   static async getCurrentUser(): Promise<User> {
     try {

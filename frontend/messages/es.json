@@ -1633,6 +1633,43 @@
             "successTitle": "¡Registro exitoso!",
             "successMessage": "Hemos enviado un correo de verificación a <bold>{email}</bold>. Por favor, revisa tu bandeja de entrada (y spam) y haz clic en el enlace para activar tu cuenta.",
             "successButton": "Ir a Iniciar Sesión"
+        },
+        "ForgotPassword": {
+            "title": "Recuperar Contraseña",
+            "subtitle": "Introduce tu email para recibir un enlace de recuperación",
+            "emailLabel": "Correo electrónico",
+            "emailPlaceholder": "tu@email.com",
+            "submitButton": "Enviar enlace",
+            "sending": "Enviando...",
+            "backToLogin": "Volver a iniciar sesión",
+            "success": {
+                "title": "Revisa tu correo",
+                "message": "Si tu correo está registrado, recibirás instrucciones para restablecer tu contraseña."
+            },
+            "errors": {
+                "general": "Ocurrió un error. Por favor, inténtalo más tarde."
+            }
+        },
+        "ResetPassword": {
+            "title": "Nueva Contraseña",
+            "subtitle": "Crea una nueva contraseña segura",
+            "newPasswordLabel": "Nueva Contraseña",
+            "confirmPasswordLabel": "Confirmar Contraseña",
+            "submitButton": "Restablecer contraseña",
+            "saving": "Guardando...",
+            "success": {
+                "title": "Contraseña actualizada",
+                "message": "Tu contraseña ha sido restablecida exitosamente."
+            },
+            "redirecting": "Redirigiendo a inicio de sesión...",
+            "invalidLink": "Enlace inválido o expirado",
+            "requestNewLink": "Solicitar nuevo enlace",
+            "errors": {
+                "missingToken": "Falta el token de seguridad",
+                "passwordLength": "La contraseña debe tener al menos 6 caracteres",
+                "passwordMatch": "Las contraseñas no coinciden",
+                "general": "Ocurrió un error. Por favor, inténtalo de nuevo."
+            }
         }
     },
     "Legal": {

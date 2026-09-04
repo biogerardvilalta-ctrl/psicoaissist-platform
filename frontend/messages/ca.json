@@ -1623,6 +1623,43 @@
             "successTitle": "Registre exitós!",
             "successMessage": "Hem enviat un correu de verificació a <bold>{email}</bold>. Si us plau, revisa la teva safata d'entrada (i spam) i fes clic a l'enllaç per activar el teu compte.",
             "successButton": "Anar a Iniciar Sessió"
+        },
+        "ForgotPassword": {
+            "title": "Recuperar Contrasenya",
+            "subtitle": "Introdueix el teu correu per rebre un enllaç de recuperació",
+            "emailLabel": "Correu electrònic",
+            "emailPlaceholder": "el.teu@correu.com",
+            "submitButton": "Enviar enllaç",
+            "sending": "Enviant...",
+            "backToLogin": "Tornar a iniciar sessió",
+            "success": {
+                "title": "Revisa el teu correu",
+                "message": "Si el teu correu està registrat, rebràs instruccions per restablir la teva contrasenya."
+            },
+            "errors": {
+                "general": "S'ha produït un error. Si us plau, torna-ho a provar més tard."
+            }
+        },
+        "ResetPassword": {
+            "title": "Nova Contrasenya",
+            "subtitle": "Crea una nova contrasenya segura",
+            "newPasswordLabel": "Nova Contrasenya",
+            "confirmPasswordLabel": "Confirmar Contrasenya",
+            "submitButton": "Restablir contrasenya",
+            "saving": "Desant...",
+            "success": {
+                "title": "Contrasenya actualitzada",
+                "message": "La teva contrasenya s'ha restablert correctament."
+            },
+            "redirecting": "Redirigint a l'inici de sessió...",
+            "invalidLink": "Enllaç invàlid o expirat",
+            "requestNewLink": "Sol·licitar nou enllaç",
+            "errors": {
+                "missingToken": "Falta el token de seguretat",
+                "passwordLength": "La contrasenya ha de tenir almenys 6 caràcters",
+                "passwordMatch": "Les contrasenyes no coincideixen",
+                "general": "S'ha produït un error. Si us plau, torna-ho a provar."
+            }
         }
     },
     "Legal": {

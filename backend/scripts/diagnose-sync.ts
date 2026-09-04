@@ -1,5 +1,4 @@
-
-import { PrismaService } from './src/common/prisma/prisma.service';
+import { PrismaService } from '../src/common/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 

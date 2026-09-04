@@ -1,6 +1,6 @@
 
 import { PrismaClient } from '@prisma/client';
-import { EncryptionService } from './src/modules/encryption/encryption.service';
+import { EncryptionService } from '../src/modules/encryption/encryption.service';
 import { ConfigService } from '@nestjs/config';
 
 // Mock ConfigService for EncryptionService

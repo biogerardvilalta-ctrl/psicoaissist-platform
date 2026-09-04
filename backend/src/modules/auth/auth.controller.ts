@@ -13,6 +13,7 @@ import {
   Query,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { JwtService } from '@nestjs/jwt';
 
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
@@ -29,6 +30,8 @@ import {
   RefreshTokenDto,
   VerifyPasswordDto,
   UpdateProfileDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
 } from './dto/auth.dto';
 import { CompleteGoogleRegisterDto } from './dto/complete-google-register.dto';
 import { EncryptionService } from '../encryption/encryption.service';
@@ -69,7 +72,7 @@ export class AuthController {
       } else {
         frontendUrl = `${protocol}://${req.headers.host}`;
       }
-      console.log('Dynamically detected FRONTEND_URL from headers:', frontendUrl);
+      this.logger.debug(`Dynamically detected FRONTEND_URL from headers: ${frontendUrl}`);
     }
 
     // Ultimate fallback
@@ -86,11 +89,11 @@ export class AuthController {
       return res.redirect(`${frontendUrl}/auth/login?error=${errorType}&error_description=${encodeURIComponent(errorDesc)}`);
     }
 
-    console.log('--------------------------------------------------');
-    console.log('DEBUG GOOGLE REDIRECT:');
-    console.log('process.env.FRONTEND_URL:', process.env.FRONTEND_URL);
-    console.log('Computed frontendUrl:', frontendUrl);
-    console.log('--------------------------------------------------');
+    this.logger.debug('--------------------------------------------------');
+    this.logger.debug('DEBUG GOOGLE REDIRECT:');
+    this.logger.debug(`process.env.FRONTEND_URL: ${process.env.FRONTEND_URL}`);
+    this.logger.debug(`Computed frontendUrl: ${frontendUrl}`);
+    this.logger.debug('--------------------------------------------------');
 
     // Handle Pending Registration
     if (user.isPendingRegistration) {
@@ -194,6 +197,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login de usuario' })
   @ApiResponse({ status: 200, description: 'Login exitoso', type: AuthResponseDto })
   @ApiResponse({ status: 401, description: 'Credenciales incorrectas' })
+  @Throttle({ default: { limit: 5, ttl: 900000 } })
   @Post('login')
   async login(
     @Body() loginDto: LoginDto,
@@ -233,6 +237,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Registro de nuevo usuario' })
   @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente', type: AuthResponseDto })
   @ApiResponse({ status: 409, description: 'Email ya registrado' })
+  @Throttle({ default: { limit: 3, ttl: 3600000 } })
   @Post('register')
   async register(
     @Body() registerDto: RegisterDto,
@@ -276,6 +281,23 @@ export class AuthController {
       this.logger.error(`Registration error: ${error.message}`);
       throw error;
     }
+  }
+
+  @ApiOperation({ summary: 'Solicitar recuperación de contraseña' })
+  @ApiResponse({ status: 200, description: 'Email de recuperación enviado (o mensaje genérico)' })
+  @Throttle({ default: { limit: 3, ttl: 3600000 } })
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto.email);
+  }
+
+  @ApiOperation({ summary: 'Restablecer contraseña con token' })
+  @ApiResponse({ status: 200, description: 'Contraseña restablecida exitosamente' })
+  @ApiResponse({ status: 401, description: 'Token inválido o expirado' })
+  @Throttle({ default: { limit: 5, ttl: 3600000 } })
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto.token, dto.newPassword);
   }
 
   @ApiOperation({ summary: 'Renovar token de acceso' })

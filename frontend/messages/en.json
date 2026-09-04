@@ -1623,6 +1623,43 @@
             "successTitle": "Registration successful!",
             "successMessage": "We have sent a verification email to <bold>{email}</bold>. Please check your inbox (and spam) and click the link to activate your account.",
             "successButton": "Go to Login"
+        },
+        "ForgotPassword": {
+            "title": "Reset Password",
+            "subtitle": "Enter your email to receive a password reset link",
+            "emailLabel": "Email address",
+            "emailPlaceholder": "your@email.com",
+            "submitButton": "Send reset link",
+            "sending": "Sending...",
+            "backToLogin": "Back to login",
+            "success": {
+                "title": "Check your email",
+                "message": "If your email is registered, you will receive instructions to reset your password."
+            },
+            "errors": {
+                "general": "An error occurred. Please try again later."
+            }
+        },
+        "ResetPassword": {
+            "title": "New Password",
+            "subtitle": "Create a new secure password",
+            "newPasswordLabel": "New Password",
+            "confirmPasswordLabel": "Confirm Password",
+            "submitButton": "Reset password",
+            "saving": "Saving...",
+            "success": {
+                "title": "Password updated",
+                "message": "Your password has been successfully reset."
+            },
+            "redirecting": "Redirecting to login...",
+            "invalidLink": "Invalid or expired link",
+            "requestNewLink": "Request new link",
+            "errors": {
+                "missingToken": "Missing security token",
+                "passwordLength": "Password must be at least 6 characters",
+                "passwordMatch": "Passwords do not match",
+                "general": "An error occurred. Please try again."
+            }
         }
     },
     "Legal": {
