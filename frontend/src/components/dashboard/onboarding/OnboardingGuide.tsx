@@ -101,23 +101,22 @@ export const OnboardingGuide = () => {
   const progressPercentage = Math.round((data.completedCount / data.totalSteps) * 100);
 
   return (
-    <div className={`fixed bottom-24 right-6 z-40 transition-all duration-300 ease-in-out ${isMinimized ? 'w-16 h-16 rounded-full' : 'w-80 rounded-xl'} bg-white shadow-2xl border border-slate-200 overflow-hidden`}>
+    <div className="fixed bottom-24 right-6 z-40 transition-all duration-300 ease-in-out">
       {isMinimized ? (
         <button 
           onClick={handleToggleMinimize}
-          className="w-full h-full flex items-center justify-center bg-indigo-600 text-white hover:bg-indigo-700 transition-colors relative group"
+          className="flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-full shadow-2xl border border-indigo-400/30 transition-all transform hover:scale-105 group font-medium text-sm"
+          title={t('title')}
         >
-          <Target className="w-8 h-8" />
-          {/* Progress ring or badge */}
-          <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
+          <Target className="w-4 h-4 text-emerald-300 animate-pulse" />
+          <span className="font-semibold tracking-wide">{t('title')}</span>
+          <span className="bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-inner">
             {data.completedCount}/{data.totalSteps}
-          </div>
-          <div className="absolute opacity-0 group-hover:opacity-100 bg-slate-800 text-white text-xs px-2 py-1 rounded -top-8 whitespace-nowrap transition-opacity">
-            {t('title')}
-          </div>
+          </span>
+          <ChevronUp className="w-4 h-4 text-indigo-200 group-hover:text-white transition-colors ml-0.5" />
         </button>
       ) : (
-        <div className="flex flex-col h-full max-h-[500px]">
+        <div className="w-80 rounded-xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-full max-h-[500px]">
           {/* Header */}
           <div className="bg-indigo-600 p-4 text-white flex justify-between items-start">
             <div>
