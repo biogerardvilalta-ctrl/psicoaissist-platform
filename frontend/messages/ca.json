@@ -150,6 +150,11 @@
                     "title": "Atenció: Pagament no completat",
                     "description": "El teu compte s'ha creat, però el pagament del pla {plan} no s'ha pogut iniciar. Si us plau, actualitza la teva subscripció.",
                     "button": "Completar Pagament"
+                },
+                "trialActive": {
+                    "title": "Trial Premium Actiu",
+                    "description": "Et queden {days} dies de prova del Pla Premium.",
+                    "cta": "Veure detalls"
                 }
             },
             "Widgets": {

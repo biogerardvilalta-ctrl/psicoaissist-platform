@@ -150,6 +150,11 @@
                     "title": "Atención: Pago no completado",
                     "description": "Tu cuenta se ha creado, pero el pago del plan {plan} no se pudo iniciar. Por favor, actualiza tu suscripción.",
                     "button": "Completar Pago"
+                },
+                "trialActive": {
+                    "title": "Trial Premium Activo",
+                    "description": "Te quedan {days} días de prueba del Plan Premium.",
+                    "cta": "Ver detalles"
                 }
             },
             "Widgets": {
