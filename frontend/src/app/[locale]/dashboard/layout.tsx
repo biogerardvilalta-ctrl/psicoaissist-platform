@@ -28,9 +28,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const pathname = usePathname();
     const t = useTranslations('Dashboard.Navigation');
     const tHeader = useTranslations('Dashboard.Header');
-    const { user, logout } = useAuth();
+    const { user, logout, reloadUser } = useAuth();
     const { isAgendaManager } = useRole();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    // Auto refresh user profile state (subscription, trial, status) on mount
+    useEffect(() => {
+        if (user) {
+            reloadUser();
+        }
+    }, []);
 
     const handleLogout = async () => {
         try {

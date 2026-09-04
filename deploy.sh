@@ -43,6 +43,12 @@ echo "🏗️ Construyendo imágenes (esto puede tardar)..."
 echo "🔥 Arrancando plataforma..."
 docker compose -f $COMPOSE_FILE -p $PROJECT_NAME up -d
 
+# 5.5 Migraciones de Base de Datos
+echo "🗄️ Aplicando migraciones i sincronització de base de datos..."
+sleep 3
+docker compose -f $COMPOSE_FILE -p $PROJECT_NAME exec -T backend npx prisma migrate deploy || true
+docker compose -f $COMPOSE_FILE -p $PROJECT_NAME exec -T backend npx prisma db push || true
+
 # 6. Verificación
 echo "🔍 Verificando estado..."
 sleep 5
