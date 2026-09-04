@@ -99,6 +99,9 @@ export class UserResponseDto {
   @ApiProperty()
   status: string;
 
+  @ApiProperty({ required: false })
+  trialStartedAt?: Date;
+
   @ApiProperty()
   enableReminders: boolean;
 
