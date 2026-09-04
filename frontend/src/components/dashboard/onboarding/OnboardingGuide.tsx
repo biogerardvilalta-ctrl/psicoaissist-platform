@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { UserAPI } from '@/lib/user-api';
 
 export const OnboardingGuide = () => {
-  const t = useTranslations('Dashboard.Onboarding');
+  const t = useTranslations('Onboarding');
   const router = useRouter();
   const { user, updateUser } = useAuth();
   const { data, loading } = useOnboarding();
