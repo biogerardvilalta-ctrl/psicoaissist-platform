@@ -1,4 +1,5 @@
 import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, UseGuards, Req, Query, BadRequestException } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AiService } from './ai.service';
@@ -43,6 +44,7 @@ export class AiController {
         },
     })
     @ApiResponse({ status: 200, description: 'Texto transcrito' })
+    @Throttle({ default: { limit: 10, ttl: 60000 } })
     @Post('transcribe')
     @UseInterceptors(FileInterceptor('audio', {
         fileFilter: (req, file, cb) => {
