@@ -148,7 +148,7 @@ describe('SessionsService', () => {
             ]);
 
             const result = await service.findAll(user);
-            expect(result).toHaveLength(1);
+            expect(result.data).toHaveLength(1);
             expect(prisma.session.findMany).toHaveBeenCalledWith(expect.objectContaining({
                 where: { userId: { in: [userId] } }
             }));
