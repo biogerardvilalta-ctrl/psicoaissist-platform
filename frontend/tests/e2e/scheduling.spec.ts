@@ -1,3 +1,4 @@
+import { API_URL } from './config';
 
 import { test, expect } from '@playwright/test';
 
@@ -26,7 +27,7 @@ test.describe('Scheduling Conflicts', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // --- 2. Login via API & Inject Token/Cookies ---
-        const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
+        const loginRes = await request.post(API_URL + '/auth/login', {
             data: { email: profEmail, password: profPass }
         });
         expect(loginRes.ok()).toBeTruthy();
@@ -52,7 +53,7 @@ test.describe('Scheduling Conflicts', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 60000 });
 
         // --- 2.1 Configure Schedule ---
-        await request.patch('http://localhost:3001/api/v1/auth/me', {
+        await request.patch(API_URL + '/auth/me', {
             data: {
                 workStartHour: '00:00',
                 workEndHour: '23:59',
@@ -64,7 +65,7 @@ test.describe('Scheduling Conflicts', () => {
         });
 
         // --- 3. Create Client via API ---
-        const clientRes = await request.post('http://localhost:3001/api/v1/clients', {
+        const clientRes = await request.post(API_URL + '/clients', {
             data: {
                 firstName: 'Test',
                 lastName: 'Client',
@@ -109,7 +110,7 @@ test.describe('Scheduling Conflicts', () => {
         await page.click('div[role="option"]:has-text("Individual")');
 
         // --- 6. TRIGGER CONFLICT ---
-        const conflictRes = await request.post('http://localhost:3001/api/v1/sessions', {
+        const conflictRes = await request.post(API_URL + '/sessions', {
             data: {
                 clientId: clientId,
                 startTime: new Date(`${dateStr}T${timeStr}:00`).toISOString(),
@@ -145,7 +146,7 @@ test.describe('Scheduling Conflicts', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // Login API & Inject
-        const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
+        const loginRes = await request.post(API_URL + '/auth/login', {
             data: { email: profEmail, password: profPass }
         });
         expect(loginRes.ok()).toBeTruthy();
@@ -170,7 +171,7 @@ test.describe('Scheduling Conflicts', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 60000 });
 
         // --- 1.1 Configure Schedule ---
-        await request.patch('http://localhost:3001/api/v1/auth/me', {
+        await request.patch(API_URL + '/auth/me', {
             data: {
                 workStartHour: '00:00',
                 workEndHour: '23:59',
@@ -182,7 +183,7 @@ test.describe('Scheduling Conflicts', () => {
         });
 
         // --- 2. Create Client ---
-        const clientRes = await request.post('http://localhost:3001/api/v1/clients', {
+        const clientRes = await request.post(API_URL + '/clients', {
             data: { firstName: 'Overlap', lastName: 'Client', email: 'overlap@test.com' },
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -195,7 +196,7 @@ test.describe('Scheduling Conflicts', () => {
         const dateStr = targetDate.toISOString().split('T')[0];
         const overlapStart = new Date(`${dateStr}T14:30:00`);
 
-        await request.post('http://localhost:3001/api/v1/sessions', {
+        await request.post(API_URL + '/sessions', {
             data: {
                 clientId: clientId,
                 startTime: overlapStart.toISOString(),
@@ -250,7 +251,7 @@ test.describe('Scheduling Conflicts', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // Login API & Inject
-        const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
+        const loginRes = await request.post(API_URL + '/auth/login', {
             data: { email: profEmail, password: profPass }
         });
         expect(loginRes.ok()).toBeTruthy();
@@ -275,7 +276,7 @@ test.describe('Scheduling Conflicts', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 60000 });
 
         // Create Client
-        await request.post('http://localhost:3001/api/v1/clients', {
+        await request.post(API_URL + '/clients', {
             data: { firstName: 'Holiday', lastName: 'Client', email: 'holiday@test.com' },
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -285,7 +286,7 @@ test.describe('Scheduling Conflicts', () => {
         const dateStr = targetDate.toISOString().split('T')[0];
 
         // Configure Schedule with Holiday
-        await request.patch('http://localhost:3001/api/v1/auth/me', {
+        await request.patch(API_URL + '/auth/me', {
             data: {
                 workStartHour: '09:00',
                 workEndHour: '18:00',
@@ -335,7 +336,7 @@ test.describe('Scheduling Conflicts', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // Login API & Inject
-        const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
+        const loginRes = await request.post(API_URL + '/auth/login', {
             data: { email: profEmail, password: profPass }
         });
         expect(loginRes.ok()).toBeTruthy();
@@ -359,14 +360,14 @@ test.describe('Scheduling Conflicts', () => {
         await page.goto('/dashboard');
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 60000 });
 
-        const clientRes = await request.post('http://localhost:3001/api/v1/clients', {
+        const clientRes = await request.post(API_URL + '/clients', {
             data: { firstName: 'Buffer', lastName: 'Client', email: 'buffer@test.com' },
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const clientId = await clientRes.json().then(d => d.id);
 
         // Configure Schedule with Buffer 15m
-        const bufferPatchRes = await request.patch('http://localhost:3001/api/v1/auth/me', {
+        const bufferPatchRes = await request.patch(API_URL + '/auth/me', {
             data: {
                 workStartHour: '09:00',
                 workEndHour: '18:00',
@@ -382,7 +383,7 @@ test.describe('Scheduling Conflicts', () => {
         targetDate.setDate(targetDate.getDate() + ((1 + 7 - targetDate.getDay()) % 7 || 7));
         const dateStr = targetDate.toISOString().split('T')[0];
 
-        await request.post('http://localhost:3001/api/v1/sessions', {
+        await request.post(API_URL + '/sessions', {
             data: {
                 clientId: clientId,
                 startTime: `${dateStr}T10:00:00.000Z`,
@@ -442,7 +443,7 @@ test.describe('Scheduling Conflicts', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // Login API & Inject
-        const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
+        const loginRes = await request.post(API_URL + '/auth/login', {
             data: { email: profEmail, password: profPass }
         });
         expect(loginRes.ok()).toBeTruthy();
@@ -466,7 +467,7 @@ test.describe('Scheduling Conflicts', () => {
         await page.goto('/dashboard');
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 60000 });
 
-        const clientRes = await request.post('http://localhost:3001/api/v1/clients', {
+        const clientRes = await request.post(API_URL + '/clients', {
             data: { firstName: 'Blocked', lastName: 'Client', email: 'blocked@test.com' },
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -476,7 +477,7 @@ test.describe('Scheduling Conflicts', () => {
         const dateStr = targetDate.toISOString().split('T')[0];
 
         // Block 12:00-14:00 (Lunch)
-        await request.patch('http://localhost:3001/api/v1/auth/me', {
+        await request.patch(API_URL + '/auth/me', {
             data: {
                 workStartHour: '09:00',
                 workEndHour: '18:00',

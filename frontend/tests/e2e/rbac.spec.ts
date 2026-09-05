@@ -1,3 +1,4 @@
+import { API_URL } from './config';
 
 import { test, expect } from '@playwright/test';
 
@@ -38,7 +39,7 @@ test.describe('RBAC: Agenda Manager Flow', () => {
         const managerEmail = `manager_${Date.now()}@test.com`;
         const managerPass = 'managerpass123';
 
-        const createManagerResponse = await page.request.post('http://localhost:3001/api/v1/users/agenda-managers', {
+        const createManagerResponse = await page.request.post(API_URL + '/users/agenda-managers', {
             data: {
                 email: managerEmail,
                 password: managerPass,
@@ -152,7 +153,7 @@ test.describe('RBAC: Agenda Manager Flow', () => {
         // Since we didn't extract the Agenda Manager's token explicitly in the test (auto-login usually sets cookie), 
         // we can try to make a request via page.request (which shares cookies).
 
-        const unauthorizedResponse = await page.request.post('http://localhost:3001/api/v1/payments/create-checkout-session', {
+        const unauthorizedResponse = await page.request.post(API_URL + '/payments/create-checkout-session', {
             data: {
                 priceId: 'price_test_123'
             }

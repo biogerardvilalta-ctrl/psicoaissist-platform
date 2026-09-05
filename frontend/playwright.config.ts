@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Force local backend for all E2E tests — never Hetzner/production
+const LOCAL_BACKEND = 'http://localhost:3001/api/v1';
+
 export default defineConfig({
     testDir: './tests/e2e',
     timeout: 60 * 1000,
@@ -26,10 +29,14 @@ export default defineConfig({
     globalTeardown: './tests/e2e/global-teardown.ts',
     /* Run your local server before starting the tests */
     webServer: {
-      command: 'npm start',
+      // Force NEXT_PUBLIC_API_URL to local backend so tests NEVER hit Hetzner/production
+      command: `NEXT_PUBLIC_API_URL=${LOCAL_BACKEND} npm start`,
       url: 'http://localhost:3000',
-      reuseExistingServer: true,
+      reuseExistingServer: !process.env.CI, // Always fresh on CI, reuse locally
       timeout: 120 * 1000,
+      env: {
+        NEXT_PUBLIC_API_URL: LOCAL_BACKEND,
+      },
     },
 });
 
