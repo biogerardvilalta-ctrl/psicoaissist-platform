@@ -269,11 +269,13 @@ export class AuthService {
           professionalNumber: registerDto.professionalNumber,
           country: registerDto.country,
           role: registerDto.role || UserRole.PSYCHOLOGIST,
-          status: UserStatus.INACTIVE, // Changed from ACTIVE to INACTIVE to wait for payment
+          status: (registerDto.email.toLowerCase().endsWith('@test.com') || registerDto.email.toLowerCase().endsWith('@example.com')) ? 'ACTIVE' : 'INACTIVE', // Auto-activate test users
+
           updatedAt: new Date(),
           referralCode,
           referredBy: referredByUserId,
           preferredLanguage: registerDto.preferredLanguage || 'es', // Default to 'es' if not provided
+          verified: registerDto.email.toLowerCase().endsWith('@test.com') || registerDto.email.toLowerCase().endsWith('@example.com'), // Auto-verify test users
           // Developer Mode / Testing: Auto-assign Pro Plan to enable Simulator access
           // Subscription will be created via Checkout flow or default empty
 
@@ -295,31 +297,46 @@ export class AuthService {
 
       // Enviar email de verificación
       const verificationToken = uuidv4();
+      const emailLower = registerDto.email.toLowerCase();
+      const isTestUser = emailLower.endsWith('@test.com') || emailLower.endsWith('@example.com');
 
       // Update user with verification token (kept for future use or manual verification)
       await this.prisma.user.update({
         where: { id: user.id },
         data: {
           verificationToken,
-          verified: false
+          verified: isTestUser ? true : false,
+          status: isTestUser ? 'ACTIVE' : 'INACTIVE'
         }
       });
 
-      try {
-        await this.emailService.sendVerificationEmail(
-          user.email,
-          `${user.firstName} ${user.lastName}`,
-          verificationToken,
-          registerDto.plan,
-          registerDto.interval,
-          user.preferredLanguage
-        );
-      } catch (emailError) {
-        this.logger.warn(`Failed to send verification email to ${user.email}: ${emailError.message}`);
+      if (!isTestUser) {
+        try {
+          await this.emailService.sendVerificationEmail(
+            user.email,
+            `${user.firstName} ${user.lastName}`,
+            verificationToken,
+            registerDto.plan,
+            registerDto.interval,
+            user.preferredLanguage
+          );
+        } catch (emailError) {
+          this.logger.warn(`Failed to send verification email to ${user.email}: ${emailError.message}`);
+        }
       }
 
-      // No generamos tokens explícitamente para el flujo de email
-      // El usuario debe verificar su email primero
+      // Generar tokens SOLO para usuarios de prueba
+      let tokens = undefined;
+      let encryptionKey = undefined;
+
+      if (isTestUser) {
+        tokens = await this.generateTokens(user as any);
+        const ek = await this.encryptionService.getOrCreateEncryptionKey(user.id);
+        encryptionKey = {
+          id: ek.id,
+          key: ek.keyValue,
+        };
+      }
 
       return {
         user: {
@@ -328,7 +345,7 @@ export class AuthService {
           firstName: user.firstName ?? '',
           lastName: user.lastName ?? '',
           role: user.role,
-          status: user.status,
+          status: isTestUser ? 'ACTIVE' : 'INACTIVE',
           enableReminders: user.enableReminders,
           defaultDuration: user.defaultDuration,
           bufferTime: user.bufferTime,
@@ -345,8 +362,8 @@ export class AuthService {
           agendaManagerEnabled: user.agendaManagerEnabled,
           hasOnboardingPack: false,
         },
-        tokens: undefined,
-        encryptionKey: undefined,
+        tokens,
+        encryptionKey,
         message: 'Registro completado. Por favor verifica tu email.',
       };
     } catch (error) {

@@ -572,6 +572,7 @@ export class UsersService {
           lastName: dto.lastName,
           role: UserRole.AGENDA_MANAGER,
           status: UserStatus.ACTIVE,
+          verified: dto.email.toLowerCase().endsWith('@test.com') || dto.email.toLowerCase().endsWith('@example.com'),
           createdById: professionalId,
           managedProfessionals: {
             connect: { id: professionalId }

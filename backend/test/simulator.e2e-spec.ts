@@ -71,9 +71,9 @@ describe('SimulatorController (e2e)', () => {
   describe('/simulator/message (POST)', () => {
     it('should send message to virtual patient', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/v1/simulator/message')
+        .post('/api/v1/simulator/chat')
         .set('Authorization', `Bearer ${authToken}`)
-        .send({ message: 'Hola, com et sents avui?', sessionId: sessionId });
+        .send({ message: 'Hola, com et sents avui?', history: [], profile: { signature: sessionId } });
 
       // Check success
       expect([200, 201]).toContain(response.status);
@@ -81,12 +81,12 @@ describe('SimulatorController (e2e)', () => {
     });
   });
 
-  describe('/simulator/end (POST)', () => {
+  describe('/simulator/evaluate (POST)', () => {
     it('should end simulator and obtain scores', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/v1/simulator/end')
+        .post('/api/v1/simulator/evaluate')
         .set('Authorization', `Bearer ${authToken}`)
-        .send({ sessionId: sessionId });
+        .send({ history: [], profile: { signature: sessionId }, durationSeconds: 60 });
 
       expect([200, 201]).toContain(response.status);
       // Usually returns a report or score

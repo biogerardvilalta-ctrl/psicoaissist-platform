@@ -23,7 +23,7 @@ test.describe('Scheduling Conflicts', () => {
         await page.check('#termsAccepted');
 
         await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/auth\/(login|register)/, { timeout: 30000 });
+        await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // --- 2. Login via API & Inject Token/Cookies ---
         const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
@@ -142,7 +142,7 @@ test.describe('Scheduling Conflicts', () => {
         await page.check('#legalLiabilityAccepted');
         await page.check('#termsAccepted');
         await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/auth\/(login|register)/, { timeout: 30000 });
+        await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // Login API & Inject
         const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
@@ -247,7 +247,7 @@ test.describe('Scheduling Conflicts', () => {
         await page.check('#legalLiabilityAccepted');
         await page.check('#termsAccepted');
         await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/auth\/(login|register)/, { timeout: 30000 });
+        await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // Login API & Inject
         const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
@@ -332,7 +332,7 @@ test.describe('Scheduling Conflicts', () => {
         await page.check('#legalLiabilityAccepted');
         await page.check('#termsAccepted');
         await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/auth\/(login|register)/, { timeout: 30000 });
+        await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // Login API & Inject
         const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {
@@ -439,7 +439,7 @@ test.describe('Scheduling Conflicts', () => {
         await page.check('#legalLiabilityAccepted');
         await page.check('#termsAccepted');
         await page.click('button[type="submit"]');
-        await expect(page).toHaveURL(/\/auth\/(login|register)/, { timeout: 30000 });
+        await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
 
         // Login API & Inject
         const loginRes = await request.post('http://localhost:3001/api/v1/auth/login', {

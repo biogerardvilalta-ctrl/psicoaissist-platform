@@ -76,7 +76,8 @@ export class SessionsAPI {
         if (filters?.to) params.append('to', filters.to);
         if (filters?.professionalId && filters.professionalId !== 'all') params.append('professionalId', filters.professionalId);
 
-        return httpClient.get<Session[]>(`${this.BASE_PATH}?${params.toString()}`);
+        const res = await httpClient.get<any>(`${this.BASE_PATH}?${params.toString()}`);
+        return (Array.isArray(res) ? res : res.data || []) as Session[];
     }
 
     static async getById(id: string): Promise<Session> {

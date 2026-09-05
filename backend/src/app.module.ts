@@ -62,13 +62,13 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
       useFactory: (config: ConfigService) => [
         {
           name: 'default',
-          ttl: config.get('THROTTLE_TTL') || 60000, // 1 minute
-          limit: config.get('THROTTLE_LIMIT') || 100, // 100 requests per minute
+          ttl: parseInt(config.get('THROTTLE_TTL') as string, 10) || 60000, // 1 minute
+          limit: parseInt(config.get('THROTTLE_LIMIT') as string, 10) || 100, // 100 requests per minute
         },
         {
           name: 'auth',
-          ttl: config.get('AUTH_THROTTLE_TTL') || 900000, // 15 minutes
-          limit: config.get('AUTH_THROTTLE_LIMIT') || 5, // 5 auth attempts per 15 min
+          ttl: parseInt(config.get('AUTH_THROTTLE_TTL') as string, 10) || 900000, // 15 minutes
+          limit: parseInt(config.get('AUTH_THROTTLE_LIMIT') as string, 10) || 5, // 5 auth attempts per 15 min
         },
       ],
     }),

@@ -493,7 +493,7 @@ export class AiService {
                     ];
 
                     generatedSummary = await this.aiProvider.generateText(prompt, {
-                        modelName: "gemini-2.0-flash"
+                        modelName: "gemini-3.6-flash"
                     });
 
                     console.log(`[AiService] Summary generated successfully.`);
@@ -899,7 +899,7 @@ INSTRUCCIONS:
             ];
 
             const response = await this.aiProvider.generateText(prompt, {
-                modelName: "gemini-2.0-flash",
+                modelName: "gemini-3.6-flash",
                 maxOutputTokens: 600,
             });
 
@@ -951,7 +951,7 @@ Genera suggeriments en temps real format JSON.
             const parsed = await this._retryWithBackoff(async () => {
                 return await this.aiProvider.generateJSON<{ questions: string[]; considerations: string[]; indicators: { type: string; label: string }[] }>(
                     combinedPrompt,
-                    { modelName: "gemini-2.0-flash", temperature: 0.7 }
+                    { modelName: "gemini-3.6-flash", temperature: 0.7 }
                 );
             });
 
@@ -1034,7 +1034,7 @@ Genera suggeriments en temps real format JSON.
         // --- 2. REAL AI GENERATION ---
         try {
             let text = await this.aiProvider.generateText(fullPrompt, {
-                modelName: "gemini-2.0-flash",
+                modelName: "gemini-3.6-flash",
                 temperature: 0.3,
                 maxOutputTokens: 8192
             });

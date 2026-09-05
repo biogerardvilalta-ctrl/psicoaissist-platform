@@ -133,10 +133,10 @@ describe('AuthController (e2e)', () => {
         .expect(401);
     });
 
-    it('should return 401 with non-existent email', () => {
+    it('should return 401 with non-existent email', async () => {
       return request(app.getHttpServer())
         .post('/api/v1/auth/login')
-        .send({ email: 'noexisteix@example.com', password: 'any' })
+        .send({ email: 'noexisteix@example.com', password: 'TestPassword123!' })
         .expect(401);
     });
   });

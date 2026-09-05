@@ -25,24 +25,10 @@ test.describe('RBAC: Agenda Manager Flow', () => {
         await page.click('button[type="submit"]');
         const registerResponse = await registerResponsePromise;
 
-        // If auto-login happens, we might not get redirect to login, but dashboard directly
-        // Adjust expectation based on actual flow.
-        // Assuming redirect to login:
-        await expect(page).toHaveURL(/\/auth\/(login|register)/);
-
-        // Login as Professional
-        await page.fill('input[type="email"]', profEmail);
-        await page.fill('input[type="password"]', profPass);
-        const loginResponsePromise = page.waitForResponse(resp => resp.url().includes('/auth/login'));
-        await page.click('button[type="submit"]');
-        const loginResponse = await loginResponsePromise;
-        expect(loginResponse.status()).toBe(201);
-
         await expect(page).toHaveURL(/\/dashboard/);
 
-        const loginData = await loginResponse.json();
-        // Validated token extraction
-        const token = loginData.tokens?.accessToken || loginData.access_token;
+        const registerData = await registerResponse.json();
+        const token = registerData.tokens?.accessToken || registerData.access_token;
 
         // If token is in cookie, `request` fixture handles it automatically if sharing context? 
         // No, `request` fixture is separate context usually. 
@@ -92,7 +78,7 @@ test.describe('RBAC: Agenda Manager Flow', () => {
 
         // --- 5. Verify Dashboard for Agenda Manager ---
         // Expect greeting to match
-        await expect(page.locator('body')).toContainText('Hola, Agenda', { timeout: 15000 });
+        await expect(page.locator('body')).toContainText(/(Hola|Hello), Agenda/, { timeout: 15000 });
 
         // Expect Professional Selector to be visible (critical for Agenda Manager)
         // From previous tasks, it seems there is a selector in the header or dashboard
@@ -136,11 +122,11 @@ test.describe('RBAC: Agenda Manager Flow', () => {
         // Wait for any heading
         // Check for common possibilities (Agenda, Sesiones, Citas)
         // Explicitly check for "Sesiones" which we saw in the failure log as visible
-        await expect(page.getByRole('heading', { name: 'Sesiones', exact: false })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /(Sesiones|Sessions)/, exact: false })).toBeVisible();
 
         // --- 6. Verify Restricted Access (Stripe/Settings) ---in the filter
         // Check for the placeholder text first
-        await expect(page.getByText('Filtrar por Profesional')).toBeVisible();
+        await expect(page.getByText(/(Filtrar por Profesional|Filter by Professional)/)).toBeVisible();
 
         // Open the dropdown
         await page.getByRole('combobox').click();
@@ -154,7 +140,7 @@ test.describe('RBAC: Agenda Manager Flow', () => {
 
         // 1. Verify "Configuración" link is NOT present in the navigation
         // The navigation item name is "Configuración"
-        await expect(page.getByRole('link', { name: 'Configuración' })).not.toBeVisible();
+        await expect(page.getByRole('link', { name: /(Configuración|Settings)/ })).not.toBeVisible();
 
         // 2. Verify direct access is blocked (Client-side redirect or 404/403)
         // Note: Next.js might show a 404 or redirect if the page logic checks role.

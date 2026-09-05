@@ -42,7 +42,7 @@ export class SimulatorService {
         @Inject('AI_PROVIDER') private aiProvider: AiProvider
     ) {
         // Allow overriding model via ENV, default to 2.0-flash if not set
-        this.modelName = (this.configService.get('GEMINI_MODEL') || 'gemini-2.0-flash').trim();
+        this.modelName = (this.configService.get('GEMINI_MODEL') || 'gemini-3.6-flash').trim();
 
         // DEBUG: Print config to logs
         const apiKey = this.configService.get<string>('GEMINI_API_KEY');

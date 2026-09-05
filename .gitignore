@@ -63,3 +63,5 @@ backend/src/debug-*.ts
 backend/*.sql
 backend/*.log
 backend/test-results.log
+frontend/playwright-report/
+frontend/test-results/

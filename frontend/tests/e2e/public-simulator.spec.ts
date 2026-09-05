@@ -7,7 +7,7 @@ test.describe('Public Simulator (The Hook)', () => {
         await page.goto('/');
 
         // 2. Click on "Probar Simulador"
-        await page.click('text=/(Probar|Provar|Try) Simulador/i');
+        await page.locator('id=hero-cta-simulator').click();
 
         // 3. Verify URL is /simulator/try
         await expect(page).toHaveURL(/\/simulator\/try/);

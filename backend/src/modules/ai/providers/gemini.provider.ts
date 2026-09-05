@@ -18,7 +18,7 @@ export class GeminiProvider implements AiProvider {
         }
         // TRIM to avoid invisible characters
         this.apiKey = apiKey ? apiKey.trim() : '';
-        this.defaultModel = (this.configService.get('GEMINI_MODEL') || 'gemini-2.0-flash').trim();
+        this.defaultModel = (this.configService.get('GEMINI_MODEL') || 'gemini-3.6-flash').trim();
     }
 
     async generateText(prompt: string | string[], options?: AiOptions): Promise<string> {
@@ -45,6 +45,7 @@ export class GeminiProvider implements AiProvider {
                     generationConfig: {
                         temperature: options?.temperature ?? 0.7,
                         maxOutputTokens: options?.maxOutputTokens ?? 1000,
+                        ...(options?.jsonMode ? { responseMimeType: 'application/json' } : {})
                     }
                 })
             });
@@ -76,14 +77,19 @@ export class GeminiProvider implements AiProvider {
         // The simulator mainly uses chat() and generateText()
         const text = await this.generateText(prompt, { ...options, jsonMode: true });
         try {
-            // Robust JSON extraction (Gemini sometimes wraps in markdown blocks)
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) {
-                throw new Error("No JSON found in response");
+            // First try to parse directly (in case responseMimeType: 'application/json' worked)
+            return JSON.parse(text) as T;
+        } catch (e1) {
+            try {
+                // Robust JSON extraction (Gemini sometimes wraps in markdown blocks)
+                const jsonMatch = text.match(/(\{|\[)[\s\S]*(\}|\])/);
+                if (!jsonMatch) {
+                    throw new Error("No JSON found in response");
+                }
+                return JSON.parse(jsonMatch[0]) as T;
+            } catch (e2) {
+                throw new Error(`Failed to parse JSON from Gemini response: ${e2.message}. Response was: ${text}`);
             }
-            return JSON.parse(jsonMatch[0]) as T;
-        } catch (e) {
-            throw new Error(`Failed to parse JSON from Gemini response: ${e.message}`);
         }
     }
 

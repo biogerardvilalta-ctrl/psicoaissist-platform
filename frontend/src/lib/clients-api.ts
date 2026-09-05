@@ -41,10 +41,11 @@ export type UpdateClientData = Partial<CreateClientData> & {
 export class ClientsAPI {
     private static readonly BASE_URL = '/api/v1/clients';
 
-    static async getAll(active: boolean = true, professionalId?: string) {
+    static async getAll(active: boolean = true, professionalId?: string): Promise<Client[]> {
         const queryParams = new URLSearchParams({ active: String(active) });
         if (professionalId && professionalId !== 'all') queryParams.append('professionalId', professionalId);
-        return httpClient.get<Client[]>(`${this.BASE_URL}?${queryParams.toString()}`);
+        const res = await httpClient.get<any>(`${this.BASE_URL}?${queryParams.toString()}`);
+        return (Array.isArray(res) ? res : res.items || res.data || []) as Client[];
     }
 
     static async getById(id: string) {

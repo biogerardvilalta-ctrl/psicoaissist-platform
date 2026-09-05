@@ -71,7 +71,7 @@ describe('ReportsController (e2e)', () => {
         sessionId: createdSessionId,
         title: 'Test Report',
         content: 'This is a test report content.',
-        reportType: 'CLINICAL_NOTES',
+        reportType: 'PROGRESS',
       };
 
       const response = await request(app.getHttpServer())
@@ -126,17 +126,17 @@ describe('ReportsController (e2e)', () => {
   describe('Export reports', () => {
     it('test export PDF (verifica Content-Type)', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/v1/reports/${createdReportId}/export/pdf`)
+        .get(`/api/v1/reports/${createdReportId}/download`)
         .set('Authorization', `Bearer ${authUserToken}`);
 
-      // Assuming the endpoint is /reports/:id/export/pdf
+      // Assuming the endpoint is /reports/:id/download
       expect([200, 201]).toContain(response.status);
       expect(response.headers['content-type']).toContain('application/pdf');
     });
 
     it('test export DOCX', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/v1/reports/${createdReportId}/export/docx`)
+        .get(`/api/v1/reports/${createdReportId}/download/word`)
         .set('Authorization', `Bearer ${authUserToken}`);
 
       expect([200, 201]).toContain(response.status);

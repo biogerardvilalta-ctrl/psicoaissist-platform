@@ -168,10 +168,12 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        
         const [dashData, allSessions] = await Promise.all([
           DashboardAPI.getStats(undefined, isAgendaManager() ? selectedProfessionalId : undefined),
           SessionsAPI.getAll({ professionalId: isAgendaManager() ? selectedProfessionalId : undefined })
         ]);
+
         setStats(dashData);
         setDashboardStats(dashData);
         const adv = calculateAdvancedStats(allSessions, user?.hourlyRate || 60);

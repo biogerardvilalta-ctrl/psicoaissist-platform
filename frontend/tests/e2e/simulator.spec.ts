@@ -19,29 +19,22 @@ test.describe('Simulator E2E', () => {
 
         await page.click('button[type="submit"]');
 
-        // Wait for redirect to login or dashboard. 
-        // Current flow redirects to login with query param.
-        await expect(page).toHaveURL(/login/);
-
-        // Login
-        await page.fill('input[type="email"]', email);
-        await page.fill('input[type="password"]', password);
-        await page.click('button[type="submit"]');
+        // Wait for redirect to dashboard directly (auto-login)
         await expect(page).toHaveURL(/\/dashboard/, { timeout: 30000 });
     });
 
     test('Can start a simulator chat and receive response', async ({ page }) => {
         // 1. Navigate to Simulator
-        await page.click('a[href="/dashboard/simulator"]');
+        await page.goto('/dashboard/simulator');
         await expect(page).toHaveURL(/\/dashboard\/simulator/);
 
         // 2. Start Simulation (Synthetic Patient)
-        const startButton = page.locator('button:has-text("Comenzar Simulación")');
+        const startButton = page.getByRole('button', { name: /(Comenzar Simulación|Start Simulation)/i });
         await expect(startButton).toBeVisible({ timeout: 15000 });
         await startButton.click();
 
         // 3. Wait for Simulation to load
-        await expect(page.locator('text=Finalizar Sesión')).toBeVisible({ timeout: 30000 });
+        await expect(page.getByRole('button', { name: /(Finalizar Sesión|End Session)/i })).toBeVisible({ timeout: 30000 });
 
         // 4. Send Message via Text Input
         const input = page.locator('input[name="message"]');

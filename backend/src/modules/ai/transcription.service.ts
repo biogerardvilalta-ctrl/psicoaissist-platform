@@ -89,8 +89,8 @@ export class TranscriptionService {
             }
 
 
-            // Using gemini-2.0-flash
-            const model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+            // Using gemini-3.6-flash
+            const model = this.genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
 
             const result = await model.generateContent([
                 {

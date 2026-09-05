@@ -106,9 +106,11 @@ describe('PaymentsController (e2e)', () => {
     });
 
     it('simulate-success (200/201 per admin)', async () => {
+      const adminUser = await prisma.user.findUnique({ where: { email: 'payments-admin@example.com' } });
       const response = await request(app.getHttpServer())
         .post('/api/v1/payments/simulate-success')
-        .set('Authorization', `Bearer ${authAdminToken}`);
+        .set('Authorization', `Bearer ${authAdminToken}`)
+        .send({ userId: adminUser.id });
       
       expect([200, 201]).toContain(response.status);
     });

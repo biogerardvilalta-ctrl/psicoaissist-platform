@@ -105,8 +105,8 @@ describe('SessionsController (e2e)', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
 
-      expect(Array.isArray(response.body)).toBe(true);
-      const session = response.body.find((s: any) => s.id === createdSessionId);
+      expect(Array.isArray(response.body.data)).toBe(true);
+      const session = response.body.data.find((s: any) => s.id === createdSessionId);
       expect(session).toBeDefined();
     });
   });
@@ -149,11 +149,13 @@ describe('SessionsController (e2e)', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
 
-      // Verify it's no longer accessible
-      await request(app.getHttpServer())
+      // Verify it's soft-deleted (status is CANCELLED)
+      const getResponse = await request(app.getHttpServer())
         .get(`/api/v1/sessions/${createdSessionId}`)
         .set('Authorization', `Bearer ${authToken}`)
-        .expect(404);
+        .expect(200);
+
+      expect(getResponse.body.status).toBe('CANCELLED');
     });
   });
 });
