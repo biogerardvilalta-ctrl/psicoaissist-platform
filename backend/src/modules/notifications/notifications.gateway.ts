@@ -66,7 +66,7 @@ export class NotificationsGateway
         if (userId && this.connectedClients.has(userId)) {
             const userSockets = this.connectedClients.get(userId);
             userSockets?.delete(client.id);
-            if (userSockets if (userSockets.size === 0) {if (userSockets.size === 0) { userSockets.size === 0) {
+            if (userSockets && userSockets.size === 0) {
                 this.connectedClients.delete(userId);
             }
         }
