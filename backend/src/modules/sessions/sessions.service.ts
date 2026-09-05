@@ -201,7 +201,7 @@ export class SessionsService {
         return this.mapToDto(session, createSessionDto.notes);
     }
 
-    async findAll(user: any, filters?: { clientId?: string; status?: SessionStatus; from?: string; to?: string; professionalId?: string }) {
+    async findAll(user: any, filters?: { clientId?: string; status?: SessionStatus; startDate?: string; endDate?: string; professionalId?: string; page?: string; limit?: string; from?: string; to?: string }) {
         let targetUserIds: string[] = [user.id];
 
         if (user.role === 'AGENDA_MANAGER') {
@@ -231,22 +231,41 @@ export class SessionsService {
         if (filters?.clientId) whereClause.clientId = filters.clientId;
         if (filters?.status && filters.status !== 'ALL' as any) whereClause.status = filters.status;
 
-        if (filters?.from || filters?.to) {
+        const start = filters?.startDate || filters?.from;
+        const end = filters?.endDate || filters?.to;
+
+        if (start || end) {
             whereClause.startTime = {};
-            if (filters.from) whereClause.startTime.gte = new Date(filters.from);
-            if (filters.to) whereClause.startTime.lte = new Date(filters.to);
+            if (start) whereClause.startTime.gte = new Date(start);
+            if (end) whereClause.startTime.lte = new Date(end);
         }
 
-        const sessions = await this.prisma.session.findMany({
-            where: whereClause,
-            include: {
-                client: true, // Need name for display
-            },
-            orderBy: { startTime: 'desc' },
-        });
+        const page = filters?.page ? parseInt(filters.page, 10) : 1;
+        const limit = filters?.limit ? parseInt(filters.limit, 10) : 20;
+        const skip = (page - 1) * limit;
 
-        // Return without notes for list view
-        return Promise.all(sessions.map(s => this.mapToDto(s, undefined)));
+        const [sessions, total] = await Promise.all([
+            this.prisma.session.findMany({
+                where: whereClause,
+                include: { client: true },
+                orderBy: { startTime: 'desc' },
+                skip,
+                take: limit,
+            }),
+            this.prisma.session.count({ where: whereClause })
+        ]);
+
+        const mappedSessions = await Promise.all(sessions.map(s => this.mapToDto(s, undefined)));
+        
+        return {
+            data: mappedSessions,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        };
     }
 
     async findByDateRange(user: any, start: string, end: string, professionalId?: string) {
