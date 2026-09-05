@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { toast } from '@/hooks/use-toast';
 
 export const apiClient = axios.create({
@@ -8,19 +8,19 @@ export const apiClient = axios.create({
 
 // Request interceptor
 apiClient.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     // We rely on cookies for token, or we could add an Authorization header if we stored it in localStorage.
     // The instructions say "afegir el token d'autenticació (des de cookies)", which means we can just use `withCredentials: true`.
     // Alternatively, if there's a specific way the token is passed, we handle it here.
     return config;
   },
-  (error) => Promise.reject(error)
+  (error: any) => Promise.reject(error)
 );
 
 // Response interceptor
 apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  (response: AxiosResponse) => response,
+  async (error: any) => {
     const originalRequest = error.config;
     
     // Auto refresh logic for 401
