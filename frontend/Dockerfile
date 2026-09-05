@@ -8,7 +8,7 @@ ENV NODE_OPTIONS="--max-old-space-size=3072"
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
