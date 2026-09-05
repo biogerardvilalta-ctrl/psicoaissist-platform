@@ -9,8 +9,14 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
+  const env = process.env.NODE_ENV || 'development';
+  const logLevels: any = env === 'production'
+    ? ['error', 'warn', 'log']
+    : ['log', 'debug', 'error', 'warn', 'verbose'];
+
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
+    logger: logLevels,
   });
 
   const configService = app.get(ConfigService);
