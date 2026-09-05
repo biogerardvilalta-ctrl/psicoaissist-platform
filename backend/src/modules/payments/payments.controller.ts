@@ -14,6 +14,7 @@ import {
   BadRequestException,
   InternalServerErrorException
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -30,6 +31,8 @@ import {
 import { Request } from 'express';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
+@ApiTags('Payments')
+@ApiBearerAuth()
 @Controller('payments')
 export class PaymentsController {
   constructor(
@@ -38,6 +41,8 @@ export class PaymentsController {
     private readonly prisma: PrismaService,
   ) { }
 
+  @ApiOperation({ summary: 'getPlans' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('plans')
   async getPlans() {
     return this.paymentsService.getAvailablePlans();
@@ -84,6 +89,8 @@ export class PaymentsController {
     return this.paymentsService.verifyCheckoutSession(body.sessionId, req.user.id);
   }
 
+  @ApiOperation({ summary: 'createInitialCheckoutSession' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Post('checkout/initial')
   async createInitialCheckoutSession(
     @Body() body: { userId: string; plan: string; interval: string },

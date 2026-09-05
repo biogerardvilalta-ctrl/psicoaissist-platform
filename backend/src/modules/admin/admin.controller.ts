@@ -10,6 +10,7 @@ import {
   Post,
   BadRequestException
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -24,6 +25,8 @@ import { UserRole, UserStatus, AuditAction, AdminTaskStatus, AdminTaskType, Admi
 import { AuditService } from '../audit/audit.service';
 import { BackupService } from './backup.service';
 
+@ApiTags('Admin')
+@ApiBearerAuth()
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
@@ -38,6 +41,8 @@ export class AdminController {
     private readonly backupService: BackupService,
   ) { }
 
+  @ApiOperation({ summary: 'sendCommunication' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Post('communicate')
   async sendCommunication(@Body() body: {
     type: 'EMAIL' | 'NOTIFICATION' | 'BOTH';
@@ -115,6 +120,8 @@ export class AdminController {
   // BETTER STRATEGY: Replace Constructor and logAdminAction separately to be safe.)
 
 
+  @ApiOperation({ summary: 'getDashboardStats' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('dashboard')
   async getDashboardStats() {
     const [
@@ -187,11 +194,15 @@ export class AdminController {
 
   }
 
+  @ApiOperation({ summary: 'getEvolutionStats' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('stats/evolution')
   async getEvolutionStats(@Query('period') period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
     return this.getRevenueChartData(period);
   }
 
+  @ApiOperation({ summary: 'getUsageEvolutionStats' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('stats/usage-evolution')
   async getUsageEvolutionStats(@Query('period') period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
     return this.getUsageChartData(period);
@@ -641,6 +652,8 @@ export class AdminController {
     });
   }
 
+  @ApiOperation({ summary: 'getLogs' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('logs')
   async getLogs(
     @Query('page') page: string = '1',
@@ -740,6 +753,8 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({ summary: 'getPlans' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('plans')
   getPlans() {
     // Return hardcoded plan details for now
@@ -805,6 +820,8 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({ summary: 'getUsers' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('users')
   async getUsers(
     @Query('page') page: string = '1',
@@ -916,6 +933,8 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({ summary: 'getUserDetails' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('users/:id')
   async getUserDetails(@Param('id') id: string) {
     const user = await this.prisma.user.findUnique({
@@ -954,6 +973,8 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({ summary: 'createUser' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Post('users')
   async createUser(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
@@ -964,6 +985,8 @@ export class AdminController {
     return user;
   }
 
+  @ApiOperation({ summary: 'updateUser' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Patch('users/:id')
   async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.update(id, updateUserDto);
@@ -974,6 +997,8 @@ export class AdminController {
     return user;
   }
 
+  @ApiOperation({ summary: 'changeUserPassword' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Patch('users/:id/password')
   async changeUserPassword(@Param('id') id: string, @Body() body: AdminChangePasswordDto) {
     const user = await this.usersService.adminChangePassword(id, body.password);
@@ -983,6 +1008,8 @@ export class AdminController {
     return user;
   }
 
+  @ApiOperation({ summary: 'updateUserStatus' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Patch('users/:id/status')
   async updateUserStatus(
     @Param('id') id: string,
@@ -1002,6 +1029,8 @@ export class AdminController {
     return user;
   }
 
+  @ApiOperation({ summary: 'verifyUser' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Patch('users/:id/verify')
   async verifyUser(@Param('id') id: string) {
     const user = await this.usersService.verifyUser(id);
@@ -1014,6 +1043,8 @@ export class AdminController {
   }
 
 
+  @ApiOperation({ summary: 'cleanupSoftDeletedUsers' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Delete('users/cleanup')
   async cleanupSoftDeletedUsers() {
     const result = await this.usersService.deleteSoftDeletedUsers();
@@ -1028,6 +1059,8 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({ summary: 'deleteUser' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Delete('users/:id')
   async deleteUser(@Param('id') id: string, @Body() body: { reason: string }) {
     // Soft delete or hard delete based on requirements
@@ -1041,6 +1074,8 @@ export class AdminController {
     return { message: 'User deleted successfully' };
   }
 
+  @ApiOperation({ summary: 'getSubscriptions' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('subscriptions')
   async getSubscriptions(
     @Query('page') page: string = '1',
@@ -1093,6 +1128,8 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({ summary: 'cancelSubscription' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Patch('subscriptions/:id/cancel')
   async cancelSubscription(@Param('id') id: string, @Body() body: { reason: string }) {
     const subscription = await this.prisma.subscription.findUnique({
@@ -1225,6 +1262,8 @@ export class AdminController {
     }
   }
 
+  @ApiOperation({ summary: 'getTasks' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('tasks')
   async getTasks(
     @Query('status') status?: AdminTaskStatus,
@@ -1252,6 +1291,8 @@ export class AdminController {
     });
   }
 
+  @ApiOperation({ summary: 'updateTask' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Patch('tasks/:id')
   async updateTask(
     @Param('id') id: string,
@@ -1283,11 +1324,15 @@ export class AdminController {
   }
 
   // Backup Endpoints
+  @ApiOperation({ summary: 'listBackups' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Get('backups')
   async listBackups() {
     return this.backupService.listBackups();
   }
 
+  @ApiOperation({ summary: 'createBackup' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Post('backups')
   async createBackup(@Body() body: { type: 'app' | 'mail' | 'all' }) {
     if (!['app', 'mail', 'all'].includes(body.type)) {
@@ -1307,6 +1352,8 @@ export class AdminController {
     return result;
   }
 
+  @ApiOperation({ summary: 'restoreBackup' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Post('backups/:filename/restore')
   async restoreBackup(@Param('filename') filename: string) {
     const result = await this.backupService.restoreBackup(filename);
@@ -1323,6 +1370,8 @@ export class AdminController {
     return result;
   }
 
+  @ApiOperation({ summary: 'deleteBackup' })
+  @ApiResponse({ status: 200, description: 'Success' })
   @Delete('backups/:filename')
   async deleteBackup(@Param('filename') filename: string) {
     const result = await this.backupService.deleteBackup(filename);
