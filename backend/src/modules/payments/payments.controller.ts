@@ -11,9 +11,11 @@ import {
   RawBodyRequest,
   Req,
   UseGuards,
+  UseInterceptors,
   BadRequestException,
   InternalServerErrorException
 } from '@nestjs/common';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
@@ -43,6 +45,9 @@ export class PaymentsController {
 
   @ApiOperation({ summary: 'getPlans' })
   @ApiResponse({ status: 200, description: 'Success' })
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('payments_plans')
+  @CacheTTL(300)
   @Get('plans')
   async getPlans() {
     return this.paymentsService.getAvailablePlans();
@@ -154,6 +159,9 @@ export class PaymentsController {
     return this.paymentsService.cancelSubscription(req.user.id);
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('subscription_status_user_')
+  @CacheTTL(30)
   @Get('subscription-status')
   @UseGuards(JwtAuthGuard)
   async getSubscriptionStatus(@Req() req: any) {
