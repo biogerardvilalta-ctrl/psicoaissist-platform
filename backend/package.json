@@ -35,7 +35,7 @@
     "@nestjs/platform-express": "^10.4.20",
     "@nestjs/platform-socket.io": "^10.2.8",
     "@nestjs/schedule": "^6.1.0",
-    "@nestjs/serve-static": "^5.0.4",
+    "@nestjs/serve-static": "^4.0.2",
     "@nestjs/swagger": "^7.1.16",
     "@nestjs/throttler": "^5.0.1",
     "@nestjs/websockets": "^10.2.8",
@@ -96,7 +96,8 @@
     "prettier": "^3.1.0",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.12",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "webpack": "^5.110.3"
   },
   "jest": {
     "moduleFileExtensions": [
