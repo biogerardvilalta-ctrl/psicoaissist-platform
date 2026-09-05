@@ -51,7 +51,24 @@ export class UsersController {
     res.send(csv);
   }
 
-  @ApiOperation({ summary: 'Exportar mis datos (GDPR) - JSON Legacy' })
+  
+  @ApiOperation({ summary: 'Exportar totes les meves dades (GDPR) - ZIP complet amb perfil, sessions i consentiments' })
+  @ApiResponse({ status: 200, description: 'Arxiu ZIP amb totes les dades personals' })
+  @Get('me/export/zip')
+  async exportZip(@Req() req: any, @Res() res: Response) {
+    const zipBuffer = await this.usersService.exportDataZip(req.user.id);
+    const fileName = `dades_personals_psicoaissist_${new Date().toISOString().split('T')[0]}.zip`;
+
+    res.set({
+      'Content-Type': 'application/zip',
+      'Content-Disposition': `attachment; filename="${fileName}"`,
+      'Content-Length': zipBuffer.length,
+    });
+
+    res.end(zipBuffer);
+  }
+
+@ApiOperation({ summary: 'Exportar mis datos (GDPR) - JSON Legacy' })
   @ApiResponse({ status: 200, description: 'Datos exportados en JSON' })
   @Get('me/export')
   async exportData(@Req() req: any) {

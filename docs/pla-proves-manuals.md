@@ -1,7 +1,7 @@
 # 📋 Pla de Proves Manuals — PsicoAIssist Platform
 
-> **Data:** Març 2026  
-> **Versió:** 0.1.0 (Beta)  
+> **Data:** Setembre 2026  
+> **Versió:** 0.2.0 (Beta)  
 > **Objectiu:** Validar totes les funcionalitats de la plataforma abans del llançament
 
 ---
@@ -12,11 +12,11 @@
 
 | Perfil | Quants | Per què |
 |--------|--------|---------|
-| 🧠 **Psicòleg A** — Experimentat (perfil Pro/Premium) | 1 | Prova les funcionalitats avançades: IA, transcripció, informes, videollamades |
+| 🧠 **Psicòleg A** — Experimentat (perfil Pro/Premium) | 1 | Prova les funcionalitats avançades: IA, transcripció, informes, videotrucades |
 | 🧠 **Psicòleg B** — Novell (perfil Basic) | 1 | Prova el flux bàsic: alta de pacients, sessions, informes manuals, limitacions del pla |
 | 🧠 **Psicòleg C** — Estudiant | 1 | Prova el simulador de casos clínics i el flux d'estudiant |
 | 👤 **Usuari D** — Tester general (no psicòleg) | 1 | Prova UX, navegació, responsive, landing, registre, i18n |
-| 👤 **Usuari E** — Tester mòbil | 1 | Prova tota l'app des del mòbil (Android/iOS), responsive, videollamades mòbil |
+| 👤 **Usuari E** — Tester mòbil | 1 | Prova tota l'app des del mòbil (Android/iOS), responsive, videotrucades mòbil |
 
 > [!TIP]
 > Si no podeu trobar 5 persones, el mínim indispensable són **2 psicòlegs + 1 tester UX**. Un psicòleg ha de provar el flux complet (Pro/Premium) i l'altre el bàsic + simulador.
@@ -144,12 +144,12 @@ Aquestes proves validen funcionalitat tècnica i UX:
 - [ ] Canviar estat: Esborrany → En revisió → Completat → Arxivat
 
 #### A7. Videollamades
-- [ ] Crear una sessió amb videollamada
-- [ ] Obrir l'enllaç de videollamada en un altre navegador/dispositiu
+- [ ] Crear una sessió amb videotrucada
+- [ ] Obrir l'enllaç de videotrucada en un altre navegador/dispositiu
 - [ ] Verificar connexió de vídeo i àudio
 - [ ] Verificar que funciona en Chrome, Firefox, Safari
 - [ ] Provar compartir pantalla (si disponible)
-- [ ] Finalitzar la videollamada
+- [ ] Finalitzar la videotrucada
 
 #### A8. Pagaments i suscripció
 - [ ] Veure els plans disponibles
@@ -199,7 +199,7 @@ Aquestes proves validen funcionalitat tècnica i UX:
 - [ ] Intentar accedir a l'anàlisi IA → ha d'aparèixer bloqueig + CTA upgrade
 - [ ] Intentar gravar àudio en una sessió → permès o bloquejat? (documentar)
 - [ ] Intentar generar un informe amb IA → ha d'estar bloquejat
-- [ ] Intentar crear una sessió amb videollamada → ha d'estar bloquejat
+- [ ] Intentar crear una sessió amb videotrucada → ha d'estar bloquejat
 - [ ] Intentar accedir al simulador → ha d'estar bloquejat (només disponible per Premium/Estudiant)
 
 **UX dels bloquejos:**
@@ -370,7 +370,7 @@ Aquestes proves validen funcionalitat tècnica i UX:
 - [ ] La gravació d'àudio funciona al mòbil?
 
 #### E6. Videollamada (mòbil)
-- [ ] Obrir una videollamada des del mòbil
+- [ ] Obrir una videotrucada des del mòbil
 - [ ] El vídeo i àudio funcionen?
 - [ ] Es pot finalitzar correctament?
 
@@ -561,3 +561,98 @@ Per no haver de crear 25 clients a mà, l'admin pot fer servir una d'aquestes op
 
 *Document generat: Març 2026*  
 *Actualitzat: 24 Març 2026 — Afegides sessions reals i validació de límits*
+
+---
+
+## 9. Proves de Flux d'Onboarding
+
+**Perfil:** Qualsevol usuari nou  
+**Temps estimat:** 30 min  
+
+> [!NOTE]
+> Valida que el flux d'incorporació de nous psicòlegs és fluid i intuïtiu.
+
+### Pas 1 — Registre i verificació
+- [ ] Registrar-se amb un email nou
+- [ ] Rebre email de verificació i confirmar el compte
+- [ ] Registrar-se amb Google OAuth (si disponible)
+
+### Pas 2 — Completar perfil professional
+- [ ] Omplir nom, cognoms i número de col·legiat
+- [ ] Seleccionar especialitat i país
+- [ ] Pujar foto de perfil (accepta JPG/PNG, rebutja PDF)
+- [ ] Verificar que el perfil es guarda correctament
+
+### Pas 3 — Configuració inicial
+- [ ] Seleccionar idioma preferit (CA/ES/EN) i verificar que la interfície canvia
+- [ ] Configurar horari d'atenció (schedule config)
+- [ ] Activar/desactivar notificacions per email
+
+### Pas 4 — Primera sessió guiada
+- [ ] Crear el primer client/pacient
+- [ ] Crear una sessió programada
+- [ ] Verificar que el dashboard mostra el resum correctament
+
+---
+
+## 10. Proves de Plans, Packs i Trial
+
+**Perfil:** Tester UX + accés a Stripe Test Mode  
+**Temps estimat:** 45 min  
+
+> [!IMPORTANT]
+> Usa targetes de prova de Stripe. Mai targetes reals.  
+> Targeta vàlida: `4242 4242 4242 4242`, qualsevol data futura, CVV `123`.
+
+### Plan Basic (gratuït / trial)
+- [ ] Crear compte nou i verificar que s'activa automàticament com a Basic
+- [ ] Comprovar que el límit de transcripció és 150 min/mes
+- [ ] Intentar activar IA avançada → veure missatge de bloqueig de pla
+- [ ] Intentar transcriure més de 150 min → veure modal de límit assolit
+
+### Pla Pro
+- [ ] Fer clic a "Actualitzar a Pro" i completar pagament amb Stripe Test
+- [ ] Verificar que el rol canvia immediatament a PSYCHOLOGIST_PRO
+- [ ] Verificar que el límit de transcripció puja (≥500 min)
+- [ ] Verificar accés a funcions Pro: informes avançats, IA en sessió
+
+### Extra Packs de Transcripció
+- [ ] Comprar un pack extra de 60 minuts (si el pla ho permet)
+- [ ] Verificar que el saldo de minuts augmenta correctament
+- [ ] Transcriure i verificar que el saldo es dedueix per minut
+
+### Cancel·lació i Downgrade
+- [ ] Des del perfil, cancel·lar la subscripció Pro
+- [ ] Verificar que al final del període s'baixa automàticament a Basic
+- [ ] Verificar que les dades existents es conserven
+
+---
+
+## 11. Proves de Consentiments GDPR
+
+**Perfil:** Psicòleg  
+**Temps estimat:** 20 min  
+
+- [ ] Obrir un client i navegar a la secció "Consentiments"
+- [ ] Crear un consentiment de tractament (tipus TREATMENT, atorgat)
+- [ ] Crear un consentiment de gravació (tipus RECORDING, atorgat)
+- [ ] Verificar que es guarda correctament amb data i hora
+- [ ] Revocar un consentiment i verificar que apareix la data de revocació
+- [ ] Exportar les dades del compte (ZIP GDPR) i verificar que el fitxer `consentiments.csv` és correcte
+
+---
+
+## 12. Proves d'Exportació GDPR
+
+**Perfil:** Qualsevol usuari autenticat  
+**Temps estimat:** 15 min  
+
+- [ ] Anar a Configuració → Privadesa → Exportar dades
+- [ ] Fer clic a "Descarregar CSV" → verificar que es descarrega un fitxer `.csv` amb les sessions desencriptades
+- [ ] Fer clic a "Descarregar ZIP complet" → verificar que es descarrega un `.zip` que conté:
+  - `perfil.json` — dades del compte sense camps sensibles (sense hash de contrasenya)
+  - `sessions.csv` — totes les sessions amb client i notes desencriptats
+  - `consentiments.csv` — historial de consentiments GDPR
+  - `LLEGIU-ME.txt` — instruccions sobre les dades
+- [ ] Verificar que el ZIP no conté hash de contrasenya ni tokens interns
+- [ ] Verificar que les dades de clients estan desencriptades i llegibles

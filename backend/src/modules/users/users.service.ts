@@ -1,3 +1,4 @@
+import * as archiver from 'archiver';
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { PrismaService } from '../../common/prisma/prisma.service';
@@ -992,6 +993,99 @@ export class UsersService {
 
     } catch (error) {
       this.logger.error(`Error generating CSV export: ${error.message}`);
+      throw error;
+    }
+  }
+
+
+  /**
+   * Export all user data as a GDPR-compliant ZIP file (#26)
+   * Contains: profile.json, sessions.csv, consents.csv
+   */
+  async exportDataZip(userId: string): Promise<Buffer> {
+    try {
+      // 1. Fetch all data
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          sessions: {
+            include: { client: true, reports: true },
+            orderBy: { startTime: 'desc' },
+          },
+          clients: true,
+          subscription: true,
+        },
+      });
+
+      if (!user) throw new NotFoundException('Usuari no trobat');
+
+      const {
+        passwordHash, googleRefreshToken, verificationToken,
+        resetPasswordToken, ...cleanUser
+      } = user as any;
+
+      // 2. Build profile JSON
+      const profileJson = JSON.stringify({
+        profile: { ...cleanUser, sessions: undefined, clients: undefined, subscription: undefined },
+        subscription: user.subscription,
+        exportDate: new Date().toISOString(),
+        version: '2.0',
+      }, null, 2);
+
+      // 3. Build sessions CSV
+      let sessionsCsv = 'ID,Data,Hora inici,Hora fi,Tipus,Estat,Client,Durada (min)\n';
+      for (const session of user.sessions) {
+        let clientName = 'Desconegut';
+        if (session.client?.encryptedPersonalData && session.client?.encryptionKeyId) {
+          try {
+            const unpacked = this.unpackEncryptedData(session.client.encryptedPersonalData, session.client.encryptionKeyId);
+            const result = await this.encryptionService.decryptData<{ firstName: string; lastName: string }>(unpacked);
+            if (result.success && result.data) {
+              clientName = `${result.data.firstName} ${result.data.lastName}`;
+            }
+          } catch { clientName = 'Error desencriptant'; }
+        }
+        const date = session.startTime?.toISOString().split('T')[0] ?? '';
+        const start = session.startTime?.toISOString().split('T')[1]?.slice(0, 5) ?? '';
+        const end = session.endTime?.toISOString().split('T')[1]?.slice(0, 5) ?? '';
+        const dur = session.duration ? Math.round(session.duration / 60) : 0;
+        sessionsCsv += `${session.id},${date},${start},${end},${session.sessionType},${session.status},"${clientName.replace(/"/g, '""')}",${dur}\n`;
+      }
+
+      // 4. Build consents CSV
+      const consents = await this.prisma.consent.findMany({
+        where: { client: { userId } },
+        include: { client: true },
+        orderBy: { grantedAt: 'desc' },
+      });
+      let consentsCsv = 'ID,Tipus,Atorgat,Data atorgament,Data revocació,Versió,Notes\n';
+      for (const c of consents) {
+        const revokedAt = c.revokedAt?.toISOString().split('T')[0] ?? '';
+        const grantedAt = c.grantedAt?.toISOString().split('T')[0] ?? '';
+        consentsCsv += `${c.id},${c.consentType},${c.granted},${grantedAt},${revokedAt},${c.version},"${(c.notes ?? '').replace(/"/g, '""')}"\n`;
+      }
+
+      // 5. Pack into ZIP using archiver (returns Buffer)
+      const zipBuffer: Buffer = await new Promise((resolve, reject) => {
+        const chunks: Buffer[] = [];
+        const archive = archiver('zip', { zlib: { level: 6 } });
+
+        archive.on('data', (chunk: Buffer) => chunks.push(chunk));
+        archive.on('end', () => resolve(Buffer.concat(chunks)));
+        archive.on('error', reject);
+
+        archive.append(Buffer.from(profileJson, 'utf8'), { name: 'perfil.json' });
+        archive.append(Buffer.from(sessionsCsv, 'utf8'), { name: 'sessions.csv' });
+        archive.append(Buffer.from(consentsCsv, 'utf8'), { name: 'consentiments.csv' });
+        archive.append(Buffer.from('Aquest arxiu conté les teves dades personals de PsicoAIssist.\nGenerat el: ' + new Date().toISOString(), 'utf8'), { name: 'LLEGIU-ME.txt' });
+
+        archive.finalize();
+      });
+
+      return zipBuffer;
+
+    } catch (error) {
+      this.logger.error(`Error generating ZIP export: ${error.message}`);
       throw error;
     }
   }
