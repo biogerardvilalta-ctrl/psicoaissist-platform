@@ -522,13 +522,12 @@ export class ClientsService {
                 resourceType: 'CLIENT',
                 resourceId: clientId,
                 details: `Eliminado definitivamente paciente (ID: ${clientId})`
-            });
+                });
         } catch (error) {
             this.logger.error(`Failed to delete client ${clientId}: ${error.message}`);
             throw error;
         }
     }
-}
 
     // ─── Gestió de Consentiments GDPR ─────────────────────────────────────────────
 
@@ -570,3 +569,4 @@ export class ClientsService {
             data: { revokedAt: new Date(), granted: false },
         });
     }
+}

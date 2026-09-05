@@ -53,7 +53,7 @@ export class AdminController {
   }) {
     const { type, target, userIds, subject, message } = body;
 
-    let recipients = [];
+    let recipients: { id: string; email: string; firstName: string | null; preferredLanguage: string }[] = [];
 
     if (target === 'ALL') {
       recipients = await this.prisma.user.findMany({
@@ -210,7 +210,7 @@ export class AdminController {
 
   private async getUsageChartData(period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
     const now = new Date();
-    const data = [];
+    const data: any[] = [];
 
     // Determine interval and iterations based on period
     let intervalType: 'day' | 'week' | 'month' = 'day';
@@ -358,7 +358,7 @@ export class AdminController {
 
   private async getRevenueChartData(period: '1w' | '1m' | '3m' | '6m' | '1y' = '1m') {
     const now = new Date();
-    const data = [];
+    const data: any[] = [];
 
     // Determine interval and iterations based on period
     let intervalType: 'day' | 'week' | 'month' = 'day';

@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { PLAN_FEATURES, PlanLimits } from './plan-features';
 import { addMonths, isBefore, isAfter } from 'date-fns';
@@ -18,6 +18,7 @@ export class UsageLimitsService {
       where: { id: userId },
       include: { subscription: true }
     });
+   if (!user) throw new NotFoundException('User not found');
 
     // Use the robust logic (Role Override > Subscription > Demo)
     const subscription = this.getEffectiveSubscription(user);
@@ -90,6 +91,7 @@ export class UsageLimitsService {
         }
       },
     });
+   if (!user) throw new NotFoundException('User not found');
 
     const subscription = this.getEffectiveSubscription(user);
     if (!subscription || subscription.status !== 'active' || subscription.currentPeriodEnd < new Date()) {
@@ -143,6 +145,7 @@ export class UsageLimitsService {
       where: { id: userId },
       include: { subscription: true },
     });
+   if (!user) throw new NotFoundException('User not found');
 
     const subscription = this.getEffectiveSubscription(user);
     if (!subscription || subscription.status !== 'active') {
@@ -185,6 +188,7 @@ export class UsageLimitsService {
         subscription: true,
       },
     });
+   if (!user) throw new NotFoundException('User not found');
 
     const subscription = this.getEffectiveSubscription(user);
     if (!subscription || subscription.status !== 'active' || subscription.currentPeriodEnd < new Date()) {
@@ -202,6 +206,7 @@ export class UsageLimitsService {
         }
       }
     });
+   if (!user) throw new NotFoundException('User not found');
 
     const planFeatures = PLAN_FEATURES[subscription.planType.toLowerCase()];
     if (!planFeatures) {
@@ -243,6 +248,7 @@ export class UsageLimitsService {
         subscription: true,
       },
     });
+   if (!user) throw new NotFoundException('User not found');
 
     const subscription = this.getEffectiveSubscription(user);
     if (!subscription || subscription.status !== 'active' || subscription.currentPeriodEnd < new Date()) {
@@ -288,6 +294,7 @@ export class UsageLimitsService {
         subscription: true,
       },
     });
+   if (!user) throw new NotFoundException('User not found');
 
     const subscription = this.getEffectiveSubscription(user);
     if (!subscription || subscription.status !== 'active') return; // Should probably throw, but let's be safe
@@ -409,6 +416,7 @@ export class UsageLimitsService {
       where: { id: userId },
       include: { subscription: true },
     });
+   if (!user) throw new NotFoundException('User not found');
 
     const subscription = this.getEffectiveSubscription(user);
     if (!subscription || subscription.status !== 'active') {
@@ -491,6 +499,7 @@ export class UsageLimitsService {
       where: { id: userId },
       include: { subscription: true },
     });
+   if (!user) throw new NotFoundException('User not found');
 
     const subscription = this.getEffectiveSubscription(user);
     if (!subscription || subscription.status !== 'active') {

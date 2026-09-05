@@ -150,7 +150,7 @@ async function main() {
 
   // Create clients for psychologists (simplified for seed - using mock encrypted data)
   console.log('🧑‍⚕️ Creating clients...');
-  const clients = [];
+  const clients: any[] = [];
 
   // Mock encrypted data (in real app this would be properly encrypted)
   const mockEncryptedData = Buffer.from(JSON.stringify({

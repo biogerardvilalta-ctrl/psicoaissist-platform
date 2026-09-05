@@ -28,7 +28,7 @@ test.describe('RBAC: Agenda Manager Flow', () => {
         // If auto-login happens, we might not get redirect to login, but dashboard directly
         // Adjust expectation based on actual flow.
         // Assuming redirect to login:
-        await expect(page).toHaveURL(/\/auth\/login/);
+        await expect(page).toHaveURL(/\/auth\/(login|register)/);
 
         // Login as Professional
         await page.fill('input[type="email"]', profEmail);

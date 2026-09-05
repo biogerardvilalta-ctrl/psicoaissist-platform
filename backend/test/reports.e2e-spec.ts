@@ -32,7 +32,6 @@ describe('ReportsController (e2e)', () => {
     // Create a PRO user to ensure no feature gating blocks us
     const proUser = await getAuthToken(app, { email: 'reports-pro@example.com', plan: 'pro' });
     authUserToken = proUser.token;
-    userId = proUser.id; // Assume getAuthToken might not return ID, we can fetch it:
     const userDoc = await prisma.user.findUnique({ where: { email: 'reports-pro@example.com' } });
     userId = userDoc.id;
 

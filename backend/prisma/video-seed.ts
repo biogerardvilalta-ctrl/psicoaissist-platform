@@ -51,7 +51,7 @@ async function main() {
 
     console.log('👥 Creating Demo Patients...');
 
-    const createdClients = [];
+    const createdClients: any[] = [];
 
     // Mock encryption key (in real app this is managed securely)
     const mockKeyId = 'demo-video-key-id';

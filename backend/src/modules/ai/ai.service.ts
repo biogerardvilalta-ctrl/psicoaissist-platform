@@ -604,8 +604,8 @@ export class AiService {
             ]
         };
 
-        const temes_emergents = [];
-        const temes_descartats = [];
+        const temes_emergents: { tema: string; descripcio: string; nivell: string }[] = [];
+        const temes_descartats: { tema: string; descripcio: string; nivell: string }[] = [];
 
         // Populate temes_emergents based on keywords (EXPANDED LIST)
         if (isMinor) {

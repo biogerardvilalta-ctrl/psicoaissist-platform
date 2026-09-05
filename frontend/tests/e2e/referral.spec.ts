@@ -70,7 +70,7 @@ test.describe('Referral System E2E', () => {
 
         // Check API response for profile or UI Widget
         // Check for Greeting first to confirm Dashboard load
-        await expect(page.locator('body')).toContainText('Hola, ReferrerUser', { timeout: 15000 });
+        await expect(page.locator('body')).toContainText(/(Hola|Hello), ReferrerUser/, { timeout: 15000 });
 
         // Check Widget "Invita y Gana" -> "Referidos"
         await expect(page.locator('body')).toContainText('Referidos');

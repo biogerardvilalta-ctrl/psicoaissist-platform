@@ -325,8 +325,8 @@ export class AuthService {
         user: {
           id: user.id,
           email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
+          firstName: user.firstName ?? '',
+          lastName: user.lastName ?? '',
           role: user.role,
           status: user.status,
           enableReminders: user.enableReminders,
@@ -338,15 +338,15 @@ export class AuthService {
           scheduleConfig: user.scheduleConfig as any,
           dashboardLayout: user.dashboardLayout as any,
           hourlyRate: user.hourlyRate,
-          referralCode: user.referralCode,
+          referralCode: user.referralCode ?? undefined,
           referralsCount: user.referralsCount,
           subscription: user.subscription,
           simulatorUsageCount: user.simulatorUsageCount,
           agendaManagerEnabled: user.agendaManagerEnabled,
           hasOnboardingPack: false,
         },
-        tokens: null, // No tokens
-        encryptionKey: null, // No key access yet
+        tokens: undefined,
+        encryptionKey: undefined,
         message: 'Registro completado. Por favor verifica tu email.',
       };
     } catch (error) {
@@ -679,8 +679,8 @@ export class AuthService {
       user: {
         id: updatedUser.id,
         email: updatedUser.email,
-        firstName: updatedUser.firstName,
-        lastName: updatedUser.lastName,
+        firstName: updatedUser.firstName ?? '',
+        lastName: updatedUser.lastName ?? '',
         role: updatedUser.role,
         status: updatedUser.status,
         trialStartedAt: updatedUser.trialStartedAt as any,
@@ -693,7 +693,7 @@ export class AuthService {
         scheduleConfig: updatedUser.scheduleConfig as any,
         dashboardLayout: updatedUser.dashboardLayout as any,
         hourlyRate: updatedUser.hourlyRate,
-        referralCode: updatedUser.referralCode,
+        referralCode: updatedUser.referralCode ?? undefined,
         referralsCount: updatedUser.referralsCount,
         subscription: updatedUser.subscription,
         simulatorUsageCount: updatedUser.simulatorUsageCount,
@@ -874,7 +874,7 @@ export class AuthService {
 
     // Backfill Referral Code if missing
     if (!user.referralCode) {
-      const newCode = await this.generateUniqueReferralCode(user.firstName);
+      const newCode = await this.generateUniqueReferralCode(user.firstName ?? 'user');
       await this.prisma.user.update({
         where: { id: userId },
         data: { referralCode: newCode, updatedAt: new Date() }

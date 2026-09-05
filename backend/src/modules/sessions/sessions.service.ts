@@ -159,7 +159,7 @@ export class SessionsService {
                 summary: `Sesión PsicoAI`,
                 description: `Sesión de ${createSessionDto.sessionType}. Gestionado por PsycoAI.`,
                 start: { dateTime: session.startTime.toISOString() },
-                end: { dateTime: session.endTime.toISOString() },
+                end: { dateTime: session.endTime?.toISOString() ?? session.startTime.toISOString() },
             });
 
             console.log(`[SessionsService] insertEvent returned:`, googleEvent);
@@ -597,7 +597,7 @@ export class SessionsService {
                 } else {
                     await this.googleService.updateEvent(updatedSession.userId, (updatedSession as any).googleEventId, {
                         start: { dateTime: updatedSession.startTime.toISOString() },
-                        end: { dateTime: updatedSession.endTime.toISOString() },
+                        end: { dateTime: updatedSession.endTime?.toISOString() ?? updatedSession.startTime.toISOString() },
                     });
                 }
             } catch (e) { console.error('Failed to update Google Event', e); }

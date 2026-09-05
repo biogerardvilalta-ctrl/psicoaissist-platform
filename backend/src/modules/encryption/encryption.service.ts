@@ -56,7 +56,7 @@ export class EncryptionService {
       const key = await this.getEncryptionKey(encryptedData.keyId);
       if (!key || !key.isActive) {
         return {
-          data: null,
+          data: null as unknown as T,
           success: false,
           error: 'Encryption key not found or inactive',
         };
@@ -70,8 +70,8 @@ export class EncryptionService {
 
       decipher.setAuthTag(Buffer.from(encryptedData.tag, 'base64'));
 
-      let decrypted = decipher.update(encryptedData.encryptedData, null, 'utf8');
-      decrypted += decipher.final('utf8');
+      let decrypted = decipher.update(encryptedData.encryptedData as unknown as string, undefined, 'utf8');
+      decrypted = decrypted + decipher.final('utf8');
 
       const parsedData = JSON.parse(decrypted);
 
@@ -81,7 +81,7 @@ export class EncryptionService {
       };
     } catch (error) {
       return {
-        data: null,
+        data: null as unknown as T,
         success: false,
         error: `Decryption failed: ${error.message}`,
       };
