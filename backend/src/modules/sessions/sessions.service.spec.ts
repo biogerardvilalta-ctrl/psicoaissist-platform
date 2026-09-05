@@ -28,7 +28,8 @@ describe('SessionsService', () => {
         session: {
             findFirst: jest.fn(),
             create: jest.fn(),
-            findMany: jest.fn(),
+            findMany: jest.fn().mockResolvedValue([]),
+            count: jest.fn().mockResolvedValue(0),
             update: jest.fn(),
             findUnique: jest.fn(),
             delete: jest.fn(),
