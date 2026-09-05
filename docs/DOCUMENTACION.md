@@ -1,7 +1,7 @@
 # 📘 Documentación Completa — PsicoAIssist Platform
 
-> **Última actualización:** Marzo 2026  
-> **Versión de la plataforma:** 0.1.0 (Beta)  
+> **Última actualización:** Setembre 2026  
+> **Versió de la plataforma:** 0.2.0 (Beta)  
 > **Estado:** En producción (entorno beta)
 
 ---
@@ -1077,4 +1077,4 @@ Todas las acciones sobre datos sensibles quedan registradas en `AuditLog`:
 
 ---
 
-*Documentación actualizada: Marzo 2026 — PsicoAIssist Platform v0.1.0 (Beta)*
+*Documentació actualitzada: Setembre 2026 — PsicoAIssist Platform v0.2.0 (Beta)*

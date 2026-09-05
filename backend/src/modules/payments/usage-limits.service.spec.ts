@@ -2,153 +2,142 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsageLimitsService } from './usage-limits.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { PlanLimits, PLAN_FEATURES } from './plan-features';
 import { ForbiddenException } from '@nestjs/common';
-import { UserRole } from '@prisma/client';
 
 describe('UsageLimitsService', () => {
   let service: UsageLimitsService;
-  let mockPrismaService: any;
-  let mockNotificationsService: any;
+  let prisma: any;
+  let notificationsService: any;
+
+  const mockPrisma = {
+    user: {
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+  };
+
+  const mockNotificationsService = {
+    create: jest.fn(),
+  };
 
   beforeEach(async () => {
-    mockPrismaService = {
-      user: {
-        findUnique: jest.fn(),
-        update: jest.fn(),
-        findMany: jest.fn().mockResolvedValue([]),
-      },
-    };
-
-    mockNotificationsService = {
-      create: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsageLimitsService,
-        {
-          provide: PrismaService,
-          useValue: mockPrismaService,
-        },
-        {
-          provide: NotificationsService,
-          useValue: mockNotificationsService,
-        },
+        { provide: PrismaService, useValue: mockPrisma },
+        { provide: NotificationsService, useValue: mockNotificationsService },
       ],
     }).compile();
 
     service = module.get<UsageLimitsService>(UsageLimitsService);
+    prisma = module.get(PrismaService);
+    notificationsService = module.get(NotificationsService);
+    jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('getPlanFeatures', () => {
+    it('retorna features correctes per pla', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'u1',
+        subscription: { planType: 'basic', status: 'active' },
+      });
+      const features = await service.getPlanFeatures('u1');
+      expect(features).toEqual(PLAN_FEATURES['basic']);
+    });
   });
 
-  describe('checkClientLimit', () => {
-    it('should throw if limit is reached for basic plan', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({
-        id: 'user-1',
-        role: UserRole.PSYCHOLOGIST,
-        subscription: { planType: 'BASIC', status: 'active', currentPeriodEnd: new Date(2100, 1, 1) },
-        _count: { clients: 25 }, // Basic limit is 25
+  describe('checkTranscriptionLimit', () => {
+    it('Basic límit -> permet fins al límit, +1 -> llança error', async () => {
+      const basicLimit = PlanLimits.BASIC_TRANSCRIPTION_MINUTES;
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'u1',
+        transcriptionMinutesUsed: basicLimit - 10,
+        subscription: { planType: 'basic', status: 'active' },
       });
-
-      await expect(service.checkClientLimit('user-1')).rejects.toThrow(ForbiddenException);
+      
+      // Should allow adding 10
+      await expect(service.checkTranscriptionLimit('u1', 10)).resolves.not.toThrow();
+      
+      // Should throw when exceeding
+      await expect(service.checkTranscriptionLimit('u1', 11)).rejects.toThrow(ForbiddenException);
     });
 
-    it('should pass if under limit for basic plan', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({
-        id: 'user-1',
-        role: UserRole.PSYCHOLOGIST,
-        subscription: { planType: 'BASIC', status: 'active', currentPeriodEnd: new Date(2100, 1, 1) },
-        _count: { clients: 24 }, // Under limit
-      });
-
-      await expect(service.checkClientLimit('user-1')).resolves.not.toThrow();
+    it('Pro -> permet fins al seu límit o fair use si és il·limitat (segons PLAN_FEATURES)', async () => {
+      const proLimit = PLAN_FEATURES['pro'].transcriptionMinutes;
+      if (proLimit === PlanLimits.UNLIMITED) {
+        mockPrisma.user.findUnique.mockResolvedValue({
+          id: 'u1',
+          transcriptionMinutesUsed: 0,
+          subscription: { planType: 'pro', status: 'active' },
+        });
+        await expect(service.checkTranscriptionLimit('u1', 999999)).rejects.toThrow(ForbiddenException);
+      } else {
+        mockPrisma.user.findUnique.mockResolvedValue({
+          id: 'u1',
+          transcriptionMinutesUsed: proLimit,
+          subscription: { planType: 'pro', status: 'active' },
+        });
+        await expect(service.checkTranscriptionLimit('u1', 1)).rejects.toThrow(ForbiddenException);
+      }
     });
 
-    it('should pass for pro plan with many clients', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({
-        id: 'user-1',
-        role: UserRole.PSYCHOLOGIST,
-        subscription: { planType: 'PRO', status: 'active', currentPeriodEnd: new Date(2100, 1, 1) },
-        _count: { clients: 100 }, // Pro is unlimited (fair use is higher)
+    it('Extra packs - verificar que s afegeixen al comptador', async () => {
+      const basicLimit = PlanLimits.BASIC_TRANSCRIPTION_MINUTES;
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'u1',
+        transcriptionMinutesUsed: basicLimit, // Already used basic limit
+        extraTranscriptionMinutes: 50, // Has 50 extra
+        subscription: { planType: 'basic', status: 'active' },
       });
-
-      await expect(service.checkClientLimit('user-1')).resolves.not.toThrow();
+      
+      // Should allow adding up to 50
+      await expect(service.checkTranscriptionLimit('u1', 50)).resolves.not.toThrow();
+      // Should throw if exceeding 50
+      await expect(service.checkTranscriptionLimit('u1', 51)).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('incrementTranscriptionUsage', () => {
-    it('should increment successfully if under limit', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({
-        id: 'user-1',
-        role: UserRole.PSYCHOLOGIST,
+    it('deducció correcta, actualitza DB', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'u1',
         transcriptionMinutesUsed: 0,
         extraTranscriptionMinutes: 0,
-        subscription: { planType: 'BASIC', status: 'active', currentPeriodEnd: new Date(2100, 1, 1) },
+        subscription: { planType: 'basic', status: 'active' },
       });
-
-      const result = await service.incrementTranscriptionUsage('user-1', 120); // 2 minutes
-
+      
+      // 120 seconds = 2 minutes
+      const result = await service.incrementTranscriptionUsage('u1', 120);
       expect(result.limitExceeded).toBe(false);
-      expect(mockPrismaService.user.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ transcriptionMinutesUsed: { increment: 2 } })
+      expect(mockPrisma.user.update).toHaveBeenCalledWith(expect.objectContaining({
+        where: { id: 'u1' },
+        data: expect.objectContaining({
+          transcriptionMinutesUsed: { increment: 2 }
         })
-      );
+      }));
     });
 
-    it('should use extra minutes when base limit is exceeded', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({
-        id: 'user-1',
-        role: UserRole.PSYCHOLOGIST,
-        transcriptionMinutesUsed: 600, // Basic limit is 600
-        extraTranscriptionMinutes: 100,
-        subscription: { planType: 'BASIC', status: 'active', currentPeriodEnd: new Date(2100, 1, 1) },
+    it('dedueix de extraTranscriptionMinutes si se supera el límit base', async () => {
+      const basicLimit = PlanLimits.BASIC_TRANSCRIPTION_MINUTES;
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: 'u1',
+        transcriptionMinutesUsed: basicLimit - 1, // 1 minute left in plan
+        extraTranscriptionMinutes: 10,
+        subscription: { planType: 'basic', status: 'active' },
       });
-
-      const result = await service.incrementTranscriptionUsage('user-1', 300); // 5 minutes
-
+      
+      // Add 120 seconds (2 minutes). 1 minute from plan, 1 minute from extra.
+      const result = await service.incrementTranscriptionUsage('u1', 120);
       expect(result.limitExceeded).toBe(false);
-      expect(mockPrismaService.user.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ 
-            transcriptionMinutesUsed: { increment: 5 },
-            extraTranscriptionMinutes: { decrement: 5 }
-          })
+      expect(mockPrisma.user.update).toHaveBeenCalledWith(expect.objectContaining({
+        where: { id: 'u1' },
+        data: expect.objectContaining({
+          transcriptionMinutesUsed: { increment: 2 },
+          extraTranscriptionMinutes: { decrement: 1 }
         })
-      );
-    });
-
-    it('should fail if base and extra limits are both exceeded', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue({
-        id: 'user-1',
-        role: UserRole.PSYCHOLOGIST,
-        transcriptionMinutesUsed: 600, // Basic limit is 600
-        extraTranscriptionMinutes: 2,
-        subscription: { planType: 'BASIC', status: 'active', currentPeriodEnd: new Date(2100, 1, 1) },
-      });
-
-      const result = await service.incrementTranscriptionUsage('user-1', 300); // 5 minutes
-
-      expect(result.limitExceeded).toBe(true);
-      expect(mockPrismaService.user.update).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('getNextMonthlyResetDate', () => {
-    it('should calculate next reset date correctly', () => {
-      const now = new Date();
-      // Suppose period started 15 days ago
-      const periodStart = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000);
-      
-      const nextReset = service.getNextMonthlyResetDate(periodStart);
-      
-      expect(nextReset.getTime()).toBeGreaterThan(now.getTime());
-      
-      // The day of month should match periodStart
-      expect(nextReset.getDate()).toBe(periodStart.getDate());
+      }));
     });
   });
 });

@@ -183,3 +183,36 @@ export class ClientResponseDto {
     @ApiProperty()
     sendWhatsappReminders: boolean;
 }
+
+// ─── Consent DTOs ─────────────────────────────────────────────────────────────
+
+export class CreateConsentDto {
+    @ApiProperty({ description: 'Tipus de consentiment', example: 'TREATMENT' })
+    @IsString()
+    @IsNotEmpty()
+    consentType: string;
+
+    @ApiProperty({ description: 'Consentiment atorgat o denegat', example: true })
+    @IsBoolean()
+    granted: boolean;
+
+    @ApiPropertyOptional({ description: 'Versió del document de consentiment', example: '2.0' })
+    @IsString()
+    @IsOptional()
+    version?: string;
+
+    @ApiPropertyOptional({ description: 'Notes addicionals' })
+    @IsString()
+    @IsOptional()
+    notes?: string;
+
+    @ApiPropertyOptional({ description: 'Adreça IP del signant' })
+    @IsString()
+    @IsOptional()
+    ipAddress?: string;
+
+    @ApiPropertyOptional({ description: 'User agent del navegador' })
+    @IsString()
+    @IsOptional()
+    userAgent?: string;
+}

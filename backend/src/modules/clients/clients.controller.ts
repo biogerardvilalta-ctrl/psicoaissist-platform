@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Put, Query } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto } from './dto/clients.dto';
+import { CreateClientDto, UpdateClientDto, ClientResponseDto, CreateClientEncryptedDto, CreateConsentDto } from './dto/clients.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -54,9 +54,42 @@ export class ClientsController {
     }
 
     @Put(':id')
-    @ApiOperation({ summary: 'Actualizar información del cliente' })
+    @ApiOperation({ summary: 'Actualitzar informació del client' })
     @ApiResponse({ status: 200, type: ClientResponseDto })
     update(@Req() req: Request & { user: any }, @Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
         return this.clientsService.update(req.user.id, id, updateClientDto);
+    }
+
+    // ─── Gestió de Consentiments GDPR ──────────────────────────────────────────────
+
+    @Get(':id/consents')
+    @ApiOperation({ summary: 'Llistar consentiments d\'un client' })
+    @ApiResponse({ status: 200, description: 'Llista de consentiments del client' })
+    @ApiResponse({ status: 404, description: 'Client no trobat' })
+    getConsents(@Req() req: Request & { user: any }, @Param('id') clientId: string) {
+        return this.clientsService.getConsents(req.user.id, clientId);
+    }
+
+    @Post(':id/consents')
+    @ApiOperation({ summary: 'Registrar consentiment per a un client' })
+    @ApiResponse({ status: 201, description: 'Consentiment creat correctament' })
+    @ApiResponse({ status: 404, description: 'Client no trobat' })
+    createConsent(
+        @Req() req: Request & { user: any },
+        @Param('id') clientId: string,
+        @Body() dto: CreateConsentDto,
+    ) {
+        return this.clientsService.createConsent(req.user.id, clientId, dto);
+    }
+
+    @Patch('consents/:consentId/revoke')
+    @ApiOperation({ summary: 'Revocar un consentiment existent' })
+    @ApiResponse({ status: 200, description: 'Consentiment revocat correctament' })
+    @ApiResponse({ status: 404, description: 'Consentiment no trobat' })
+    revokeConsent(
+        @Req() req: Request & { user: any },
+        @Param('consentId') consentId: string,
+    ) {
+        return this.clientsService.revokeConsent(req.user.id, consentId);
     }
 }

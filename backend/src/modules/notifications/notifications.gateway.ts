@@ -49,7 +49,7 @@ export class NotificationsGateway
             if (!this.connectedClients.has(userId)) {
                 this.connectedClients.set(userId, new Set());
             }
-            this.connectedClients.get(userId).add(client.id);
+            this.connectedClients.get(userId)?.add(client.id);
 
             // Join a room specifically for this user for easy broadcasting
             client.join(`user_${userId}`);
@@ -65,8 +65,8 @@ export class NotificationsGateway
         const userId = client.data.userId;
         if (userId && this.connectedClients.has(userId)) {
             const userSockets = this.connectedClients.get(userId);
-            userSockets.delete(client.id);
-            if (userSockets.size === 0) {
+            userSockets?.delete(client.id);
+            if (userSockets if (userSockets.size === 0) {if (userSockets.size === 0) { userSockets.size === 0) {
                 this.connectedClients.delete(userId);
             }
         }

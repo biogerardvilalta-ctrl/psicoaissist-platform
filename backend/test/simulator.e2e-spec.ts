@@ -8,6 +8,7 @@ import { getAuthToken } from './helpers/auth.helper';
 describe('SimulatorController (e2e)', () => {
   let app: INestApplication;
   let authToken: string;
+  let sessionId: string; // The conversation ID returned by /start
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -24,7 +25,7 @@ describe('SimulatorController (e2e)', () => {
     await app.init();
     
     // Get Auth Token
-    const user = await getAuthToken(app, { email: 'simulator-test@example.com' });
+    const user = await getAuthToken(app, { email: 'simulator-test@example.com', plan: 'pro' });
     authToken = user.token;
   });
 
@@ -60,10 +61,47 @@ describe('SimulatorController (e2e)', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send({ difficulty: 'easy' });
 
-      // Assuming the simulator returns a profile
-      if (response.status === 201 || response.status === 200) {
-        expect(response.body).toHaveProperty('name');
-      }
+      expect([200, 201]).toContain(response.status);
+      expect(response.body).toHaveProperty('name');
+      // Some endpoints might return id, sessionId, or conversationId
+      sessionId = response.body.id || response.body.sessionId || response.body.conversationId || 'test-session-id';
+    });
+  });
+
+  describe('/simulator/message (POST)', () => {
+    it('should send message to virtual patient', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/simulator/message')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({ message: 'Hola, com et sents avui?', sessionId: sessionId });
+
+      // Check success
+      expect([200, 201]).toContain(response.status);
+      expect(response.body).toBeDefined();
+    });
+  });
+
+  describe('/simulator/end (POST)', () => {
+    it('should end simulator and obtain scores', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/simulator/end')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({ sessionId: sessionId });
+
+      expect([200, 201]).toContain(response.status);
+      // Usually returns a report or score
+      expect(response.body).toBeDefined();
+    });
+  });
+
+  describe('/simulator/reports (GET)', () => {
+    it('should retrieve simulator history', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/simulator/reports')
+        .set('Authorization', `Bearer ${authToken}`);
+
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
     });
   });
 });

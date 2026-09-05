@@ -464,7 +464,7 @@ export class PaymentsService {
       const isPack = createCheckoutDto.plan === 'minutes_pack' || createCheckoutDto.plan === 'simulator_pack' || createCheckoutDto.plan === 'agenda_manager_pack' || createCheckoutDto.plan === 'on_boarding_pack';
 
       // Planes demo hardcoded sin llamar a Stripe
-      const demoPlans = {
+      const demoPlans: any = {
         basic: { name: 'Plan Básico', amount: 2900, currency: 'eur', interval: 'month' },
         pro: { name: 'Plan Pro', amount: 5900, currency: 'eur', interval: 'month' },
         business: { name: 'Plan Business', amount: 12900, currency: 'eur', interval: 'month' },
@@ -659,7 +659,7 @@ export class PaymentsService {
         throw new BadRequestException('Invalid plan selected');
       }
 
-      let updatedSubscription;
+      let updatedSubscription: any;
       try {
         updatedSubscription = await this.stripeService.updateSubscription(
           user.subscription.stripeSubscriptionId,
@@ -1159,7 +1159,7 @@ export class PaymentsService {
 
   private getPlanDisplayName(planType: PlanType): string {
     const plans = this.stripeService.getPlans();
-    return plans[planType]?.name || planType;
+    return (plans as any)[planType]?.name || planType;
   }
 
   async simulatePaymentSuccess(userId: string) {

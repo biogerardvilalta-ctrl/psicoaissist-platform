@@ -529,3 +529,44 @@ export class ClientsService {
         }
     }
 }
+
+    // ─── Gestió de Consentiments GDPR ─────────────────────────────────────────────
+
+    async getConsents(userId: string, clientId: string) {
+        // Verify the client belongs to this user
+        await this.findOne(userId, clientId);
+        return this.prisma.consent.findMany({
+            where: { clientId },
+            orderBy: { grantedAt: 'desc' },
+        });
+    }
+
+    async createConsent(userId: string, clientId: string, dto: any) {
+        // Verify the client belongs to this user
+        await this.findOne(userId, clientId);
+        return this.prisma.consent.create({
+            data: {
+                clientId,
+                consentType: dto.consentType as any,
+                granted: dto.granted,
+                grantedAt: new Date(),
+                version: dto.version ?? '1.0',
+                notes: dto.notes,
+                ipAddress: dto.ipAddress,
+                userAgent: dto.userAgent,
+            },
+        });
+    }
+
+    async revokeConsent(userId: string, consentId: string) {
+        const consent = await this.prisma.consent.findUnique({ where: { id: consentId }, include: { client: true } });
+        if (!consent) {
+            throw new NotFoundException('Consentiment no trobat');
+        }
+        // Verify the consent's client belongs to this user
+        await this.findOne(userId, consent.clientId);
+        return this.prisma.consent.update({
+            where: { id: consentId },
+            data: { revokedAt: new Date(), granted: false },
+        });
+    }
