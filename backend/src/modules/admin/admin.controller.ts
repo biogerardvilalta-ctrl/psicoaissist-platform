@@ -1059,6 +1059,60 @@ export class AdminController {
     };
   }
 
+  @ApiOperation({ summary: 'Delete E2E test users (non-production only)' })
+  @ApiResponse({ status: 200, description: 'Test users deleted' })
+  @Delete('test-users')
+  async cleanupTestUsers(@Body() body?: { patterns?: string[] }) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('This endpoint is not available in production');
+    }
+
+    const defaultPatterns = [
+      '@test.com',
+      'testonboarding',
+      'plan-demo@',
+      'plan-basic@',
+      'plan-pro@',
+      'plan-trial',
+      'stripe-',
+    ];
+    const patterns = body?.patterns || defaultPatterns;
+
+    // Build OR conditions for Prisma
+    const orConditions = patterns.map((pattern) => ({
+      email: { contains: pattern },
+    }));
+
+    const testUsers = await this.prisma.user.findMany({
+      where: { OR: orConditions },
+      select: { id: true, email: true },
+    });
+
+    if (testUsers.length === 0) {
+      return { success: true, deleted: 0, message: 'No test users found.' };
+    }
+
+    const ids = testUsers.map((u) => u.id);
+
+    // Delete in cascade order
+    await this.prisma.auditLog.deleteMany({ where: { userId: { in: ids } } });
+    await this.prisma.notification.deleteMany({ where: { userId: { in: ids } } });
+    await this.prisma.report.deleteMany({ where: { userId: { in: ids } } });
+    await this.prisma.session.deleteMany({ where: { userId: { in: ids } } });
+    await this.prisma.client.deleteMany({ where: { userId: { in: ids } } });
+    await this.prisma.subscription.deleteMany({ where: { userId: { in: ids } } });
+    const deleted = await this.prisma.user.deleteMany({ where: { id: { in: ids } } });
+
+    await this.logAdminAction('TEST_USER_CLEANUP', { deletedCount: deleted.count, patterns });
+
+    return {
+      success: true,
+      deleted: deleted.count,
+      message: `Deleted ${deleted.count} test users.`,
+    };
+  }
+
+
   @ApiOperation({ summary: 'deleteUser' })
   @ApiResponse({ status: 200, description: 'Success' })
   @Delete('users/:id')

@@ -23,6 +23,7 @@ export default defineConfig({
             use: { ...devices['Desktop Chrome'] },
         },
     ],
+    globalTeardown: './tests/e2e/global-teardown.ts',
     /* Run your local server before starting the tests */
     webServer: {
       command: 'npm start',
@@ -31,3 +32,4 @@ export default defineConfig({
       timeout: 120 * 1000,
     },
 });
+
