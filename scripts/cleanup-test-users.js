@@ -1,10 +1,12 @@
 /**
  * Cleanup Test Users Script
- * Executa això al servidor Hetzner per eliminar tots els usuaris de test:
- *   node scripts/cleanup-test-users.js
+ * Executa des del directori del servidor:
+ *   cd /ruta-app/psicoaissist-platform/backend && node ../scripts/cleanup-test-users.js
  */
 
-const { PrismaClient } = require('@prisma/client');
+const path = require('path');
+// Always load @prisma/client from backend/node_modules
+const { PrismaClient } = require(path.join(__dirname, '../backend/node_modules/@prisma/client'));
 
 const prisma = new PrismaClient();
 
