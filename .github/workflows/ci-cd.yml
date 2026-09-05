@@ -44,7 +44,7 @@ jobs:
 
     - name: Install backend dependencies
       working-directory: ./backend
-      run: npm ci
+      run: npm install --legacy-peer-deps
 
     - name: Setup environment variables
       working-directory: ./backend
@@ -90,7 +90,7 @@ jobs:
 
     - name: Install frontend dependencies
       working-directory: ./frontend
-      run: npm ci
+      run: npm install --legacy-peer-deps
 
     - name: Run unit tests
       working-directory: ./frontend
@@ -114,13 +114,13 @@ jobs:
     - name: Backend security audit
       working-directory: ./backend
       run: |
-        npm ci
+        npm install --legacy-peer-deps
         npm audit --audit-level high || true
 
     - name: Frontend security audit
       working-directory: ./frontend
       run: |
-        npm ci
+        npm install --legacy-peer-deps
         npm audit --audit-level high || true
 
   # Docker Build (only on main branch)
