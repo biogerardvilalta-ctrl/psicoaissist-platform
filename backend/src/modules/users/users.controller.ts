@@ -193,6 +193,16 @@ export class UsersController {
     if (req.user.id !== id && req.user.role !== UserRole.ADMIN && req.user.role !== UserRole.SUPER_ADMIN) {
       throw new BadRequestException('No tienes permisos para modificar el layout de otro usuario');
     }
+
+    if (!body.layout || typeof body.layout !== 'object') {
+      throw new BadRequestException('El layout debe ser un objeto JSON válido');
+    }
+
+    const jsonString = JSON.stringify(body.layout);
+    if (jsonString.length > 50 * 1024) { // 50KB
+      throw new BadRequestException('El layout supera el límite de 50KB');
+    }
+
     try {
       return await this.usersService.updateDashboardLayout(id, body.layout);
     } catch (error) {
