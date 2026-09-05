@@ -46,7 +46,6 @@ backend_debug.log
 
 # Testing
 coverage/
-backend/test/
 
 # Misc
 cookies.txt
@@ -57,3 +56,10 @@ frontend/.next/
 frontend/out/
 backend/dist/
 
+# Temporary files (debug, backup, scripts temporals)
+*.bak
+backend/src/check-*.ts
+backend/src/debug-*.ts
+backend/*.sql
+backend/*.log
+backend/test-results.log

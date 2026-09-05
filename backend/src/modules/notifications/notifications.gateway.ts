@@ -7,7 +7,7 @@ import {
     ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UseGuards, UnauthorizedException } from '@nestjs/common';
+import { UseGuards, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
@@ -29,6 +29,8 @@ export class NotificationsGateway
         private jwtService: JwtService,
         private configService: ConfigService,
     ) { }
+
+    private readonly logger = new Logger(NotificationsGateway.name);
 
     async handleConnection(client: Socket) {
         try {
@@ -52,9 +54,9 @@ export class NotificationsGateway
             // Join a room specifically for this user for easy broadcasting
             client.join(`user_${userId}`);
 
-            console.log(`Client connected: ${client.id}, User: ${userId}`);
+            this.logger.log(`Client connected: ${client.id}, User: ${userId}`);
         } catch (error) {
-            console.error(`Connection unauthorized: ${error.message}`);
+            this.logger.error(`Connection unauthorized: ${error.message}`);
             client.disconnect();
         }
     }
@@ -68,7 +70,7 @@ export class NotificationsGateway
                 this.connectedClients.delete(userId);
             }
         }
-        console.log(`Client disconnected: ${client.id}`);
+        this.logger.log(`Client disconnected: ${client.id}`);
     }
 
     // Method to send notification to a specific user

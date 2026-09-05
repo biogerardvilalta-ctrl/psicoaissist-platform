@@ -84,7 +84,7 @@ export class AuthController {
     if (user && user._isError) {
       const errorType = user.errorType || 'auth_failed';
       const errorDesc = user.message || 'Unknown error';
-      console.warn('Handling authentication error in controller:', errorDesc);
+      this.logger.warn(`Handling authentication error in controller: ${errorDesc}`);
 
       return res.redirect(`${frontendUrl}/auth/login?error=${errorType}&error_description=${encodeURIComponent(errorDesc)}`);
     }
@@ -123,7 +123,7 @@ export class AuthController {
         // Redirect to completion page
         return res.redirect(redirectUrl);
       } else {
-        console.warn('Headers already sent in googleAuthRedirect, cannot redirect or clear cookies.');
+        this.logger.warn('Headers already sent in googleAuthRedirect, cannot redirect or clear cookies.');
         return;
       }
     }
@@ -161,7 +161,7 @@ export class AuthController {
 
       return res.redirect(redirectUrl);
     } else {
-      console.warn('Headers already sent in googleAuthRedirect (login flow), cannot redirect.');
+      this.logger.warn('Headers already sent in googleAuthRedirect (login flow), cannot redirect.');
     }
   }
 

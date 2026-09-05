@@ -43,7 +43,7 @@ Després d'una revisió exhaustiva del codi font, l'arquitectura, els tests i la
 
 **Situació actual:** Hi ha fitxers `.bak` (`page-old.tsx.bak`, `useAdmin-old.ts.bak`) i múltiples fitxers de logs grans (`backend_clean_start.log`, `server.log`, etc.) directament al directori `backend/`.
 
-**Impacte:** Inflacció del repositori, possible filtració d'informació sensible en logs.
+**Impacte:** Sobrecàrrega del repositori, possible filtració d'informació sensible en logs.
 
 **Proposta:**
 - Eliminar tots els fitxers `.bak` i `.log` del repositori.
@@ -162,7 +162,7 @@ Després d'una revisió exhaustiva del codi font, l'arquitectura, els tests i la
 - Implementar CRON job per backup automàtic de PostgreSQL.
 - Emmagatzematge xifrat de backups.
 - Retenció configurable (7 dies, 30 dies).
-- Endpoint admin per triggerar backup manual.
+- Endpoint admin per activar el backup manual.
 
 ---
 
@@ -242,7 +242,7 @@ Després d'una revisió exhaustiva del codi font, l'arquitectura, els tests i la
 
 ### 20. WebSocket reconnection handling
 
-**Situació actual:** El hook `useSocket` no gestiona reconexions explícitament.
+**Situació actual:** El hook `useSocket` no gestiona reconnexions explícitament.
 
 **Proposta:**
 - Implementar retry automàtic amb backoff exponencial.
@@ -272,7 +272,7 @@ Després d'una revisió exhaustiva del codi font, l'arquitectura, els tests i la
 
 **Proposta:**
 - Afegir validació de l'esquema JSON del layout al backend.
-- Limitar la mida del JSON per evitar inflacció.
+- Limitar la mida del JSON per evitar sobrecàrrega.
 
 ---
 

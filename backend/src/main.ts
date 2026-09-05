@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
@@ -13,10 +13,10 @@ async function bootstrap() {
     rawBody: true,
   });
 
+  const configService = app.get(ConfigService);
+
   // Enable Trust Proxy for Nginx (Critical for Secure Cookies in Production)
   (app as any).set('trust proxy', 1);
-
-  const configService = app.get(ConfigService);
 
   // Ensure uploads directory exists
   const fs = require('fs');
@@ -88,16 +88,16 @@ async function bootstrap() {
   if (configService.get('NODE_ENV') !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('Psychologist Assistant API')
-      .setDescription('API para la aplicación de asistente de psicólogos')
+      .setDescription('API for the psychologist assistant application')
       .setVersion('1.0')
       .addBearerAuth()
-      .addTag('auth', 'Autenticación y autorización')
-      .addTag('users', 'Gestión de usuarios')
-      .addTag('clients', 'Gestión de clientes')
-      .addTag('sessions', 'Sesiones terapéuticas')
-      .addTag('reports', 'Informes y reportes')
-      .addTag('ai', 'Servicios de inteligencia artificial')
-      .addTag('payments', 'Pagos y suscripciones')
+      .addTag('auth', 'Authentication and authorization')
+      .addTag('users', 'User management')
+      .addTag('clients', 'Client management')
+      .addTag('sessions', 'Therapeutic sessions')
+      .addTag('reports', 'Reports and analytics')
+      .addTag('ai', 'Artificial intelligence services')
+      .addTag('payments', 'Payments and subscriptions')
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
@@ -110,13 +110,9 @@ async function bootstrap() {
   const port = configService.get('PORT') || 3001;
   await app.listen(port);
 
-  console.log(`🚀 Server running on http://localhost:${port}`);
-  console.log(`✅ Transcription Limits Logic Updated.`);
-  console.log(`🔄 Force Restart Triggered.`);
-  console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+  const logger = new Logger('Bootstrap');
+  logger.log(`🚀 Server running on port ${port}`);
+  logger.log(`📚 API Docs available at /api/docs`);
 }
 
-bootstrap();// restart trigger mié 07 ene 2026 17:12:19 CET
-// restart trigger vie 09 ene 2026 15:30:12 CET
-// restart trigger mar 10 feb 2026 14:39:40 CET
-// restart trigger mar 10 feb 2026 15:06:19 CET
+bootstrap();

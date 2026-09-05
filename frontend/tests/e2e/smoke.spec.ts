@@ -8,10 +8,10 @@ test.describe('Smoke Validation', () => {
 
         // 2. Check for Title / Header
         await expect(page).toHaveTitle(/PsicoAIssist/);
-        await expect(page.getByRole('heading', { name: /Potencia tu práctica/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /(Potencia|Empower)/i }).first()).toBeVisible();
 
         // 3. Check for Login Link
-        const loginLink = page.getByRole('link', { name: /iniciar sesión/i });
+        const loginLink = page.getByRole('link', { name: /(iniciar sesión|log in|sign in)/i });
         await expect(loginLink).toBeVisible();
     });
 
@@ -39,7 +39,7 @@ test.describe('Smoke Validation', () => {
 
         // 5. Verify Dashboard Loaded
         // Check for greeting which confirms login and layout
-        await expect(page.locator('body')).toContainText('Hola, Dra. Andrea', { timeout: 15000 });
+        await expect(page.locator('body')).toContainText(/(Hola|Hello), Dra\. Andrea/, { timeout: 15000 });
 
         console.log('✅ Dashboard loaded with user greeting');
     });

@@ -65,7 +65,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         if (session) {
             clearInterval(session.interval);
             this.activeSessions.delete(clientId);
-            console.log(`[SessionsGateway] Stopped tracking for client ${clientId}`);
+            this.logger.log(`Stopped tracking for client ${clientId}`);
         }
     }
 
@@ -89,13 +89,13 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
                     // Stop any existing tracking for this socket to be safe
                     this.stopTracking(client.id);
                     // Do NOT start interval here. Wait for start_recording.
-                    console.log(`[SessionsGateway] User ${userId} joined session ${sessionId}.`);
+                    this.logger.log(`User ${userId} joined session ${sessionId}.`);
 
                     // Removed: Do NOT check limit on join to avoid annoying modal. Check only on Record.
                 }
             }
         } catch (e) {
-            console.error('[SessionsGateway] Failed to start tracking', e);
+            this.logger.error('Failed to start tracking', e);
         }
 
         return { event: 'joined', sessionId };
@@ -127,10 +127,10 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
                 // Notify Client
                 client.emit('ai_limit_reached', { message: 'Has consumido tus minutos de IA.' });
-                console.log(`[SessionsGateway] Limit reached for user ${userId}. AI stopped.`);
+                this.logger.log(`Limit reached for user ${userId}. AI stopped.`);
             }
         } catch (e) {
-            console.error(`[SessionsGateway] Error processing deduction for user ${userId}`, e);
+            this.logger.error(`Error processing deduction for user ${userId}`, e);
         }
     }
 
@@ -183,7 +183,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             // We rely on the interval flag 'limitReached' which is updated every minute.
 
         } catch (e) {
-            console.error(`[SessionsGateway] Auth check failed: ${e.message}`);
+            this.logger.error(`Auth check failed: ${e.message}`);
             client.emit('debug_log', { message: `Auth Error: ${e.message}` });
             return;
         }
@@ -209,9 +209,9 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             }
 
             client.emit('debug_log', { message: "Calling AI Service..." });
-            console.log(`[SessionsGateway] Requesting AI suggestions for User ${userId} (${notes.length} chars)`);
+            this.logger.log(`Requesting AI suggestions for User ${userId} (${notes.length} chars)`);
             const suggestions = await this.aiService.getLiveSuggestions(notes);
-            console.log(`[SessionsGateway] AI Suggestions generated:`, suggestions ? 'Yes' : 'No');
+            this.logger.log(`AI Suggestions generated: ${suggestions ? 'Yes' : 'No'}`);
 
             if (suggestions && (suggestions.questions.length > 0 || suggestions.considerations.length > 0)) {
                 client.emit('debug_log', { message: `AI Success: ${suggestions.questions.length} Qs` });
@@ -259,7 +259,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
                 // Use helper to check and notify
                 const isLimitReached = await this.checkAndNotifyLimit(client, userId);
                 if (isLimitReached) {
-                    console.warn(`[SessionsGateway] User ${userId} already at limit. Blocking recording start.`);
+                    this.logger.warn(`User ${userId} already at limit. Blocking recording start.`);
                     return;
                 }
 
@@ -274,10 +274,10 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
                     limitReached: false
                 });
 
-                console.log(`[SessionsGateway] Started recording & billing for user ${userId} in session ${sessionId}`);
+                this.logger.log(`Started recording & billing for user ${userId} in session ${sessionId}`);
             }
         } catch (e) {
-            console.error('[SessionsGateway] Failed to start recording', e);
+            this.logger.error('Failed to start recording', e);
         }
     }
 
@@ -288,7 +288,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     ) {
         // Stop billing
         this.stopTracking(client.id);
-        console.log(`[SessionsGateway] Stopped recording & billing for client ${client.id}`);
+        this.logger.log(`Stopped recording & billing for client ${client.id}`);
     }
 
     // --- Video Call Signaling ---
@@ -298,7 +298,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         @MessageBody() data: { token?: string, sessionId?: string },
         @ConnectedSocket() client: Socket,
     ) {
-        console.log(`[SessionsGateway] join-video-room request from ${client.id}`, data);
+        this.logger.log(`join-video-room request from ${client.id}: ${JSON.stringify(data)}`);
         let roomId: string | null = null;
         let identity: 'host' | 'guest' = 'guest';
 
@@ -314,10 +314,10 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
                         identity = 'host';
                     }
                 } catch (e) {
-                    console.error(`[SessionsGateway] Token decode error`, e);
+                    this.logger.error('Token decode error', e);
                 }
             } else {
-                console.warn(`[SessionsGateway] No token provided for Host join`);
+                this.logger.warn('No token provided for Host join');
             }
         } else if (data.token) {
             // Patient / Guest
@@ -327,7 +327,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
                 roomId = session.id;
                 identity = 'guest';
             } else {
-                console.warn(`[SessionsGateway] Session not found for token: ${data.token}`);
+                this.logger.warn(`Session not found for token: ${data.token}`);
             }
         }
 
@@ -340,14 +340,14 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             const room = (this.server.adapter as any).rooms.get(roomName);
             const peerCount = room ? room.size : 0;
 
-            console.log(`[SessionsGateway] Emitting room-joined to ${client.id}. Room: ${roomId}, Peers: ${peerCount}, Identity: ${identity}`);
+            this.logger.log(`Emitting room-joined to ${client.id}. Room: ${roomId}, Peers: ${peerCount}, Identity: ${identity}`);
 
             client.emit('room-joined', { identity, roomId, peerCount });
             // Notify others
             client.to(roomName).emit('peer-joined', { identity });
             this.logger.log(`Client ${client.id} joined video room ${roomId} as ${identity}. Peers: ${peerCount}`);
         } else {
-            console.error(`[SessionsGateway] Failed to resolve RoomID for client ${client.id}`);
+            this.logger.error(`Failed to resolve RoomID for client ${client.id}`);
             client.emit('error', { message: 'Invalid video session' });
         }
     }

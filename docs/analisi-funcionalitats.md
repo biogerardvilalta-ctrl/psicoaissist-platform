@@ -137,7 +137,7 @@ El sistema compta amb **17 mòduls backend**, **14 controladors REST** amb **~90
 - **Notes xifrades** — Notes del terapeuta
 - **Consentiment de gravació** — `recordingConsent`, `consentSigned`
 - **Qualitat d'àudio**: `LOW`, `MEDIUM`, `HIGH`, `ULTRA`
-- **Videollamada** — Token únic per videoconferència
+- **Videotrucada** — Token únic per videoconferència
 - **Google Calendar** — `googleEventId` per sincronització
 - **Menor d'edat** — Flag `isMinor`
 - **Recordatori enviat** — Control de `reminderSent`
@@ -273,7 +273,7 @@ El sistema compta amb **17 mòduls backend**, **14 controladors REST** amb **~90
 
 ---
 
-## 10. Videollamades WebRTC (`webrtc`)
+## 10. Videotrucades WebRTC (`webrtc`)
 
 ### Endpoints (1 endpoint)
 
@@ -421,7 +421,7 @@ El sistema compta amb **17 mòduls backend**, **14 controladors REST** amb **~90
 | `/dashboard/activity` | Registre d'activitat |
 | `/dashboard/compliance` | Compliance GDPR |
 | `/dashboard/profile` | Perfil professional |
-| `/video-call/:token` | Sala de videollamada |
+| `/video-call/:token` | Sala de videotrucada |
 | `/payment` | Flux de pagament |
 | `/admin/*` | Panel d'administració |
 | `/legal/*` | Pàgines legals |
@@ -440,15 +440,15 @@ El sistema compta amb **17 mòduls backend**, **14 controladors REST** amb **~90
 1. `useSocket` — Connexió WebSocket per notificacions
 2. `useSpeechRecognition` — Reconeixement de veu en temps real
 3. `useToast` — Sistema de notificacions UI
-4. `useWebRTC` — Gestió de videollamades
+4. `useWebRTC` — Gestió de videotrucades
 5. `useAdmin` — Operacions d'administració
 6. `useOnboarding` — Estat d'onboarding
 7. `usePayments` — Operacions de pagament
 8. `useRole` — Permisos per rol
 
 ### Internacionalització (3 idiomes)
-- **Catalán** (`ca.json`) — Idioma per defecte
-- **Español** (`es.json`)
+- **Català** (`ca.json`) — Idioma per defecte
+- **Castellà** (`es.json`)
 - **Anglès** (`en.json`)
 
 ---
