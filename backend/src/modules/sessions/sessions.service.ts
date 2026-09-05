@@ -667,7 +667,11 @@ export class SessionsService {
             }
         }
 
-        await this.prisma.session.delete({ where: { id } });
+        // Soft delete instead of hard delete, using CANCELLED since DELETED is not in SessionStatus
+        await this.prisma.session.update({ 
+            where: { id },
+            data: { status: 'CANCELLED' } 
+        });
 
         await this.auditService.log({
             userId,
