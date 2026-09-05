@@ -1,4 +1,5 @@
 import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
@@ -166,5 +167,72 @@ export class BackupService {
       `grep DBPASS /home/admin/dockers/mailcow-dockerized/mailcow.conf | cut -d= -f2`
     );
     return stdout.trim();
+  }
+
+  // ─── CRON Jobs — Backup Automàtic ────────────────────────────────────────────
+
+  /**
+   * Backup diari de la base de dades de l'app a les 02:00 AM
+   */
+  @Cron('0 2 * * *', { name: 'daily-app-backup' })
+  async scheduledDailyAppBackup(): Promise<void> {
+    this.logger.log('🗄️ Starting scheduled daily app backup...');
+    try {
+      const result = await this.createBackup('app');
+      if (result.success) {
+        this.logger.log(`✅ Daily app backup completed: ${result.files.join(', ')}`);
+      } else {
+        this.logger.warn(`⚠️ Daily app backup failed: ${result.message}`);
+      }
+    } catch (error) {
+      this.logger.error(`❌ Daily app backup error: ${error.message}`);
+    }
+  }
+
+  /**
+   * Backup setmanal complet (app + mail) els dilluns a les 03:00 AM
+   */
+  @Cron('0 3 * * 1', { name: 'weekly-full-backup' })
+  async scheduledWeeklyFullBackup(): Promise<void> {
+    this.logger.log('🗄️ Starting scheduled weekly full backup (app + mail)...');
+    try {
+      const result = await this.createBackup('all');
+      if (result.success) {
+        this.logger.log(`✅ Weekly full backup completed: ${result.files.join(', ')}`);
+      } else {
+        this.logger.warn(`⚠️ Weekly full backup failed: ${result.message}`);
+      }
+    } catch (error) {
+      this.logger.error(`❌ Weekly full backup error: ${error.message}`);
+    }
+  }
+
+  /**
+   * Purga de backups antics (>30 dies) els dissabtes a les 04:00 AM
+   */
+  @Cron('0 4 * * 6', { name: 'backup-cleanup' })
+  async scheduledBackupCleanup(): Promise<void> {
+    this.logger.log('🧹 Starting scheduled backup cleanup (>30 days)...');
+    try {
+      if (!fs.existsSync(this.BACKUP_DIR)) return;
+
+      const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      const files = fs.readdirSync(this.BACKUP_DIR).filter(f => f.endsWith('.sql.gz'));
+      let deleted = 0;
+
+      for (const file of files) {
+        const fullPath = path.join(this.BACKUP_DIR, file);
+        const stat = fs.statSync(fullPath);
+        if (stat.mtime.getTime() < thirtyDaysAgo) {
+          fs.unlinkSync(fullPath);
+          this.logger.log(`🗑️ Deleted old backup: ${file}`);
+          deleted++;
+        }
+      }
+
+      this.logger.log(`✅ Backup cleanup completed. Deleted ${deleted} old backup(s).`);
+    } catch (error) {
+      this.logger.error(`❌ Backup cleanup error: ${error.message}`);
+    }
   }
 }

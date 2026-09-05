@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useRole } from '@/hooks/useRole';
 import { Heart, User, Settings, LogOut, Menu, X, Shield, LayoutDashboard, Users, FileText, Calendar, PieChart, Mic } from 'lucide-react';
-import { NotificationProvider } from '@/context/NotificationContext';
+import { NotificationProvider } from '@/contexts/NotificationContext';
 import { NotificationBell } from '@/components/ui/NotificationBell';
 import { Link } from '@/navigation';
 import { useRouter, usePathname } from '@/navigation';

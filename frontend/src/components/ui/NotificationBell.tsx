@@ -1,6 +1,6 @@
 "use client";
 
-import { useNotifications } from "@/context/NotificationContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { Bell, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

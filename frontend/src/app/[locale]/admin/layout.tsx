@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Panel de administración para gestionar usuarios y suscripciones de PsicoAIssist',
 };
 
-import { NotificationProvider } from '@/context/NotificationContext';
+import { NotificationProvider } from '@/contexts/NotificationContext';
 
 export default function AdminLayout({
   children,

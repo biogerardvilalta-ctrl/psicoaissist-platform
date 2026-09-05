@@ -85,6 +85,8 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
 }
 
 
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+
 export default function RootLayout({
   children,
   params: { locale }
@@ -123,7 +125,9 @@ export default function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages} now={new Date()}>
           <AuthProvider>
             <ConditionalHeader />
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
             <ConditionalFooter />
             <Toaster />
           </AuthProvider>

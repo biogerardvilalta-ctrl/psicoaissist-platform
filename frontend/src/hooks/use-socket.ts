@@ -1,50 +1,93 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
+export type ConnectionState = 'connected' | 'disconnected' | 'reconnecting';
+
 export const useSocket = (url: string = 'http://localhost:3001', token?: string | null) => {
     const socketRef = useRef<Socket | null>(null);
-    const [isConnected, setIsConnected] = useState(false);
-    const [isAiLimitReached, setIsAiLimitReached] = useState(false); // Added state
+    const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
+    const [isAiLimitReached, setIsAiLimitReached] = useState(false);
+    const retryCountRef = useRef(0);
 
     useEffect(() => {
-        // Resolve token: explicit arg > localStorage
         const authToken = token || localStorage.getItem('psychoai_access_token');
+        let reconnectTimer: NodeJS.Timeout;
 
-        // Init socket
-        const socketIo = io(url, {
-            transports: ['websocket'],
-            autoConnect: true,
-            auth: {
-                token: authToken
+        const connect = () => {
+            if (socketRef.current) {
+                socketRef.current.disconnect();
             }
-        });
 
-        socketIo.on('connect', () => {
-            setIsConnected(true);
-            console.log('Socket connected');
-        });
+            const socketIo = io(url, {
+                transports: ['websocket'],
+                autoConnect: true,
+                reconnection: false, // We handle reconnection manually for custom backoff
+                auth: { token: authToken }
+            });
 
-        socketIo.on('disconnect', () => {
-            setIsConnected(false);
-            console.log('Socket disconnected');
-        });
+            socketIo.on('connect', () => {
+                setConnectionState('connected');
+                retryCountRef.current = 0;
+                console.log('Socket connected');
+            });
 
-        // Added event listener for 'ai_limit_reached'
-        socketIo.on('ai_limit_reached', (data: { message: string }) => {
-            console.log('%c[SOCKET] AI Limit Reached Event Received:', 'color: red; font-weight: bold;', data);
-            setIsAiLimitReached(true);
-        });
+            socketIo.on('disconnect', (reason) => {
+                console.log('Socket disconnected:', reason);
+                if (reason === 'io server disconnect') {
+                    setConnectionState('disconnected');
+                } else {
+                    setConnectionState('reconnecting');
+                    scheduleReconnect();
+                }
+            });
 
-        socketRef.current = socketIo;
+            socketIo.on('connect_error', (err) => {
+                console.log('Socket connect_error:', err);
+                setConnectionState('reconnecting');
+                scheduleReconnect();
+            });
+
+            socketIo.on('ai_limit_reached', (data: { message: string }) => {
+                console.log('%c[SOCKET] AI Limit Reached Event Received:', 'color: red; font-weight: bold;', data);
+                setIsAiLimitReached(true);
+            });
+
+            // Handle multiple sessions
+            socketIo.on('session_terminated', (data: any) => {
+                console.log('Session terminated by another device', data);
+                // Note: to implement full modal and redirect, this should ideally be handled in auth context or use a toast + navigation.
+                // Redirecting to login:
+                alert("S'ha iniciat sessió des d'un altre dispositiu. La sessió actual s'ha tancat.");
+                window.location.href = '/login';
+            });
+
+            socketRef.current = socketIo;
+        };
+
+        const scheduleReconnect = () => {
+            clearTimeout(reconnectTimer);
+            const backoff = Math.min(1000 * Math.pow(2, retryCountRef.current), 30000);
+            retryCountRef.current++;
+            console.log(`Reconnecting in ${backoff}ms...`);
+            reconnectTimer = setTimeout(() => {
+                connect();
+            }, backoff);
+        };
+
+        connect();
 
         return () => {
-            socketIo.disconnect();
+            clearTimeout(reconnectTimer);
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+            }
         };
     }, [url, token]);
 
     return {
         socket: socketRef.current,
-        isConnected,
+        isConnected: connectionState === 'connected',
+        connectionState,
         isAiLimitReached
     };
 };
