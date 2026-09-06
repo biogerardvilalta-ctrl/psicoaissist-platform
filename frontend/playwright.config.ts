@@ -30,7 +30,7 @@ export default defineConfig({
     /* Run your local server before starting the tests */
     webServer: {
       // Force NEXT_PUBLIC_API_URL to local backend so tests NEVER hit Hetzner/production
-      command: `NEXT_PUBLIC_API_URL=${LOCAL_BACKEND} npm start`,
+      command: `NEXT_PUBLIC_API_URL=${LOCAL_BACKEND} npm run dev`,
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI, // Always fresh on CI, reuse locally
       timeout: 120 * 1000,

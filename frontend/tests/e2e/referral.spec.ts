@@ -10,7 +10,7 @@ test.describe('Referral System E2E', () => {
         const referrerPass = 'password123';
         const referrerName = 'ReferrerUser';
 
-        await pageA.goto('/auth/register?plan=pro');
+        await pageA.goto('/auth/register');
         await pageA.fill('#firstName', referrerName);
         await pageA.fill('#lastName', 'Test');
         await pageA.fill('#email', referrerEmail);
@@ -30,6 +30,16 @@ test.describe('Referral System E2E', () => {
         const referralCode = registerDataA.user.referralCode;
         console.log(`User A Registered. Code: ${referralCode}`);
         expect(referralCode).toBeTruthy();
+
+        // Inject tokens to ensure reliable session
+        const tokensA = registerDataA.tokens;
+        const userA = registerDataA.user;
+        await pageA.evaluate(({ accessToken, tokens, user }) => {
+            localStorage.setItem('psychoai_access_token', accessToken);
+            localStorage.setItem('psychoai_refresh_token', tokens.refreshToken);
+            localStorage.setItem('psychoai_user', JSON.stringify(user));
+        }, { accessToken: tokensA.accessToken, tokens: tokensA, user: userA });
+
 
         // Manually navigate to dashboard because Stripe error might keep us on register page
         await pageA.goto('/dashboard');
@@ -59,8 +69,13 @@ test.describe('Referral System E2E', () => {
         console.log('User B Registered with code.');
 
         // --- 3. Verify User A Count ---
-        // User A is already logged in and on the dashboard in contextA, just refresh
-        await pageA.reload();
+        // User A is already logged in and on the dashboard in contextA, just navigate to it to ensure fresh state
+
+        // Add debug listeners
+        pageA.on('console', msg => console.log(`[PageA Console] ${msg.type()}: ${msg.text()}`));
+        pageA.on('response', resp => console.log(`[PageA Network] ${resp.status()} ${resp.url()}`));
+
+        await pageA.goto('/dashboard');
         await expect(pageA).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
         // Check for Greeting first to confirm Dashboard load

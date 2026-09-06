@@ -946,6 +946,8 @@ export class SessionsService {
             },
             select: { startTime: true, endTime: true, duration: true }
         });
+        require('fs').appendFileSync('/tmp/debug-sessions.txt', JSON.stringify({ dateStr, dayStart, dayEnd, sessions, targetUserId }) + '\n');
+
 
         // 3.1 Inject Blocked Blocks
         if (scheduleConfig && scheduleConfig.blockedBlocks && Array.isArray(scheduleConfig.blockedBlocks)) {
@@ -980,7 +982,7 @@ export class SessionsService {
                 const sEndWithBuffer = new Date(sEndTime.getTime() + (bufferTime * 60000));
                 const proposedEndWithBuffer = new Date(slotEnd.getTime() + (bufferTime * 60000));
 
-                return (currentSlot < sEndWithBuffer && proposedEndWithBuffer > sStart);
+                console.log("Checking:", currentSlot.toISOString(), slotEnd.toISOString(), "against session:", sStart.toISOString(), sEndWithBuffer.toISOString(), "result:", (currentSlot < sEndWithBuffer && proposedEndWithBuffer > sStart)); return (currentSlot < sEndWithBuffer && proposedEndWithBuffer > sStart);
             });
 
             if (!hasCollision) {

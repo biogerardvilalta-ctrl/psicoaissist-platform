@@ -354,7 +354,7 @@ export default function NewSessionPage() {
                                             disabled={isLoadingClients || !!preselectedClientId} // Disable if preselected to lock context, or allow change? Usually allow change is better, but if coming from specific client action, maybe lock. Let's keep enabled but default selected.
                                         >
                                             <FormControl>
-                                                <SelectTrigger>
+                                                <SelectTrigger data-testid="patient-select">
                                                     <SelectValue placeholder={isLoadingClients ? t('loadingPatients') : t('selectPatient')} />
                                                 </SelectTrigger>
                                             </FormControl>
@@ -406,7 +406,7 @@ export default function NewSessionPage() {
                                                 disabled={isLoadingSlots}
                                             >
                                                 <FormControl>
-                                                    <SelectTrigger>
+                                                    <SelectTrigger data-testid="time-select">
                                                         <SelectValue placeholder={isLoadingSlots ? t('loadingSchedules') : t('selectTime')} />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -439,7 +439,7 @@ export default function NewSessionPage() {
                                         <FormLabel>{t('sessionType')}</FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
-                                                <SelectTrigger>
+                                                <SelectTrigger data-testid="session-type-select">
                                                     <SelectValue placeholder={t('selectType')} />
                                                 </SelectTrigger>
                                             </FormControl>

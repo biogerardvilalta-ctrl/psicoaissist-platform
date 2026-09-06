@@ -62,7 +62,8 @@ export class PaymentsController {
   }
 
   @Post('create-checkout-session-demo')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async createCheckoutSessionDemo(
     @Body() createCheckoutDto: CreateCheckoutSessionDto,
     @Req() req: any,
@@ -77,7 +78,8 @@ export class PaymentsController {
   }
 
   @Post('create-checkout-session')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.PSYCHOLOGIST, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   async createCheckoutSession(
     @Body() createCheckoutDto: CreateCheckoutSessionDto,
     @Req() req: any,

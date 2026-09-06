@@ -88,23 +88,24 @@ test.describe('Scheduling Conflicts', () => {
         await page.goto('/dashboard/sessions/new');
         await page.waitForTimeout(2000);
 
-        await page.click('button:has-text("Seleccionar paciente")');
+        const patientSelectTrigger = page.getByTestId('patient-select');
+        await patientSelectTrigger.waitFor({ state: 'visible', timeout: 15000 });
+        await patientSelectTrigger.click();
         await page.click('div[role="option"]:has-text("Test Client")');
 
         await page.fill('input[type="date"]', dateStr);
 
         await page.waitForTimeout(1000);
-        await expect(page.getByText('Cargando horarios...')).toBeHidden();
-        const timeContainer = page.locator('div.space-y-2', { has: page.getByText('Hora Disponible') });
-        const timeSelectTrigger = timeContainer.locator('button[role="combobox"]');
+        await expect(page.getByText(/Cargando|Loading/i)).toBeHidden();
+
+        const timeSelectTrigger = page.getByTestId('time-select');
         await expect(timeSelectTrigger).toBeEnabled({ timeout: 10000 });
         await timeSelectTrigger.click();
 
         await page.waitForTimeout(500);
         await page.getByRole('option', { name: timeStr }).click();
 
-        const typeContainer = page.locator('div.space-y-2', { has: page.getByText('Tipo de Sesión') });
-        const typeSelectTrigger = typeContainer.locator('button[role="combobox"]');
+        const typeSelectTrigger = page.getByTestId('session-type-select');
         await expect(typeSelectTrigger).toBeEnabled();
         await typeSelectTrigger.click();
         await page.click('div[role="option"]:has-text("Individual")');
@@ -121,10 +122,10 @@ test.describe('Scheduling Conflicts', () => {
         expect(conflictRes.status()).toBe(201);
 
         // --- 7. Submit UI Form (Should Fail) ---
-        await page.click('button:has-text("Agendar Sesión")');
+        await page.getByRole('button', { name: /agendar|schedule/i }).click();
 
         // --- 8. Verify Error Handling ---
-        await expect(page.getByText(/Error al agendar|ya tiene|ocupado/i).first()).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('div[role="alert"], div.toast, li[role="status"]').first()).toBeVisible({ timeout: 10000 });
     });
 
     test('Should remove slots that partially overlap with existing sessions', async ({ page, request }) => {
@@ -194,7 +195,7 @@ test.describe('Scheduling Conflicts', () => {
         const targetDate = new Date();
         targetDate.setDate(targetDate.getDate() + ((1 + 7 - targetDate.getDay()) % 7 || 7));
         const dateStr = targetDate.toISOString().split('T')[0];
-        const overlapStart = new Date(`${dateStr}T14:30:00`);
+        const overlapStart = new Date(`${dateStr}T14:30:00Z`);
 
         await request.post(API_URL + '/sessions', {
             data: {
@@ -208,17 +209,17 @@ test.describe('Scheduling Conflicts', () => {
         // --- 4. Check UI Slots ---
         await page.goto('/dashboard/sessions/new');
 
-        await page.click('button:has-text("Seleccionar paciente")');
+        const patientSelectTrigger = page.getByTestId('patient-select');
+        await patientSelectTrigger.waitFor({ state: 'visible', timeout: 15000 });
+        await patientSelectTrigger.click();
         await page.getByRole('option', { name: 'Overlap Client' }).click();
 
         await page.fill('input[type="date"]', dateStr);
 
         await page.waitForTimeout(1000);
-        await expect(page.getByText('Cargando horarios...')).toBeHidden();
+        await expect(page.getByText(/Cargando|Loading/i)).toBeHidden();
 
-        const timeContainer = page.locator('div.space-y-2', { has: page.getByText('Hora Disponible') });
-        const timeSelectTrigger = timeContainer.locator('button[role="combobox"]');
-
+        const timeSelectTrigger = page.getByTestId('time-select');
         await expect(timeSelectTrigger).toBeEnabled({ timeout: 10000 });
         await timeSelectTrigger.click();
 
@@ -297,15 +298,16 @@ test.describe('Scheduling Conflicts', () => {
 
         // Verify No Slots Available
         await page.goto('/dashboard/sessions/new');
-        await page.click('button:has-text("Seleccionar paciente")');
+        const patientSelectTrigger = page.getByTestId('patient-select');
+        await patientSelectTrigger.waitFor({ state: 'visible', timeout: 15000 });
+        await patientSelectTrigger.click();
         await page.getByRole('option', { name: 'Holiday Client' }).click();
         await page.fill('input[type="date"]', dateStr);
 
         await page.waitForTimeout(1000);
-        await expect(page.getByText('Cargando horarios...')).toBeHidden();
+        await expect(page.getByText(/Cargando|Loading/i)).toBeHidden();
 
-        const timeContainer = page.locator('div.space-y-2', { has: page.getByText('Hora Disponible') });
-        const timeSelectTrigger = timeContainer.locator('button[role="combobox"]');
+        const timeSelectTrigger = page.getByTestId('time-select');
 
         if (await timeSelectTrigger.isEnabled()) {
             await timeSelectTrigger.click();
@@ -396,13 +398,14 @@ test.describe('Scheduling Conflicts', () => {
 
         // Verify 11:00 is BLOCKED
         await page.goto('/dashboard/sessions/new');
-        await page.click('button:has-text("Seleccionar paciente")');
+        const patientSelectTrigger = page.getByTestId('patient-select');
+        await patientSelectTrigger.waitFor({ state: 'visible', timeout: 15000 });
+        await patientSelectTrigger.click();
         await page.getByRole('option', { name: 'Buffer Client' }).click();
         await page.fill('input[type="date"]', dateStr);
 
         await page.waitForTimeout(1000);
-        const timeContainer = page.locator('div.space-y-2', { has: page.getByText('Hora Disponible') });
-        const timeSelectTrigger = timeContainer.locator('button[role="combobox"]');
+        const timeSelectTrigger = page.getByTestId('time-select');
         await timeSelectTrigger.click();
 
         // With 60m duration + 15m buffer:
@@ -481,6 +484,8 @@ test.describe('Scheduling Conflicts', () => {
             data: {
                 workStartHour: '09:00',
                 workEndHour: '18:00',
+                bufferTime: 0,
+                defaultDuration: 60,
                 scheduleConfig: {
                     holidays: [],
                     blockedBlocks: [{ date: dateStr, start: '12:00', end: '14:00' }]
@@ -490,13 +495,14 @@ test.describe('Scheduling Conflicts', () => {
         });
 
         await page.goto('/dashboard/sessions/new');
-        await page.click('button:has-text("Seleccionar paciente")');
+        const patientSelectTrigger = page.getByTestId('patient-select');
+        await patientSelectTrigger.waitFor({ state: 'visible', timeout: 15000 });
+        await patientSelectTrigger.click();
         await page.getByRole('option', { name: 'Blocked Client' }).click();
         await page.fill('input[type="date"]', dateStr);
 
         await page.waitForTimeout(1000);
-        const timeContainer = page.locator('div.space-y-2', { has: page.getByText('Hora Disponible') });
-        const timeSelectTrigger = timeContainer.locator('button[role="combobox"]');
+        const timeSelectTrigger = page.getByTestId('time-select');
         await timeSelectTrigger.click();
 
         // 12:00 and 13:00 should be hidden

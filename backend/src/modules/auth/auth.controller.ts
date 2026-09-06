@@ -198,7 +198,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login de usuario' })
   @ApiResponse({ status: 200, description: 'Login exitoso', type: AuthResponseDto })
   @ApiResponse({ status: 401, description: 'Credenciales incorrectas' })
-  @Throttle({ default: { limit: 5, ttl: 900000 } })
+  @Throttle({ default: { limit: process.env.NODE_ENV === 'production' ? 5 : 5000, ttl: 900000 } })
   @HttpCode(200)
   @Post('login')
   async login(
@@ -239,7 +239,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Registro de nuevo usuario' })
   @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente', type: AuthResponseDto })
   @ApiResponse({ status: 409, description: 'Email ya registrado' })
-  @Throttle({ default: { limit: 5, ttl: 3600000 } })
+  @Throttle({ default: { limit: process.env.NODE_ENV === 'production' ? 5 : 5000, ttl: 3600000 } })
   @Post('register')
   async register(
     @Body() registerDto: RegisterDto,
@@ -287,7 +287,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Solicitar recuperación de contraseña' })
   @ApiResponse({ status: 200, description: 'Email de recuperación enviado (o mensaje genérico)' })
-  @Throttle({ default: { limit: 5, ttl: 3600000 } })
+  @Throttle({ default: { limit: process.env.NODE_ENV === 'production' ? 5 : 5000, ttl: 3600000 } })
   @HttpCode(200)
   @Post('forgot-password')
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
@@ -297,7 +297,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Restablecer contraseña con token' })
   @ApiResponse({ status: 200, description: 'Contraseña restablecida exitosamente' })
   @ApiResponse({ status: 401, description: 'Token inválido o expirado' })
-  @Throttle({ default: { limit: 5, ttl: 3600000 } })
+  @Throttle({ default: { limit: process.env.NODE_ENV === 'production' ? 5 : 5000, ttl: 3600000 } })
   @HttpCode(200)
   @Post('reset-password')
   async resetPassword(@Body() dto: ResetPasswordDto) {

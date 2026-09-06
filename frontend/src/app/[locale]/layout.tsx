@@ -15,7 +15,6 @@ const inter = Inter({
 
 type Props = {
   params: { locale: string };
-  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
@@ -76,13 +75,15 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
         'max-snippet': -1,
       },
     },
-    viewport: {
-      width: 'device-width',
-      initialScale: 1,
-      maximumScale: 5,
-    },
   };
 }
+
+import type { Viewport } from 'next';
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 
 import { ErrorBoundary } from '@/components/ErrorBoundary'

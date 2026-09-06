@@ -110,6 +110,7 @@
             "legal": "Legal"
         },
         "Header": {
+            "userMenu": "User Menu",
             "adminLabel": "Admin",
             "panel": "Panel",
             "users": "Users",
