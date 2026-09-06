@@ -391,10 +391,11 @@ export class AuthService {
         return { message: genericMessage };
       }
 
-      // Rate limiting: prevent spam (max 1 resend per 5 minutes per email)
+      // Rate limiting: prevent spam (max 5 resends per 5 minutes per email)
       const rateLimitKey = `resend_verification_${email.toLowerCase()}`;
-      const isRateLimited = await this.cacheManager.get(rateLimitKey);
-      if (isRateLimited) {
+      const attemptsStr = await this.cacheManager.get(rateLimitKey);
+      const attempts = attemptsStr ? parseInt(attemptsStr, 10) : 0;
+      if (attempts >= 5) {
         this.logger.warn(`Resend verification rate-limited for ${email}`);
         return { message: genericMessage };
       }
@@ -417,7 +418,7 @@ export class AuthService {
       );
 
       // Set rate limit (5 minutes = 300 seconds)
-      await this.cacheManager.set(rateLimitKey, 'true', 300 * 1000 as any);
+      await this.cacheManager.set(rateLimitKey, (attempts + 1).toString(), 300 * 1000 as any);
 
       this.logger.log(`Verification email resent to ${email}`);
       return { message: genericMessage };

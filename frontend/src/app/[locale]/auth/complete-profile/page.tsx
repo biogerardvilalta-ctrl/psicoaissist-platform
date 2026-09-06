@@ -140,12 +140,12 @@ export default function CompleteProfilePage() {
                     });
                     // Delay fallback to dashboard so user sees the error
                     setTimeout(() => {
-                        window.location.href = '/dashboard';
+                        router.push('/dashboard');
                     }, 3000);
                 }
             } else {
                 // Redirect to dashboard
-                window.location.href = '/dashboard';
+                router.push('/dashboard');
             }
 
         } catch (err: any) {
@@ -180,9 +180,9 @@ export default function CompleteProfilePage() {
                     <h2 className="text-xl font-bold text-gray-900 mb-2">Perfil Completado</h2>
                     <p className="text-gray-600 mb-6">{error}</p>
                     <p className="text-sm text-gray-500 mb-6">Tu cuenta ha sido creada correctamente, pero falló la redirección al pago. Puedes intentar cambiar de plan desde el Dashboard.</p>
-                    <a href="/dashboard" className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    <Link href="/dashboard" className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
                         Ir al Dashboard
-                    </a>
+                    </Link>
                 </div>
             </div>
         );

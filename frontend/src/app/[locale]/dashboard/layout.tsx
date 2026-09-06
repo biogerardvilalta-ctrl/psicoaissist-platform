@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const pathname = usePathname();
     const t = useTranslations('Dashboard.Navigation');
     const tHeader = useTranslations('Dashboard.Header');
-    const { user, logout, reloadUser } = useAuth();
+    const { user, logout, reloadUser, isLoading } = useAuth();
     const { isAgendaManager } = useRole();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -47,6 +47,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             console.error('Error al cerrar sesión:', error);
         }
     };
+
+    // Auth guard: redirect unauthenticated users to login
+    useEffect(() => {
+        if (!isLoading && !user) {
+            router.push('/auth/login');
+        }
+    }, [user, isLoading, router]);
 
     // Force redirect for INACTIVE users trying to access dashboard
     useEffect(() => {
@@ -147,7 +154,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 {/* User Menu */}
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-gray-100 hover:ring-primary/20 transition-all" id="user-menu-trigger">
+                                        <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-gray-100 hover:ring-primary/20 transition-all" id="user-menu-trigger" aria-label={tHeader('userMenu') || 'User menu'}>
                                             <Avatar className="h-9 w-9">
                                                 <AvatarFallback className="bg-gradient-primary text-white text-xs font-semibold">
                                                     {user?.firstName?.[0]}{user?.lastName?.[0]}
@@ -203,6 +210,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     className="xl:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 focus-ring"
                                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                     aria-label="Toggle navigation"
+                                    aria-expanded={isMobileMenuOpen}
+                                    aria-controls="dashboard-mobile-menu"
                                     id="dashboard-mobile-toggle"
                                 >
                                     {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -257,7 +266,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                                 {/* Language switcher in mobile */}
                                 <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 mt-2">
-                                    <span className="text-sm font-medium text-gray-600">Idioma</span>
+                                    <span className="text-sm font-medium text-gray-600">{t('language')}</span>
                                     <LanguageSwitcher />
                                 </div>
                             </div>

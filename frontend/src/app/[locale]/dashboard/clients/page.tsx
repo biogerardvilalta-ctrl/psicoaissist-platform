@@ -95,9 +95,6 @@ export default function ClientsPage() {
     }, [activeTab, fetchClients]);
 
     const handleArchive = async (id: string) => {
-        if (!confirm(t('actions.archiveConfirm'))) {
-            return;
-        }
 
         try {
             await ClientsAPI.delete(id);
@@ -133,9 +130,6 @@ export default function ClientsPage() {
     };
 
     const handleDeletePermanent = async (id: string) => {
-        if (!confirm(t('actions.deleteConfirm'))) {
-            return;
-        }
 
         try {
             await ClientsAPI.deletePermanent(id);

@@ -4,7 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   createdAt: string;
-  role: 'PSYCHOLOGIST' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP' | 'PSYCHOLOGIST_PREMIUM' | 'MANAGER';
+  role: 'PSYCHOLOGIST' | 'PSYCHOLOGIST_BASIC' | 'PSYCHOLOGIST_PRO' | 'PSYCHOLOGIST_PREMIUM' | 'ADMIN' | 'SUPER_ADMIN' | 'AGENDA_MANAGER' | 'PROFESSIONAL_GROUP' | 'MANAGER';
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   trialStartedAt?: string;
   subscription?: {

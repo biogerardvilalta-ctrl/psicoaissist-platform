@@ -65,12 +65,12 @@ export default function PaymentCancelPage() {
             >
               📧 suport@psicoaissist.com
             </a>
-            <a
-              href="/chat"
+            <Link
+              href="/dashboard"
               className="block text-sm text-blue-600 hover:underline"
             >
               {t('help.liveChat')}
-            </a>
+            </Link>
           </div>
         </div>
       </div>

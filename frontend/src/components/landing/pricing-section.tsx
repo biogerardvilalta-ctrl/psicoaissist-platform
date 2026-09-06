@@ -51,7 +51,7 @@ export default function PricingSection() {
 
   const handleSelectPlan = async (planId: string) => {
     if (planId === 'clinics') {
-      router.push('/contact');
+      window.location.href = 'mailto:vendes@psicoaissist.com';
       return;
     }
     router.push(`/auth/register?plan=${planId}`);

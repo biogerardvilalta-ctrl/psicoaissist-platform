@@ -61,9 +61,7 @@ class EndSimulationDto {
 @Controller('simulator')
 @UseGuards(JwtAuthGuard)
 export class SimulatorController {
-    constructor(private readonly simulatorService: SimulatorService) {
-        console.log("✅✅✅ SIMULATOR CONTROLLER LOADED (V3) ✅✅✅");
-    }
+    constructor(private readonly simulatorService: SimulatorService) {}
 
     @ApiOperation({ summary: 'Iniciar un nuevo caso clínico simulado' })
     @ApiResponse({ status: 201, description: 'Caso simulado generado' })
@@ -139,7 +137,7 @@ export class SimulatorController {
     async chatDemo(@Body() dto: ChatDto) {
         // Limit history length strictly to prevent abuse
         if (dto.history.length > 6) {
-            return "... (Límite de la demo alcanzado. Regístrate para continuar)";
+            return { response: '... (Límite de la demo alcanzado. Regístrate para continuar)' };
         }
 
         return {

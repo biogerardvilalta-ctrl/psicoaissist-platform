@@ -313,34 +313,42 @@ export default function SessionsPage() {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">{t('filters.type')}</label>
-                                        <select
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        <Select
                                             value={typeFilter}
-                                            onChange={(e) => setTypeFilter(e.target.value)}
+                                            onValueChange={(val) => setTypeFilter(val)}
                                         >
-                                            <option value="ALL">{t('filters.allTypes')}</option>
-                                            <option value="INDIVIDUAL">{t('types.INDIVIDUAL')}</option>
-                                            <option value="GROUP">{t('types.GROUP')}</option>
-                                            <option value="FAMILY">{t('types.FAMILY')}</option>
-                                            <option value="COUPLE">{t('types.COUPLE')}</option>
-                                            <option value="CONSULTATION">{t('types.CONSULTATION')}</option>
-                                            <option value="EMERGENCY">{t('types.EMERGENCY')}</option>
-                                        </select>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('filters.allTypes')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="ALL">{t('filters.allTypes')}</SelectItem>
+                                                <SelectItem value="INDIVIDUAL">{t('types.INDIVIDUAL')}</SelectItem>
+                                                <SelectItem value="GROUP">{t('types.GROUP')}</SelectItem>
+                                                <SelectItem value="FAMILY">{t('types.FAMILY')}</SelectItem>
+                                                <SelectItem value="COUPLE">{t('types.COUPLE')}</SelectItem>
+                                                <SelectItem value="CONSULTATION">{t('types.CONSULTATION')}</SelectItem>
+                                                <SelectItem value="EMERGENCY">{t('types.EMERGENCY')}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">{t('filters.status')}</label>
-                                        <select
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        <Select
                                             value={statusFilter}
-                                            onChange={(e) => setStatusFilter(e.target.value)}
+                                            onValueChange={(val) => setStatusFilter(val)}
                                         >
-                                            <option value="ALL">{t('filters.allStatuses')}</option>
-                                            <option value="SCHEDULED">{t('status.SCHEDULED')}</option>
-                                            <option value="COMPLETED">{t('status.COMPLETED')}</option>
-                                            <option value="CANCELLED">{t('status.CANCELLED')}</option>
-                                            <option value="IN_PROGRESS">{t('status.IN_PROGRESS')}</option>
-                                            <option value="NO_SHOW">{t('status.NO_SHOW')}</option>
-                                        </select>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('filters.allStatuses')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="ALL">{t('filters.allStatuses')}</SelectItem>
+                                                <SelectItem value="SCHEDULED">{t('status.SCHEDULED')}</SelectItem>
+                                                <SelectItem value="COMPLETED">{t('status.COMPLETED')}</SelectItem>
+                                                <SelectItem value="CANCELLED">{t('status.CANCELLED')}</SelectItem>
+                                                <SelectItem value="IN_PROGRESS">{t('status.IN_PROGRESS')}</SelectItem>
+                                                <SelectItem value="NO_SHOW">{t('status.NO_SHOW')}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
 

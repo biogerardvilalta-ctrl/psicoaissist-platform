@@ -77,7 +77,6 @@ export default function SettingsPage() {
       setBufferTime(user.bufferTime?.toString() || "10");
       setWorkStartHour(user.workStartHour || "09:00");
       setWorkEndHour(user.workEndHour || "18:00");
-      setWorkEndHour(user.workEndHour || "18:00");
 
       // Redirect if on Basic plan and trying to access blocked section
       const isBasic = user.subscription?.planType?.toUpperCase() === 'BASIC';
@@ -159,7 +158,7 @@ export default function SettingsPage() {
     ...((user?.subscription?.planType?.toUpperCase() === 'PREMIUM' || user?.role === 'ADMIN') ? [{ id: 'branding', label: t('sections.branding'), icon: Palette }] : []),
     // Solo mostrar Gestores de Agenda si tiene el pack activado con agendaManagerEnabled o es ADMIN
     ...((user?.agendaManagerEnabled === true || user?.role === 'ADMIN') ? [{ id: 'managers', label: t('sections.managers'), icon: Users }] : []),
-    { id: 'notifications', label: t('sections.notifications'), icon: Bell },
+    // { id: 'notifications', label: t('sections.notifications'), icon: Bell },
     { id: 'privacy', label: t('sections.privacy'), icon: FileJson },
   ];
 
@@ -403,34 +402,7 @@ export default function SettingsPage() {
 
 
 
-        {/* NOTIFICATIONS SECTION */}
-        {activeSection === 'notifications' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('notifications.title')}</CardTitle>
-              <CardDescription>{t('notifications.subtitle')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="reminders"
-                  checked={enableReminders}
-                  onCheckedChange={handleReminderChange}
-                  disabled={loading}
-                />
-                <div className="grid gap-1.5 leading-none">
-                  <Label htmlFor="reminders" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    {t('notifications.enableReminders')}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {t('notifications.remindersHelp')}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-        )}
+        {/* NOTIFICATIONS SECTION REMOVED AS REQUESTED */}
 
         {/* AGENDA MANAGERS SECTION */}
         {activeSection === 'managers' && (

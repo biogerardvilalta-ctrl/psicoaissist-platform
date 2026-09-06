@@ -13,7 +13,7 @@ export default function Navigation() {
 
   if (!isAuthenticated) return null;
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => path === '/' ? pathname === path : pathname.startsWith(path) || pathname === path;
 
   const navItems = [
     // Common items for all authenticated users

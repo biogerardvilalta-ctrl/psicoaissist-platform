@@ -12,9 +12,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { CreditCard, Calendar, CheckCircle2, AlertCircle, Activity, Users, Server } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/navigation';
 
 // ... imports
-import { simulatorService, StatsData } from '@/services/simulator.service';
+import { simulatorService, StatsData } from '@/lib/simulator-api';
 import { SimulatorUsageBar } from '@/components/dashboard/usage/SimulatorUsageBar';
 import { usePayments } from '@/hooks/usePayments';
 import { UpgradePlanModal } from '@/components/dashboard/settings/upgrade-plan-modal';
@@ -25,6 +26,7 @@ export default function ProfilePage() {
     const { toast } = useToast();
     const { openCustomerPortal, loading: paymentsLoading } = usePayments();
     const t = useTranslations('Dashboard.Profile');
+    const router = useRouter();
 
     // Simulator Stats
     const [stats, setStats] = useState<StatsData | null>(null);
@@ -84,7 +86,7 @@ export default function ProfilePage() {
                 description: t('toasts.accountDeletedDesc'),
             });
             await logout(); // Ensure client session is cleared
-            window.location.href = '/auth/login';
+            router.push('/auth/login');
         } catch (error) {
             toast({
                 title: t('toasts.accountDeleteError'),
@@ -103,7 +105,7 @@ export default function ProfilePage() {
                 title: t('toasts.subscriptionCanceled'),
                 description: t('toasts.subscriptionCanceledDesc'),
             });
-            setTimeout(() => window.location.reload(), 1500);
+            setTimeout(() => reloadUser(), 1500);
         } catch (error) {
             // Error handling is already in usePayments
             setIsCancelSubscriptionDialogOpen(false);
@@ -137,7 +139,7 @@ export default function ProfilePage() {
 
             setIsEditing(false);
             // Ideally update local user context if needed, but page reload or re-fetch works
-            window.location.reload();
+            reloadUser();
         } catch (error) {
             toast({
                 title: t('toasts.profileError'),

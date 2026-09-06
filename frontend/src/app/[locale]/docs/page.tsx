@@ -92,7 +92,7 @@ export default function DocsIndexPage() {
 
                 <div className="mt-16 text-center">
                     <p className="text-slate-500">
-                        {t('contact.text')} <Link href="/contact" className="text-blue-600 hover:underline">{t('contact.link')}</Link>
+                        {t('contact.text')} <a href="mailto:suport@psicoaissist.com" className="text-blue-600 hover:underline">{t('contact.link')}</a>
                     </p>
                 </div>
             </div>

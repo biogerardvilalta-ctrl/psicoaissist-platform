@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { UserAPI } from '@/lib/user-api';
 import { User } from '@/types/auth';
 import { Plus, Trash2, User as UserIcon, Loader2, Check } from 'lucide-react';
-import { Input } from '@/components/ui/input'; // Assuming you have these UI components
-// If not, use standard HTML/Tailwind for now or verify component existence.
-// To stay safe, I'll use standard HTML + Tailwind classes if I'm not sure, but since I saw 'shadcn' like imports before, I'll try to use basic HTML/Tailwind that looks like shadcn.
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 export function AgendaManagersSettings() {
+    const { toast } = useToast();
     const [managers, setManagers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
@@ -40,27 +40,25 @@ export function AgendaManagersSettings() {
         try {
             setIsCreating(true);
             await UserAPI.createAgendaManager(newManager);
-            // Si funciona, podría ser que se haya creado O vinculado. 
-            // Podríamos comprobar si ya existía en la lista 'managers' antes de recargar,
-            // pero lo más sencillo es mostrar un mensaje de éxito genérico.
-            alert('Gestor asignado/vinculado correctamente.'); // Simple alert for now, strictly per component style
+            toast({ title: 'Gestor asignado/vinculado correctamente.' });
             setNewManager({ firstName: '', lastName: '', email: '', password: '' });
             await loadManagers();
         } catch (error: any) {
             console.error('Failed to create manager', error);
-            alert(error.message || 'Error al asignar/vincular gestor');
+            toast({ title: 'Error', description: error.message || 'Error al asignar/vincular gestor', variant: 'destructive' });
         } finally {
             setIsCreating(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('¿Estás seguro de que deseas desvincular a este gestor? No se eliminará su cuenta, solo perderá acceso a tu agenda.')) return;
         try {
             await UserAPI.deleteAgendaManager(id);
             setManagers(managers.filter(m => m.id !== id));
+            toast({ title: 'Gestor desvinculado.' });
         } catch (error) {
             console.error('Failed to delete manager', error);
+            toast({ title: 'Error', description: 'Error al desvincular gestor', variant: 'destructive' });
         }
     };
 
@@ -77,37 +75,33 @@ export function AgendaManagersSettings() {
             <div className="bg-gray-50/50 p-4 rounded-lg border border-gray-100 dark:bg-gray-800/20 dark:border-gray-800">
                 <form onSubmit={handleCreate} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input
+                        <Input
                             type="text"
                             placeholder="Nombre"
                             required
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             value={newManager.firstName}
                             onChange={(e) => setNewManager({ ...newManager, firstName: e.target.value })}
                         />
-                        <input
+                        <Input
                             type="text"
                             placeholder="Apellidos"
                             required
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             value={newManager.lastName}
                             onChange={(e) => setNewManager({ ...newManager, lastName: e.target.value })}
                         />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input
+                        <Input
                             type="email"
                             placeholder="Email"
                             required
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             value={newManager.email}
                             onChange={(e) => setNewManager({ ...newManager, email: e.target.value })}
                         />
-                        <input
+                        <Input
                             type="password"
                             placeholder="Contraseña (solo si es nuevo usuario)"
                             minLength={6}
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             value={newManager.password}
                             onChange={(e) => setNewManager({ ...newManager, password: e.target.value })}
                         />

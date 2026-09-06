@@ -3,6 +3,7 @@
 import { AdminUser } from '@/lib/admin-api';
 import { User, Crown, Shield, Clock, MoreVertical } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from '@/navigation';
 
 interface RecentUsersProps {
   users: AdminUser[];
@@ -163,6 +164,7 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                     <button
                       onClick={() => setShowDropdown(showDropdown === user.id ? null : user.id)}
                       className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+                      aria-label="Acciones de usuario"
                     >
                       <MoreVertical className="w-4 h-4 text-gray-600" />
                     </button>
@@ -170,18 +172,18 @@ export default function RecentUsers({ users, loading, error, onRefresh, onViewAl
                     {showDropdown === user.id && (
                       <div className="absolute right-0 bottom-full sm:top-full sm:bottom-auto mt-1 mb-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-20">
                         <div className="py-1">
-                          <button
-                            onClick={() => console.log('View details', user.id)}
+                          <Link
+                            href="/admin/users"
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                           >
                             Ver detalles
-                          </button>
-                          <button
-                            onClick={() => console.log('Edit user', user.id)}
+                          </Link>
+                          <Link
+                            href="/admin/users"
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                           >
                             Editar usuario
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     )}

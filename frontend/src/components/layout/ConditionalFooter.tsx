@@ -10,6 +10,9 @@ export default function ConditionalFooter() {
   // Check if pathname contains admin or dashboard segments
   const isExcluded =
     pathname?.includes('/admin') ||
+    pathname?.includes('/auth') ||
+    pathname?.includes('/video-call') ||
+    pathname?.includes('/legal') ||
     pathname?.includes('/dashboard');
 
   if (isExcluded) {

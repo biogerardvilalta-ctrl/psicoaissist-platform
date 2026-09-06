@@ -2,8 +2,6 @@ import { Link } from '@/navigation';
 import { getPostBySlug, getAllPosts } from '@/lib/blog-data';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Calendar, Clock, User, Share2 } from 'lucide-react';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 
 // Basic markdown-like renderer if we don't have a library installed, 
 // or just display line breaks. For simplicity in this step without installing deps,
@@ -44,7 +42,6 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
 
     return (
         <div className="min-h-screen bg-white">
-            <Header />
             <article className="pt-24 pb-16">
                 {/* Header */}
                 <header className="max-w-3xl mx-auto px-4 sm:px-6 mb-12 text-center">
@@ -105,7 +102,6 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
                     </div>
                 </div>
             </article>
-            <Footer />
         </div>
     );
 }

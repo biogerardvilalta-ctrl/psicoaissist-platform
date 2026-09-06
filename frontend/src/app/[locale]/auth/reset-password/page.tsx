@@ -29,7 +29,7 @@ export default function ResetPasswordPage() {
   }, [token, t]);
 
   const validateForm = () => {
-    if (password.length < 6) {
+    if (password.length < 8) {
       setErrorMessage(t('errors.passwordLength'));
       return false;
     }
@@ -74,7 +74,7 @@ export default function ResetPasswordPage() {
           <div className="pt-4">
             <Link
               href="/auth/forgot-password"
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700"
             >
               {t('requestNewLink')}
             </Link>
@@ -93,7 +93,7 @@ export default function ResetPasswordPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
               <KeyRound className="w-8 h-8 text-white" />
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function ResetPasswordPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors pr-10"
+                    className="block w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:bg-white transition-colors pr-10"
                     placeholder="••••••••"
                   />
                   <button
@@ -162,7 +162,7 @@ export default function ResetPasswordPage() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="block w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors pr-10"
+                    className="block w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:bg-white transition-colors pr-10"
                     placeholder="••••••••"
                   />
                 </div>
@@ -180,7 +180,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={status === 'loading' || !password || !confirmPassword}
-                className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
+                className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
               >
                 {status === 'loading' ? (
                   <div className="flex items-center">

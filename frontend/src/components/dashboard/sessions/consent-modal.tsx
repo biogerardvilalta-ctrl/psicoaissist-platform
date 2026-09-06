@@ -53,8 +53,7 @@ export function ConsentModal({ isOpen, onClose, onConfirm, clientName }: Consent
                         <Info className="h-4 w-4 text-blue-600" />
                         <AlertTitle className="text-blue-800">{t('clinicalToolTitle')}</AlertTitle>
                         <AlertDescription className="text-blue-700 text-sm">
-                            {t('clinicalToolDescription').split('No realitza')[0]}
-                            <strong>{t('clinicalToolDescription').split('No realitza')[1] ? 'No realitza' + t('clinicalToolDescription').split('No realitza')[1] : t('clinicalToolDescription')}</strong>
+                            <p>{t('clinicalToolDescription')}</p>
                         </AlertDescription>
                     </Alert>
 

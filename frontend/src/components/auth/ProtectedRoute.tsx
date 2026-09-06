@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { User } from '@/types/auth';
+import { Spinner } from '@/components/ui/spinner';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  requiredRole?: User['role'];
+  requiredRole?: User['role'] | User['role'][];
   redirectTo?: string;
   fallback?: ReactNode;
 }
@@ -25,17 +26,18 @@ export default function ProtectedRoute({
     if (!isLoading) {
       // Not authenticated - redirect to login
       if (!isAuthenticated) {
-        console.log('🔒 Not authenticated, redirecting to:', redirectTo);
         router.push(redirectTo);
         return;
       }
 
       // Authenticated but wrong role - redirect based on user role
-      const hasPermission = user?.role === requiredRole || (requiredRole === 'ADMIN' && user?.role === 'SUPER_ADMIN');
+      const requiredRoles = Array.isArray(requiredRole) ? requiredRole : requiredRole ? [requiredRole] : [];
+      const hasPermission =
+        requiredRoles.length === 0 ||
+        requiredRoles.includes(user?.role as User['role']) ||
+        (requiredRoles.includes('ADMIN') && user?.role === 'SUPER_ADMIN');
 
-      if (requiredRole && !hasPermission) {
-        console.log('🚫 Insufficient permissions. Required:', requiredRole, 'Current:', user?.role);
-
+      if (!hasPermission) {
         // Redirect based on user's actual role
         if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
           router.push('/admin');
@@ -52,10 +54,7 @@ export default function ProtectedRoute({
     return (
       fallback || (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Verificando autenticación...</p>
-          </div>
+          <Spinner size="lg" />
         </div>
       )
     );
@@ -67,8 +66,12 @@ export default function ProtectedRoute({
   }
 
   // Wrong role
-  const hasPermission = user?.role === requiredRole || (requiredRole === 'ADMIN' && user?.role === 'SUPER_ADMIN');
-  if (requiredRole && !hasPermission) {
+  const requiredRoles = Array.isArray(requiredRole) ? requiredRole : requiredRole ? [requiredRole] : [];
+  const hasPermission =
+    requiredRoles.length === 0 ||
+    requiredRoles.includes(user?.role as User['role']) ||
+    (requiredRoles.includes('ADMIN') && user?.role === 'SUPER_ADMIN');
+  if (!hasPermission) {
     return null; // Router push will handle redirect
   }
 

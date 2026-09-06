@@ -123,7 +123,7 @@ export function TodaysSessions() {
                                     onClick={() => handleStartSession(session.id)}
                                 >
                                     {session.status === SessionStatus.COMPLETED ? t('viewDetails') : t('start')}
-                                    {!session.status && <ArrowRight className="ml-2 h-4 w-4" />}
+                                    {session.status !== SessionStatus.COMPLETED && <ArrowRight className="ml-2 h-4 w-4" />}
                                 </Button>
                             </div>
                         ))}

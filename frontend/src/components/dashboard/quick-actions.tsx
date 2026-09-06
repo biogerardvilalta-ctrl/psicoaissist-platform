@@ -1,7 +1,7 @@
 'use client';
 
 import { Heart, User, FileText, Calendar, Plus, ArrowRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Link } from '@/navigation';
 
 interface QuickAction {
   id: string;
@@ -10,11 +10,10 @@ interface QuickAction {
   icon: any;
   color: string;
   hoverColor: string;
-  action: () => void;
+  href: string;
 }
 
 export default function QuickActions() {
-  const router = useRouter();
 
   const quickActions: QuickAction[] = [
     {
@@ -24,9 +23,7 @@ export default function QuickActions() {
       icon: Heart,
       color: 'bg-blue-100 group-hover:bg-blue-200 text-blue-600',
       hoverColor: 'hover:border-blue-500 hover:bg-blue-50',
-      action: () => {
-        router.push('/dashboard/sessions');
-      }
+      href: '/dashboard/sessions'
     },
     {
       id: 'manage-patients',
@@ -35,9 +32,7 @@ export default function QuickActions() {
       icon: User,
       color: 'bg-green-100 group-hover:bg-green-200 text-green-600',
       hoverColor: 'hover:border-green-500 hover:bg-green-50',
-      action: () => {
-        router.push('/dashboard/clients');
-      }
+      href: '/dashboard/clients'
     },
     {
       id: 'generate-report',
@@ -46,9 +41,7 @@ export default function QuickActions() {
       icon: FileText,
       color: 'bg-purple-100 group-hover:bg-purple-200 text-purple-600',
       hoverColor: 'hover:border-purple-500 hover:bg-purple-50',
-      action: () => {
-        router.push('/dashboard/reports/new');
-      }
+      href: '/dashboard/reports/new'
     },
     {
       id: 'schedule-appointment',
@@ -57,9 +50,7 @@ export default function QuickActions() {
       icon: Calendar,
       color: 'bg-orange-100 group-hover:bg-orange-200 text-orange-600',
       hoverColor: 'hover:border-orange-500 hover:bg-orange-50',
-      action: () => {
-        router.push('/dashboard/sessions/new');
-      }
+      href: '/dashboard/sessions/new'
     }
   ];
 
@@ -71,6 +62,7 @@ export default function QuickActions() {
             <h3 className="text-lg font-medium text-gray-900">Acciones Rápidas</h3>
             <p className="text-sm text-gray-500 mt-1">Comienza a usar PsicoAIssist con estas opciones</p>
           </div>
+          {/* TODO: Implement Personalizar */}
           <button className="flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors">
             <Plus className="w-4 h-4 mr-1" />
             Personalizar
@@ -83,10 +75,10 @@ export default function QuickActions() {
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
-              <button
+              <Link
                 key={action.id}
-                onClick={action.action}
-                className={`p-4 border-2 border-dashed border-gray-300 rounded-lg transition-colors group ${action.hoverColor}`}
+                href={action.href}
+                className={`p-4 border-2 border-dashed border-gray-300 rounded-lg transition-colors group block ${action.hoverColor}`}
               >
                 <div className="text-center">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 transition-colors ${action.color}`}>
@@ -99,7 +91,7 @@ export default function QuickActions() {
                   Hacer clic para continuar
                   <ArrowRight className="w-3 h-3 ml-1" />
                 </div>
-              </button>
+              </Link>
             );
           })}
         </div>

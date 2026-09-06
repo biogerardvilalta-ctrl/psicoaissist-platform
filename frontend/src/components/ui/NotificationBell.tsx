@@ -70,14 +70,6 @@ export function NotificationBell() {
                                 {t('markAsRead')}
                             </Button>
                         )}
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs h-auto px-2 text-blue-600"
-                            onClick={() => sendTestNotification()}
-                        >
-                            🔔 {t('test')}
-                        </Button>
                     </div>
                 </div>
                 <div className="h-[300px] overflow-y-auto">
@@ -88,10 +80,10 @@ export function NotificationBell() {
                     ) : (
                         <div className="flex flex-col">
                             {notifications.map((notification) => (
-                                <div
+                                <button
                                     key={notification.id}
                                     className={cn(
-                                        "flex flex-col gap-1 border-b p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer",
+                                        "flex flex-col gap-1 border-b p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer text-left w-full",
                                         !notification.isRead && "bg-blue-50/50 dark:bg-blue-900/10"
                                     )}
                                     onClick={() => !notification.isRead && markAsRead(notification.id)}
@@ -110,7 +102,7 @@ export function NotificationBell() {
                                     <span className="text-[10px] text-gray-400">
                                         {format(new Date(notification.createdAt), "d MMM, HH:mm", { locale: dateLocale })}
                                     </span>
-                                </div>
+                                </button>
                             ))}
                         </div>
                     )}

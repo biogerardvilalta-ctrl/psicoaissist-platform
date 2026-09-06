@@ -129,6 +129,8 @@ export function Header() {
               onClick={toggleMenu}
               className="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 focus-ring"
               aria-label="Toggle menu"
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
               id="mobile-menu-toggle"
             >
               {isMenuOpen ? (

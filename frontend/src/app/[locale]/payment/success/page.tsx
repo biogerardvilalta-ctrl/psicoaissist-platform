@@ -171,7 +171,7 @@ export default function PaymentSuccessPage() {
 
         {/* Support info */}
         <p className="text-xs text-gray-500 mt-6">
-          {t('support.message')} <a href="/contact" className="text-blue-600 hover:underline">{t('support.link')}</a>
+          {t('support.message')} <a href="mailto:suport@psicoaissist.com" className="text-blue-600 hover:underline">{t('support.link')}</a>
         </p>
       </div>
     </div>

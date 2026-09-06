@@ -42,12 +42,7 @@ import { ProgressChart, StatsCard } from '@/components/dashboard';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
-const TABS = [
-    { id: 'overview', label: 'Resumen General', icon: LayoutDashboard },
-    { id: 'clinical', label: 'Detalle Clínico', icon: Activity },
-    { id: 'patients', label: 'Pacientes y Adherencia', icon: Users },
-    { id: 'themes', label: 'Temas y Tendencias', icon: PieChartIcon },
-];
+
 
 export default function StatisticsPage() {
     const searchParams = useSearchParams();

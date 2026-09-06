@@ -113,9 +113,14 @@ export class GoogleService {
             });
             return response.data.items;
         } catch (error) {
-            console.error('Failed to list Google events', error);
-            // If refresh token is invalid, we should wipe it so UI updates
-            throw new BadRequestException('Failed to fetch calendar events');
+            // If refresh token is invalid, clear it from DB so the UI updates to disconnected state
+            if (error.code === 401 || error.message?.includes('invalid_grant')) {
+                await this.prisma.user.update({
+                    where: { id: userId },
+                    data: { googleRefreshToken: null },
+                });
+            }
+            return [];
         }
     }
 
@@ -185,5 +190,17 @@ export class GoogleService {
         } catch (error) {
             console.error('Failed to delete Google event', error);
         }
+    }
+
+    async disconnect(userId: string) {
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                googleRefreshToken: null,
+                googleCalendarId: null,
+                googleImportCalendar: false,
+            },
+        });
+        return { success: true };
     }
 }

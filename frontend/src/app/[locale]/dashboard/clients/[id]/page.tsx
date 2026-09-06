@@ -28,18 +28,14 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
     useEffect(() => {
         const loadData = async () => {
             try {
-                // Fetch Client and All Sessions simultaneously
-                const [clientData, allSessions] = await Promise.all([
+                // Fetch Client and Sessions for this specific client simultaneously
+                const [clientData, clientSessions] = await Promise.all([
                     ClientsAPI.getById(params.id),
-                    SessionsAPI.getAll()
+                    SessionsAPI.getAll({ clientId: params.id })
                 ]);
 
                 setClient(clientData);
-
-                // Check correct ID and filter
-                // Note: SessionsAPI.getAll returns session.clientId which should match params.id
-                const filtered = allSessions.filter(s => s.clientId === params.id);
-                setSessions(filtered);
+                setSessions(clientSessions);
 
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -108,7 +104,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
                     <Button variant="outline" onClick={() => router.push(`/dashboard/sessions/new?clientId=${client.id}`)}>
                         <Calendar className="mr-2 h-4 w-4" /> {t('actions.newSession')}
                     </Button>
-                    <Button variant="default">
+                    <Button variant="default" onClick={() => router.push(`/dashboard/clients/${client.id}/edit`)}>
                         <Edit className="mr-2 h-4 w-4" /> {t('actions.edit')}
                     </Button>
                 </div>

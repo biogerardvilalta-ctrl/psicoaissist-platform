@@ -147,7 +147,6 @@ export default function NewReportPage() {
                 language: locale
             });
             setDraftContent(result.content);
-            setDraftContent(result.content);
             const typeKey = reportType === ReportType.PROGRESS ? 'evolution' : 'discharge';
             setReportTitle(`${t(`defaultTitles.${typeKey}`)} - ${new Date().toLocaleDateString()}`);
             nextStep(); // Move to Edit step

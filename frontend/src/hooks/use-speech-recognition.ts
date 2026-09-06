@@ -68,7 +68,7 @@ export function useSpeechRecognition(lang: string = 'es-ES') {
                 // Usually means it's already started
             }
         } else {
-            alert("Your browser does not support speech recognition.");
+            console.error("Your browser does not support speech recognition.");
         }
     }, []);
 

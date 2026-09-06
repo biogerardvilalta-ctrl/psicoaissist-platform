@@ -138,7 +138,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Obtener usuario por ID' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado', type: UserResponseDto })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
-  @Roles(UserRole.ADMIN, UserRole.PSYCHOLOGIST)
+  @Roles(UserRole.ADMIN, UserRole.PSYCHOLOGIST, UserRole.PSYCHOLOGIST_BASIC, UserRole.PSYCHOLOGIST_PRO, UserRole.PSYCHOLOGIST_PREMIUM)
   @UseGuards(RolesGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {

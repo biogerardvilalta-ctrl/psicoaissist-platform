@@ -44,7 +44,7 @@ export default function AdminHeader() {
         <div className="flex justify-between h-16">
           {/* Logo y navegación principal */}
           <div className="flex items-center">
-            <Link href="/admin" className="flex items-center space-x-3 mr-8">
+            <Link href="/admin" className="flex items-center space-x-3 mr-8" aria-label="Inicio Administración">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">PA</span>
               </div>
@@ -85,7 +85,7 @@ export default function AdminHeader() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-3 focus:outline-none">
+                <button className="flex items-center space-x-3 focus:outline-none" aria-label="Menú de usuario">
                   <Avatar className="h-8 w-8 bg-gray-700">
                     <AvatarFallback className="bg-blue-600 text-white">
                       {((user?.firstName ? user.firstName.trim().charAt(0) : '') + (user?.lastName ? user.lastName.trim().charAt(0) : '')).toUpperCase() || 'A'}
@@ -109,7 +109,7 @@ export default function AdminHeader() {
                 <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/profile" className="w-full cursor-pointer flex items-center">
+                  <Link href="/dashboard/profile" className="w-full cursor-pointer flex items-center">
                     <UserCircle className="mr-2 h-4 w-4" />
                     <span>Perfil</span>
                   </Link>
@@ -132,7 +132,7 @@ export default function AdminHeader() {
             <div className="lg:hidden">
               <Sheet>
                 <SheetTrigger asChild>
-                  <button className="p-2 text-gray-300 hover:text-white">
+                  <button className="p-2 text-gray-300 hover:text-white" aria-label="Abrir menú de navegación">
                     <Menu className="w-6 h-6" />
                   </button>
                 </SheetTrigger>
@@ -164,7 +164,7 @@ export default function AdminHeader() {
                     </nav>
 
                     <div className="pt-6 border-t border-gray-100 text-center text-xs text-gray-400">
-                      © 2024 PsicoAIssist. Todos los derechos reservados.
+                      &copy; {new Date().getFullYear()} PsicoAIssist. Todos los derechos reservados.
                     </div>
                   </div>
                 </SheetContent>

@@ -4,12 +4,14 @@ import { useState, useCallback } from 'react';
 import { PaymentsAPI } from '@/lib/payments-api';
 import type { Plan, CreateCheckoutSessionRequest } from '@/types/payments';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/auth-context';
 
 export function usePayments() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { toast } = useToast();
+  const { reloadUser } = useAuth();
 
   const createCheckoutSession = useCallback(async (request: CreateCheckoutSessionRequest) => {
     console.log('🔄 Iniciando createCheckoutSession:', request);
@@ -32,7 +34,7 @@ export function usePayments() {
         });
         // Reload page to reflect changes? Or just return.
         // Reloading might be safer to refresh permissions without complex state updates.
-        setTimeout(() => window.location.reload(), 1500);
+        setTimeout(() => reloadUser(), 1500);
       }
 
       return session;
@@ -97,7 +99,7 @@ export function usePayments() {
       });
 
       // Refresh page to update permissions
-      setTimeout(() => window.location.reload(), 1500);
+      setTimeout(() => reloadUser(), 1500);
 
     } catch (err) {
       console.error('❌ Error actualizando plan:', err);

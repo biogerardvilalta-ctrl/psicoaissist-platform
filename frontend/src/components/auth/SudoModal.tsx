@@ -10,9 +10,10 @@ import { AuthAPI } from '@/lib/auth-api';
 interface SudoModalProps {
     isOpen: boolean;
     onVerified: () => void;
+    onClose?: () => void;
 }
 
-export function SudoModal({ isOpen, onVerified }: SudoModalProps) {
+export function SudoModal({ isOpen, onVerified, onClose }: SudoModalProps) {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -57,9 +58,12 @@ export function SudoModal({ isOpen, onVerified }: SudoModalProps) {
                             disabled={loading}
                             autoFocus
                         />
-                        {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
+                        {error && <p role="alert" className="text-sm text-red-500 font-medium">{error}</p>}
                     </div>
-                    <DialogFooter>
+                    <DialogFooter className="gap-2 sm:gap-0 flex-col sm:flex-row">
+                        <Button type="button" variant="outline" onClick={onClose} disabled={loading || !onClose}>
+                            Cancelar
+                        </Button>
                         <Button type="submit" disabled={loading || !password}>
                             {loading ? 'Verificando...' : 'Verificar'}
                         </Button>

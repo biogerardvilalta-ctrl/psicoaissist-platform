@@ -236,7 +236,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error creating user:', error);
-      throw new Error('Error al crear el usuario');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al crear el usuario');
     }
   }
 
@@ -246,7 +246,7 @@ export class AdminAPI {
       await httpClient.patch(`${this.BASE_URL}/users/${id}/password`, { password });
     } catch (error) {
       console.error('❌ Error changing password:', error);
-      throw new Error('Error al cambiar la contraseña');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al cambiar la contraseña');
     }
   }
 
@@ -257,7 +257,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error fetching user:', error);
-      throw new Error('Error al cargar el usuario');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al cargar el usuario');
     }
   }
 
@@ -268,7 +268,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error updating user:', error);
-      throw new Error('Error al actualizar el usuario');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al actualizar el usuario');
     }
   }
 
@@ -279,7 +279,7 @@ export class AdminAPI {
       console.log('✅ User deleted successfully');
     } catch (error) {
       console.error('❌ Error deleting user:', error);
-      throw new Error('Error al eliminar el usuario');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al eliminar el usuario');
     }
   }
 
@@ -290,7 +290,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error verifying user:', error);
-      throw new Error('Error al verificar el usuario');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al verificar el usuario');
     }
   }
 
@@ -301,7 +301,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error cleaning up users:', error);
-      throw new Error('Error al realizar la limpieza de usuarios');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al realizar la limpieza de usuarios');
     }
   }
 
@@ -313,7 +313,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error fetching backups:', error);
-      throw new Error('Error al cargar la lista de backups');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al cargar la lista de backups');
     }
   }
 
@@ -324,7 +324,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error creating backup:', error);
-      throw new Error('Error al crear el backup');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al crear el backup');
     }
   }
 
@@ -335,7 +335,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error restoring backup:', error);
-      throw new Error('Error al restaurar el backup');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al restaurar el backup');
     }
   }
 
@@ -346,7 +346,7 @@ export class AdminAPI {
       return response as any;
     } catch (error) {
       console.error('❌ Error deleting backup:', error);
-      throw new Error('Error al eliminar el backup');
+      throw new Error((error as any).response?.data?.message || (error as any).message || 'Error al eliminar el backup');
     }
   }
 }

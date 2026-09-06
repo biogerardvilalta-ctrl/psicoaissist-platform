@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Mic, MicOff, Square, Play, RotateCcw, User, UserCheck, Settings2, BarChart3, History, Search, X } from 'lucide-react';
-import { simulatorService, PatientProfile, SimulationReport, StatsData } from '@/services/simulator.service';
+import { simulatorService, PatientProfile, SimulationReport, StatsData } from '@/lib/simulator-api';
 import { ApiError } from '@/lib/http-client';
 import { Link } from '@/navigation';
 import { EvolutionChart } from './components/EvolutionChart';
@@ -33,7 +33,7 @@ import { useTranslations, useLocale } from 'next-intl';
 // I will assume it's a local helper or I need to implement basic speech rec logic.
 // Let's implement a simple version of the hook here to avoid import errors if the file is missing/unknown.
 
-const useSpeechRecognition = () => {
+const useSpeechRecognition = (lang: string = 'es-ES') => {
     const [isListening, setIsListening] = useState(false);
     const [transcript, setTranscript] = useState('');
     const [interimTranscript, setInterimTranscript] = useState('');
@@ -45,7 +45,7 @@ const useSpeechRecognition = () => {
             recognitionRef.current = new window.webkitSpeechRecognition();
             recognitionRef.current.continuous = true;
             recognitionRef.current.interimResults = true;
-            recognitionRef.current.lang = 'es-ES';
+            recognitionRef.current.lang = lang;
 
             recognitionRef.current.onresult = (event: any) => {
                 let finalTranscript = '';
@@ -66,7 +66,7 @@ const useSpeechRecognition = () => {
                 setIsListening(false);
             };
         }
-    }, []);
+    }, [lang]);
 
     const startListening = () => {
         if (recognitionRef.current) {
@@ -94,9 +94,10 @@ const useSpeechRecognition = () => {
 
 export default function SimulatorPage() {
     const { toast } = useToast();
-    const { isListening, transcript, interimTranscript, startListening, stopListening, resetTranscript } = useSpeechRecognition();
-    const t = useTranslations('Dashboard.Simulator');
     const locale = useLocale();
+    const lang = locale === 'ca' ? 'ca-ES' : locale === 'en' ? 'en-US' : 'es-ES';
+    const { isListening, transcript, interimTranscript, startListening, stopListening, resetTranscript } = useSpeechRecognition(lang);
+    const t = useTranslations('Dashboard.Simulator');
 
     // Main State
     const [status, setStatus] = useState<'idle' | 'loading' | 'active' | 'evaluating' | 'finished'>('idle');
@@ -254,7 +255,7 @@ export default function SimulatorPage() {
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
             window.speechSynthesis.cancel(); // Stop previous
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'es-ES'; // Match input language
+            utterance.lang = lang; // Match input language
             utterance.rate = ttsRate;
             utterance.pitch = ttsPitch;
             window.speechSynthesis.speak(utterance);

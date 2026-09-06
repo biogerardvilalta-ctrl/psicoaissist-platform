@@ -24,7 +24,7 @@ export function useAdminStats() {
       setError(message);
       console.error('Error fetching admin stats:', err);
     } finally {
-      setTimeout(() => setLoading(false), 600);
+      setLoading(false);
     }
   }, []);
 
@@ -66,7 +66,7 @@ export function useAdminUsers(filters?: UserFilters) {
       setError(message);
       console.error('Error fetching admin users:', err);
     } finally {
-      setTimeout(() => setLoading(false), 400);
+      setLoading(false);
     }
   }, [filters]); // Removed 'filters' comment, added it as dependency since it IS used inside via closure or if we want to reset it
 

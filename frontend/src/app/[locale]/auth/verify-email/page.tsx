@@ -8,10 +8,13 @@ import { AuthAPI } from '@/lib/auth-api';
 import { Link } from '@/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { usePayments } from '@/hooks/usePayments';
+import { Spinner } from '@/components/ui/spinner';
+import { useTranslations } from 'next-intl';
 
 function VerifyEmailContent() {
+    const t = useTranslations('auth');
     const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
-    const [message, setMessage] = useState('Verificando tu correo electrónico...');
+    const [message, setMessage] = useState(t('verifyEmail') || 'Verificando tu correo electrónico...');
     const searchParams = useSearchParams();
     const router = useRouter();
     const { loginWithTokens } = useAuth();
@@ -27,7 +30,7 @@ function VerifyEmailContent() {
     useEffect(() => {
         if (!token) {
             setStatus('error');
-            setMessage('Token de verificación no encontrado.');
+            setMessage(t('tokenNotFound') || 'Token de verificación no encontrado.');
             return;
         }
 
@@ -123,7 +126,7 @@ function VerifyEmailContent() {
 export default function VerifyEmailPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
-            <Suspense fallback={<div>Cargando...</div>}>
+            <Suspense fallback={<Spinner />}>
                 <VerifyEmailContent />
             </Suspense>
         </div>

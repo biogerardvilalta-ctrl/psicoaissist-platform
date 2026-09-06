@@ -24,11 +24,11 @@ export default function ClinicsPage() {
                         {t('Hero.description')}
                     </p>
                     <div className="mt-10 flex items-center justify-center gap-x-6">
-                        <Link href="/contact">
+                        <a href="mailto:vendes@psicoaissist.com">
                             <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white h-12 px-8 text-base">
                                 {t('Hero.cta')}
                             </Button>
-                        </Link>
+                        </a>
                         <Link href="#features" className="text-sm font-semibold leading-6 text-white hover:text-blue-400 transition-colors">
                             {t('Hero.more')} <ArrowRight className="inline-block w-4 h-4 ml-1" />
                         </Link>
@@ -247,11 +247,11 @@ export default function ClinicsPage() {
                                 </li>
                             ))}
                         </ul>
-                        <Link href="/contact">
+                        <a href="mailto:vendes@psicoaissist.com">
                             <Button className="bg-white text-slate-900 hover:bg-slate-100">
                                 {t('Simulator.cta')}
                             </Button>
-                        </Link>
+                        </a>
                     </div>
                     {/* Visual Abstracto del Simulador */}
                     <div className="flex-1 relative">
@@ -290,11 +290,11 @@ export default function ClinicsPage() {
                         {t('CTA.description')}
                     </p>
                     <div className="mt-10 flex items-center justify-center gap-x-6">
-                        <Link href="/contact">
+                        <a href="mailto:vendes@psicoaissist.com">
                             <Button size="lg" className="bg-blue-600 hover:bg-blue-500 h-14 px-8 text-lg">
                                 {t('CTA.button')}
                             </Button>
-                        </Link>
+                        </a>
                     </div>
                 </div>
             </section>

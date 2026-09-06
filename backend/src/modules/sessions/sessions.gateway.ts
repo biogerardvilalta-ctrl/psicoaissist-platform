@@ -156,13 +156,11 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
 
             if (!token) {
-                client.emit('debug_log', { message: "No Token Found" });
                 return;
             }
 
             const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get('JWT_SECRET') }) as any;
             if (!payload || !payload.sub) {
-                client.emit('debug_log', { message: "Invalid Token Payload" });
                 return;
             }
 
@@ -171,8 +169,6 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             // Check Plan Features
             // Check Plan Features using centralized logic (Respects Role Override)
             const planFeatures = await this.usageLimitsService.getPlanFeatures(userId);
-
-            client.emit('debug_log', { message: `Plan Check: ${planFeatures ? 'OK' : 'FAIL'} (Analytics: ${planFeatures?.advancedAnalytics})` });
 
             if (!planFeatures?.advancedAnalytics) {
                 return;
@@ -191,10 +187,8 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         // 3. Process AI Suggestions
         try {
             // Rate Limiting & Optimization
-            // a) Length Check: Ignore very short updates (e.g. "Ah") to save tokens and calls
-            // DEBUG: Lowered to 5 for testing. Original: 50
-            if (!notes || notes.trim().length < 5) {
-                // client.emit('debug_log', { message: `Too short: ${notes?.length || 0}` });
+            // a) Length Check: Ignore very short updates
+            if (!notes || notes.trim().length < 50) {
                 return;
             }
 
@@ -203,28 +197,18 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
             if (sessionData && sessionData.lastAiRequestTime) {
                 const timeSinceLastCall = now - sessionData.lastAiRequestTime;
                 if (timeSinceLastCall < 5000) {
-                    // client.emit('debug_log', { message: "Throttled" });
                     return;
                 }
             }
 
-            client.emit('debug_log', { message: "Calling AI Service..." });
             this.logger.log(`Requesting AI suggestions for User ${userId} (${notes.length} chars)`);
             const suggestions = await this.aiService.getLiveSuggestions(notes);
             this.logger.log(`AI Suggestions generated: ${suggestions ? 'Yes' : 'No'}`);
 
             if (suggestions && (suggestions.questions.length > 0 || suggestions.considerations.length > 0)) {
-                client.emit('debug_log', { message: `AI Success: ${suggestions.questions.length} Qs` });
                 client.emit('aiSuggestions', suggestions);
-            } else {
-                client.emit('debug_log', { message: "AI Returned Empty. Sending Mock." });
-                // MOCK FALLBACK TO PROVE PIPELINE
-                client.emit('aiSuggestions', {
-                    questions: ["¿Mock: Como te hace sentir esto?", "Mock: ¿Puedes elaborar?"],
-                    considerations: ["Mock: Observar lenguaje corporal"],
-                    indicators: []
-                });
             }
+            // No mock fallback: if AI returns empty, we simply don't emit anything
 
             // Update throttle timestamp
             if (sessionData) {
@@ -234,7 +218,6 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
         } catch (error) {
             this.logger.error(`Error processing AI suggestions: ${error.message}`);
-            client.emit('debug_log', { message: `AI Error: ${error.message}` });
         }
     }
 

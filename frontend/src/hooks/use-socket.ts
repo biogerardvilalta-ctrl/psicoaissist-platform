@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from '@/navigation';
 
 export type ConnectionState = 'connected' | 'disconnected' | 'reconnecting';
 
 export const useSocket = (url: string = 'http://localhost:3001', token?: string | null) => {
     const socketRef = useRef<Socket | null>(null);
+    const { toast } = useToast();
+    const router = useRouter();
     const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
     const [isAiLimitReached, setIsAiLimitReached] = useState(false);
     const retryCountRef = useRef(0);
@@ -56,9 +60,12 @@ export const useSocket = (url: string = 'http://localhost:3001', token?: string 
             socketIo.on('session_terminated', (data: any) => {
                 console.log('Session terminated by another device', data);
                 // Note: to implement full modal and redirect, this should ideally be handled in auth context or use a toast + navigation.
-                // Redirecting to login:
-                alert("S'ha iniciat sessió des d'un altre dispositiu. La sessió actual s'ha tancat.");
-                window.location.href = '/login';
+                toast({
+                    title: "Sessió tancada",
+                    description: "S'ha iniciat sessió des d'un altre dispositiu. La sessió actual s'ha tancat.",
+                    variant: "destructive"
+                });
+                router.push('/auth/login');
             });
 
             socketRef.current = socketIo;

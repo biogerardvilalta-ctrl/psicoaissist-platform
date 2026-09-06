@@ -5,7 +5,7 @@ import { Calendar, dateFnsLocalizer, Views, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Session, SessionStatus } from '@/lib/sessions-api';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,12 +58,11 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
 
     const handleCancelSession = async () => {
         if (!selectedSession) return;
-        if (!confirm(t('actions.cancelConfirm'))) return;
         try {
             await SessionsAPI.update(selectedSession.id, { status: SessionStatus.CANCELLED });
             toast({ title: t('toasts.cancelSuccess'), description: t('toasts.cancelSuccessDesc') });
             setIsActionDialogOpen(false);
-            window.location.reload(); // Simple reload to refresh data
+            router.refresh();
         } catch (error) {
             toast({ title: t('toasts.loadError'), description: t('toasts.cancelError'), variant: 'destructive' });
         }
@@ -71,12 +70,11 @@ export function CalendarView({ sessions, onNavigate, currentDate, view, onViewCh
 
     const handleDeleteSession = async () => {
         if (!selectedSession) return;
-        if (!confirm(t('actions.deleteConfirmPermanent'))) return;
         try {
             await SessionsAPI.delete(selectedSession.id);
             toast({ title: t('toasts.deleteSuccess'), description: t('toasts.deleteSuccessDesc') });
             setIsActionDialogOpen(false);
-            window.location.reload();
+            router.refresh();
         } catch (error) {
             toast({ title: t('toasts.loadError'), description: t('toasts.deleteError'), variant: 'destructive' });
         }

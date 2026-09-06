@@ -25,6 +25,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { UpgradeModal } from '@/components/shared/UpgradeModal';
@@ -93,8 +94,8 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel, manag
             riskLevel: initialData?.riskLevel || "LOW",
             notes: initialData?.notes || "",
             sendEmailReminders: initialData?.sendEmailReminders ?? true,
-            consentData: false,
-            consentAI: false,
+            consentData: initialData?.consentData ?? false,
+            consentAI: initialData?.consentAI ?? false,
         },
     });
 
@@ -357,11 +358,10 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel, manag
                                             </CardDescription>
                                         </div>
                                         <FormControl>
-                                            <input
-                                                type="checkbox"
+                                            <Checkbox
+                                                id="sendEmailReminders"
                                                 checked={field.value}
-                                                onChange={field.onChange}
-                                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                onCheckedChange={field.onChange}
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -387,11 +387,11 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel, manag
                                 render={({ field }) => (
                                     <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                                         <FormControl>
-                                            <input
-                                                type="checkbox"
+                                            <Checkbox
+                                                id="consentData"
                                                 checked={field.value}
-                                                onChange={field.onChange}
-                                                className="h-4 w-4 mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                onCheckedChange={field.onChange}
+                                                className="mt-1"
                                             />
                                         </FormControl>
                                         <div className="space-y-1 leading-none">
@@ -412,11 +412,11 @@ export function ClientForm({ initialData, onSubmit, onCancel, submitLabel, manag
                                 render={({ field }) => (
                                     <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                                         <FormControl>
-                                            <input
-                                                type="checkbox"
+                                            <Checkbox
+                                                id="consentAI"
                                                 checked={field.value}
-                                                onChange={field.onChange}
-                                                className="h-4 w-4 mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                onCheckedChange={field.onChange}
+                                                className="mt-1"
                                             />
                                         </FormControl>
                                         <div className="space-y-1 leading-none">

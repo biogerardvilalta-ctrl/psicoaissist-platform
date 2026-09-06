@@ -11,6 +11,8 @@ export default function ConditionalHeader() {
   const isExcluded =
     pathname?.includes('/admin') ||
     pathname?.includes('/legal') ||
+    pathname?.includes('/auth') ||
+    pathname?.includes('/video-call') ||
     pathname?.includes('/dashboard');
 
   if (isExcluded) {

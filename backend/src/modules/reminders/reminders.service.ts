@@ -110,12 +110,6 @@ export class RemindersService {
                     });
                 }
 
-                // 2c. Notify Client by WhatsApp
-                if (session.client.sendWhatsappReminders && clientPhone) {
-                    this.logger.log(`📱 Sending Whatsapp Reminder to Client ${clientName} (${clientPhone})`);
-                    // Mock WhatsApp Service
-                }
-
                 // 3. Mark as sent
                 await this.prisma.session.update({
                     where: { id: session.id },

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useRouter } from '@/navigation';
 import { Button } from '@/components/ui/button';
 import { Video, Mic, MicOff, VideoOff, PhoneOff } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import { useWebRTC } from '@/hooks/use-webrtc';
 import { useTranslations } from 'next-intl';
 
 export default function VideoCallPage({ params }: { params: { token: string } }) {
+    const router = useRouter();
     const t = useTranslations('VideoCall');
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
@@ -128,7 +130,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
     const endCall = () => {
         if (socket) socket.disconnect();
         if (localStream) localStream.getTracks().forEach(track => track.stop());
-        window.location.href = '/'; // Simple redirect for guest
+        router.push('/dashboard');
     };
 
     return (
@@ -149,7 +151,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
                 <div className="absolute top-4 left-4 landscape:left-auto landscape:right-4 lg:landscape:left-4 lg:landscape:right-auto bg-black/50 px-3 py-1 rounded text-sm backdrop-blur-sm text-white z-10">
                     {status} ({connectionStatus})
                     {networkQuality !== 'unknown' && (
-                        <span className={`ml-2 px-1.5 py-0.5 rounded textxs font-bold ${networkQuality === 'good' ? 'bg-green-500/20 text-green-400' :
+                        <span className={`ml-2 px-1.5 py-0.5 rounded text-xs font-bold ${networkQuality === 'good' ? 'bg-green-500/20 text-green-400' :
                             networkQuality === 'fair' ? 'bg-yellow-500/20 text-yellow-400' :
                                 'bg-red-500/20 text-red-400'
                             }`}>
@@ -182,6 +184,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
                         size="icon"
                         className={`rounded-full h-14 w-14 landscape:h-10 landscape:w-10 lg:landscape:h-14 lg:landscape:w-14 ${isAudioEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
                         onClick={toggleAudio}
+                        aria-label="Toggle audio"
                     >
                         {isAudioEnabled ? <Mic className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" /> : <MicOff className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" />}
                     </Button>
@@ -191,6 +194,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
                         size="icon"
                         className={`rounded-full h-14 w-14 landscape:h-10 landscape:w-10 lg:landscape:h-14 lg:landscape:w-14 ${isVideoEnabled ? "bg-slate-700/50 border-slate-500 hover:bg-slate-600" : ""} text-white transition-all`}
                         onClick={toggleVideo}
+                        aria-label="Toggle video"
                     >
                         {isVideoEnabled ? <Video className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" /> : <VideoOff className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" />}
                     </Button>
@@ -202,6 +206,7 @@ export default function VideoCallPage({ params }: { params: { token: string } })
                         size="icon"
                         className="rounded-full h-14 w-14 landscape:h-10 landscape:w-10 lg:landscape:h-14 lg:landscape:w-14 bg-red-600 hover:bg-red-700 border-transparent shadow-lg hover:scale-105 transition-all"
                         onClick={endCall}
+                        aria-label="End call"
                     >
                         <PhoneOff className="h-6 w-6 landscape:h-5 landscape:w-5 lg:landscape:h-6 lg:landscape:w-6" />
                     </Button>

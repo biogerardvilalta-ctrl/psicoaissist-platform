@@ -11,9 +11,9 @@ import {
   RawBodyRequest,
   Req,
   UseGuards,
-  UseInterceptors,
   BadRequestException,
-  InternalServerErrorException
+  InternalServerErrorException,
+  UseInterceptors
 } from '@nestjs/common';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
@@ -159,9 +159,6 @@ export class PaymentsController {
     return this.paymentsService.cancelSubscription(req.user.id);
   }
 
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('subscription_status_user_')
-  @CacheTTL(30)
   @Get('subscription-status')
   @UseGuards(JwtAuthGuard)
   async getSubscriptionStatus(@Req() req: any) {

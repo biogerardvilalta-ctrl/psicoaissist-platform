@@ -96,6 +96,36 @@ export function GoogleCalendarConnect() {
         }
     };
 
+    const handleDisconnect = async () => {
+        setLoading(true);
+        try {
+            await httpClient.delete('/api/v1/google/disconnect');
+            setIsConnected(false);
+            setImportEnabled(false);
+            
+            try {
+                const updatedUser = await AuthAPI.getCurrentUser();
+                updateUser(updatedUser);
+            } catch (e) {
+                console.error("Error refreshing profile", e);
+            }
+            
+            toast({
+                title: t('toasts.disconnectedTitle', { default: 'Desconectado' }),
+                description: t('toasts.disconnectedDesc', { default: 'Google Calendar se ha desconectado.' }),
+            });
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: t('toasts.errorTitle'),
+                description: t('toasts.errorDesc'),
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleConnect = async () => {
         setLoading(true);
         try {
@@ -132,14 +162,26 @@ export function GoogleCalendarConnect() {
                             {isConnected ? t('connected') : t('disconnected')}
                         </p>
                     </div>
-                    <Button
-                        onClick={handleConnect}
-                        disabled={loading || isConnected}
-                        variant={isConnected ? "outline" : "default"}
-                        className="w-full sm:w-auto"
-                    >
-                        {loading ? t('connecting') : isConnected ? t('connected') : t('connectButton')}
-                    </Button>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                        {isConnected && (
+                            <Button
+                                onClick={handleDisconnect}
+                                disabled={loading}
+                                variant="destructive"
+                                className="w-full sm:w-auto"
+                            >
+                                {loading ? t('disconnecting', { default: 'Desconectando...' }) : t('disconnect', { default: 'Desconectar' })}
+                            </Button>
+                        )}
+                        <Button
+                            onClick={handleConnect}
+                            disabled={loading || isConnected}
+                            variant={isConnected ? "outline" : "default"}
+                            className="w-full sm:w-auto"
+                        >
+                            {loading ? t('connecting') : isConnected ? t('connected') : t('connectButton')}
+                        </Button>
+                    </div>
                 </div>
 
                 {isConnected && (

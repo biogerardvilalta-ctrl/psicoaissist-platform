@@ -7,6 +7,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/navigation';
 
 export function Footer() {
   const t = useTranslations('Landing.Footer');
@@ -46,13 +47,13 @@ export function Footer() {
                 { href: '/legal?tab=cookies', label: t('links.cookies') },
               ].map((link) => (
                 <li key={link.href}>
-                  <a
+                  <Link
                     href={link.href}
                     className="text-gray-400 hover:text-white text-sm transition-colors duration-200 inline-flex items-center gap-1 group"
                   >
                     {link.label}
                     <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

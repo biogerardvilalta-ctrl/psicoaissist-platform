@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/navigation';
 
 export default function Error({
   error,
@@ -13,6 +14,7 @@ export default function Error({
   reset: () => void;
 }) {
   const t = useTranslations('common');
+  const router = useRouter();
 
   useEffect(() => {
     // Log the error to an error reporting service
@@ -27,11 +29,10 @@ export default function Error({
       
       <div className="space-y-2">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
-          Oops! Alguna cosa ha anat malament.
+          {t('error.title') || 'Oops! Alguna cosa ha anat malament.'}
         </h2>
         <p className="text-gray-500 dark:text-gray-400 max-w-[500px] mx-auto">
-          Hem detectat un error inesperat i el nostre equip ja n'està informat. 
-          Pots provar de tornar a carregar la pàgina.
+          {t('error.description') || "Hem detectat un error inesperat i el nostre equip ja n'està informat. Pots provar de tornar a carregar la pàgina."}
         </p>
       </div>
 
@@ -41,14 +42,14 @@ export default function Error({
           size="lg"
           className="font-medium"
         >
-          Tornar a intentar
+          {t('error.retry') || 'Tornar a intentar'}
         </Button>
         <Button 
           variant="outline" 
           size="lg"
-          onClick={() => window.location.href = '/'}
+          onClick={() => router.push('/')}
         >
-          Tornar a l'Inici
+          {t('error.backHome') || "Tornar a l'Inici"}
         </Button>
       </div>
     </div>

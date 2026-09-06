@@ -48,7 +48,7 @@ export default function ActivityLogPage() {
     };
 
     return (
-        <ProtectedRoute requiredRole="PSYCHOLOGIST">
+        <ProtectedRoute requiredRole={['PSYCHOLOGIST', 'ADMIN', 'SUPER_ADMIN']}>
             <div className="min-h-screen bg-gray-50 pb-12">
                 <main className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center gap-4 mb-8">

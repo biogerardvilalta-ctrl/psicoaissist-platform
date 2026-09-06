@@ -37,8 +37,9 @@ export function SortableWidget({ id, children, isEditMode }: SortableWidgetProps
                     {...attributes}
                     {...listeners}
                     className="absolute top-2 right-2 p-2 bg-white/80 backdrop-blur-sm rounded-md shadow-sm 
-                     cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity z-10 
+                     cursor-grab active:cursor-grabbing opacity-50 group-hover:opacity-100 transition-opacity z-10 
                      border hover:bg-white"
+                    aria-label="Arrossega per reordenar"
                 >
                     <GripVertical className="h-4 w-4 text-slate-500" />
                 </div>

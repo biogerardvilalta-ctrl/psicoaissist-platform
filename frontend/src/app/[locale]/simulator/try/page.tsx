@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Link } from '@/navigation';
-import { Header } from '@/components/layout/header';
 import { Send, Loader2, Lock } from 'lucide-react';
 
 interface Message {
@@ -99,7 +98,6 @@ export default function PublicSimulatorPage() {
     return (
         // h-[100dvh] ensures it fits the actual visible screen on mobile (addressing address bar resize)
         <div className="h-[100dvh] bg-gray-50 flex flex-col overflow-hidden">
-            <Header />
 
             <main className="flex-1 flex flex-col w-full max-w-2xl mx-auto pt-16 sm:pt-20 pb-0 px-0 sm:px-4">
 
